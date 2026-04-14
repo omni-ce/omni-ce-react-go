@@ -1,8 +1,8 @@
 #!/bin/bash
 
 
-APP_NAME="apimq-app"
-IMAGE_NAME="apimq"
+APP_NAME="react-go-app"
+IMAGE_NAME="react-go"
 
 # Hapus file-file yang tidak perlu
 echo "🗑️ Cleaning up..."

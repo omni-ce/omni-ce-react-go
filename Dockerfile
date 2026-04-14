@@ -35,7 +35,7 @@ RUN go mod download
 COPY . .
 COPY --from=fe-builder /app/dist ./dist
 
-RUN go build -o apimq main.go
+RUN go build -o react-go main.go
 
 # =======================================================================================
 # Run
@@ -45,7 +45,7 @@ FROM runner
 WORKDIR /app
 
 # copy compiled files
-COPY --from=be-builder /app/apimq /app/apimq
+COPY --from=be-builder /app/react-go /app/react-go
 
 # run
-CMD ["./apimq"]
+CMD ["./react-go"]

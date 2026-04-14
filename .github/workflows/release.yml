@@ -9,7 +9,10 @@ permissions:
   contents: write
 env:
   NODE_OPTIONS: --max-old-space-size=4096
-  NAME: apimq
+  NAME: react-go
+  COOLIFY_URL: https://c00l.molinar.id
+  COOLIFY_CONTAINER_URL: https://react-go.molinar.id
+  COOLIFY_UUID: 19989165-7709-458b-8168-91347559547f
 
 jobs:
   build:
@@ -104,8 +107,8 @@ jobs:
       #   run: |
       #     curl -s -X GET \
       #       -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}" \
-      #       "https://c00l.molinar.id/api/v1/deploy?uuid=${{ secrets.COOLIFY_UUID }}&force=false"
-      #     echo "Deployed successfully: https://apimq.molinar.id"
+      #       "${{ env.COOLIFY_URL }}/api/v1/deploy?uuid=${{ env.COOLIFY_UUID }}&force=false"
+      #     echo "Deployed successfully: ${{ env.COOLIFY_CONTAINER_URL }}"
 
   github_release:
     needs: build
