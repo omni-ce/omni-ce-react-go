@@ -36,3 +36,4 @@ tsconfig.app.tsbuildinfo
 tsconfig.node.tsbuildinfo
 
 /database/system.sqlite
+/uploads
