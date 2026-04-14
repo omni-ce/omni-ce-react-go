@@ -1,7 +1,8 @@
-import "@/PWABadge.css";
 import { Fragment } from "react/jsx-runtime";
 
 import { useRegisterSW } from "virtual:pwa-register/react";
+
+import "@/PWABadge.css";
 
 function PWABadge() {
   // check for updates every hour
