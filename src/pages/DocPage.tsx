@@ -8,6 +8,7 @@ import {
   RiMenuLine,
   RiCloseLine,
 } from "react-icons/ri";
+import { Link } from "react-router";
 
 interface DocSection {
   id: string;
@@ -332,9 +333,7 @@ export default function DocPage() {
           </div>
           <div>
             <p className="text-sm font-bold text-foreground">Docs</p>
-            <p className="text-[10px] text-dark-400 font-mono">
-              Base Project
-            </p>
+            <p className="text-[10px] text-dark-400 font-mono">Base Project</p>
           </div>
           <button
             onClick={() => setSidebarOpen(false)}
@@ -389,12 +388,12 @@ export default function DocPage() {
 
         {/* Footer */}
         <div className="p-4 border-t border-dark-600/50 shrink-0">
-          <a
-            href="/app/dashboard"
+          <Link
+            to="/"
             className="flex items-center gap-2 text-xs text-dark-400 hover:text-foreground transition-colors font-mono"
           >
-            ← Back to Dashboard
-          </a>
+            ← Back to Home
+          </Link>
         </div>
       </aside>
 

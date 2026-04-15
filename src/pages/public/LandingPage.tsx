@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import {
   HiOutlineCode,
   HiOutlineLightningBolt,
@@ -142,13 +142,13 @@ export default function LandingPage() {
             className="mt-10 flex flex-wrap items-center justify-center gap-4 animate-fade-in"
             style={{ animationDelay: "0.3s" }}
           >
-            <button
-              onClick={() => navigate("/app/dashboard")}
+            <Link
+              to="/app/dashboard"
               className="flex items-center gap-2 px-6 py-3 text-sm font-semibold bg-accent-500 hover:bg-accent-600 text-white rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-accent-500/25 active:scale-[0.98]"
             >
               {language({ id: "Ke Dashboard", en: "Go to Dashboard" })}
               <HiOutlineArrowRight size={16} />
-            </button>
+            </Link>
             <a
               href="https://github.com/jefripunza/react-go"
               target="_blank"
@@ -332,13 +332,13 @@ export default function LandingPage() {
             })}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
-            <button
-              onClick={() => navigate("/app/dashboard")}
+            <Link
+              to="/app/dashboard"
               className="flex items-center gap-2 px-6 py-3 text-sm font-semibold bg-accent-500 hover:bg-accent-600 text-white rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-accent-500/25"
             >
               {language({ id: "Buka Dashboard", en: "Open Dashboard" })}
               <HiOutlineArrowRight size={16} />
-            </button>
+            </Link>
             <button
               onClick={() =>
                 window.open("/doc", "_blank", "noopener,noreferrer")
