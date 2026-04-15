@@ -25,7 +25,7 @@ import Pagination, {
   type PaginationColumn,
   type PaginationHandle,
 } from "@/components/Pagination";
-import BlankUser from "@/assets/blank-user.webp";
+import BlankUser from "@/assets/blank-user.svg";
 
 export default function UsersPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);

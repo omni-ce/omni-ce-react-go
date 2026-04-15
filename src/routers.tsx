@@ -54,11 +54,16 @@ const sidebarLinks: ISidebarLink[] = [
 export const routers = createBrowserRouter([
   {
     path: "/",
-    element: <MainLayout />,
     children: [
       {
-        index: true,
-        element: <LandingPage />,
+        path: "/",
+        element: <MainLayout />,
+        children: [
+          {
+            index: true,
+            element: <LandingPage />,
+          },
+        ],
       },
       {
         path: "login",

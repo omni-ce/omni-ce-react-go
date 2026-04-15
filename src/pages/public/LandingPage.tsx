@@ -114,7 +114,7 @@ export default function LandingPage() {
               onClick={() => navigate("/login")}
               className="px-4 py-2 text-sm font-semibold bg-accent-500 hover:bg-accent-600 text-white rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-accent-500/25 active:scale-[0.98]"
             >
-              Dashboard
+              Login
             </button>
           </div>
         </div>
@@ -144,7 +144,7 @@ export default function LandingPage() {
           >
             Build Full-Stack Apps
             <br />
-            <span className="bg-gradient-to-r from-accent-400 via-neon-cyan to-accent-500 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-accent-400 via-neon-cyan to-accent-500 bg-clip-text text-transparent">
               React + Go
             </span>
           </h1>
@@ -165,7 +165,7 @@ export default function LandingPage() {
             style={{ animationDelay: "0.3s" }}
           >
             <button
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/app/dashboard")}
               className="flex items-center gap-2 px-6 py-3 text-sm font-semibold bg-accent-500 hover:bg-accent-600 text-white rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-accent-500/25 active:scale-[0.98]"
             >
               Go to Dashboard
@@ -218,9 +218,7 @@ export default function LandingPage() {
                 </span>
                 {"\n"}
                 <span className="text-dark-400">{"  "}➜ Local: </span>
-                <span className="text-accent-400">
-                  http://localhost:5173/
-                </span>
+                <span className="text-accent-400">http://localhost:5173/</span>
               </pre>
             </div>
           </div>
@@ -307,7 +305,11 @@ export default function LandingPage() {
                 title: "Install",
                 code: "bun install && go mod download",
               },
-              { step: "03", title: "Run", code: "bun run dev && go run main.go" },
+              {
+                step: "03",
+                title: "Run",
+                code: "bun run dev && go run main.go",
+              },
             ].map((item) => (
               <div
                 key={item.step}
@@ -340,7 +342,7 @@ export default function LandingPage() {
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
             <button
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/app/dashboard")}
               className="flex items-center gap-2 px-6 py-3 text-sm font-semibold bg-accent-500 hover:bg-accent-600 text-white rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-accent-500/25"
             >
               Open Dashboard
