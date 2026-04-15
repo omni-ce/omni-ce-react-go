@@ -25,27 +25,22 @@ func SetupRoutes(app *fiber.App, api fiber.Router) {
 	example.RegisterRoutes(api)
 
 	// /api/auth
-	authApi := api.Group("/auth")
-	auth.RegisterPublicRoutes(authApi)
-	auth.RegisterProtectedRoutes(authApi)
+	auth.RegisterPublicRoutes(api.Group("/auth"))
+	auth.RegisterProtectedRoutes(api.Group("/auth", middlewares.UseToken))
 
 	// User
 	user.ProtectedRoute(api.Group("/user", middlewares.UseToken))
 	user.ManagementRoute(api.Group("/user", middlewares.UseToken))
 
-	// /api/whitelist (protected)
-	whitelistProtected := api.Group("/whitelist", middlewares.UseToken)
-	whitelist.RegisterRoutes(whitelistProtected)
+	// /api/whitelist
+	whitelist.ProtectedRoute(api.Group("/whitelist", middlewares.UseToken))
 
-	// /api/apikey (protected)
-	apikeyProtected := api.Group("/apikey", middlewares.UseToken)
-	apikey.RegisterRoutes(apikeyProtected)
+	// /api/apikey
+	apikey.ProtectedRoute(api.Group("/apikey", middlewares.UseToken))
 
-	// /api/setting (protected)
-	settingProtected := api.Group("/setting", middlewares.UseToken)
-	setting.RegisterRoutes(settingProtected)
+	// /api/setting
+	setting.ProtectedRoute(api.Group("/setting", middlewares.UseToken))
 
-	// /api/dashboard (protected)
-	dashboardProtected := api.Group("/dashboard", middlewares.UseToken)
-	dashboard.RegisterRoutes(dashboardProtected)
+	// /api/dashboard
+	dashboard.ProtectedRoute(api.Group("/dashboard", middlewares.UseToken))
 }

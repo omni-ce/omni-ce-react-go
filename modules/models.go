@@ -1,15 +1,19 @@
 package modules
 
 import (
-	"react-go/modules/apikey"
-	"react-go/modules/setting"
-	"react-go/modules/whitelist"
+	apikey "react-go/modules/apikey/model"
+	auth "react-go/modules/auth/model"
+	setting "react-go/modules/setting/model"
+	user "react-go/modules/user/model"
+	whitelist "react-go/modules/whitelist/model"
 
 	"gorm.io/gorm"
 )
 
 func Models() []interface{} {
 	return []interface{}{
+		&auth.Access{},
+		&user.User{},
 		&setting.Setting{},
 		&whitelist.Whitelist{},
 		&apikey.ApiKey{},
@@ -17,5 +21,6 @@ func Models() []interface{} {
 }
 
 func SeedAll(db *gorm.DB) {
-	setting.Seed(db)
+	user.User{}.Seed(db)
+	setting.Setting{}.Seed(db)
 }

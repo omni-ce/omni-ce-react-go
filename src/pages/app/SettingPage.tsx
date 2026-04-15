@@ -4,6 +4,7 @@ import SectionTitle from "@/components/SectionTitle";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { settingService } from "@/services/setting.service";
+import AppIconSvg from "@/assets/react-go.svg";
 
 export default function SettingPage() {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -162,7 +163,7 @@ export default function SettingPage() {
         <SectionTitle>About</SectionTitle>
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-accent-500/20 border border-accent-500/30 flex items-center justify-center overflow-hidden shrink-0">
-            <img src="/app.svg" alt="App" className="w-6 h-6" />
+            <img src={AppIconSvg} alt="App" className="w-6 h-6" />
           </div>
           <div>
             <h3 className="text-sm font-semibold text-foreground">

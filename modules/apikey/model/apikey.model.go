@@ -1,4 +1,4 @@
-package apikey
+package model
 
 import (
 	"crypto/rand"
@@ -21,7 +21,8 @@ type ApiKey struct {
 
 func (a *ApiKey) BeforeCreate(tx *gorm.DB) error {
 	if a.ID == uuid.Nil {
-		a.ID = uuid.New()
+		uuidV7, _ := uuid.NewV7()
+		a.ID = uuidV7
 	}
 	if a.Key == "" {
 		a.Key = generateKey()
@@ -32,5 +33,5 @@ func (a *ApiKey) BeforeCreate(tx *gorm.DB) error {
 func generateKey() string {
 	b := make([]byte, 32)
 	rand.Read(b)
-	return "apimq_" + hex.EncodeToString(b)
+	return "api_" + hex.EncodeToString(b)
 }

@@ -1,10 +1,9 @@
-package setting
+package model
 
 import (
 	"crypto/md5"
 	"fmt"
 	"log"
-	"time"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -23,21 +22,7 @@ func (s *Setting) BeforeCreate(tx *gorm.DB) error {
 	return nil
 }
 
-type Access struct {
-	ID       uuid.UUID `json:"id" gorm:"type:char(36);primaryKey"`
-	IP       string    `json:"ip"`
-	Country  string    `json:"country"`
-	AccessAt time.Time `json:"access_at" gorm:"autoCreateTime"`
-}
-
-func (a *Access) BeforeCreate(tx *gorm.DB) error {
-	if a.ID == uuid.Nil {
-		a.ID = uuid.New()
-	}
-	return nil
-}
-
-func Seed(db *gorm.DB) {
+func (Setting) Seed(db *gorm.DB) {
 
 	hash_password := fmt.Sprintf("%x", md5.Sum([]byte("admin")))
 

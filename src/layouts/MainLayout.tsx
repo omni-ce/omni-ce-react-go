@@ -4,6 +4,7 @@ import { HiOutlineCode } from "react-icons/hi";
 import { RiTranslate2 } from "react-icons/ri";
 import { useLanguageStore } from "@/stores/languageStore";
 import version from "@/version";
+import AppIconSvg from "@/assets/react-go.svg";
 
 export default function MainLayout() {
   const navigate = useNavigate();
@@ -33,9 +34,7 @@ export default function MainLayout() {
       >
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-accent-500/20 border border-accent-500/30 flex items-center justify-center">
-              <img src="/app.svg" alt="App" className="w-4 h-4" />
-            </div>
+            <img src={AppIconSvg} alt="App" className="w-10 h-10" />
             <span className="font-bold text-foreground tracking-tight">
               React-Go
             </span>
@@ -86,9 +85,7 @@ export default function MainLayout() {
       <footer className="py-8 px-6 border-t border-dark-600/20">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-accent-500/20 border border-accent-500/30 flex items-center justify-center">
-              <img src="/app.svg" alt="App" className="w-3 h-3" />
-            </div>
+            <img src={AppIconSvg} alt="App" className="w-8 h-8" />
             <span className="text-xs font-mono text-dark-400">
               React-Go v{version}
             </span>

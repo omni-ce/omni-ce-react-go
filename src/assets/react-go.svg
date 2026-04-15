@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 450" width="100%" height="100%">
+  <g stroke="#000" stroke-width="4" fill="#EBC7A7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 85 385 L 50 420 C 40 430 60 435 70 430 L 110 395 Z" />
+    <path d="M 215 385 L 250 420 C 260 430 240 435 230 430 L 190 395 Z" />
+  </g>
+  
+  <g stroke="#000" stroke-width="3" stroke-linecap="round">
+    <line x1="55" y1="422" x2="65" y2="412" />
+    <line x1="68" y1="428" x2="75" y2="416" />
+    <line x1="245" y1="422" x2="235" y2="412" />
+    <line x1="232" y1="428" x2="225" y2="416" />
+  </g>
+
+  <g stroke="#000" stroke-width="4" fill="#EBC7A7" stroke-linecap="round">
+    <path d="M 45 230 C 15 230 10 240 10 250 C 10 260 25 260 45 255 Z" />
+    <path d="M 255 230 C 285 230 290 240 290 250 C 290 260 275 260 255 255 Z" />
+  </g>
+
+  <g stroke="#000" stroke-width="2.5" stroke-linecap="round">
+    <line x1="18" y1="240" x2="28" y2="242" />
+    <line x1="20" y1="250" x2="30" y2="248" />
+    <line x1="282" y1="240" x2="272" y2="242" />
+    <line x1="280" y1="250" x2="270" y2="248" />
+  </g>
+
+  <g stroke="#000" stroke-width="4" fill="#6AD7E5">
+    <circle cx="65" cy="75" r="22" />
+    <circle cx="235" cy="75" r="22" />
+  </g>
+  
+  <g fill="#000">
+    <circle cx="58" cy="70" r="9" />
+    <circle cx="242" cy="70" r="9" />
+  </g>
+
+  <path d="M 90 45 
+           C 120 25 180 25 210 45 
+           C 245 70 260 140 260 230 
+           C 260 340 230 400 150 400 
+           C 70 400 40 340 40 230 
+           C 40 140 55 70 90 45 Z" 
+        fill="#6AD7E5" stroke="#000" stroke-width="4" stroke-linejoin="round"/>
+
+  <ellipse cx="190" cy="105" rx="38" ry="42" fill="#FFF" stroke="#000" stroke-width="4"/>
+  
+  <ellipse cx="110" cy="105" rx="42" ry="46" fill="#FFF" stroke="#000" stroke-width="4"/>
+  
+  <circle cx="138" cy="108" r="13" fill="#000"/>
+  <circle cx="182" cy="108" r="13" fill="#000"/>
+  
+  <circle cx="133" cy="102" r="5" fill="#FFF"/>
+  <circle cx="177" cy="102" r="5" fill="#FFF"/>
+
+  <g stroke="#000" stroke-width="4">
+    <rect x="135" y="155" width="13" height="20" rx="5" fill="#FFF" />
+    <rect x="152" y="155" width="13" height="20" rx="5" fill="#FFF" />
+    
+    <ellipse cx="150" cy="142" rx="30" ry="16" fill="#EBC7A7" />
+  </g>
+  
+  <ellipse cx="150" cy="128" rx="14" ry="8" fill="#000" />
+
+  <g transform="translate(150, 280)" fill="none" stroke="#FFF" stroke-width="6">
+    <circle cx="0" cy="0" r="16" fill="#FFF" stroke="none" />
+    
+    <ellipse rx="22" ry="65" />
+    
+    <ellipse rx="22" ry="65" transform="rotate(60)" />
+    <ellipse rx="22" ry="65" transform="rotate(-60)" />
+  </g>
+</svg>

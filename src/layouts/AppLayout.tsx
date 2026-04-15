@@ -23,6 +23,7 @@ import { no_auth_navigate } from "@/constant";
 import type { LanguageCode } from "@/stores/languageStore";
 import type { UserRole } from "@/types/user";
 import { useLanguageStore } from "@/stores/languageStore";
+import AppIconSvg from "@/assets/react-go.svg";
 
 export interface ISidebarLink extends Partial<IndexRouteObject> {
   show_hr?: boolean;
@@ -131,9 +132,7 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
             {(!effectiveCollapsed || isMobileOpen) && (
               <div className="flex items-center gap-3 min-w-0">
                 <div className="relative shrink-0">
-                  <div className="w-9 h-9 rounded-lg bg-accent-500/20 border border-accent-500/30 flex items-center justify-center overflow-hidden">
-                    <img src="/app.svg" alt="App" className="w-5 h-5" />
-                  </div>
+                  <img src={AppIconSvg} alt="App" className="w-8 h-8" />
                 </div>
                 <div className="min-w-0">
                   <h1 className="text-base font-bold text-foreground tracking-tight truncate">

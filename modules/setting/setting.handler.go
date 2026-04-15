@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"fmt"
 	"react-go/dto"
+	model "react-go/modules/setting/model"
 	"react-go/variable"
 	"strings"
 
@@ -11,7 +12,7 @@ import (
 )
 
 func All(c *fiber.Ctx) error {
-	settings := make([]Setting, 0)
+	settings := make([]model.Setting, 0)
 	if err := variable.Db.Find(&settings).Error; err != nil {
 		return dto.InternalServerError(c, "Failed to get settings", nil)
 	}
@@ -36,7 +37,7 @@ func Set(c *fiber.Ctx) error {
 		}
 
 		for key, value := range bodies {
-			var s Setting
+			var s model.Setting
 			if err := variable.Db.Where("key = ?", key).First(&s).Error; err != nil {
 				return dto.NotFound(c, fmt.Sprintf("Setting not found: %s", key), nil)
 			}
@@ -73,7 +74,7 @@ func Set(c *fiber.Ctx) error {
 			}
 			file := files[0]
 
-			var s Setting
+			var s model.Setting
 			if err := variable.Db.Where("key = ?", fieldname).First(&s).Error; err != nil {
 				return dto.NotFound(c, fmt.Sprintf("Setting not found: %s", fieldname), nil)
 			}
@@ -97,7 +98,7 @@ func Set(c *fiber.Ctx) error {
 			}
 			value := values[0]
 
-			var s Setting
+			var s model.Setting
 			if err := variable.Db.Where("key = ?", key).First(&s).Error; err != nil {
 				return dto.NotFound(c, fmt.Sprintf("Setting not found: %s", key), nil)
 			}

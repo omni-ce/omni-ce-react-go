@@ -2,6 +2,7 @@ package apikey
 
 import (
 	"react-go/dto"
+	model "react-go/modules/apikey/model"
 	"react-go/variable"
 	"time"
 
@@ -18,7 +19,7 @@ type ToggleApiKeyRequest struct {
 }
 
 func GetAll(c *fiber.Ctx) error {
-	keys := make([]ApiKey, 0)
+	keys := make([]model.ApiKey, 0)
 	if err := variable.Db.Order("created_at DESC").Find(&keys).Error; err != nil {
 		return dto.InternalServerError(c, "Failed to get API keys", nil)
 	}
@@ -35,7 +36,7 @@ func Create(c *fiber.Ctx) error {
 		return dto.BadRequest(c, "Name is required", nil)
 	}
 
-	entry := ApiKey{
+	entry := model.ApiKey{
 		Name: req.Name,
 	}
 
@@ -64,7 +65,7 @@ func Toggle(c *fiber.Ctx) error {
 		return dto.BadRequest(c, "Invalid request body", nil)
 	}
 
-	var entry ApiKey
+	var entry model.ApiKey
 	if err := variable.Db.Where("id = ?", id).First(&entry).Error; err != nil {
 		return dto.NotFound(c, "API key not found", nil)
 	}
@@ -83,7 +84,7 @@ func Delete(c *fiber.Ctx) error {
 		return dto.BadRequest(c, "ID is required", nil)
 	}
 
-	var entry ApiKey
+	var entry model.ApiKey
 	if err := variable.Db.Where("id = ?", id).First(&entry).Error; err != nil {
 		return dto.NotFound(c, "API key not found", nil)
 	}

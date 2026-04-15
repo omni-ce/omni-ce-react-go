@@ -2,6 +2,7 @@ package whitelist
 
 import (
 	"react-go/dto"
+	model "react-go/modules/whitelist/model"
 	"react-go/variable"
 
 	"github.com/gofiber/fiber/v2"
@@ -14,7 +15,7 @@ type CreateWhitelistRequest struct {
 }
 
 func GetAll(c *fiber.Ctx) error {
-	entries := make([]Whitelist, 0)
+	entries := make([]model.Whitelist, 0)
 	if err := variable.Db.Order("created_at DESC").Find(&entries).Error; err != nil {
 		return dto.InternalServerError(c, "Failed to get whitelist entries", nil)
 	}
@@ -35,12 +36,12 @@ func Create(c *fiber.Ctx) error {
 	}
 
 	// Check if value already exists
-	var existing Whitelist
+	var existing model.Whitelist
 	if err := variable.Db.Where("value = ?", req.Value).First(&existing).Error; err == nil {
 		return dto.BadRequest(c, "Entry with this value already exists", nil)
 	}
 
-	entry := Whitelist{
+	entry := model.Whitelist{
 		Type:  req.Type,
 		Value: req.Value,
 		Label: req.Label,
@@ -58,7 +59,7 @@ func Delete(c *fiber.Ctx) error {
 		return dto.BadRequest(c, "ID is required", nil)
 	}
 
-	var entry Whitelist
+	var entry model.Whitelist
 	if err := variable.Db.Where("id = ?", id).First(&entry).Error; err != nil {
 		return dto.NotFound(c, "Whitelist entry not found", nil)
 	}

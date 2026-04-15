@@ -9,6 +9,7 @@ import {
 } from "react-icons/ri";
 import { useNavigate } from "react-router";
 import { useLanguageStore } from "@/stores/languageStore";
+import AppIconSvg from "@/assets/react-go.svg";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -55,10 +56,8 @@ export default function LoginPage() {
       {/* Logo & Brand */}
       <div className="flex items-center gap-3 mb-8">
         <div className="relative">
-          <div className="w-12 h-12 rounded-xl bg-accent-500/20 border border-accent-500/30 flex items-center justify-center">
-            <img src="/app.svg" alt="App" className="w-6 h-6" />
-          </div>
-          <div className="absolute -top-1 -right-1 w-3 h-3 bg-neon-green rounded-full animate-pulse-glow" />
+          <img src={AppIconSvg} alt="App" className="w-12 h-12" />
+          {/* <div className="absolute -top-1 -right-1 w-3 h-3 bg-neon-green rounded-full animate-pulse-glow" /> */}
         </div>
         <div>
           <h1 className="text-2xl font-bold text-foreground tracking-tight">
