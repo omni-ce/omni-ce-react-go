@@ -23,6 +23,7 @@ echo "Start Process ..."
 # Install dependencies
 echo "Install dependencies ..."
 bun i
+go mod tidy
 
 # Replace variables in application.variable.go
 echo "Replace variables ..."
