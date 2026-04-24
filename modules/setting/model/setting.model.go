@@ -1,8 +1,6 @@
 package model
 
 import (
-	"crypto/md5"
-	"fmt"
 	"log"
 
 	"github.com/google/uuid"
@@ -23,24 +21,23 @@ func (s *Setting) BeforeCreate(tx *gorm.DB) error {
 }
 
 func (Setting) Seed(db *gorm.DB) {
+	var count int64
+	db.Model(&Setting{}).Count(&count)
 
-	hash_password := fmt.Sprintf("%x", md5.Sum([]byte("admin")))
-
-	settings := map[string]string{
-		"auth_password": hash_password,
-	}
-
-	inserts := []string{}
-	exists := []string{}
-	for key, value := range settings {
-		var s Setting
-		if err := db.Where("key = ?", key).First(&s).Error; err != nil {
-			db.Create(&Setting{Key: key, Value: value})
-			inserts = append(inserts, key)
-		} else {
-			exists = append(exists, key)
+	if count == 0 {
+		stats := []Setting{
+			// {
+			// 	Key:   "auth_password",
+			// 	Value: fmt.Sprintf("%x", md5.Sum([]byte("admin"))),
+			// },
 		}
+
+		for _, s := range stats {
+			db.Create(&s)
+		}
+
+		log.Println("✅ Setting seeded")
+	} else {
+		log.Println("⚠️  Setting already seeded")
 	}
-	log.Printf("✅ Inserted %d settings!", len(inserts))
-	log.Printf("👌 Already exists %d settings!", len(exists))
 }

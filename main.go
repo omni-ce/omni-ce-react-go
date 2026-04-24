@@ -30,8 +30,8 @@ func replaceHTMLHeadTitle(data []byte) []byte {
 		return data
 	}
 	s := string(data)
-	s = strings.ReplaceAll(s, "html-head-title", "ApiMQ | Message Broker for HTTP requests")
-	s = strings.ReplaceAll(s, "html-head-description", "ApiMQ is a self-hosted HTTP message queue for reliable request delivery.")
+	s = strings.ReplaceAll(s, "html-head-title", variable.AppHtmlHeadTitle)
+	s = strings.ReplaceAll(s, "html-head-description", variable.AppHtmlHeadDescription)
 	return []byte(s)
 }
 

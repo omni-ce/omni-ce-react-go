@@ -63,6 +63,6 @@ func (User) Seed(db *gorm.DB) {
 
 		log.Println("✅ Users seeded")
 	} else {
-		log.Println("⚠️ Users already seeded")
+		log.Println("⚠️  Users already seeded")
 	}
 }

@@ -9,16 +9,9 @@ import (
 	"react-go/modules/setting"
 	"react-go/modules/user"
 	"react-go/modules/whitelist"
-	"react-go/worker"
 
 	"github.com/gofiber/fiber/v2"
 )
-
-func SetupWorkers() {
-	// Start queue worker manager
-	queueWorker := worker.NewManager()
-	queueWorker.Start()
-}
 
 func SetupRoutes(app *fiber.App, api fiber.Router) {
 	// /api
