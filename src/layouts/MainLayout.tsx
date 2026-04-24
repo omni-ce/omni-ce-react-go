@@ -4,7 +4,7 @@ import { HiOutlineCode } from "react-icons/hi";
 import { RiTranslate2 } from "react-icons/ri";
 import { useLanguageStore } from "@/stores/languageStore";
 import version from "@/version";
-import AppIconSvg from "@/assets/react-go.svg";
+import AppIconSvg from "@/assets/react_go.svg";
 
 export default function MainLayout() {
   const navigate = useNavigate();

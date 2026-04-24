@@ -9,7 +9,7 @@ import {
 } from "react-icons/ri";
 import { useNavigate } from "react-router";
 import { useLanguageStore } from "@/stores/languageStore";
-import AppIconSvg from "@/assets/react-go.svg";
+import AppIconSvg from "@/assets/react_go.svg";
 
 export default function LoginPage() {
   const navigate = useNavigate();

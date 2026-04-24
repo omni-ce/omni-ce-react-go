@@ -4,7 +4,7 @@ import SectionTitle from "@/components/SectionTitle";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { settingService } from "@/services/setting.service";
-import AppIconSvg from "@/assets/react-go.svg";
+import AppIconSvg from "@/assets/react_go.svg";
 
 export default function SettingPage() {
   const [currentPassword, setCurrentPassword] = useState("");
