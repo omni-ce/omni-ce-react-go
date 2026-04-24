@@ -19,7 +19,7 @@ export default function JsonEditor({
         height={height}
         defaultLanguage="json"
         value={value}
-        onChange={(val) => onChange(val ?? "{}")}
+        onChange={(val: string | undefined) => onChange(val ?? "{}")}
         theme="vs-dark"
         options={{
           minimap: { enabled: false },
