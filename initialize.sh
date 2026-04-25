@@ -1,6 +1,8 @@
 #!/bin/bash
 
-# Questions
+### Questions
+
+# Project
 while true; do
   read -p "Project Code? [react-go]          : " projectCode
   if [ -z "$projectCode" ]; then
@@ -12,6 +14,32 @@ while true; do
     break
   fi
 done
+
+# User
+while true; do
+  read -p "User: Username? [admin]             : " username
+  if [ -z "$username" ]; then
+    break
+  fi
+  if [[ ! "$username" =~ ^[a-z0-9-]+$ ]]; then
+    echo "⚠️  Error: Username harus berupa huruf kecil, angka, dan strip (-). Tidak boleh ada spasi atau karakter spesial. Contoh: admin"
+  else
+    break
+  fi
+done
+while true; do
+  read -p "User: Password? [admin123]          : " password
+  if [ -z "$password" ]; then
+    break
+  fi
+  if [[ ${#password} -lt 8 || ! "$password" =~ [A-Z] || ! "$password" =~ [a-z] || ! "$password" =~ [0-9] || ! "$password" =~ [^a-zA-Z0-9] ]]; then
+    echo "⚠️  Error: Password minimal 8 karakter, serta harus mengandung kombinasi huruf besar, huruf kecil, angka, dan karakter spesial minimal masing-masing 1 karakter."
+  else
+    break
+  fi
+done
+
+# HTML
 read -p "HTML Title? [title | mini-detail] : " htmlTitle
 read -p "HTML Description?                 : " htmlDescription
 
@@ -34,6 +62,14 @@ fi
 if [ ! -z "$htmlDescription" ]; then
   escDesc=$(printf '%s' "$htmlDescription" | sed -e 's/[\/&]/\\&/g')
   sed -i '' "s/AppHtmlHeadDescription = \".*\"/AppHtmlHeadDescription = \"$escDesc\"/" variable/application.variable.go
+fi
+
+# Replace user credentials in user.model.go
+if [ ! -z "$username" ]; then
+  sed -i '' "s/Username: \"admin\"/Username: \"$username\"/" modules/user/model/user.model.go
+fi
+if [ ! -z "$password" ]; then
+  sed -i '' "s/Password: function.EncryptPassword(\"admin123\")/Password: function.EncryptPassword(\"$password\")/" modules/user/model/user.model.go
 fi
 
 # Replace project code globally (except .git, node_modules, and this script)
