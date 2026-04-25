@@ -7,7 +7,7 @@ import {
   RiLockLine,
   RiUserLine,
 } from "react-icons/ri";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useLanguageStore } from "@/stores/languageStore";
 import AppIconSvg from "@/assets/react_go.svg";
 
@@ -54,20 +54,22 @@ export default function LoginPage() {
   return (
     <div className="flex flex-col items-center px-4 animate-fade-in">
       {/* Logo & Brand */}
-      <div className="flex items-center gap-3 mb-8">
-        <div className="relative">
-          <img src={AppIconSvg} alt="App" className="w-12 h-12" />
-          {/* <div className="absolute -top-1 -right-1 w-3 h-3 bg-neon-green rounded-full animate-pulse-glow" /> */}
+      <Link to={"/"}>
+        <div className="flex items-center gap-3 mb-8">
+          <div className="relative">
+            <img src={AppIconSvg} alt="App" className="w-12 h-12" />
+            {/* <div className="absolute -top-1 -right-1 w-3 h-3 bg-neon-green rounded-full animate-pulse-glow" /> */}
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-foreground tracking-tight">
+              Base Project
+            </h1>
+            <p className="text-xs text-dark-300 font-mono">
+              {language({ id: "Dasbor Admin", en: "Admin Dashboard" })}
+            </p>
+          </div>
         </div>
-        <div>
-          <h1 className="text-2xl font-bold text-foreground tracking-tight">
-            Base Project
-          </h1>
-          <p className="text-xs text-dark-300 font-mono">
-            {language({ id: "Dasbor Admin", en: "Admin Dashboard" })}
-          </p>
-        </div>
-      </div>
+      </Link>
 
       {/* Login Card */}
       <div className="w-full max-w-md">
