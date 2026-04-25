@@ -5,7 +5,7 @@ import {
   type IndexRouteObject,
   Link,
 } from "react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useAuthStore } from "@/stores/authStore";
 import { useSidebarStore } from "@/stores/sidebarStore";
 import {
@@ -24,6 +24,8 @@ import type { UserRole } from "@/types/user";
 import { useLanguageStore } from "@/stores/languageStore";
 import AppIconSvg from "@/assets/react_go.svg";
 import ControlButton from "@/components/ControlButton";
+import NotificationPopup from "@/components/NotificationPopup";
+import { notifications as dummyNotifications } from "@/dummy";
 
 export interface ISidebarLink extends Partial<IndexRouteObject> {
   show_hr?: boolean;
@@ -53,6 +55,15 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
   } = useSidebarStore();
 
   const [isDesktop, setIsDesktop] = useState(false);
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const [notifs, setNotifs] = useState(dummyNotifications);
+  const notifBtnRef = useRef<HTMLButtonElement>(null);
+
+  const unreadCount = notifs.filter((n) => !n.isRead).length;
+
+  const handleMarkAllRead = useCallback(() => {
+    setNotifs((prev) => prev.map((n) => ({ ...n, isRead: true })));
+  }, []);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -262,15 +273,27 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
             <ControlButton />
 
             {/* Notification */}
-            <button
-              onClick={() =>
-                window.open("/doc", "_blank", "noopener,noreferrer")
-              }
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-dark-300 hover:text-foreground hover:bg-dark-700/50 transition-all border border-transparent ${effectiveCollapsed && !isMobileOpen ? "justify-center" : ""}`}
-              title={language({ id: "Notifikasi", en: "Notifications" })}
-            >
-              <RiNotificationLine className="w-4.5 h-4.5 shrink-0" />
-            </button>
+            <div className="relative">
+              <button
+                ref={notifBtnRef}
+                onClick={() => setIsNotifOpen((prev) => !prev)}
+                className="relative p-2 rounded-lg text-dark-300 hover:text-foreground hover:bg-dark-700/50 transition-all"
+                title={language({ id: "Notifikasi", en: "Notifications" })}
+              >
+                <RiNotificationLine className="w-4.5 h-4.5" />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center min-w-[16px] h-4 px-1 bg-neon-red text-white text-[9px] font-bold rounded-full animate-pulse">
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
+              <NotificationPopup
+                isOpen={isNotifOpen}
+                onClose={() => setIsNotifOpen(false)}
+                notifications={notifs}
+                onMarkAllRead={handleMarkAllRead}
+              />
+            </div>
           </div>
         </header>
 

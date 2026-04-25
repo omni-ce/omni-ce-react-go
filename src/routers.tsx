@@ -16,6 +16,7 @@ import LoginPage from "@/pages/auth/LoginPage";
 import DashboardPage from "@/pages/app/DashboardPage";
 import UsersPage from "@/pages/app/UsersPage";
 import SettingsPage from "@/pages/app/SettingPage";
+import NotificationsPage from "@/pages/app/NotificationsPage";
 
 // Documentation
 import DocPage from "@/pages/DocPage";
@@ -77,6 +78,10 @@ export const routers = createBrowserRouter([
           {
             path: "settings",
             element: <SettingsPage />,
+          },
+          {
+            path: "notifications",
+            element: <NotificationsPage />,
           },
         ],
       },
