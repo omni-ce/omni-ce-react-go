@@ -8,7 +8,7 @@ import (
 
 func RegisterPublicRoutes(r fiber.Router) {
 	r.Post("/login", Login)
-	r.Post("/logout", Logout)
+	r.Post("/logout", middlewares.UseToken, Logout)
 }
 
 func RegisterProtectedRoutes(r fiber.Router) {

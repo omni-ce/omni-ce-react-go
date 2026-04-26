@@ -10,14 +10,10 @@ import {
   RiArrowRightLine,
 } from "react-icons/ri";
 import { useLanguageStore } from "@/stores/languageStore";
-import type { INotification } from "@/dummy";
-
-interface NotificationPopupProps {
-  isOpen: boolean;
-  onClose: () => void;
-  notifications: INotification[];
-  onMarkAllRead?: () => void;
-}
+import type { INotification } from "@/types/notification";
+import { timeAgo } from "@/utils/datetime";
+import { useAuthStore } from "@/stores/authStore";
+import { getSocket } from "@/lib/socket";
 
 const typeConfig = {
   info: {
@@ -52,21 +48,11 @@ const typeConfig = {
   },
 };
 
-function timeAgo(
-  ts: string,
-  language: (t: { id: string; en: string }) => string,
-): string {
-  const diff = Date.now() - new Date(ts).getTime();
-  const minutes = Math.floor(diff / 60000);
-  const hours = Math.floor(diff / 3600000);
-  const days = Math.floor(diff / 86400000);
-
-  if (minutes < 1) return language({ id: "Baru saja", en: "Just now" });
-  if (minutes < 60)
-    return `${minutes} ${language({ id: "menit lalu", en: "min ago" })}`;
-  if (hours < 24)
-    return `${hours} ${language({ id: "jam lalu", en: "hr ago" })}`;
-  return `${days} ${language({ id: "hari lalu", en: "day ago" })}`;
+interface NotificationPopupProps {
+  isOpen: boolean;
+  onClose: () => void;
+  notifications: INotification[];
+  onMarkAllRead?: () => void;
 }
 
 export default function NotificationPopup({
@@ -76,11 +62,30 @@ export default function NotificationPopup({
   onMarkAllRead,
 }: NotificationPopupProps) {
   const navigate = useNavigate();
-  const { language } = useLanguageStore();
   const popupRef = useRef<HTMLDivElement>(null);
+
+  const { language } = useLanguageStore();
+  const { user } = useAuthStore();
 
   const recent = notifications.slice(0, 4);
   const unreadCount = notifications.filter((n) => !n.isRead).length;
+
+  useEffect(() => {
+    console.log({ user });
+
+    if (user?.id) {
+      const socket = getSocket();
+      console.log({ socket });
+
+      socket.emit("join", user.id);
+      socket.on("notification", (data: INotification) => {
+        console.log(data);
+      });
+      return () => {
+        socket.off("notification");
+      };
+    }
+  }, [user?.id]);
 
   // Close on click outside
   useEffect(() => {

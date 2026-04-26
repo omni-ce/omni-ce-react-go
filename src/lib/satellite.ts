@@ -30,6 +30,11 @@ satellite.interceptors.request.use(
 // response interceptor
 satellite.interceptors.response.use(
   (response) => {
+    // header: x-new-token
+    const newToken = response.headers["x-new-token"]; // like refresh token
+    if (newToken) {
+      localStorage.setItem("token", newToken);
+    }
     return response;
   },
   (error) => {

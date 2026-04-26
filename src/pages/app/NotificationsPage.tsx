@@ -12,7 +12,9 @@ import {
   RiCheckLine,
 } from "react-icons/ri";
 import { useLanguageStore } from "@/stores/languageStore";
-import { notifications as dummyNotifications, type INotification } from "@/dummy";
+import { notifications as dummyNotifications } from "@/dummy";
+import type { INotification } from "@/types/notification";
+import { formatTimestamp } from "@/utils/datetime";
 
 const typeConfig = {
   info: {
@@ -64,33 +66,6 @@ const typeConfig = {
 
 type FilterType = "all" | INotification["type"];
 
-function formatTimestamp(
-  ts: string,
-  language: (t: { id: string; en: string }) => string,
-): string {
-  const date = new Date(ts);
-  const diff = Date.now() - date.getTime();
-  const minutes = Math.floor(diff / 60000);
-  const hours = Math.floor(diff / 3600000);
-  const days = Math.floor(diff / 86400000);
-
-  if (minutes < 1) return language({ id: "Baru saja", en: "Just now" });
-  if (minutes < 60)
-    return `${minutes} ${language({ id: "menit lalu", en: "min ago" })}`;
-  if (hours < 24)
-    return `${hours} ${language({ id: "jam lalu", en: "hr ago" })}`;
-  if (days < 7)
-    return `${days} ${language({ id: "hari lalu", en: "days ago" })}`;
-
-  return date.toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
 export default function NotificationsPage() {
   const { language } = useLanguageStore();
   const [notifs, setNotifs] = useState<INotification[]>(dummyNotifications);
@@ -133,31 +108,32 @@ export default function NotificationsPage() {
   ];
 
   // Group notifications by date
-  const grouped = filteredNotifs.reduce<
-    Record<string, INotification[]>
-  >((acc, notif) => {
-    const date = new Date(notif.timestamp);
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
+  const grouped = filteredNotifs.reduce<Record<string, INotification[]>>(
+    (acc, notif) => {
+      const date = new Date(notif.timestamp);
+      const today = new Date();
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
 
-    let key: string;
-    if (date.toDateString() === today.toDateString()) {
-      key = language({ id: "Hari ini", en: "Today" });
-    } else if (date.toDateString() === yesterday.toDateString()) {
-      key = language({ id: "Kemarin", en: "Yesterday" });
-    } else {
-      key = date.toLocaleDateString(undefined, {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
-    }
+      let key: string;
+      if (date.toDateString() === today.toDateString()) {
+        key = language({ id: "Hari ini", en: "Today" });
+      } else if (date.toDateString() === yesterday.toDateString()) {
+        key = language({ id: "Kemarin", en: "Yesterday" });
+      } else {
+        key = date.toLocaleDateString(undefined, {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+      }
 
-    if (!acc[key]) acc[key] = [];
-    acc[key].push(notif);
-    return acc;
-  }, {});
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(notif);
+      return acc;
+    },
+    {},
+  );
 
   return (
     <div className="space-y-6 animate-fade-in max-w-4xl">
@@ -243,9 +219,7 @@ export default function NotificationsPage() {
                 : "border-dark-500"
             }`}
           >
-            {showUnreadOnly && (
-              <RiCheckLine className="w-2 h-2 text-white" />
-            )}
+            {showUnreadOnly && <RiCheckLine className="w-2 h-2 text-white" />}
           </div>
           {language({ id: "Belum dibaca saja", en: "Unread only" })}
         </button>

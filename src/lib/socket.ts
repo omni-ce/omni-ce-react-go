@@ -1,7 +1,7 @@
 import { io, Socket } from "socket.io-client";
 import { HOST_API } from "@/environment";
 
-let socket: Socket | null = null;
+export let socket: Socket | null = null;
 
 export function getSocket(): Socket {
   if (!socket) {
@@ -9,7 +9,7 @@ export function getSocket(): Socket {
       transports: ["websocket", "polling"],
       autoConnect: true,
       reconnection: true,
-      reconnectionDelay: 1000,
+      reconnectionDelay: 3000,
     });
   }
   return socket;

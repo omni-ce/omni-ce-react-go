@@ -7,11 +7,13 @@ import (
 	"react-go/dto"
 	"react-go/environment"
 	"react-go/function"
+	"react-go/middlewares"
 	model "react-go/modules/user/model"
 	"react-go/variable"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 )
 
 func GenerateToken(userID string, role string) (string, error) {
@@ -87,5 +89,19 @@ func Logout(c *fiber.Ctx) error {
 }
 
 func Validate(c *fiber.Ctx) error {
-	return dto.OK(c, "Token valid", nil)
+	claims := c.Locals(string(middlewares.ClaimsContextKey)).(*function.JwtClaims)
+	userID, err := uuid.Parse(claims.ID)
+	if err != nil {
+		return dto.Unauthorized(c, "Invalid user", nil)
+	}
+
+	user := model.User{}
+	if err := variable.Db.
+		First(&user, "id = ?", userID).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to fetch user", nil)
+	}
+	return dto.OK(c, "Token valid", fiber.Map{
+		"user": user,
+	})
 }
