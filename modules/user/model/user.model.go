@@ -2,7 +2,7 @@ package model
 
 import (
 	"log"
-	"react-go/function"
+	"react-go/function/hash"
 	"time"
 
 	"github.com/google/uuid"
@@ -52,7 +52,7 @@ func (User) Seed(db *gorm.DB) {
 			{
 				Name:     "Admin",
 				Username: "admin",
-				Password: function.EncryptPassword("admin123"),
+				Password: hash.Password("admin123"),
 				Role:     UserRoleAdmin,
 			},
 		}

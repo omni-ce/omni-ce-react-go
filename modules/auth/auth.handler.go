@@ -7,6 +7,7 @@ import (
 	"react-go/dto"
 	"react-go/environment"
 	"react-go/function"
+	"react-go/function/hash"
 	model "react-go/modules/user/model"
 	"react-go/variable"
 
@@ -67,7 +68,7 @@ func Login(c *fiber.Ctx) error {
 	}
 
 	// Verify password
-	if !function.ValidatePassword(req.Password, user.Password) {
+	if !hash.ValidatePassword(req.Password, user.Password) {
 		return dto.Unauthorized(c, "Invalid username or password", nil)
 	}
 
@@ -87,15 +88,12 @@ func Logout(c *fiber.Ctx) error {
 }
 
 func Validate(c *fiber.Ctx) error {
-	claims := c.Locals("claims").(*function.JwtClaims)
-
-	user := model.User{}
-	if err := variable.Db.
-		First(&user, "id = ?", claims.ID).
-		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to fetch user", nil)
+	user, err := function.JwtGetUser(c)
+	if err != nil {
+		return dto.InternalServerError(c, err.Error(), nil)
 	}
+
 	return dto.OK(c, "Token valid", fiber.Map{
-		"user": user,
+		"user": user.Map(),
 	})
 }

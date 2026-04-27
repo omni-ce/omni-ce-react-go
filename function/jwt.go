@@ -2,9 +2,13 @@ package function
 
 import (
 	"errors"
+	"fmt"
 	"react-go/environment"
+	"react-go/modules/user/model"
+	"react-go/variable"
 	"time"
 
+	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -42,4 +46,22 @@ func JwtValidateToken(tokenString string) (*JwtClaims, error) {
 	}
 
 	return claims, nil
+}
+
+func JwtGetUser(c *fiber.Ctx) (model.User, error) {
+	user := model.User{}
+
+	claims, ok := c.Locals("claims").(*JwtClaims)
+	if !ok {
+		return user, errors.New("claims not found")
+	}
+	current_user_id := claims.ID
+
+	if err := variable.Db.
+		First(&user, "id = ?", current_user_id).
+		Error; err != nil {
+		return user, fmt.Errorf("user not found: %v", err)
+	}
+
+	return user, nil
 }

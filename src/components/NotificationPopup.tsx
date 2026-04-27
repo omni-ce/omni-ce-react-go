@@ -76,8 +76,8 @@ export default function NotificationPopup({
     if (user?.id) {
       const socket = getSocket();
       console.log({ socket });
-
-      socket.emit("join", user.id);
+      const token = localStorage.getItem("token");
+      socket.emit("join", token);
       socket.on("notification", (data: INotification) => {
         console.log(data);
       });

@@ -5,8 +5,12 @@ export let socket: Socket | null = null;
 
 export function getSocket(): Socket {
   if (!socket) {
+    const token = localStorage.getItem("token");
     socket = io(HOST_API, {
       transports: ["websocket", "polling"],
+      auth: {
+        token,
+      },
       autoConnect: true,
       reconnection: true,
       reconnectionDelay: 3000,

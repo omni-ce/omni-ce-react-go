@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"react-go/dto"
 	"react-go/function"
-	"react-go/middlewares"
+	"react-go/function/hash"
 	model "react-go/modules/user/model"
 	"react-go/variable"
 	"strings"
@@ -16,17 +16,13 @@ import (
 
 func GetMe(on string) func(*fiber.Ctx) error {
 	return func(c *fiber.Ctx) error {
-		claims := c.Locals(string(middlewares.ClaimsContextKey)).(*function.JwtClaims)
-
-		u := model.User{}
-		if err := variable.Db.
-			First(&u, "id = ?", claims.ID).
-			Error; err != nil {
-			return dto.InternalServerError(c, "Failed to fetch user", nil)
+		user, err := function.JwtGetUser(c)
+		if err != nil {
+			return dto.InternalServerError(c, err.Error(), nil)
 		}
 
 		return dto.OK(c, "Success get user", fiber.Map{
-			"user": u.Map(),
+			"user": user.Map(),
 		})
 	}
 }
@@ -184,7 +180,7 @@ func ChangePassword(on string) func(c *fiber.Ctx) error {
 
 		if err := variable.Db.
 			Model(&existing).
-			Update("password", function.EncryptPassword(req.Password)).
+			Update("password", hash.Password(req.Password)).
 			Error; err != nil {
 			return dto.InternalServerError(c, "Failed to update user", nil)
 		}
