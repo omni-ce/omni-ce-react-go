@@ -17,16 +17,3 @@ type Notification struct {
 	IsRead    bool     `json:"is_read"`
 	Link      *string  `json:"link,omitempty"`
 }
-
-/*
-Notification {
-  id: string;
-  type: NotificationType;
-  title: { id: string; en: string };
-  message: { id: string; en: string };
-  timestamp: string; // ISO 8601
-  isRead: boolean;
-  link?: string;
-}
-
-*/
