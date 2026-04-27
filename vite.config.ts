@@ -58,6 +58,18 @@ export default defineConfig({
       '@': '/src',
     },
   },
+  server: {
+    watch: {
+      ignored: [
+        '**/*.go',
+        '**/go.mod',
+        '**/go.sum',
+        '**/vendor/**',
+        '**/bin/**',
+        '**/tmp/**',
+      ],
+    },
+  },
   plugins: [
     react(),
     tailwindcss(),
