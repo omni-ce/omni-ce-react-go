@@ -6,7 +6,8 @@ import { Label } from "@/components/ui/Label";
 import { settingService } from "@/services/setting.service";
 import AppIconSvg from "@/assets/react_go.svg";
 
-export default function SettingPage() {
+interface SettingPageProps {}
+export default function SettingPage({}: SettingPageProps) {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");

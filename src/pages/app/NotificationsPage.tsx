@@ -67,7 +67,8 @@ const typeConfig = {
 
 type FilterType = "all" | INotification["type"];
 
-export default function NotificationsPage() {
+interface NotificationsPageProps {}
+export default function NotificationsPage({}: NotificationsPageProps) {
   const { language } = useLanguageStore();
   const {
     notifications: notifs,

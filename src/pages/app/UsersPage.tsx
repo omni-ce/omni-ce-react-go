@@ -12,7 +12,6 @@ import {
   DialogFooter,
 } from "@/components/ui/Dialog";
 import { HiOutlinePencil, HiOutlineTrash } from "react-icons/hi";
-import { HOST_API } from "@/environment";
 import {
   getPaginatedUsers,
   removeUser,
@@ -27,7 +26,8 @@ import Pagination, {
 } from "@/components/Pagination";
 import BlankUser from "@/assets/blank-user.svg";
 
-export default function UsersPage() {
+interface UsersPageProps {}
+export default function UsersPage({}: UsersPageProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const paginationRef = useRef<PaginationHandle>(null);
   const { language } = useLanguageStore();

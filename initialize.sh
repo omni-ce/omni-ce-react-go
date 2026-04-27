@@ -17,7 +17,7 @@ done
 
 # User
 while true; do
-  read -p "User: Username? [admin]             : " username
+  read -p "User: Username? [admin]           : " username
   if [ -z "$username" ]; then
     break
   fi
@@ -28,7 +28,7 @@ while true; do
   fi
 done
 while true; do
-  read -p "User: Password? [admin123]          : " password
+  read -p "User: Password? [admin123]        : " password
   if [ -z "$password" ]; then
     break
   fi
@@ -39,9 +39,12 @@ while true; do
   fi
 done
 
+# Server
+read -p "Server Name? [ReactGO]              : " serverName
+
 # HTML
-read -p "HTML Title? [title | mini-detail] : " htmlTitle
-read -p "HTML Description?                 : " htmlDescription
+read -p "HTML Title? [title | mini-detail]   : " htmlTitle
+read -p "HTML Description?                   : " htmlDescription
 
 echo "Start Process ..."
 
@@ -62,6 +65,12 @@ fi
 if [ ! -z "$htmlDescription" ]; then
   escDesc=$(printf '%s' "$htmlDescription" | sed -e 's/[\/&]/\\&/g')
   sed -i '' "s/AppHtmlHeadDescription = \".*\"/AppHtmlHeadDescription = \"$escDesc\"/" variable/application.variable.go
+fi
+
+# Replace server name in variable server.variable.go
+if [ ! -z "$serverName" ]; then
+  escServerName=$(printf '%s' "$serverName" | sed -e 's/[\/&]/\\&/g')
+  sed -i '' "s/ServerName = \".*\"/ServerName = \"$escServerName\"/" variable/server.variable.go
 fi
 
 # Replace user credentials in user.model.go

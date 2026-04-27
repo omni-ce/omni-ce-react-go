@@ -10,6 +10,7 @@
 
 - CRUD menu Users
 - CRUD menu Roles
+- CRUD menu Master Data
 - Dapat notification jika user di edit oleh admin
 - Switch maintenance system (bisa diaktifkan / dimatikan)
 

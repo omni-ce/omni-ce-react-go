@@ -15,7 +15,8 @@ import { useDashboardStore } from "@/stores/dashboardStore";
 import { getSocket } from "@/lib/socket";
 import { useLanguageStore } from "@/stores/languageStore";
 
-export default function DashboardPage() {
+interface DashboardPageProps {}
+export default function DashboardPage({}: DashboardPageProps) {
   const { stats, queues, fetchStats, setStats } = useDashboardStore();
   const { language } = useLanguageStore();
 
@@ -127,9 +128,24 @@ export default function DashboardPage() {
           icon={RiCheckboxCircleLine}
           color="cyan"
         />
-        <StatCard label={language({ id: "Tertunda", en: "Pending" })} value={0} icon={RiTimeLine} color="yellow" />
-        <StatCard label={language({ id: "Waktu", en: "Timing" })} value={0} icon={RiTimerLine} color="indigo" />
-        <StatCard label={language({ id: "Gagal", en: "Failed" })} value={0} icon={RiAlertLine} color="red" />
+        <StatCard
+          label={language({ id: "Tertunda", en: "Pending" })}
+          value={0}
+          icon={RiTimeLine}
+          color="yellow"
+        />
+        <StatCard
+          label={language({ id: "Waktu", en: "Timing" })}
+          value={0}
+          icon={RiTimerLine}
+          color="indigo"
+        />
+        <StatCard
+          label={language({ id: "Gagal", en: "Failed" })}
+          value={0}
+          icon={RiAlertLine}
+          color="red"
+        />
       </div>
 
       {/* Queue chart */}

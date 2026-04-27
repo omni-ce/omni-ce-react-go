@@ -213,20 +213,18 @@ export default function NotificationPopup({
       </div>
 
       {/* Footer - See All */}
-      {notifications.length > 0 && (
-        <div className="border-t border-dark-600/40">
-          <button
-            onClick={() => {
-              navigate("/app/notifications");
-              onClose();
-            }}
-            className="w-full flex items-center justify-center gap-2 px-5 py-3 text-xs font-semibold text-accent-400 hover:text-accent-300 hover:bg-dark-700/30 transition-all"
-          >
-            {language({ id: "Lihat semua", en: "See all" })}
-            <RiArrowRightLine className="w-3.5 h-3.5" />
-          </button>
-        </div>
-      )}
+      <div className="border-t border-dark-600/40">
+        <button
+          onClick={() => {
+            navigate("/app/notifications");
+            onClose();
+          }}
+          className="w-full flex items-center justify-center gap-2 px-5 py-3 text-xs font-semibold text-accent-400 hover:text-accent-300 hover:bg-dark-700/30 transition-all"
+        >
+          {language({ id: "Lihat semua", en: "See all" })}
+          <RiArrowRightLine className="w-3.5 h-3.5" />
+        </button>
+      </div>
     </div>
   );
 }
