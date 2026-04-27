@@ -1,6 +1,7 @@
 package dummy
 
 import (
+	notification "react-go/modules/notification/model"
 	"react-go/types"
 	"time"
 )
@@ -8,7 +9,7 @@ import (
 var Notifications = []types.Notification{
 	{
 		ID:   "notif-1",
-		Type: types.NotificationTypeSuccess,
+		Type: notification.NotificationTypeSuccess,
 		Title: types.Language{
 			Id: "Login berhasil",
 			En: "Login successful",
@@ -22,7 +23,7 @@ var Notifications = []types.Notification{
 	},
 	{
 		ID:   "notif-2",
-		Type: types.NotificationTypeWarning,
+		Type: notification.NotificationTypeWarning,
 		Title: types.Language{
 			Id: "Kapasitas hampir penuh",
 			En: "Storage almost full",
@@ -36,7 +37,7 @@ var Notifications = []types.Notification{
 	},
 	{
 		ID:   "notif-3",
-		Type: types.NotificationTypeInfo,
+		Type: notification.NotificationTypeInfo,
 		Title: types.Language{
 			Id: "Pengguna baru terdaftar",
 			En: "New user registered",
@@ -50,7 +51,7 @@ var Notifications = []types.Notification{
 	},
 	{
 		ID:   "notif-4",
-		Type: types.NotificationTypeError,
+		Type: notification.NotificationTypeError,
 		Title: types.Language{
 			Id: "Antrian gagal diproses",
 			En: "Queue processing failed",
@@ -64,7 +65,7 @@ var Notifications = []types.Notification{
 	},
 	{
 		ID:   "notif-5",
-		Type: types.NotificationTypeSystem,
+		Type: notification.NotificationTypeSystem,
 		Title: types.Language{
 			Id: "Pembaruan sistem",
 			En: "System update",
@@ -78,7 +79,7 @@ var Notifications = []types.Notification{
 	},
 	{
 		ID:   "notif-6",
-		Type: types.NotificationTypeInfo,
+		Type: notification.NotificationTypeInfo,
 		Title: types.Language{
 			Id: "Backup selesai",
 			En: "Backup completed",
@@ -92,7 +93,7 @@ var Notifications = []types.Notification{
 	},
 	{
 		ID:   "notif-7",
-		Type: types.NotificationTypeSuccess,
+		Type: notification.NotificationTypeSuccess,
 		Title: types.Language{
 			Id: "Deploy berhasil",
 			En: "Deployment successful",
@@ -106,7 +107,7 @@ var Notifications = []types.Notification{
 	},
 	{
 		ID:   "notif-8",
-		Type: types.NotificationTypeWarning,
+		Type: notification.NotificationTypeWarning,
 		Title: types.Language{
 			Id: "SSL akan kedaluwarsa",
 			En: "SSL expiring soon",
