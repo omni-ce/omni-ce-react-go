@@ -2,12 +2,13 @@ package socket
 
 import (
 	"log"
-	"react-go/dummy"
 	"react-go/function"
 	notification "react-go/modules/notification/model"
+	"react-go/variable"
 	"time"
 
 	"github.com/doquangtan/socketio/v4"
+	"github.com/google/uuid"
 )
 
 var UserNotification map[string]*socketio.Socket = make(map[string]*socketio.Socket)
@@ -73,7 +74,12 @@ func Init(io *socketio.Io) {
 			connectedUserID = claims.ID
 			UserNotification[connectedUserID] = socket
 			log.Printf("✅ Websocket: User %s connected to socket %s", connectedUserID, socket.Id)
-			socket.Emit("notification", dummy.Notifications)
+
+			// Fetch latest 10 notifications from DB for this user
+			var notifs []notification.Notification
+			variable.Db.Where("user_id = ?", connectedUserID).
+				Order("id DESC").Limit(10).Find(&notifs)
+			socket.Emit("notification", notifs)
 		})
 
 		// ================================================================ //
@@ -113,9 +119,15 @@ func Init(io *socketio.Io) {
 	})
 }
 
-func SendNotification(userId string, notification notification.Notification) {
+// SendNotification inserts a notification into the DB and emits it via socket if the user is connected.
+func SendNotification(userId string, notif notification.Notification) {
+	notif.UserID = uuid.MustParse(userId)
+	if err := variable.Db.Create(&notif).Error; err != nil {
+		log.Printf("❌ Failed to insert notification for user %s: %v", userId, err)
+		return
+	}
 	if socket, ok := UserNotification[userId]; ok {
-		socket.Emit("notification", notification)
+		socket.Emit("notification", notif)
 	}
 }
 

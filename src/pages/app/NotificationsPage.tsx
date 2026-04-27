@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import {
   RiNotificationLine,
   RiCheckDoubleLine,
@@ -10,6 +10,7 @@ import {
   RiDeleteBinLine,
   RiFilterLine,
   RiCheckLine,
+  RiLoader4Line,
 } from "react-icons/ri";
 import { useLanguageStore } from "@/stores/languageStore";
 import { useNotificationStore } from "@/stores/notificationStore";
@@ -74,9 +75,36 @@ export default function NotificationsPage() {
     toggleRead: handleToggleRead,
     deleteNotification: handleDelete,
     clearAll: handleClearAll,
+    loadMore,
+    hasMore,
+    isLoadingMore,
   } = useNotificationStore();
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
   const [showUnreadOnly, setShowUnreadOnly] = useState(false);
+
+  // Infinite scroll sentinel
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  const handleLoadMore = useCallback(() => {
+    loadMore();
+  }, [loadMore]);
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !isLoadingMore) {
+          handleLoadMore();
+        }
+      },
+      { threshold: 0.1 },
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [hasMore, isLoadingMore, handleLoadMore]);
 
   const unreadCount = notifs.filter((n) => !n.is_read).length;
 
@@ -98,7 +126,7 @@ export default function NotificationsPage() {
   // Group notifications by date
   const grouped = filteredNotifs.reduce<Record<string, INotification[]>>(
     (acc, notification) => {
-      const date = new Date(notification.timestamp);
+      const date = new Date(notification.created_at);
       const today = new Date();
       const yesterday = new Date(today);
       yesterday.setDate(yesterday.getDate() - 1);
@@ -345,7 +373,7 @@ export default function NotificationsPage() {
                               {language(config.label)}
                             </span>
                             <span className="text-[10px] font-mono text-dark-500">
-                              {formatTimestamp(notif.timestamp, language)}
+                              {formatTimestamp(notif.created_at, language)}
                             </span>
                           </div>
                         </div>
@@ -356,6 +384,24 @@ export default function NotificationsPage() {
               </div>
             </div>
           ))}
+
+          {/* Infinite scroll sentinel */}
+          <div ref={sentinelRef} className="flex justify-center py-4">
+            {isLoadingMore && (
+              <div className="flex items-center gap-2 text-dark-400 text-xs font-mono">
+                <RiLoader4Line className="w-4 h-4 animate-spin" />
+                {language({ id: "Memuat...", en: "Loading..." })}
+              </div>
+            )}
+            {!hasMore && notifs.length > 0 && (
+              <p className="text-dark-500 text-[11px] font-mono">
+                {language({
+                  id: "Semua notifikasi telah dimuat",
+                  en: "All notifications loaded",
+                })}
+              </p>
+            )}
+          </div>
         </div>
       )}
     </div>

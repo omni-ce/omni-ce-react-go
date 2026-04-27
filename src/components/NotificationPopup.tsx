@@ -202,7 +202,7 @@ export default function NotificationPopup({
                     {language(notif.message)}
                   </p>
                   <span className="text-[10px] text-dark-500 font-mono mt-1 block">
-                    {timeAgo(notif.timestamp, language)}
+                    {timeAgo(notif.created_at, language)}
                   </span>
                 </div>
               </button>
