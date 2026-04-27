@@ -14,8 +14,10 @@ interface NotificationState {
 export const useNotificationStore = create<NotificationState>()((set) => ({
   notifications: [], // Start empty. Let the socket populate it.
 
+  // init awal dari socket
   setNotifications: (notifications) => set({ notifications }),
 
+  // tambah notifikasi dari socket
   addNotification: (notifications) =>
     set((state) => ({
       notifications: [notifications, ...state.notifications],

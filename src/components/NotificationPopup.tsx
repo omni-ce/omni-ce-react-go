@@ -52,19 +52,19 @@ const typeConfig = {
 interface NotificationPopupProps {
   isOpen: boolean;
   onClose: () => void;
-  notifications: INotification[];
   onMarkAllRead?: () => void;
 }
 
 export default function NotificationPopup({
   isOpen,
   onClose,
-  notifications,
   onMarkAllRead,
 }: NotificationPopupProps) {
   const navigate = useNavigate();
   const popupRef = useRef<HTMLDivElement>(null);
 
+  const { notifications, setNotifications, addNotification } =
+    useNotificationStore();
   const { language } = useLanguageStore();
   const { user } = useAuthStore();
 
@@ -77,9 +77,9 @@ export default function NotificationPopup({
       socket.emit("join", localStorage.getItem("token"));
       socket.on("notification", (data: INotification | INotification[]) => {
         if (Array.isArray(data)) {
-          useNotificationStore.getState().setNotifications(data);
+          setNotifications(data);
         } else {
-          useNotificationStore.getState().addNotification(data);
+          addNotification(data);
         }
       });
       return () => {

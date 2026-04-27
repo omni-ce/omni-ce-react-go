@@ -2,10 +2,21 @@ package model
 
 import (
 	"time"
+
+	"github.com/google/uuid"
+)
+
+const (
+	NotificationTypeInfo    string = "info"
+	NotificationTypeSuccess string = "success"
+	NotificationTypeWarning string = "warning"
+	NotificationTypeError   string = "error"
+	NotificationTypeSystem  string = "system"
 )
 
 type Notification struct {
 	ID        uint      `json:"id" gorm:"autoIncrement;primaryKey"`
+	UserID    uuid.UUID `json:"user_id" gorm:"type:char(36);not null"`
 	Type      string    `json:"type" gorm:"type:varchar(20)"`
 	Title     string    `json:"title" gorm:"type:varchar(255)"`
 	Message   string    `json:"message" gorm:"type:varchar(255)"`

@@ -30,6 +30,11 @@
       "source": "JuliusBrussee/caveman",
       "sourceType": "github",
       "computedHash": "05c97bc3120108acd0b80bdef7fb4fa7c224ba83c8d384ccbc97f92e8a065918"
+    },
+    "vibe-security": {
+      "source": "raroque/vibe-security-skill",
+      "sourceType": "github",
+      "computedHash": "b9599a66355f44cff8082d89e1ea3891a2d2fa43dfdc890f435ea786fd66bcdf"
     }
   }
 }

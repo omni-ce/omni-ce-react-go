@@ -4,7 +4,7 @@ import (
 	"log"
 	"react-go/dummy"
 	"react-go/function"
-	"react-go/types"
+	notification "react-go/modules/notification/model"
 	"time"
 
 	"github.com/doquangtan/socketio/v4"
@@ -113,7 +113,7 @@ func Init(io *socketio.Io) {
 	})
 }
 
-func SendNotification(userId string, notification types.Notification) {
+func SendNotification(userId string, notification notification.Notification) {
 	if socket, ok := UserNotification[userId]; ok {
 		socket.Emit("notification", notification)
 	}

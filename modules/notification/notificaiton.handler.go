@@ -14,6 +14,10 @@ func MarkRead(c *fiber.Ctx) error {
 	return dto.OK(c, "Hello World!", nil)
 }
 
+func ToggleRead(c *fiber.Ctx) error {
+	return dto.OK(c, "Hello World!", nil)
+}
+
 func Delete(c *fiber.Ctx) error {
 	return dto.OK(c, "Hello World!", nil)
 }

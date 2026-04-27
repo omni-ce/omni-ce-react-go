@@ -55,11 +55,12 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
   } = useSidebarStore();
 
   const [isDesktop, setIsDesktop] = useState(false);
-  const [isNotifOpen, setIsNotifOpen] = useState(false);
-  const { notifications: notifs, markAllRead: handleMarkAllRead } = useNotificationStore();
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const { notifications, markAllRead: handleMarkAllRead } =
+    useNotificationStore();
   const notifBtnRef = useRef<HTMLButtonElement>(null);
 
-  const unreadCount = notifs.filter((n) => !n.is_read).length;
+  const unreadCount = notifications.filter((n) => !n.is_read).length;
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -272,7 +273,7 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
             <div className="relative">
               <button
                 ref={notifBtnRef}
-                onClick={() => setIsNotifOpen((prev) => !prev)}
+                onClick={() => setIsNotificationOpen((prev) => !prev)}
                 className="relative p-2 rounded-lg text-dark-300 hover:text-foreground hover:bg-dark-700/50 transition-all"
                 title={language({ id: "Notifikasi", en: "Notifications" })}
               >
@@ -284,9 +285,8 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
                 )}
               </button>
               <NotificationPopup
-                isOpen={isNotifOpen}
-                onClose={() => setIsNotifOpen(false)}
-                notifications={notifs}
+                isOpen={isNotificationOpen}
+                onClose={() => setIsNotificationOpen(false)}
                 onMarkAllRead={handleMarkAllRead}
               />
             </div>
