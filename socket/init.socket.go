@@ -4,6 +4,7 @@ import (
 	"log"
 	"react-go/dummy"
 	"react-go/function"
+	"react-go/types"
 	"time"
 
 	"github.com/doquangtan/socketio/v4"
@@ -110,6 +111,12 @@ func Init(io *socketio.Io) {
 			log.Println("[socket] client left room: update_log")
 		})
 	})
+}
+
+func SendNotification(userId string, notification types.Notification) {
+	if socket, ok := UserNotification[userId]; ok {
+		socket.Emit("notification", notification)
+	}
 }
 
 // ================================================================ //

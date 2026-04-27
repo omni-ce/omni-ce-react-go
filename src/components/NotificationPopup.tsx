@@ -14,6 +14,7 @@ import type { INotification } from "@/types/notification";
 import { timeAgo } from "@/utils/datetime";
 import { useAuthStore } from "@/stores/authStore";
 import { getSocket } from "@/lib/socket";
+import { useNotificationStore } from "@/stores/notificationStore";
 
 const typeConfig = {
   info: {
@@ -74,8 +75,12 @@ export default function NotificationPopup({
     if (user?.id) {
       const socket = getSocket();
       socket.emit("join", localStorage.getItem("token"));
-      socket.on("notification", (data: INotification) => {
-        console.log(data);
+      socket.on("notification", (data: INotification | INotification[]) => {
+        if (Array.isArray(data)) {
+          useNotificationStore.getState().setNotifications(data);
+        } else {
+          useNotificationStore.getState().addNotification(data);
+        }
       });
       return () => {
         socket.off("notification");

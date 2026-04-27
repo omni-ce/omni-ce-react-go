@@ -25,7 +25,7 @@ import { useLanguageStore } from "@/stores/languageStore";
 import AppIconSvg from "@/assets/react_go.svg";
 import ControlButton from "@/components/ControlButton";
 import NotificationPopup from "@/components/NotificationPopup";
-import { notifications as dummyNotifications } from "@/dummy";
+import { useNotificationStore } from "@/stores/notificationStore";
 
 export interface ISidebarLink extends Partial<IndexRouteObject> {
   show_hr?: boolean;
@@ -56,14 +56,10 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
 
   const [isDesktop, setIsDesktop] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
-  const [notifs, setNotifs] = useState(dummyNotifications);
+  const { notifications: notifs, markAllRead: handleMarkAllRead } = useNotificationStore();
   const notifBtnRef = useRef<HTMLButtonElement>(null);
 
   const unreadCount = notifs.filter((n) => !n.is_read).length;
-
-  const handleMarkAllRead = useCallback(() => {
-    setNotifs((prev) => prev.map((n) => ({ ...n, isRead: true })));
-  }, []);
 
   useEffect(() => {
     const checkAuth = async () => {

@@ -12,7 +12,7 @@ import {
   RiCheckLine,
 } from "react-icons/ri";
 import { useLanguageStore } from "@/stores/languageStore";
-import { notifications as dummyNotifications } from "@/dummy";
+import { useNotificationStore } from "@/stores/notificationStore";
 import type { INotification } from "@/types/notification";
 import { formatTimestamp } from "@/utils/datetime";
 
@@ -68,35 +68,23 @@ type FilterType = "all" | INotification["type"];
 
 export default function NotificationsPage() {
   const { language } = useLanguageStore();
-  const [notifs, setNotifs] = useState<INotification[]>(dummyNotifications);
+  const {
+    notifications: notifs,
+    markAllRead: handleMarkAllRead,
+    toggleRead: handleToggleRead,
+    deleteNotification: handleDelete,
+    clearAll: handleClearAll,
+  } = useNotificationStore();
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
   const [showUnreadOnly, setShowUnreadOnly] = useState(false);
 
-  const unreadCount = notifs.filter((n) => !n.isRead).length;
+  const unreadCount = notifs.filter((n) => !n.is_read).length;
 
   const filteredNotifs = notifs.filter((n) => {
     if (activeFilter !== "all" && n.type !== activeFilter) return false;
-    if (showUnreadOnly && n.isRead) return false;
+    if (showUnreadOnly && n.is_read) return false;
     return true;
   });
-
-  const handleMarkAllRead = () => {
-    setNotifs((prev) => prev.map((n) => ({ ...n, isRead: true })));
-  };
-
-  const handleToggleRead = (id: string) => {
-    setNotifs((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, isRead: !n.isRead } : n)),
-    );
-  };
-
-  const handleDelete = (id: string) => {
-    setNotifs((prev) => prev.filter((n) => n.id !== id));
-  };
-
-  const handleClearAll = () => {
-    setNotifs([]);
-  };
 
   const filters: { key: FilterType; label: { id: string; en: string } }[] = [
     { key: "all", label: { id: "Semua", en: "All" } },
@@ -109,8 +97,8 @@ export default function NotificationsPage() {
 
   // Group notifications by date
   const grouped = filteredNotifs.reduce<Record<string, INotification[]>>(
-    (acc, notif) => {
-      const date = new Date(notif.timestamp);
+    (acc, notification) => {
+      const date = new Date(notification.timestamp);
       const today = new Date();
       const yesterday = new Date(today);
       yesterday.setDate(yesterday.getDate() - 1);
@@ -129,7 +117,7 @@ export default function NotificationsPage() {
       }
 
       if (!acc[key]) acc[key] = [];
-      acc[key].push(notif);
+      acc[key].push(notification);
       return acc;
     },
     {},
@@ -274,7 +262,7 @@ export default function NotificationsPage() {
                     <div
                       key={notif.id}
                       className={`group relative bg-dark-800/60 border rounded-xl p-4 transition-all duration-200 hover:bg-dark-800/80 ${
-                        !notif.isRead
+                        !notif.is_read
                           ? `${config.border} bg-dark-800/80`
                           : "border-dark-600/30"
                       }`}
@@ -294,14 +282,14 @@ export default function NotificationsPage() {
                               <div className="flex items-center gap-2">
                                 <h4
                                   className={`text-sm font-semibold truncate ${
-                                    !notif.isRead
+                                    !notif.is_read
                                       ? "text-foreground"
                                       : "text-dark-200"
                                   }`}
                                 >
                                   {language(notif.title)}
                                 </h4>
-                                {!notif.isRead && (
+                                {!notif.is_read && (
                                   <div
                                     className={`w-2 h-2 rounded-full ${config.dot} shrink-0 animate-pulse`}
                                   />
@@ -318,7 +306,7 @@ export default function NotificationsPage() {
                                 onClick={() => handleToggleRead(notif.id)}
                                 className="p-1.5 rounded-lg text-dark-400 hover:text-accent-400 hover:bg-accent-500/10 transition-all"
                                 title={
-                                  notif.isRead
+                                  notif.is_read
                                     ? language({
                                         id: "Tandai belum dibaca",
                                         en: "Mark as unread",
@@ -329,7 +317,7 @@ export default function NotificationsPage() {
                                       })
                                 }
                               >
-                                {notif.isRead ? (
+                                {notif.is_read ? (
                                   <RiInformationLine className="w-3.5 h-3.5" />
                                 ) : (
                                   <RiCheckDoubleLine className="w-3.5 h-3.5" />
