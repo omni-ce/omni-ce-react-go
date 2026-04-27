@@ -68,16 +68,12 @@ export default function NotificationPopup({
   const { user } = useAuthStore();
 
   const recent = notifications.slice(0, 4);
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
+  const unreadCount = notifications.filter((n) => !n.is_read).length;
 
   useEffect(() => {
-    console.log({ user });
-
     if (user?.id) {
       const socket = getSocket();
-      console.log({ socket });
-      const token = localStorage.getItem("token");
-      socket.emit("join", token);
+      socket.emit("join", localStorage.getItem("token"));
       socket.on("notification", (data: INotification) => {
         console.log(data);
       });
@@ -171,7 +167,7 @@ export default function NotificationPopup({
                   onClose();
                 }}
                 className={`w-full flex items-start gap-3 px-5 py-3.5 text-left hover:bg-dark-700/40 transition-all border-b border-dark-600/20 last:border-b-0 ${
-                  !notif.isRead ? "bg-dark-700/20" : ""
+                  !notif.is_read ? "bg-dark-700/20" : ""
                 }`}
               >
                 {/* Icon */}
@@ -186,12 +182,12 @@ export default function NotificationPopup({
                   <div className="flex items-center gap-2">
                     <span
                       className={`text-xs font-semibold truncate ${
-                        !notif.isRead ? "text-foreground" : "text-dark-200"
+                        !notif.is_read ? "text-foreground" : "text-dark-200"
                       }`}
                     >
                       {language(notif.title)}
                     </span>
-                    {!notif.isRead && (
+                    {!notif.is_read && (
                       <div
                         className={`w-1.5 h-1.5 rounded-full ${config.dot} shrink-0`}
                       />

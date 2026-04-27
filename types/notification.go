@@ -1,0 +1,32 @@
+package types
+
+const (
+	NotificationTypeInfo    string = "info"
+	NotificationTypeSuccess string = "success"
+	NotificationTypeWarning string = "warning"
+	NotificationTypeError   string = "error"
+	NotificationTypeSystem  string = "system"
+)
+
+type Notification struct {
+	ID        string   `json:"id"`
+	Type      string   `json:"type"`
+	Title     Language `json:"title"`
+	Message   Language `json:"message"`
+	Timestamp string   `json:"timestamp"`
+	IsRead    bool     `json:"is_read"`
+	Link      *string  `json:"link,omitempty"`
+}
+
+/*
+Notification {
+  id: string;
+  type: NotificationType;
+  title: { id: string; en: string };
+  message: { id: string; en: string };
+  timestamp: string; // ISO 8601
+  isRead: boolean;
+  link?: string;
+}
+
+*/

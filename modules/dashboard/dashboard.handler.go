@@ -5,6 +5,8 @@ import (
 	"react-go/variable"
 
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 type DashboardStats struct {
@@ -19,17 +21,19 @@ type DashboardStats struct {
 func GetStats(c *fiber.Ctx) error {
 	var stats DashboardStats
 
+	db := variable.Db.Session(&gorm.Session{Logger: logger.Default.LogMode(logger.Silent)}) // silent mode to avoid noise
+
 	// Total queues
-	variable.Db.Table("queues").Count(&stats.TotalQueues)
+	db.Table("queues").Count(&stats.TotalQueues)
 
 	// Total messages (all statuses)
-	variable.Db.Table("queue_messages").Count(&stats.TotalMessages)
+	db.Table("queue_messages").Count(&stats.TotalMessages)
 
 	// Count by status
-	variable.Db.Table("queue_messages").Where("status = ?", "completed").Count(&stats.TotalCompleted)
-	variable.Db.Table("queue_messages").Where("status = ? AND is_ack = false", "failed").Count(&stats.TotalFailed)
-	variable.Db.Table("queue_messages").Where("status = ?", "timing").Count(&stats.TotalTiming)
-	variable.Db.Table("queue_messages").Where("status = ?", "pending").Count(&stats.TotalPending)
+	db.Table("queue_messages").Where("status = ?", "completed").Count(&stats.TotalCompleted)
+	db.Table("queue_messages").Where("status = ? AND is_ack = false", "failed").Count(&stats.TotalFailed)
+	db.Table("queue_messages").Where("status = ?", "timing").Count(&stats.TotalTiming)
+	db.Table("queue_messages").Where("status = ?", "pending").Count(&stats.TotalPending)
 
 	return dto.OK(c, "Dashboard stats retrieved successfully", stats)
 }

@@ -63,7 +63,10 @@ func Login(c *fiber.Ctx) error {
 
 	// Find user by username
 	var user model.User
-	if err := variable.Db.Where("username = ?", req.Username).First(&user).Error; err != nil {
+	if err := variable.Db.
+		Where("username = ?", req.Username).
+		First(&user).
+		Error; err != nil {
 		return dto.Unauthorized(c, "Invalid username or password", nil)
 	}
 
@@ -79,6 +82,7 @@ func Login(c *fiber.Ctx) error {
 
 	return dto.OK(c, "Login success", fiber.Map{
 		"token": token,
+		"user":  user.Map(),
 	})
 }
 

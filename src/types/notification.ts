@@ -11,6 +11,6 @@ export interface INotification {
   title: { id: string; en: string };
   message: { id: string; en: string };
   timestamp: string; // ISO 8601
-  isRead: boolean;
+  is_read: boolean;
   link?: string;
 }

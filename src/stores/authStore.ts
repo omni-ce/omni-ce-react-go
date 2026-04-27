@@ -59,8 +59,9 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     }
     if (isAuthenticated) return true;
     try {
-      await authService.validate(on);
-      set({ isAuthenticated: true, isLoading: false });
+      const resp = await authService.validate(on);
+      const user = resp.data.user;
+      set({ isAuthenticated: true, isLoading: false, user });
       return true;
     } catch (err) {
       const error = err as AxiosError;

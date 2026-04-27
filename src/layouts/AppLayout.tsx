@@ -59,7 +59,7 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
   const [notifs, setNotifs] = useState(dummyNotifications);
   const notifBtnRef = useRef<HTMLButtonElement>(null);
 
-  const unreadCount = notifs.filter((n) => !n.isRead).length;
+  const unreadCount = notifs.filter((n) => !n.is_read).length;
 
   const handleMarkAllRead = useCallback(() => {
     setNotifs((prev) => prev.map((n) => ({ ...n, isRead: true })));

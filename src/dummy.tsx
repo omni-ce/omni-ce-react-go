@@ -10,7 +10,7 @@ export const notifications: INotification[] = [
       en: "You have logged in from a new device.",
     },
     timestamp: new Date(Date.now() - 2 * 60 * 1000).toISOString(), // 2 min ago
-    isRead: false,
+    is_read: false,
   },
   {
     id: "notif-2",
@@ -21,7 +21,7 @@ export const notifications: INotification[] = [
       en: "Database storage has reached 85%. Please clean up soon.",
     },
     timestamp: new Date(Date.now() - 15 * 60 * 1000).toISOString(), // 15 min ago
-    isRead: false,
+    is_read: false,
   },
   {
     id: "notif-3",
@@ -32,7 +32,7 @@ export const notifications: INotification[] = [
       en: "User 'john_doe' has just registered to the system.",
     },
     timestamp: new Date(Date.now() - 45 * 60 * 1000).toISOString(), // 45 min ago
-    isRead: false,
+    is_read: false,
   },
   {
     id: "notif-4",
@@ -43,7 +43,7 @@ export const notifications: INotification[] = [
       en: "Queue 'email_sender' failed after 3 retry attempts.",
     },
     timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
-    isRead: true,
+    is_read: true,
   },
   {
     id: "notif-5",
@@ -54,7 +54,7 @@ export const notifications: INotification[] = [
       en: "System has been updated to the latest version v2.1.0.",
     },
     timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(), // 5 hours ago
-    isRead: true,
+    is_read: true,
   },
   {
     id: "notif-6",
@@ -65,7 +65,7 @@ export const notifications: INotification[] = [
       en: "Daily automatic backup has been completed successfully.",
     },
     timestamp: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(), // 12 hours ago
-    isRead: true,
+    is_read: true,
   },
   {
     id: "notif-7",
@@ -76,7 +76,7 @@ export const notifications: INotification[] = [
       en: "Deployment to production server completed without errors.",
     },
     timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
-    isRead: true,
+    is_read: true,
   },
   {
     id: "notif-8",
@@ -87,6 +87,6 @@ export const notifications: INotification[] = [
       en: "SSL certificate will expire in 7 days. Please renew soon.",
     },
     timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
-    isRead: true,
+    is_read: true,
   },
 ];

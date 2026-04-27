@@ -2,6 +2,7 @@ package socket
 
 import (
 	"log"
+	"react-go/dummy"
 	"react-go/function"
 	"time"
 
@@ -51,8 +52,8 @@ func Init(io *socketio.Io) {
 		socket.On("disconnect", func(event *socketio.EventPayload) {
 			log.Println("[socket] client disconnected:", socket.Id)
 			if connectedUserID != "" {
-				log.Printf("🛸 Websocket: User %s disconnected", connectedUserID)
 				delete(UserNotification, connectedUserID)
+				log.Printf("🛸 Websocket: User %s disconnected", connectedUserID)
 			}
 		})
 
@@ -64,15 +65,14 @@ func Init(io *socketio.Io) {
 			if !ok {
 				return
 			}
-
 			claims, err := function.JwtValidateToken(token)
 			if err != nil {
 				return
 			}
-
 			connectedUserID = claims.ID
 			UserNotification[connectedUserID] = socket
 			log.Printf("✅ Websocket: User %s connected to socket %s", connectedUserID, socket.Id)
+			socket.Emit("notification", dummy.Notifications)
 		})
 
 		// ================================================================ //
