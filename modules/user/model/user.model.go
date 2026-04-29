@@ -21,6 +21,7 @@ type User struct {
 	Username  string    `json:"username" gorm:"uniqueIndex"`
 	Password  string    `json:"password" gorm:"not null"`
 	Role      string    `json:"role" gorm:"not null"`
+	IsActive  bool      `json:"is_active" gorm:"not null;default:true"`
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
 }
 
