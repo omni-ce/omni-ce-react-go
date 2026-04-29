@@ -18,7 +18,7 @@ import (
 
 func SetupRoutes(app *fiber.App, api fiber.Router) {
 	// /api
-	example.RegisterRoutes(api)
+	example.RegisterRoutes(app)
 
 	// /api/auth
 	auth.RegisterPublicRoutes(api.Group("/auth"))

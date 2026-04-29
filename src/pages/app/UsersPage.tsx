@@ -12,11 +12,7 @@ import {
   DialogFooter,
 } from "@/components/ui/Dialog";
 import { HiOutlinePencil, HiOutlineTrash } from "react-icons/hi";
-import {
-  getPaginatedUsers,
-  removeUser,
-  switchUserRole,
-} from "@/services/user.service";
+import { removeUser, switchUserRole } from "@/services/user.service";
 import { useLanguageStore } from "@/stores/languageStore";
 import { formatDateTime } from "@/utils/datetime";
 import type { User } from "@/types/user";
@@ -193,7 +189,7 @@ export default function UsersPage({}: UsersPageProps) {
         ref={paginationRef}
         title={language({ id: "Daftar Pengguna", en: "User List" })}
         columns={columns}
-        function={getPaginatedUsers}
+        module="user"
       />
 
       {/* Create/Edit Dialog */}

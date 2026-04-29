@@ -40,7 +40,9 @@ func main() {
 	database.OpenDB()
 
 	// Setup workers
-	modules.SetupWorkers()
+	go func() {
+		modules.SetupWorkers()
+	}()
 
 	// Ensure uploads directory exists
 	os.MkdirAll(variable.UploadsPath, 0755)
@@ -52,7 +54,6 @@ func main() {
 	app := fiber.New(fiber.Config{
 		AppName:       variable.ServerName,
 		ServerHeader:  variable.ServerName,
-		Prefork:       false,
 		StrictRouting: true,
 		CaseSensitive: true,
 		BodyLimit:     1024 * 1024 * 10, // MB
