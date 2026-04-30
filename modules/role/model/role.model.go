@@ -2,6 +2,7 @@ package model
 
 import (
 	"log"
+	"react-go/types"
 	"time"
 
 	"gorm.io/gorm"
@@ -16,6 +17,13 @@ type Role struct {
 	CreatedAt      time.Time `json:"created_at" gorm:"autoCreateTime"`
 	// relations
 	RoleDivision RoleDivision `json:"role_division" gorm:"foreignKey:RoleDivisionID;references:ID;constraint:OnDelete:CASCADE"`
+}
+
+func (s *Role) Option() types.Option {
+	return types.Option{
+		Key:   s.ID,
+		Value: s.Name,
+	}
 }
 
 func (Role) Seed(db *gorm.DB) {

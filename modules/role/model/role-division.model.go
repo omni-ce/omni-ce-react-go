@@ -2,6 +2,7 @@ package model
 
 import (
 	"log"
+	"react-go/types"
 	"time"
 
 	"gorm.io/gorm"
@@ -13,6 +14,13 @@ type RoleDivision struct {
 	Description string    `json:"description" gorm:"type:varchar(255)"`
 	IsActive    bool      `json:"is_active" gorm:"type:boolean;default:true"`
 	CreatedAt   time.Time `json:"created_at" gorm:"autoCreateTime"`
+}
+
+func (s *RoleDivision) Option() types.Option {
+	return types.Option{
+		Key:   s.ID,
+		Value: s.Name,
+	}
 }
 
 func (RoleDivision) Seed(db *gorm.DB) {

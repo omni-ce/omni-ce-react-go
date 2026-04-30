@@ -8,6 +8,7 @@ import (
 	"react-go/modules/example"
 	"react-go/modules/master_data"
 	"react-go/modules/notification"
+	"react-go/modules/option"
 	"react-go/modules/role"
 	"react-go/modules/rule"
 	"react-go/modules/setting"
@@ -40,15 +41,19 @@ func SetupRoutes(app *fiber.App, api fiber.Router) {
 	// Notification
 	notification.ProtectedRoute(api.Group("/notification", middlewares.UseToken))
 
-	// /api/whitelist
+	// Whitelist
 	whitelist.ProtectedRoute(api.Group("/whitelist", middlewares.UseToken))
 
-	// /api/apikey
+	// API Key
 	apikey.ProtectedRoute(api.Group("/apikey", middlewares.UseToken))
 
-	// /api/setting
+	// Setting
 	setting.ProtectedRoute(api.Group("/setting", middlewares.UseToken))
 
-	// /api/dashboard
+	// Dashboard
 	dashboard.ProtectedRoute(api.Group("/dashboard", middlewares.UseToken))
+
+	// Option
+	option.PublicRoute(api.Group("/option"))
+	option.ProtectedRoute(api.Group("/option", middlewares.UseToken))
 }
