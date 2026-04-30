@@ -28,7 +28,7 @@ import {
 } from "react-icons/hi2";
 
 export default function RolesPage() {
-  const { language } = useLanguageStore();
+  const { languageCode, language } = useLanguageStore();
   const [divisions, setDivisions] = useState<DivisionGroup[]>([]);
   const [rules, setRules] = useState<Rule[]>([]);
   const [originalRules, setOriginalRules] = useState<Rule[]>([]);
@@ -96,12 +96,13 @@ export default function RolesPage() {
       {
         key: "set",
         label: language({
-          id: "Set",
+          id: "Ubah",
           en: "set",
         }),
       },
     ],
-    [language],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [languageCode, language],
   );
 
   const menuList = useMemo(() => {
