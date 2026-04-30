@@ -124,3 +124,29 @@ func DivisionDelete(c *fiber.Ctx) error {
 
 	return dto.OK(c, "Division deleted", nil)
 }
+
+func DivisionSetActive(c *fiber.Ctx) error {
+	id, err := strconv.ParseUint(c.Params("id"), 10, 64)
+	if err != nil {
+		return dto.BadRequest(c, "Invalid ID", nil)
+	}
+
+	var division model.RoleDivision
+	if err := variable.Db.
+		First(&division, "id = ?", id).
+		Error; err != nil {
+		return dto.NotFound(c, "Division not found", nil)
+	}
+
+	newStatus := !division.IsActive
+	if err := variable.Db.
+		Model(&division).
+		Update("is_active", newStatus).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to toggle division status", nil)
+	}
+
+	return dto.OK(c, "Division status toggled", fiber.Map{
+		"is_active": newStatus,
+	})
+}

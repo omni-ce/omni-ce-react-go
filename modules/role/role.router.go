@@ -11,6 +11,7 @@ func ProtectedRoute(r fiber.Router) {
 	r.Post("/division/create", middlewares.UseRoleMenu("roles", "create"), DivisionCreate)
 	r.Put("/division/edit/:id", middlewares.UseRoleMenu("roles", "update"), DivisionUpdate)
 	r.Delete("/division/remove/:id", middlewares.UseRoleMenu("roles", "delete"), DivisionDelete)
+	r.Patch("/division/set-active/:id", middlewares.UseRoleMenu("roles", "set"), DivisionSetActive)
 
 	// role
 	r.Get("/all", middlewares.UseRoleMenu("roles", "read"), GetAll)

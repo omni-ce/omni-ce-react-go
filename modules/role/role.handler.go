@@ -5,7 +5,6 @@ import (
 	"react-go/function"
 	model "react-go/modules/role/model"
 	rule "react-go/modules/rule/model"
-	user "react-go/modules/user/model"
 	"react-go/variable"
 	"strconv"
 
@@ -198,43 +197,28 @@ func Delete(c *fiber.Ctx) error {
 }
 
 func SetActive(c *fiber.Ctx) error {
-	idParam := c.Params("id")
-	id, err := strconv.ParseUint(idParam, 10, 64)
+	id, err := strconv.ParseUint(c.Params("id"), 10, 64)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid user id", nil)
+		return dto.BadRequest(c, "Invalid ID", nil)
 	}
 
-	// Only SU can toggle active status
-	currentUser, err := function.JwtGetUser(c)
-	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
-	}
-	if currentUser.Role != user.UserRoleAdmin {
-		return dto.Forbidden(c, "Only super admin can toggle user status", nil)
-	}
-
-	var existing user.User
+	var role model.Role
 	if err := variable.Db.
-		First(&existing, "id = ?", id).
+		First(&role, "id = ?", id).
 		Error; err != nil {
-		return dto.NotFound(c, "User not found", nil)
+		return dto.NotFound(c, "Role not found", nil)
 	}
 
-	// Prevent deactivating self
-	if existing.ID == currentUser.ID {
-		return dto.BadRequest(c, "Cannot deactivate yourself", nil)
-	}
-
-	newStatus := !existing.IsActive
+	newStatus := !role.IsActive
 	if err := variable.Db.
-		Model(&existing).
+		Model(&role).
 		Update("is_active", newStatus).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to toggle user status", nil)
+		return dto.InternalServerError(c, "Failed to toggle role status", nil)
 	}
 
-	return dto.OK(c, "Success toggle user status", fiber.Map{
-		"user": existing.Map(),
+	return dto.OK(c, "Role status toggled", fiber.Map{
+		"is_active": newStatus,
 	})
 }
 

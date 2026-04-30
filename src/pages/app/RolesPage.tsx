@@ -16,9 +16,13 @@ import satellite from "@/lib/satellite";
 import type { Response } from "@/types/response";
 import type { Rule } from "@/stores/ruleStore";
 import { sidebarLinks } from "@/routers";
-import { HiChevronDown, HiChevronRight, HiOutlinePlus } from "react-icons/hi2";
-
-// ─── Types ──────────────────────────────────────────────────────────
+import {
+  HiChevronDown,
+  HiChevronRight,
+  HiOutlinePlus,
+  HiOutlinePencilSquare,
+  HiOutlineTrash,
+} from "react-icons/hi2";
 
 interface RoleItem {
   id: number;
@@ -26,47 +30,92 @@ interface RoleItem {
   description: string;
   is_active: boolean;
 }
-
 interface DivisionGroup {
   id: number;
   name: string;
   description: string;
+  is_active: boolean;
   roles: RoleItem[];
 }
-
-const ACTIONS = ["create", "read", "update", "delete", "set"] as const;
-type ActionType = (typeof ACTIONS)[number];
-
-// ─── Component ──────────────────────────────────────────────────────
 
 export default function RolesPage() {
   const { language } = useLanguageStore();
   const [divisions, setDivisions] = useState<DivisionGroup[]>([]);
   const [rules, setRules] = useState<Rule[]>([]);
+  const [originalRules, setOriginalRules] = useState<Rule[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [updatingKeys, setUpdatingKeys] = useState<Set<string>>(new Set());
+  const [isSaving, setIsSaving] = useState(false);
 
-  // Track open state for accordions
   const [openDivisions, setOpenDivisions] = useState<Set<number>>(new Set());
   const [openRoles, setOpenRoles] = useState<Set<number>>(new Set());
 
-  // Add Division dialog
-  const [divisionDialogOpen, setDivisionDialogOpen] = useState(false);
-  const [divisionForm, setDivisionForm] = useState({
-    name: "",
-    description: "",
-  });
-  const [isDivisionSubmitting, setIsDivisionSubmitting] = useState(false);
+  // Division dialog
+  const [divDialogOpen, setDivDialogOpen] = useState(false);
+  const [divEditId, setDivEditId] = useState<number | null>(null);
+  const [divForm, setDivForm] = useState({ name: "", description: "" });
+  const [divSubmitting, setDivSubmitting] = useState(false);
 
-  // Add Role dialog
+  // Role dialog
   const [roleDialogOpen, setRoleDialogOpen] = useState(false);
+  const [roleEditId, setRoleEditId] = useState<number | null>(null);
   const [roleForm, setRoleForm] = useState({ name: "", description: "" });
-  const [roleTargetDivisionId, setRoleTargetDivisionId] = useState<
-    number | null
-  >(null);
-  const [isRoleSubmitting, setIsRoleSubmitting] = useState(false);
+  const [roleDivId, setRoleDivId] = useState<number | null>(null);
+  const [roleSubmitting, setRoleSubmitting] = useState(false);
 
-  // Menu list from sidebar paths
+  // Confirm delete
+  const [deleteTarget, setDeleteTarget] = useState<{
+    type: "division" | "role";
+    id: number;
+    name: string;
+  } | null>(null);
+
+  const ACTIONS = useMemo<
+    Array<{
+      key: string;
+      label: string;
+    }>
+  >(
+    () => [
+      {
+        key: "create",
+        label: language({
+          id: "Tambah",
+          en: "create",
+        }),
+      },
+      {
+        key: "read",
+        label: language({
+          id: "Baca",
+          en: "read",
+        }),
+      },
+      {
+        key: "update",
+        label: language({
+          id: "Edit",
+          en: "update",
+        }),
+      },
+      {
+        key: "delete",
+        label: language({
+          id: "Hapus",
+          en: "delete",
+        }),
+      },
+      {
+        key: "set",
+        label: language({
+          id: "Set",
+          en: "set",
+        }),
+      },
+    ],
+    [language],
+  );
+  type ActionType = (typeof ACTIONS)[number];
+
   const menuList = useMemo(() => {
     return sidebarLinks
       .filter((link) => link.path && link.strict === true && !link.isHide)
@@ -76,7 +125,6 @@ export default function RolesPage() {
       }));
   }, [language]);
 
-  // Fetch data
   const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -86,18 +134,17 @@ export default function RolesPage() {
         ),
         satellite.get<Response<{ rows: Rule[] }>>("/api/rule/list"),
       ]);
-
       const divs = rolesRes.data.data.divisions;
+      const fetchedRules = rulesRes.data.data.rows;
       setDivisions(divs);
-      setRules(rulesRes.data.data.rows);
-
-      // Default: all accordions open
+      setRules(fetchedRules);
+      setOriginalRules(fetchedRules);
       setOpenDivisions(new Set(divs.map((d) => d.id)));
-      const roleIds = new Set<number>();
-      divs.forEach((d) => d.roles.forEach((r) => roleIds.add(r.id)));
-      setOpenRoles(roleIds);
+      const rIds = new Set<number>();
+      divs.forEach((d) => d.roles.forEach((r) => rIds.add(r.id)));
+      setOpenRoles(rIds);
     } catch {
-      // silent
+      /* silent */
     } finally {
       setIsLoading(false);
     }
@@ -107,244 +154,261 @@ export default function RolesPage() {
     fetchData();
   }, [fetchData]);
 
-  // Get rule state for a specific role+menu+action combo
   const getRuleState = useCallback(
     (roleId: number, menuKey: string, action: ActionType): boolean => {
-      const rule = rules.find(
-        (r) => r.role_id === roleId && r.key === menuKey && r.action === action,
+      const r = rules.find(
+        (x) => x.role_id === roleId && x.key === menuKey && x.action === action,
       );
-      return rule ? rule.state : false;
+      return r ? r.state : false;
     },
     [rules],
   );
 
-  // Handle checkbox toggle
-  const handleToggle = useCallback(
-    async (roleId: number, menuKey: string, action: ActionType) => {
-      const compositeKey = `${roleId}-${menuKey}-${action}`;
-      if (updatingKeys.has(compositeKey)) return;
+  // Local-only toggle (no API call)
+  const toggleRule = (roleId: number, menuKey: string, action: ActionType) => {
+    setRules((prev) => {
+      const idx = prev.findIndex(
+        (r) => r.role_id === roleId && r.key === menuKey && r.action === action,
+      );
+      if (idx >= 0) {
+        const u = [...prev];
+        u[idx] = { ...u[idx], state: !u[idx].state };
+        return u;
+      }
+      return [
+        ...prev,
+        { id: 0, role_id: roleId, key: menuKey, action, state: true },
+      ];
+    });
+  };
 
-      const currentState = getRuleState(roleId, menuKey, action);
-      const newState = !currentState;
-
-      // Optimistic update
-      setRules((prev) => {
-        const idx = prev.findIndex(
+  const toggleRow = (roleId: number, menuKey: string) => {
+    const allOn = ACTIONS.every((a) => getRuleState(roleId, menuKey, a));
+    const s = !allOn;
+    setRules((prev) => {
+      const u = [...prev];
+      for (const action of ACTIONS) {
+        const idx = u.findIndex(
           (r) =>
             r.role_id === roleId && r.key === menuKey && r.action === action,
         );
-        if (idx >= 0) {
-          const updated = [...prev];
-          updated[idx] = { ...updated[idx], state: newState };
-          return updated;
-        }
-        return [
-          ...prev,
-          { id: 0, role_id: roleId, key: menuKey, action, state: newState },
-        ];
-      });
-
-      setUpdatingKeys((prev) => new Set(prev).add(compositeKey));
-
-      try {
-        await satellite.post("/api/rule/set", {
-          data: [{ role_id: roleId, key: menuKey, action, state: newState }],
-        });
-      } catch {
-        setRules((prev) => {
-          const idx = prev.findIndex(
-            (r) =>
-              r.role_id === roleId && r.key === menuKey && r.action === action,
-          );
-          if (idx >= 0) {
-            const reverted = [...prev];
-            reverted[idx] = { ...reverted[idx], state: currentState };
-            return reverted;
-          }
-          return prev;
-        });
-      } finally {
-        setUpdatingKeys((prev) => {
-          const next = new Set(prev);
-          next.delete(compositeKey);
-          return next;
-        });
+        if (idx >= 0) u[idx] = { ...u[idx], state: s };
+        else u.push({ id: 0, role_id: roleId, key: menuKey, action, state: s });
       }
-    },
-    [getRuleState, updatingKeys],
-  );
+      return u;
+    });
+  };
 
-  // Toggle row (all actions for a menu in a role)
-  const handleToggleRow = useCallback(
-    async (roleId: number, menuKey: string) => {
-      const allChecked = ACTIONS.every((a) => getRuleState(roleId, menuKey, a));
-      const newState = !allChecked;
+  const toggleCol = (roleId: number, action: ActionType) => {
+    const allOn = menuList.every((m) => getRuleState(roleId, m.key, action));
+    const s = !allOn;
+    setRules((prev) => {
+      const u = [...prev];
+      for (const menu of menuList) {
+        const idx = u.findIndex(
+          (r) =>
+            r.role_id === roleId && r.key === menu.key && r.action === action,
+        );
+        if (idx >= 0) u[idx] = { ...u[idx], state: s };
+        else
+          u.push({ id: 0, role_id: roleId, key: menu.key, action, state: s });
+      }
+      return u;
+    });
+  };
 
-      setRules((prev) => {
-        const updated = [...prev];
+  // Check if rules have changed
+  const hasChanges = useMemo(() => {
+    const allRoleIds = new Set<number>();
+    divisions.forEach((d) => d.roles.forEach((r) => allRoleIds.add(r.id)));
+    for (const roleId of allRoleIds) {
+      for (const menu of menuList) {
         for (const action of ACTIONS) {
-          const idx = updated.findIndex(
-            (r) =>
-              r.role_id === roleId && r.key === menuKey && r.action === action,
-          );
-          if (idx >= 0) {
-            updated[idx] = { ...updated[idx], state: newState };
-          } else {
-            updated.push({
-              id: 0,
-              role_id: roleId,
-              key: menuKey,
-              action,
-              state: newState,
-            });
-          }
-        }
-        return updated;
-      });
-
-      try {
-        await satellite.post("/api/rule/set", {
-          data: ACTIONS.map((action) => ({
-            role_id: roleId,
-            key: menuKey,
-            action,
-            state: newState,
-          })),
-        });
-      } catch {
-        fetchData();
-      }
-    },
-    [getRuleState, fetchData],
-  );
-
-  // Toggle column (all menus for an action in a role)
-  const handleToggleColumn = useCallback(
-    async (roleId: number, action: ActionType) => {
-      const allChecked = menuList.every((m) =>
-        getRuleState(roleId, m.key, action),
-      );
-      const newState = !allChecked;
-
-      setRules((prev) => {
-        const updated = [...prev];
-        for (const menu of menuList) {
-          const idx = updated.findIndex(
+          const cur = rules.find(
             (r) =>
               r.role_id === roleId && r.key === menu.key && r.action === action,
           );
-          if (idx >= 0) {
-            updated[idx] = { ...updated[idx], state: newState };
-          } else {
-            updated.push({
-              id: 0,
-              role_id: roleId,
-              key: menu.key,
-              action,
-              state: newState,
-            });
-          }
+          const orig = originalRules.find(
+            (r) =>
+              r.role_id === roleId && r.key === menu.key && r.action === action,
+          );
+          const curState = cur ? cur.state : false;
+          const origState = orig ? orig.state : false;
+          if (curState !== origState) return true;
         }
-        return updated;
-      });
+      }
+    }
+    return false;
+  }, [rules, originalRules, divisions, menuList]);
 
-      try {
-        await satellite.post("/api/rule/set", {
-          data: menuList.map((menu) => ({
+  // Save all rules
+  const handleSave = async () => {
+    const allRoleIds: number[] = [];
+    divisions.forEach((d) => d.roles.forEach((r) => allRoleIds.push(r.id)));
+
+    const data: {
+      role_id: number;
+      key: string;
+      action: string;
+      state: boolean;
+    }[] = [];
+    for (const roleId of allRoleIds) {
+      for (const menu of menuList) {
+        for (const action of ACTIONS) {
+          data.push({
             role_id: roleId,
             key: menu.key,
             action,
-            state: newState,
-          })),
-        });
-      } catch {
-        fetchData();
+            state: getRuleState(roleId, menu.key, action),
+          });
+        }
       }
-    },
-    [getRuleState, menuList, fetchData],
-  );
-
-  const toggleDivision = (id: number) => {
-    setOpenDivisions((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
-
-  const toggleRole = (id: number) => {
-    setOpenRoles((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
-
-  // ─── Division CRUD ──────────────────────────────────────────────
-
-  const handleCreateDivision = async () => {
-    if (!divisionForm.name.trim()) return;
-    setIsDivisionSubmitting(true);
+    }
+    setIsSaving(true);
     try {
-      await satellite.post("/api/role/division/create", {
-        name: divisionForm.name.trim(),
-        description: divisionForm.description.trim(),
-      });
-      setDivisionDialogOpen(false);
-      setDivisionForm({ name: "", description: "" });
+      await satellite.post("/api/rule/set", { data });
       await fetchData();
-    } catch (err: unknown) {
-      const msg =
-        (err as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message ?? "Failed to create division";
-      alert(msg);
+    } catch {
+      alert("Failed to save");
     } finally {
-      setIsDivisionSubmitting(false);
+      setIsSaving(false);
     }
   };
 
-  // ─── Role CRUD ────────────────────────────────────────────────
+  // Division CRUD
+  const openDivCreate = () => {
+    setDivEditId(null);
+    setDivForm({ name: "", description: "" });
+    setDivDialogOpen(true);
+  };
+  const openDivEdit = (d: DivisionGroup) => {
+    setDivEditId(d.id);
+    setDivForm({ name: d.name, description: d.description });
+    setDivDialogOpen(true);
+  };
+  const handleDivSubmit = async () => {
+    if (!divForm.name.trim()) return;
+    setDivSubmitting(true);
+    try {
+      if (divEditId)
+        await satellite.put(`/api/role/division/edit/${divEditId}`, {
+          name: divForm.name.trim(),
+          description: divForm.description.trim(),
+        });
+      else
+        await satellite.post("/api/role/division/create", {
+          name: divForm.name.trim(),
+          description: divForm.description.trim(),
+        });
+      setDivDialogOpen(false);
+      await fetchData();
+    } catch (e: unknown) {
+      alert(
+        (e as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message ?? "Failed",
+      );
+    } finally {
+      setDivSubmitting(false);
+    }
+  };
+  const handleDivToggle = async (id: number) => {
+    try {
+      await satellite.patch(`/api/role/division/set-active/${id}`);
+      await fetchData();
+    } catch {
+      /* */
+    }
+  };
+  const handleDivDelete = async (id: number) => {
+    try {
+      await satellite.delete(`/api/role/division/remove/${id}`);
+      await fetchData();
+    } catch {
+      /* */
+    }
+  };
 
-  const openAddRole = (divisionId: number) => {
-    setRoleTargetDivisionId(divisionId);
+  // Role CRUD
+  const openRoleCreate = (divId: number) => {
+    setRoleEditId(null);
+    setRoleDivId(divId);
     setRoleForm({ name: "", description: "" });
     setRoleDialogOpen(true);
   };
-
-  const handleCreateRole = async () => {
-    if (!roleForm.name.trim() || !roleTargetDivisionId) return;
-    setIsRoleSubmitting(true);
+  const openRoleEdit = (r: RoleItem) => {
+    setRoleEditId(r.id);
+    setRoleForm({ name: r.name, description: r.description });
+    setRoleDialogOpen(true);
+  };
+  const handleRoleSubmit = async () => {
+    if (!roleForm.name.trim()) return;
+    setRoleSubmitting(true);
     try {
-      await satellite.post("/api/role/create", {
-        role_division_id: roleTargetDivisionId,
-        name: roleForm.name.trim(),
-        description: roleForm.description.trim(),
-      });
+      if (roleEditId)
+        await satellite.put(`/api/role/edit/${roleEditId}`, {
+          name: roleForm.name.trim(),
+          description: roleForm.description.trim(),
+        });
+      else
+        await satellite.post("/api/role/create", {
+          role_division_id: roleDivId,
+          name: roleForm.name.trim(),
+          description: roleForm.description.trim(),
+        });
       setRoleDialogOpen(false);
-      setRoleForm({ name: "", description: "" });
-      setRoleTargetDivisionId(null);
       await fetchData();
-    } catch (err: unknown) {
-      const msg =
-        (err as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message ?? "Failed to create role";
-      alert(msg);
+    } catch (e: unknown) {
+      alert(
+        (e as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message ?? "Failed",
+      );
     } finally {
-      setIsRoleSubmitting(false);
+      setRoleSubmitting(false);
+    }
+  };
+  const handleRoleToggle = async (id: number) => {
+    try {
+      await satellite.patch(`/api/role/set-active/${id}`);
+      await fetchData();
+    } catch {
+      /* */
+    }
+  };
+  const handleRoleDelete = async (id: number) => {
+    try {
+      await satellite.delete(`/api/role/remove/${id}`);
+      await fetchData();
+    } catch {
+      /* */
     }
   };
 
-  // ─── Render ───────────────────────────────────────────────────
+  const confirmDelete = () => {
+    if (!deleteTarget) return;
+    if (deleteTarget.type === "division") handleDivDelete(deleteTarget.id);
+    else handleRoleDelete(deleteTarget.id);
+    setDeleteTarget(null);
+  };
 
-  if (isLoading) {
+  const toggleDivision = (id: number) =>
+    setOpenDivisions((p) => {
+      const n = new Set(p);
+      n.has(id) ? n.delete(id) : n.add(id);
+      return n;
+    });
+  const toggleRoleAccordion = (id: number) =>
+    setOpenRoles((p) => {
+      const n = new Set(p);
+      n.has(id) ? n.delete(id) : n.add(id);
+      return n;
+    });
+
+  if (isLoading)
     return (
       <div className="flex items-center justify-center py-20">
         <div className="w-6 h-6 border-2 border-accent-400 border-t-transparent rounded-full animate-spin" />
       </div>
     );
-  }
 
   return (
     <div className="space-y-6">
@@ -361,30 +425,23 @@ export default function RolesPage() {
             })}
           </p>
         </div>
-        <Button
-          onClick={() => {
-            setDivisionForm({ name: "", description: "" });
-            setDivisionDialogOpen(true);
-          }}
-          className="gap-2"
-        >
+        <Button onClick={openDivCreate} className="gap-2">
           <HiOutlinePlus size={16} />
           {language({ id: "Tambah Divisi", en: "Add Division" })}
         </Button>
       </div>
 
-      {/* Division Accordions */}
+      {/* Divisions */}
       <div className="space-y-4">
         {divisions.map((division) => (
           <Card key={division.id}>
-            {/* Division Header */}
             <CardHeader
               className="cursor-pointer select-none hover:bg-dark-700/30 transition-colors"
               onClick={() => toggleDivision(division.id)}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <span className="text-dark-400 transition-transform duration-200">
+                  <span className="text-dark-400">
                     {openDivisions.has(division.id) ? (
                       <HiChevronDown size={18} />
                     ) : (
@@ -400,17 +457,53 @@ export default function RolesPage() {
                     )}
                   </div>
                 </div>
-                <Badge variant="outline">
-                  {division.roles.length}{" "}
-                  {language({ id: "peran", en: "roles" })}
-                </Badge>
+                <div className="flex items-center gap-2">
+                  {/* Toggle active */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDivToggle(division.id);
+                    }}
+                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${division.is_active ? "bg-accent-500" : "bg-dark-600"}`}
+                  >
+                    <span
+                      className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${division.is_active ? "translate-x-[18px]" : "translate-x-[3px]"}`}
+                    />
+                  </button>
+                  {/* Edit */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openDivEdit(division);
+                    }}
+                    className="p-1.5 rounded-lg text-dark-400 hover:text-accent-400 hover:bg-dark-700/50 transition-all"
+                  >
+                    <HiOutlinePencilSquare size={15} />
+                  </button>
+                  {/* Delete */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setDeleteTarget({
+                        type: "division",
+                        id: division.id,
+                        name: division.name,
+                      });
+                    }}
+                    className="p-1.5 rounded-lg text-dark-400 hover:text-red-400 hover:bg-dark-700/50 transition-all"
+                  >
+                    <HiOutlineTrash size={15} />
+                  </button>
+                  <Badge variant="outline">
+                    {division.roles.length}{" "}
+                    {language({ id: "peran", en: "roles" })}
+                  </Badge>
+                </div>
               </div>
             </CardHeader>
 
-            {/* Division Content - Role Accordions */}
             {openDivisions.has(division.id) && (
               <CardContent className="space-y-3 pt-2">
-                {/* Add Role Button */}
                 <div className="flex justify-end">
                   <Button
                     variant="outline"
@@ -418,7 +511,7 @@ export default function RolesPage() {
                     className="gap-1.5"
                     onClick={(e) => {
                       e.stopPropagation();
-                      openAddRole(division.id);
+                      openRoleCreate(division.id);
                     }}
                   >
                     <HiOutlinePlus size={14} />
@@ -440,18 +533,18 @@ export default function RolesPage() {
                       className="border border-dark-600/40 rounded-xl overflow-hidden"
                     >
                       {/* Role Header */}
-                      <button
-                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-dark-700/30 transition-colors text-left"
-                        onClick={() => toggleRole(role.id)}
-                      >
-                        <span className="text-dark-400 transition-transform duration-200">
-                          {openRoles.has(role.id) ? (
-                            <HiChevronDown size={16} />
-                          ) : (
-                            <HiChevronRight size={16} />
-                          )}
-                        </span>
-                        <div className="flex items-center gap-2 flex-1 min-w-0">
+                      <div className="flex items-center gap-3 px-4 py-3 hover:bg-dark-700/30 transition-colors">
+                        <button
+                          className="flex items-center gap-3 flex-1 min-w-0 text-left"
+                          onClick={() => toggleRoleAccordion(role.id)}
+                        >
+                          <span className="text-dark-400">
+                            {openRoles.has(role.id) ? (
+                              <HiChevronDown size={16} />
+                            ) : (
+                              <HiChevronRight size={16} />
+                            )}
+                          </span>
                           <span className="font-medium text-sm text-foreground truncate">
                             {role.name}
                           </span>
@@ -460,21 +553,41 @@ export default function RolesPage() {
                               — {role.description}
                             </span>
                           )}
+                        </button>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <button
+                            onClick={() => handleRoleToggle(role.id)}
+                            className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${role.is_active ? "bg-accent-500" : "bg-dark-600"}`}
+                          >
+                            <span
+                              className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${role.is_active ? "translate-x-[18px]" : "translate-x-[3px]"}`}
+                            />
+                          </button>
+                          <button
+                            onClick={() => openRoleEdit(role)}
+                            className="p-1.5 rounded-lg text-dark-400 hover:text-accent-400 hover:bg-dark-700/50 transition-all"
+                          >
+                            <HiOutlinePencilSquare size={15} />
+                          </button>
+                          <button
+                            onClick={() =>
+                              setDeleteTarget({
+                                type: "role",
+                                id: role.id,
+                                name: role.name,
+                              })
+                            }
+                            className="p-1.5 rounded-lg text-dark-400 hover:text-red-400 hover:bg-dark-700/50 transition-all"
+                          >
+                            <HiOutlineTrash size={15} />
+                          </button>
                         </div>
-                        <Badge
-                          variant={role.is_active ? "default" : "destructive"}
-                        >
-                          {role.is_active
-                            ? language({ id: "Aktif", en: "Active" })
-                            : language({ id: "Nonaktif", en: "Inactive" })}
-                        </Badge>
-                      </button>
+                      </div>
 
-                      {/* Role Content - Permission Grid */}
+                      {/* Permission Grid */}
                       {openRoles.has(role.id) && (
                         <div className="border-t border-dark-600/40 px-4 py-3">
                           <div className="overflow-x-auto">
-                            {/* Grid Header */}
                             <div
                               className="grid gap-2 min-w-[600px] items-center mb-2"
                               style={{
@@ -486,7 +599,7 @@ export default function RolesPage() {
                                 {language({ id: "Menu", en: "Menu" })}
                               </div>
                               {ACTIONS.map((action) => {
-                                const allChecked = menuList.every((m) =>
+                                const allOn = menuList.every((m) =>
                                   getRuleState(role.id, m.key, action),
                                 );
                                 return (
@@ -499,22 +612,19 @@ export default function RolesPage() {
                                     </span>
                                     <input
                                       type="checkbox"
-                                      checked={allChecked}
+                                      checked={allOn}
                                       onChange={() =>
-                                        handleToggleColumn(role.id, action)
+                                        toggleCol(role.id, action)
                                       }
                                       disabled={!role.is_active}
                                       className="w-3.5 h-3.5 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-                                      title={`Toggle all ${action}`}
                                     />
                                   </div>
                                 );
                               })}
                             </div>
-
-                            {/* Grid Rows */}
                             {menuList.map((menu) => {
-                              const allChecked = ACTIONS.every((a) =>
+                              const allOn = ACTIONS.every((a) =>
                                 getRuleState(role.id, menu.key, a),
                               );
                               return (
@@ -529,9 +639,9 @@ export default function RolesPage() {
                                   <div className="flex items-center gap-2 px-2">
                                     <input
                                       type="checkbox"
-                                      checked={allChecked}
+                                      checked={allOn}
                                       onChange={() =>
-                                        handleToggleRow(role.id, menu.key)
+                                        toggleRow(role.id, menu.key)
                                       }
                                       disabled={!role.is_active}
                                       className="w-3.5 h-3.5 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
@@ -540,38 +650,26 @@ export default function RolesPage() {
                                       {menu.label}
                                     </span>
                                   </div>
-                                  {ACTIONS.map((action) => {
-                                    const checked = getRuleState(
-                                      role.id,
-                                      menu.key,
-                                      action,
-                                    );
-                                    const compositeKey = `${role.id}-${menu.key}-${action}`;
-                                    const isUpdating =
-                                      updatingKeys.has(compositeKey);
-                                    return (
-                                      <div
-                                        key={action}
-                                        className="flex justify-center"
-                                      >
-                                        <input
-                                          type="checkbox"
-                                          checked={checked}
-                                          onChange={() =>
-                                            handleToggle(
-                                              role.id,
-                                              menu.key,
-                                              action,
-                                            )
-                                          }
-                                          disabled={
-                                            !role.is_active || isUpdating
-                                          }
-                                          className="w-4 h-4 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
-                                        />
-                                      </div>
-                                    );
-                                  })}
+                                  {ACTIONS.map((action) => (
+                                    <div
+                                      key={action}
+                                      className="flex justify-center"
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        checked={getRuleState(
+                                          role.id,
+                                          menu.key,
+                                          action,
+                                        )}
+                                        onChange={() =>
+                                          toggleRule(role.id, menu.key, action)
+                                        }
+                                        disabled={!role.is_active}
+                                        className="w-4 h-4 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
+                                      />
+                                    </div>
+                                  ))}
                                 </div>
                               );
                             })}
@@ -600,12 +698,29 @@ export default function RolesPage() {
         )}
       </div>
 
-      {/* ─── Add Division Dialog ──────────────────────────────── */}
-      <Dialog open={divisionDialogOpen} onClose={() => {}}>
-        <DialogContent onClose={() => setDivisionDialogOpen(false)}>
+      {/* Save Button */}
+      {hasChanges && (
+        <div className="sticky bottom-4 flex justify-end">
+          <Button
+            onClick={handleSave}
+            disabled={isSaving}
+            className="gap-2 shadow-lg shadow-accent-500/20"
+          >
+            {isSaving
+              ? language({ id: "Menyimpan...", en: "Saving..." })
+              : language({ id: "Simpan Perubahan", en: "Save Changes" })}
+          </Button>
+        </div>
+      )}
+
+      {/* Division Dialog */}
+      <Dialog open={divDialogOpen} onClose={() => {}}>
+        <DialogContent onClose={() => setDivDialogOpen(false)}>
           <DialogHeader>
             <DialogTitle>
-              {language({ id: "Tambah Divisi", en: "Add Division" })}
+              {divEditId
+                ? language({ id: "Edit Divisi", en: "Edit Division" })
+                : language({ id: "Tambah Divisi", en: "Add Division" })}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
@@ -614,9 +729,9 @@ export default function RolesPage() {
                 {language({ id: "Nama Divisi", en: "Division Name" })}
               </Label>
               <Input
-                value={divisionForm.name}
+                value={divForm.name}
                 onChange={(e) =>
-                  setDivisionForm((prev) => ({ ...prev, name: e.target.value }))
+                  setDivForm((p) => ({ ...p, name: e.target.value }))
                 }
                 placeholder={language({
                   id: "Masukkan nama divisi",
@@ -628,12 +743,9 @@ export default function RolesPage() {
             <div className="space-y-2">
               <Label>{language({ id: "Deskripsi", en: "Description" })}</Label>
               <Input
-                value={divisionForm.description}
+                value={divForm.description}
                 onChange={(e) =>
-                  setDivisionForm((prev) => ({
-                    ...prev,
-                    description: e.target.value,
-                  }))
+                  setDivForm((p) => ({ ...p, description: e.target.value }))
                 }
                 placeholder={language({
                   id: "Masukkan deskripsi (opsional)",
@@ -644,17 +756,14 @@ export default function RolesPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setDivisionDialogOpen(false)}
-            >
+            <Button variant="outline" onClick={() => setDivDialogOpen(false)}>
               {language({ id: "Batal", en: "Cancel" })}
             </Button>
             <Button
-              onClick={handleCreateDivision}
-              disabled={!divisionForm.name.trim() || isDivisionSubmitting}
+              onClick={handleDivSubmit}
+              disabled={!divForm.name.trim() || divSubmitting}
             >
-              {isDivisionSubmitting
+              {divSubmitting
                 ? language({ id: "Menyimpan...", en: "Saving..." })
                 : language({ id: "Simpan", en: "Save" })}
             </Button>
@@ -662,12 +771,14 @@ export default function RolesPage() {
         </DialogContent>
       </Dialog>
 
-      {/* ─── Add Role Dialog ──────────────────────────────────── */}
+      {/* Role Dialog */}
       <Dialog open={roleDialogOpen} onClose={() => {}}>
         <DialogContent onClose={() => setRoleDialogOpen(false)}>
           <DialogHeader>
             <DialogTitle>
-              {language({ id: "Tambah Peran", en: "Add Role" })}
+              {roleEditId
+                ? language({ id: "Edit Peran", en: "Edit Role" })
+                : language({ id: "Tambah Peran", en: "Add Role" })}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
@@ -676,7 +787,7 @@ export default function RolesPage() {
               <Input
                 value={roleForm.name}
                 onChange={(e) =>
-                  setRoleForm((prev) => ({ ...prev, name: e.target.value }))
+                  setRoleForm((p) => ({ ...p, name: e.target.value }))
                 }
                 placeholder={language({
                   id: "Masukkan nama peran",
@@ -690,10 +801,7 @@ export default function RolesPage() {
               <Input
                 value={roleForm.description}
                 onChange={(e) =>
-                  setRoleForm((prev) => ({
-                    ...prev,
-                    description: e.target.value,
-                  }))
+                  setRoleForm((p) => ({ ...p, description: e.target.value }))
                 }
                 placeholder={language({
                   id: "Masukkan deskripsi (opsional)",
@@ -708,12 +816,37 @@ export default function RolesPage() {
               {language({ id: "Batal", en: "Cancel" })}
             </Button>
             <Button
-              onClick={handleCreateRole}
-              disabled={!roleForm.name.trim() || isRoleSubmitting}
+              onClick={handleRoleSubmit}
+              disabled={!roleForm.name.trim() || roleSubmitting}
             >
-              {isRoleSubmitting
+              {roleSubmitting
                 ? language({ id: "Menyimpan...", en: "Saving..." })
                 : language({ id: "Simpan", en: "Save" })}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirm Dialog */}
+      <Dialog open={!!deleteTarget} onClose={() => setDeleteTarget(null)}>
+        <DialogContent onClose={() => setDeleteTarget(null)}>
+          <DialogHeader>
+            <DialogTitle>
+              {language({ id: "Konfirmasi Hapus", en: "Confirm Delete" })}
+            </DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-dark-300">
+            {language({
+              id: `Yakin ingin menghapus "${deleteTarget?.name}"? Semua data terkait akan ikut terhapus.`,
+              en: `Are you sure you want to delete "${deleteTarget?.name}"? All related data will be removed.`,
+            })}
+          </p>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteTarget(null)}>
+              {language({ id: "Batal", en: "Cancel" })}
+            </Button>
+            <Button variant="destructive" onClick={confirmDelete}>
+              {language({ id: "Hapus", en: "Delete" })}
             </Button>
           </DialogFooter>
         </DialogContent>
