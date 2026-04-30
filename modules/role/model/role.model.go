@@ -11,6 +11,7 @@ type Role struct {
 	ID          uint      `json:"id" gorm:"autoIncrement;primaryKey"`
 	Name        string    `json:"name" gorm:"type:varchar(50);uniqueIndex;not null"`
 	Description string    `json:"description" gorm:"type:varchar(255)"`
+	IsActive    bool      `json:"is_active" gorm:"type:boolean;default:true"`
 	CreatedAt   time.Time `json:"created_at" gorm:"autoCreateTime"`
 }
 

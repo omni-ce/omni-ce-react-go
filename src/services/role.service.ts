@@ -5,6 +5,7 @@ export interface Role {
   id: number;
   name: string;
   description: string;
+  is_active: boolean;
   created_at: string;
 }
 
@@ -43,9 +44,7 @@ export const roleService = {
     return response.data;
   },
   delete: async (id: number) => {
-    const response = await satellite.delete<Response<null>>(
-      `/api/role/${id}`,
-    );
+    const response = await satellite.delete<Response<null>>(`/api/role/${id}`);
     return response.data;
   },
 };

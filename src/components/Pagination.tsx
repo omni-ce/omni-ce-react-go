@@ -271,11 +271,17 @@ const Pagination = forwardRef(function PaginationInner<T>(
   }, [columns, hasCrud, fields, language, useIsActive, togglingActiveId]);
 
   // Derive searchable field keys from columns with search: true
-  const searchableFields = useMemo(() => {
+  // Stabilize reference: only recalculate when the actual keys change
+  const searchableFieldsKey = useMemo(() => {
     return mergedColumns
       .filter((column) => column.search)
-      .map((column) => column.key);
+      .map((column) => column.key)
+      .join(",");
   }, [mergedColumns]);
+
+  const searchableFields = useMemo(() => {
+    return searchableFieldsKey ? searchableFieldsKey.split(",") : [];
+  }, [searchableFieldsKey]);
 
   // Has any column with search: true
   const hasColumnSearch = searchableFields.length > 0;
@@ -292,7 +298,11 @@ const Pagination = forwardRef(function PaginationInner<T>(
   // Debounce per-column searches
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
-      setDebouncedColumnSearches(columnSearches);
+      setDebouncedColumnSearches((prev) => {
+        // Skip update if nothing changed (prevents extra fetch on mount)
+        if (JSON.stringify(prev) === JSON.stringify(columnSearches)) return prev;
+        return columnSearches;
+      });
     }, 500);
     return () => {
       window.clearTimeout(timeoutId);
@@ -352,7 +362,7 @@ const Pagination = forwardRef(function PaginationInner<T>(
         isFetchingRef.current = false;
       }
     },
-    [paginateUrl, searchableFields],
+    [paginateUrl, searchableFieldsKey],
   );
 
   useEffect(() => {

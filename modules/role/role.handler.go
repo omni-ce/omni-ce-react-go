@@ -4,6 +4,7 @@ import (
 	"react-go/dto"
 	"react-go/function"
 	model "react-go/modules/role/model"
+	user "react-go/modules/user/model"
 	"react-go/variable"
 	"strconv"
 
@@ -138,5 +139,46 @@ func BulkDelete(c *fiber.Ctx) error {
 
 	return dto.OK(c, "Success bulk delete roles", fiber.Map{
 		"deleted_count": len(req.IDs),
+	})
+}
+
+func SetActive(c *fiber.Ctx) error {
+	idParam := c.Params("id")
+	id, err := strconv.ParseUint(idParam, 10, 64)
+	if err != nil {
+		return dto.BadRequest(c, "Invalid user id", nil)
+	}
+
+	// Only SU can toggle active status
+	currentUser, err := function.JwtGetUser(c)
+	if err != nil {
+		return dto.Unauthorized(c, "Unauthorized", nil)
+	}
+	if currentUser.Role != user.UserRoleAdmin {
+		return dto.Forbidden(c, "Only super admin can toggle user status", nil)
+	}
+
+	var existing user.User
+	if err := variable.Db.
+		First(&existing, "id = ?", id).
+		Error; err != nil {
+		return dto.NotFound(c, "User not found", nil)
+	}
+
+	// Prevent deactivating self
+	if existing.ID == currentUser.ID {
+		return dto.BadRequest(c, "Cannot deactivate yourself", nil)
+	}
+
+	newStatus := !existing.IsActive
+	if err := variable.Db.
+		Model(&existing).
+		Update("is_active", newStatus).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to toggle user status", nil)
+	}
+
+	return dto.OK(c, "Success toggle user status", fiber.Map{
+		"user": existing.Map(),
 	})
 }

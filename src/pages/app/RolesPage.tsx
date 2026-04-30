@@ -55,10 +55,16 @@ export default function RolesPage({}: RolesPageProps) {
         ),
       },
       {
-        key: "created_at",
-        header: language({ id: "Dibuat Pada", en: "Created At" }),
-        sort: true,
-        render: (role) => formatDateTime(role.created_at),
+        key: "is_active",
+        header: language({ id: "STATUS", en: "STATUS" }),
+        strict: true,
+        render: (role) => (
+          <Badge variant={role.is_active ? "default" : "destructive"}>
+            {role.is_active
+              ? language({ id: "Aktif", en: "Active" })
+              : language({ id: "Nonaktif", en: "Inactive" })}
+          </Badge>
+        ),
       },
     ],
     [language],
@@ -87,6 +93,7 @@ export default function RolesPage({}: RolesPageProps) {
         columns={columns}
         module="role"
         fields={fields}
+        useIsActive
       />
     </div>
   );
