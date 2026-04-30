@@ -87,7 +87,11 @@ func List(c *fiber.Ctx) error {
 		return dto.InternalServerError(c, "Failed to find role menus", nil)
 	}
 
+	rows := make([]map[string]any, 0)
+	for _, item := range roleMenus {
+		rows = append(rows, item.Map())
+	}
 	return dto.OK(c, "Success", fiber.Map{
-		"rows": roleMenus,
+		"rows": rows,
 	})
 }

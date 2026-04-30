@@ -20,10 +20,11 @@ type Rule struct {
 
 func (s *Rule) Map() map[string]any {
 	return map[string]any{
-		"id":     s.ID,
-		"key":    s.Key,
-		"action": s.Action,
-		"state":  s.State,
+		"id":      s.ID,
+		"role_id": s.RoleID,
+		"key":     s.Key,
+		"action":  s.Action,
+		"state":   s.State,
 	}
 }
 
