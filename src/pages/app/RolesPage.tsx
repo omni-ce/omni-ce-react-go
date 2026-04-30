@@ -12,10 +12,13 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/Dialog";
-import satellite from "@/lib/satellite";
-import type { Response } from "@/types/response";
 import type { Rule } from "@/stores/ruleStore";
 import { sidebarLinks } from "@/routers";
+import {
+  roleService,
+  type RoleItem,
+  type DivisionGroup,
+} from "@/services/role.service";
 import {
   HiChevronDown,
   HiChevronRight,
@@ -23,20 +26,6 @@ import {
   HiOutlinePencilSquare,
   HiOutlineTrash,
 } from "react-icons/hi2";
-
-interface RoleItem {
-  id: number;
-  name: string;
-  description: string;
-  is_active: boolean;
-}
-interface DivisionGroup {
-  id: number;
-  name: string;
-  description: string;
-  is_active: boolean;
-  roles: RoleItem[];
-}
 
 export default function RolesPage() {
   const { language } = useLanguageStore();
@@ -114,7 +103,6 @@ export default function RolesPage() {
     ],
     [language],
   );
-  type ActionType = (typeof ACTIONS)[number];
 
   const menuList = useMemo(() => {
     return sidebarLinks
@@ -129,13 +117,11 @@ export default function RolesPage() {
     setIsLoading(true);
     try {
       const [rolesRes, rulesRes] = await Promise.all([
-        satellite.get<Response<{ divisions: DivisionGroup[] }>>(
-          "/api/role/all",
-        ),
-        satellite.get<Response<{ rows: Rule[] }>>("/api/rule/list"),
+        roleService.getAll(),
+        roleService.getRules(),
       ]);
-      const divs = rolesRes.data.data.divisions;
-      const fetchedRules = rulesRes.data.data.rows;
+      const divs = rolesRes.data.divisions;
+      const fetchedRules = rulesRes.data.rows;
       setDivisions(divs);
       setRules(fetchedRules);
       setOriginalRules(fetchedRules);
@@ -155,7 +141,7 @@ export default function RolesPage() {
   }, [fetchData]);
 
   const getRuleState = useCallback(
-    (roleId: number, menuKey: string, action: ActionType): boolean => {
+    (roleId: number, menuKey: string, action: string): boolean => {
       const r = rules.find(
         (x) => x.role_id === roleId && x.key === menuKey && x.action === action,
       );
@@ -165,7 +151,7 @@ export default function RolesPage() {
   );
 
   // Local-only toggle (no API call)
-  const toggleRule = (roleId: number, menuKey: string, action: ActionType) => {
+  const toggleRule = (roleId: number, menuKey: string, action: string) => {
     setRules((prev) => {
       const idx = prev.findIndex(
         (r) => r.role_id === roleId && r.key === menuKey && r.action === action,
@@ -183,23 +169,30 @@ export default function RolesPage() {
   };
 
   const toggleRow = (roleId: number, menuKey: string) => {
-    const allOn = ACTIONS.every((a) => getRuleState(roleId, menuKey, a));
+    const allOn = ACTIONS.every((a) => getRuleState(roleId, menuKey, a.key));
     const s = !allOn;
     setRules((prev) => {
       const u = [...prev];
-      for (const action of ACTIONS) {
+      for (const act of ACTIONS) {
         const idx = u.findIndex(
           (r) =>
-            r.role_id === roleId && r.key === menuKey && r.action === action,
+            r.role_id === roleId && r.key === menuKey && r.action === act.key,
         );
         if (idx >= 0) u[idx] = { ...u[idx], state: s };
-        else u.push({ id: 0, role_id: roleId, key: menuKey, action, state: s });
+        else
+          u.push({
+            id: 0,
+            role_id: roleId,
+            key: menuKey,
+            action: act.key,
+            state: s,
+          });
       }
       return u;
     });
   };
 
-  const toggleCol = (roleId: number, action: ActionType) => {
+  const toggleCol = (roleId: number, action: string) => {
     const allOn = menuList.every((m) => getRuleState(roleId, m.key, action));
     const s = !allOn;
     setRules((prev) => {
@@ -223,14 +216,18 @@ export default function RolesPage() {
     divisions.forEach((d) => d.roles.forEach((r) => allRoleIds.add(r.id)));
     for (const roleId of allRoleIds) {
       for (const menu of menuList) {
-        for (const action of ACTIONS) {
+        for (const act of ACTIONS) {
           const cur = rules.find(
             (r) =>
-              r.role_id === roleId && r.key === menu.key && r.action === action,
+              r.role_id === roleId &&
+              r.key === menu.key &&
+              r.action === act.key,
           );
           const orig = originalRules.find(
             (r) =>
-              r.role_id === roleId && r.key === menu.key && r.action === action,
+              r.role_id === roleId &&
+              r.key === menu.key &&
+              r.action === act.key,
           );
           const curState = cur ? cur.state : false;
           const origState = orig ? orig.state : false;
@@ -239,7 +236,7 @@ export default function RolesPage() {
       }
     }
     return false;
-  }, [rules, originalRules, divisions, menuList]);
+  }, [rules, originalRules, divisions, menuList, ACTIONS]);
 
   // Save all rules
   const handleSave = async () => {
@@ -254,19 +251,19 @@ export default function RolesPage() {
     }[] = [];
     for (const roleId of allRoleIds) {
       for (const menu of menuList) {
-        for (const action of ACTIONS) {
+        for (const act of ACTIONS) {
           data.push({
             role_id: roleId,
             key: menu.key,
-            action,
-            state: getRuleState(roleId, menu.key, action),
+            action: act.key,
+            state: getRuleState(roleId, menu.key, act.key),
           });
         }
       }
     }
     setIsSaving(true);
     try {
-      await satellite.post("/api/rule/set", { data });
+      await roleService.setRules(data);
       await fetchData();
     } catch {
       alert("Failed to save");
@@ -290,16 +287,12 @@ export default function RolesPage() {
     if (!divForm.name.trim()) return;
     setDivSubmitting(true);
     try {
-      if (divEditId)
-        await satellite.put(`/api/role/division/edit/${divEditId}`, {
-          name: divForm.name.trim(),
-          description: divForm.description.trim(),
-        });
-      else
-        await satellite.post("/api/role/division/create", {
-          name: divForm.name.trim(),
-          description: divForm.description.trim(),
-        });
+      const payload = {
+        name: divForm.name.trim(),
+        description: divForm.description.trim(),
+      };
+      if (divEditId) await roleService.divisionUpdate(divEditId, payload);
+      else await roleService.divisionCreate(payload);
       setDivDialogOpen(false);
       await fetchData();
     } catch (e: unknown) {
@@ -313,7 +306,7 @@ export default function RolesPage() {
   };
   const handleDivToggle = async (id: number) => {
     try {
-      await satellite.patch(`/api/role/division/set-active/${id}`);
+      await roleService.divisionSetActive(id);
       await fetchData();
     } catch {
       /* */
@@ -321,7 +314,7 @@ export default function RolesPage() {
   };
   const handleDivDelete = async (id: number) => {
     try {
-      await satellite.delete(`/api/role/division/remove/${id}`);
+      await roleService.divisionDelete(id);
       await fetchData();
     } catch {
       /* */
@@ -344,17 +337,13 @@ export default function RolesPage() {
     if (!roleForm.name.trim()) return;
     setRoleSubmitting(true);
     try {
-      if (roleEditId)
-        await satellite.put(`/api/role/edit/${roleEditId}`, {
-          name: roleForm.name.trim(),
-          description: roleForm.description.trim(),
-        });
+      const payload = {
+        name: roleForm.name.trim(),
+        description: roleForm.description.trim(),
+      };
+      if (roleEditId) await roleService.update(roleEditId, payload);
       else
-        await satellite.post("/api/role/create", {
-          role_division_id: roleDivId,
-          name: roleForm.name.trim(),
-          description: roleForm.description.trim(),
-        });
+        await roleService.create({ role_division_id: roleDivId!, ...payload });
       setRoleDialogOpen(false);
       await fetchData();
     } catch (e: unknown) {
@@ -368,7 +357,7 @@ export default function RolesPage() {
   };
   const handleRoleToggle = async (id: number) => {
     try {
-      await satellite.patch(`/api/role/set-active/${id}`);
+      await roleService.setActive(id);
       await fetchData();
     } catch {
       /* */
@@ -376,7 +365,7 @@ export default function RolesPage() {
   };
   const handleRoleDelete = async (id: number) => {
     try {
-      await satellite.delete(`/api/role/remove/${id}`);
+      await roleService.delete(id);
       await fetchData();
     } catch {
       /* */
@@ -393,12 +382,14 @@ export default function RolesPage() {
   const toggleDivision = (id: number) =>
     setOpenDivisions((p) => {
       const n = new Set(p);
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       n.has(id) ? n.delete(id) : n.add(id);
       return n;
     });
   const toggleRoleAccordion = (id: number) =>
     setOpenRoles((p) => {
       const n = new Set(p);
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       n.has(id) ? n.delete(id) : n.add(id);
       return n;
     });
@@ -598,23 +589,23 @@ export default function RolesPage() {
                               <div className="text-xs font-semibold text-dark-300 uppercase tracking-wider px-2">
                                 {language({ id: "Menu", en: "Menu" })}
                               </div>
-                              {ACTIONS.map((action) => {
+                              {ACTIONS.map((act) => {
                                 const allOn = menuList.every((m) =>
-                                  getRuleState(role.id, m.key, action),
+                                  getRuleState(role.id, m.key, act.key),
                                 );
                                 return (
                                   <div
-                                    key={action}
+                                    key={act.key}
                                     className="flex flex-col items-center gap-1"
                                   >
                                     <span className="text-xs font-semibold text-dark-300 uppercase tracking-wider">
-                                      {action}
+                                      {act.label}
                                     </span>
                                     <input
                                       type="checkbox"
                                       checked={allOn}
                                       onChange={() =>
-                                        toggleCol(role.id, action)
+                                        toggleCol(role.id, act.key)
                                       }
                                       disabled={!role.is_active}
                                       className="w-3.5 h-3.5 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
@@ -625,7 +616,7 @@ export default function RolesPage() {
                             </div>
                             {menuList.map((menu) => {
                               const allOn = ACTIONS.every((a) =>
-                                getRuleState(role.id, menu.key, a),
+                                getRuleState(role.id, menu.key, a.key),
                               );
                               return (
                                 <div
@@ -650,9 +641,9 @@ export default function RolesPage() {
                                       {menu.label}
                                     </span>
                                   </div>
-                                  {ACTIONS.map((action) => (
+                                  {ACTIONS.map((act) => (
                                     <div
-                                      key={action}
+                                      key={act.key}
                                       className="flex justify-center"
                                     >
                                       <input
@@ -660,10 +651,10 @@ export default function RolesPage() {
                                         checked={getRuleState(
                                           role.id,
                                           menu.key,
-                                          action,
+                                          act.key,
                                         )}
                                         onChange={() =>
-                                          toggleRule(role.id, menu.key, action)
+                                          toggleRule(role.id, menu.key, act.key)
                                         }
                                         disabled={!role.is_active}
                                         className="w-4 h-4 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
