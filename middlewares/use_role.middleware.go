@@ -20,14 +20,31 @@ func UseOnlyAdmin(c *fiber.Ctx) error {
 		return dto.Unauthorized(c, "Unauthorized", nil)
 	}
 	if currentUser.Role != user.UserRoleAdmin {
-		return dto.Forbidden(c, "Only super admin can toggle user status", nil)
+		return dto.Forbidden(c, "You don't have permission", nil)
 	}
 
+	c.Locals(string("user"), currentUser)
 	return c.Next()
+}
+
+func UseRoleMenu(module string, action string) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		_, ok := c.Locals("claims").(*function.JwtClaims)
+		if !ok {
+			return dto.Forbidden(c, "Please set jwt middleware before use role middleware", nil)
+		}
+
+		return c.Next()
+	}
 }
 
 func UseRole(roles ...string) fiber.Handler {
 	return func(c *fiber.Ctx) error {
+		_, ok := c.Locals("claims").(*function.JwtClaims)
+		if !ok {
+			return dto.Forbidden(c, "Please set jwt middleware before use role middleware", nil)
+		}
+
 		return c.Next()
 	}
 }

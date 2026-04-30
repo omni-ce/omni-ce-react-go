@@ -31,7 +31,7 @@ export interface ISidebarLink extends Partial<IndexRouteObject> {
   show_hr?: boolean;
   hr_title?: string;
   label: Record<LanguageCode, string>;
-  roles: UserRole[];
+  strict?: boolean;
   icon: React.ComponentType<{ size?: number }>;
   isHide?: boolean;
 }

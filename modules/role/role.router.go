@@ -1,15 +1,16 @@
 package role
 
 import (
+	"react-go/middlewares"
+
 	"github.com/gofiber/fiber/v2"
 )
 
 func ProtectedRoute(r fiber.Router) {
-	r.Get("/all", GetAll)
-	r.Get("/paginate", GetPaginate)
-	r.Post("/create", Create)
-	r.Put("/edit/:id", Update)
-	r.Delete("/remove/:id", Delete)
-	r.Post("/bulk-remove", BulkDelete)
-	r.Patch("/set-active/:id", SetActive)
+	r.Post("/create", middlewares.UseRoleMenu("role", "create"), Create)
+	r.Get("/paginate", middlewares.UseRoleMenu("role", "read"), GetPaginate)
+	r.Put("/edit/:id", middlewares.UseRoleMenu("role", "update"), Update)
+	r.Delete("/remove/:id", middlewares.UseRoleMenu("role", "delete"), Delete)
+	r.Patch("/set-active/:id", middlewares.UseRoleMenu("role", "set"), SetActive)
+	r.Post("/bulk-remove", middlewares.UseRoleMenu("role", "delete"), BulkDelete)
 }

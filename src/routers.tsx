@@ -38,7 +38,6 @@ const sidebarLinks: ISidebarLink[] = [
     label: { id: "Dashboard", en: "Dashboard" },
     path: "dashboard",
     element: <DashboardPage />,
-    roles: [],
     icon: HiOutlineHome,
   },
 
@@ -46,7 +45,7 @@ const sidebarLinks: ISidebarLink[] = [
     label: { id: "Peran", en: "Roles" },
     path: "roles",
     element: <RolesPage />,
-    roles: ["su"],
+    strict: true,
     icon: HiOutlineShieldCheck,
   },
 
@@ -54,7 +53,7 @@ const sidebarLinks: ISidebarLink[] = [
     label: { id: "Pengguna", en: "Users" },
     path: "users",
     element: <UsersPage />,
-    roles: ["su"],
+    strict: true,
     icon: HiOutlineUser,
   },
 
@@ -62,7 +61,7 @@ const sidebarLinks: ISidebarLink[] = [
     label: { id: "Data Master", en: "Master Data" },
     path: "master-data",
     element: <MasterDataPage />,
-    roles: ["su"],
+    strict: true,
     icon: HiOutlineDatabase,
   },
 ];

@@ -11,27 +11,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func GetAll(c *fiber.Ctx) error {
-	var roles []model.Role
-	if err := variable.Db.Order("id ASC").Find(&roles).Error; err != nil {
-		return dto.InternalServerError(c, "Failed to fetch roles", nil)
-	}
-	return dto.OK(c, "Success", fiber.Map{"roles": roles})
-}
-
-func GetPaginate(c *fiber.Ctx) error {
-	roles := make([]model.Role, 0)
-	pagination, err := function.Pagination(c, &model.Role{}, []string{"name", "description"}, &roles)
-	if err != nil {
-		return dto.InternalServerError(c, "Failed to prepare pagination", nil)
-	}
-
-	return dto.OK(c, "Success", fiber.Map{
-		"rows":       roles,
-		"pagination": pagination.Meta(),
-	})
-}
-
 func Create(c *fiber.Ctx) error {
 	var req struct {
 		Name        string `json:"name" validate:"required"`
@@ -56,6 +35,19 @@ func Create(c *fiber.Ctx) error {
 	}
 
 	return dto.Created(c, "Role created", role)
+}
+
+func GetPaginate(c *fiber.Ctx) error {
+	roles := make([]model.Role, 0)
+	pagination, err := function.Pagination(c, &model.Role{}, []string{"name", "description"}, &roles)
+	if err != nil {
+		return dto.InternalServerError(c, "Failed to prepare pagination", nil)
+	}
+
+	return dto.OK(c, "Success", fiber.Map{
+		"rows":       roles,
+		"pagination": pagination.Meta(),
+	})
 }
 
 func Update(c *fiber.Ctx) error {
@@ -119,29 +111,6 @@ func Delete(c *fiber.Ctx) error {
 	return dto.OK(c, "Role deleted", nil)
 }
 
-func BulkDelete(c *fiber.Ctx) error {
-	var req struct {
-		IDs []uint64 `json:"ids"`
-	}
-	if err := c.BodyParser(&req); err != nil {
-		return dto.BadRequest(c, "Invalid request body", nil)
-	}
-
-	if len(req.IDs) == 0 {
-		return dto.BadRequest(c, "No IDs provided", nil)
-	}
-
-	if err := variable.Db.
-		Delete(&model.Role{}, "id IN ?", req.IDs).
-		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to bulk delete roles", nil)
-	}
-
-	return dto.OK(c, "Success bulk delete roles", fiber.Map{
-		"deleted_count": len(req.IDs),
-	})
-}
-
 func SetActive(c *fiber.Ctx) error {
 	idParam := c.Params("id")
 	id, err := strconv.ParseUint(idParam, 10, 64)
@@ -180,5 +149,28 @@ func SetActive(c *fiber.Ctx) error {
 
 	return dto.OK(c, "Success toggle user status", fiber.Map{
 		"user": existing.Map(),
+	})
+}
+
+func BulkDelete(c *fiber.Ctx) error {
+	var req struct {
+		IDs []uint64 `json:"ids"`
+	}
+	if err := c.BodyParser(&req); err != nil {
+		return dto.BadRequest(c, "Invalid request body", nil)
+	}
+
+	if len(req.IDs) == 0 {
+		return dto.BadRequest(c, "No IDs provided", nil)
+	}
+
+	if err := variable.Db.
+		Delete(&model.Role{}, "id IN ?", req.IDs).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to bulk delete roles", nil)
+	}
+
+	return dto.OK(c, "Success bulk delete roles", fiber.Map{
+		"deleted_count": len(req.IDs),
 	})
 }

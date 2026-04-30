@@ -21,8 +21,8 @@ func (Role) Seed(db *gorm.DB) {
 
 	if count == 0 {
 		roles := []Role{
-			{Name: "Admin", Description: "Full access"},
-			{Name: "Operator", Description: "Limited access"},
+			{ID: 1, Name: "Admin", Description: "Full access"},
+			{ID: 2, Name: "Operator", Description: "Limited access"},
 		}
 
 		for _, r := range roles {
