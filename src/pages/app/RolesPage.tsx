@@ -550,7 +550,8 @@ export default function RolesPage() {
                         <div className="flex items-center gap-2 shrink-0">
                           <button
                             onClick={() => handleRoleToggle(role.id)}
-                            className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${role.is_active ? "bg-accent-500" : "bg-dark-600"}`}
+                            disabled={!division.is_active}
+                            className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${role.is_active ? "bg-accent-500" : "bg-dark-600"} disabled:opacity-40 disabled:cursor-not-allowed`}
                           >
                             <span
                               className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${role.is_active ? "translate-x-[18px]" : "translate-x-[3px]"}`}
@@ -609,7 +610,7 @@ export default function RolesPage() {
                                       onChange={() =>
                                         toggleCol(role.id, act.key)
                                       }
-                                      disabled={!role.is_active}
+                                      disabled={!role.is_active || !division.is_active}
                                       className="w-3.5 h-3.5 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                                     />
                                   </div>
@@ -636,7 +637,7 @@ export default function RolesPage() {
                                       onChange={() =>
                                         toggleRow(role.id, menu.key)
                                       }
-                                      disabled={!role.is_active}
+                                      disabled={!role.is_active || !division.is_active}
                                       className="w-3.5 h-3.5 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                                     />
                                     <span className="text-sm text-foreground font-medium">
@@ -658,7 +659,7 @@ export default function RolesPage() {
                                         onChange={() =>
                                           toggleRule(role.id, menu.key, act.key)
                                         }
-                                        disabled={!role.is_active}
+                                        disabled={!role.is_active || !division.is_active}
                                         className="w-4 h-4 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
                                       />
                                     </div>
