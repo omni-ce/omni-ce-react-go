@@ -38,6 +38,7 @@ export default function UsersPage({}: UsersPageProps) {
         key: "password",
         label: language({ id: "Password", en: "Password" }),
         type: "password",
+        only: "create",
         required: true,
         minLength: 8,
       },

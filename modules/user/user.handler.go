@@ -7,6 +7,7 @@ import (
 	"react-go/function"
 	"react-go/function/hash"
 	notification "react-go/modules/notification/model"
+	role "react-go/modules/role/model"
 	model "react-go/modules/user/model"
 	"react-go/socket"
 	"react-go/variable"
@@ -173,13 +174,33 @@ func Edit(c *fiber.Ctx) error {
 		return dto.BadRequest(c, "Invalid user id", nil)
 	}
 
-	var req struct {
+	var body struct {
 		Name     string `json:"name"`
 		Username string `json:"username"`
-		Password string `json:"password"`
+		Roles    []struct {
+			DivisionID string `json:"division_id"`
+			RoleID     string `json:"role_id"`
+		} `json:"roles"`
 	}
-	if err := function.RequestBody(c, &req); err != nil {
+	if err := function.RequestBody(c, &body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
+	}
+
+	roleIds := make([]string, 0)
+	for _, r := range body.Roles {
+		roleIds = append(roleIds, r.RoleID)
+	}
+
+	// check role ids
+	roles := make([]role.Role, 0)
+	if err := variable.Db.
+		Where("id IN ?", roleIds).
+		Find(&roles).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to fetch roles", nil)
+	}
+	if len(roles) != len(roleIds) {
+		return dto.BadRequest(c, "Invalid role ids", nil)
 	}
 
 	var existing model.User
@@ -191,12 +212,12 @@ func Edit(c *fiber.Ctx) error {
 
 	updates := map[string]any{}
 
-	name := strings.TrimSpace(req.Name)
+	name := strings.TrimSpace(body.Name)
 	if name != "" {
 		updates["name"] = name
 	}
 
-	username := strings.TrimSpace(req.Username)
+	username := strings.TrimSpace(body.Username)
 	if username != "" && username != existing.Username {
 		// Check duplicate username
 		var dup model.User
@@ -204,11 +225,6 @@ func Edit(c *fiber.Ctx) error {
 			return dto.BadRequest(c, "Username already exists", nil)
 		}
 		updates["username"] = username
-	}
-
-	password := strings.TrimSpace(req.Password)
-	if password != "" {
-		updates["password"] = hash.Password(password)
 	}
 
 	if len(updates) == 0 {

@@ -1,0 +1,472 @@
+import { useState, useEffect, useRef } from "react";
+import { Label } from "@/components/ui/Label";
+import { Input } from "@/components/ui/Input";
+import { Select } from "@/components/ui/Select";
+import { Button } from "@/components/ui/Button";
+import { HiOutlineTrash, HiOutlinePlus } from "react-icons/hi";
+import { useLanguageStore } from "@/stores/languageStore";
+import satellite from "@/lib/satellite";
+import type { Response } from "@/types/response";
+
+export interface DynamicFormFieldOption {
+  value: string;
+  label: string;
+}
+
+export interface DynamicFormField {
+  key: string;
+  label: string;
+  type:
+    | "text"
+    | "email"
+    | "number"
+    | "password"
+    | "select"
+    | "textarea"
+    | "array";
+  options?: DynamicFormFieldOption[] | string;
+  required?: boolean;
+  minLength?: number;
+  maxLength?: number;
+  col?: number;
+  ref?: string;
+  debounce?: string;
+  strict?: boolean;
+  only?: "create" | "update";
+  children?: DynamicFormField[];
+}
+
+function DynamicSelect({
+  field,
+  formData,
+  onChange,
+}: {
+  field: DynamicFormField;
+  formData: Record<string, string>;
+  onChange: (val: string) => void;
+}) {
+  const [opts, setOpts] = useState<DynamicFormFieldOption[]>([]);
+  const [disabled, setDisabled] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { language } = useLanguageStore();
+
+  const onChangeRef = useRef(onChange);
+  useEffect(() => {
+    onChangeRef.current = onChange;
+  }, [onChange]);
+
+  const prevRefVal = useRef<string | undefined>(undefined);
+
+  useEffect(() => {
+    let endpoint = "";
+    if (typeof field.options === "string") {
+      endpoint = field.options;
+      if (field.ref) {
+        const refVal = formData[field.ref];
+        if (!refVal) {
+          setOpts([]);
+          setDisabled(true);
+          if (
+            prevRefVal.current !== undefined &&
+            prevRefVal.current !== refVal
+          ) {
+            onChangeRef.current("");
+          }
+          prevRefVal.current = refVal;
+          return;
+        }
+        setDisabled(false);
+        endpoint = endpoint.replace(`{${field.ref}}`, String(refVal));
+        // We clear the value whenever the parent dependency changes,
+        // so we don't accidentally submit a stale child value.
+        if (prevRefVal.current !== undefined && prevRefVal.current !== refVal) {
+          onChangeRef.current("");
+        }
+        prevRefVal.current = refVal;
+      }
+    } else if (Array.isArray(field.options)) {
+      setOpts(field.options);
+      setDisabled(false);
+      return;
+    } else {
+      return;
+    }
+
+    let isMounted = true;
+    setLoading(true);
+    satellite
+      .get<Response<{ key: unknown; value: string }[]>>(
+        `/api/option/${endpoint}`,
+      )
+      .then((res) => {
+        if (isMounted) {
+          const data = res.data.data || [];
+          const mapped = data.map((d) => ({
+            value: String(d.key),
+            label: d.value,
+          }));
+          setOpts(mapped);
+        }
+      })
+      .catch(() => {
+        if (isMounted) setOpts([]);
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [field.options, field.ref, field.ref ? formData[field.ref] : undefined]);
+
+  return (
+    <Select
+      id={`field-${field.key}`}
+      className="mt-1.5"
+      value={formData[field.key] ?? ""}
+      onChange={(e) => onChange(e.target.value)}
+      disabled={disabled || loading}
+    >
+      <option value="" disabled hidden>
+        {loading ? "Loading..." : language({ id: "Pilih...", en: "Choose..." })}
+      </option>
+      {opts.map((opt) => (
+        <option key={opt.value} value={opt.value}>
+          {opt.label}
+        </option>
+      ))}
+    </Select>
+  );
+}
+
+function ArrayField({
+  field,
+  value,
+  onChange,
+}: {
+  field: DynamicFormField;
+  value: Record<string, unknown>[];
+  onChange: (val: Record<string, unknown>[]) => void;
+}) {
+  const { language } = useLanguageStore();
+  const handleAdd = () => {
+    const newItem: Record<string, unknown> = {};
+    if (field.children) {
+      field.children.forEach((child) => {
+        if (
+          child.type === "select" &&
+          Array.isArray(child.options) &&
+          child.options.length > 0
+        ) {
+          newItem[child.key] = child.options[0].value;
+        } else {
+          newItem[child.key] = "";
+        }
+      });
+    }
+    onChange([...value, newItem]);
+  };
+
+  const handleRemove = (index: number) => {
+    const next = [...value];
+    next.splice(index, 1);
+    onChange(next);
+  };
+
+  const handleChildChange = (
+    index: number,
+    childKey: string,
+    childVal: unknown,
+  ) => {
+    const next = [...value];
+    next[index] = { ...next[index], [childKey]: childVal };
+    onChange(next);
+  };
+
+  return (
+    <div className="mt-2 space-y-4">
+      {value.map((item, index) => (
+        <div
+          key={index}
+          className="relative p-4 border border-dark-600 rounded-xl bg-dark-900/40"
+        >
+          <button
+            type="button"
+            onClick={() => handleRemove(index)}
+            className="absolute top-2 right-2 p-1.5 rounded-lg text-dark-400 hover:text-neon-red hover:bg-neon-red/10 transition-colors"
+          >
+            <HiOutlineTrash className="w-4 h-4" />
+          </button>
+          <div className="grid grid-cols-12 gap-4 mt-2">
+            {field.children?.map((child) => (
+              <div
+                key={child.key}
+                style={{
+                  gridColumn: `span ${child.col || 12} / span ${
+                    child.col || 12
+                  }`,
+                }}
+              >
+                <Label
+                  htmlFor={`field-${field.key}-${index}-${child.key}`}
+                  required={child.required}
+                >
+                  {child.label}
+                </Label>
+                {child.type === "select" ? (
+                  <DynamicSelect
+                    field={child}
+                    formData={item as Record<string, string>}
+                    onChange={(val) => handleChildChange(index, child.key, val)}
+                  />
+                ) : child.type === "textarea" ? (
+                  <textarea
+                    id={`field-${field.key}-${index}-${child.key}`}
+                    className="mt-1.5 w-full px-4 py-2.5 bg-dark-900/60 border border-dark-500/50 rounded-xl text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30 transition-all font-mono text-sm disabled:opacity-50 min-h-[80px] resize-y"
+                    value={String(item[child.key] ?? "")}
+                    onChange={(e) =>
+                      handleChildChange(index, child.key, e.target.value)
+                    }
+                    minLength={child.minLength}
+                    maxLength={child.maxLength}
+                  />
+                ) : (
+                  <Input
+                    id={`field-${field.key}-${index}-${child.key}`}
+                    type={child.type}
+                    className="mt-1.5"
+                    value={String(item[child.key] ?? "")}
+                    onChange={(e) =>
+                      handleChildChange(index, child.key, e.target.value)
+                    }
+                    minLength={child.minLength}
+                    maxLength={child.maxLength}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        onClick={handleAdd}
+        className="w-full flex items-center justify-center gap-2 border-dashed border-dark-500 text-dark-300 hover:text-foreground"
+      >
+        <HiOutlinePlus className="w-4 h-4" />
+        {language({ id: "Tambah", en: "Add" })} {field.label}
+      </Button>
+    </div>
+  );
+}
+
+function DebouncedInput({
+  field,
+  formData,
+  onChange,
+  onError,
+  initialValue,
+}: {
+  field: DynamicFormField;
+  formData: Record<string, string>;
+  onChange: (val: string) => void;
+  onError: (key: string, error: string | null) => void;
+  initialValue?: string;
+}) {
+  const { language } = useLanguageStore();
+  const value = formData[field.key] ?? "";
+  const [loading, setLoading] = useState(false);
+  const [msg, setMsg] = useState<{
+    text: Record<string, string>;
+    isError: boolean;
+  } | null>(null);
+
+  useEffect(() => {
+    if (!field.debounce || !value || value === initialValue) {
+      setMsg(null);
+      onError(field.key, null);
+      return;
+    }
+
+    setMsg(null);
+    onError(field.key, "typing"); // block save while typing/debouncing
+
+    const timer = setTimeout(() => {
+      setLoading(true);
+      satellite
+        .post<{
+          message: string;
+          data: { available: boolean; message: Record<string, string> };
+        }>(`/api/debounce/${field.debounce}`, { value })
+        .then((res) => {
+          const data = res.data?.data;
+
+          if (data && data.available === false) {
+            setMsg({ text: data.message, isError: true });
+            onError(field.key, res.data.message);
+          } else {
+            setMsg({ text: data.message, isError: false });
+            onError(field.key, null);
+          }
+        })
+        .catch(() => {
+          setMsg({
+            text: {
+              id: "Terjadi kesalahan saat memeriksa ketersediaan",
+              en: "Error checking availability",
+            },
+            isError: true,
+          });
+          onError(field.key, "Error");
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }, 1500);
+
+    return () => {
+      clearTimeout(timer);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value, field.debounce, field.key, initialValue, language]);
+
+  return (
+    <div className="relative mt-1.5">
+      <Input
+        id={`field-${field.key}`}
+        type={field.type}
+        className={loading ? "pr-10" : ""}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        minLength={field.minLength}
+        maxLength={field.maxLength}
+        disabled={loading}
+      />
+      {loading && (
+        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+          <svg
+            className="h-4 w-4 animate-spin text-dark-400"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+        </div>
+      )}
+      {!loading && msg && (
+        <span
+          className={`text-xs mt-1 block ${
+            msg.isError ? "text-neon-red" : "text-neon-green"
+          }`}
+        >
+          {language(msg.text)}
+        </span>
+      )}
+    </div>
+  );
+}
+
+export interface DynamicFormProps {
+  fields: DynamicFormField[];
+  formData: Record<string, unknown>;
+  onChange: (key: string, value: unknown) => void;
+  fieldErrors?: Record<string, string | null>;
+  editingRow?: unknown;
+  onError?: (key: string, err: string | null) => void;
+}
+
+export default function DynamicForm({
+  fields,
+  formData,
+  onChange,
+  editingRow,
+  onError,
+}: DynamicFormProps) {
+  const isCreate = !editingRow;
+  const filteredFields = fields.filter((field) => {
+    if (field.only === "create" && !isCreate) return false;
+    if (field.only === "update" && isCreate) return false;
+    return true;
+  });
+
+  return (
+    <div className="grid grid-cols-12 gap-4 mt-2">
+      {filteredFields.map((field) => (
+        <div
+          key={field.key}
+          style={{
+            gridColumn: `span ${field.col || 12} / span ${field.col || 12}`,
+          }}
+        >
+          <Label htmlFor={`field-${field.key}`} required={field.required}>
+            {field.label}
+          </Label>
+          {field.type === "array" ? (
+            <ArrayField
+              field={field}
+              value={(formData[field.key] as Record<string, unknown>[]) || []}
+              onChange={(newVal) => onChange(field.key, newVal)}
+            />
+          ) : field.type === "select" ? (
+            <DynamicSelect
+              field={field}
+              formData={formData as Record<string, string>}
+              onChange={(val) => onChange(field.key, val)}
+            />
+          ) : field.type === "textarea" ? (
+            <textarea
+              id={`field-${field.key}`}
+              className="mt-1.5 w-full px-4 py-2.5 bg-dark-900/60 border border-dark-500/50 rounded-xl text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30 transition-all font-mono text-sm disabled:opacity-50 min-h-[80px] resize-y"
+              value={String(formData[field.key] ?? "")}
+              onChange={(e) => onChange(field.key, e.target.value)}
+              minLength={field.minLength}
+              maxLength={field.maxLength}
+            />
+          ) : field.debounce ? (
+            <DebouncedInput
+              field={field}
+              formData={formData as Record<string, string>}
+              onChange={(val) => onChange(field.key, val)}
+              onError={(key, err) => {
+                if (onError) onError(key, err);
+              }}
+              initialValue={
+                editingRow && typeof editingRow === "object"
+                  ? String(
+                      (editingRow as Record<string, unknown>)[field.key] ?? "",
+                    )
+                  : ""
+              }
+            />
+          ) : (
+            <Input
+              id={`field-${field.key}`}
+              type={field.type}
+              className="mt-1.5"
+              value={String(formData[field.key] ?? "")}
+              onChange={(e) => onChange(field.key, e.target.value)}
+              minLength={field.minLength}
+              maxLength={field.maxLength}
+            />
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
