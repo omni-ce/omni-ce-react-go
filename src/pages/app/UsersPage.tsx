@@ -101,10 +101,13 @@ export default function UsersPage({}: UsersPageProps) {
         sort: true,
         search: true,
         render: (user) => (
-          <div className="flex items-center gap-2">
-            <Badge variant={user.role === "su" ? "default" : "secondary"}>
-              {user.role?.toUpperCase()}
-            </Badge>
+          <div className="flex flex-wrap items-center gap-2">
+            {user.roles &&
+              user.roles.map((role) => (
+                <Badge key={role} variant={"secondary"}>
+                  {role}
+                </Badge>
+              ))}
           </div>
         ),
       },

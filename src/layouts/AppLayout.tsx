@@ -20,7 +20,6 @@ import Loading from "@/components/Loading";
 import version from "@/version";
 import { no_auth_navigate } from "@/constant";
 import type { LanguageCode } from "@/stores/languageStore";
-import type { UserRole } from "@/types/user";
 import { useLanguageStore } from "@/stores/languageStore";
 import AppIconSvg from "@/assets/react_go.svg";
 import ControlButton from "@/components/ControlButton";

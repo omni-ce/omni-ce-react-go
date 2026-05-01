@@ -33,7 +33,7 @@ function Dialog({ open, onClose, width, children }: DialogProps) {
       />
 
       {/* Control Button at top right of overlay */}
-      <div className="fixed top-4 right-4 z-60 animate-fade-in flex items-center gap-2 bg-black/10 backdrop-blur-md rounded-lg p-2">
+      <div className="fixed top-4 right-4 z-[60] animate-fade-in flex items-center gap-2 bg-white/80 dark:bg-black/20 dark:text-gray-400 backdrop-blur-md rounded-lg p-2 shadow-sm">
         <ControlButton />
       </div>
       {/* Content wrapper */}

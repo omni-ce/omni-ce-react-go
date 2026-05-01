@@ -14,6 +14,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 func Me(on string) func(*fiber.Ctx) error {
@@ -110,14 +111,17 @@ func Create(c *fiber.Ctx) error {
 
 func Paginate(c *fiber.Ctx) error {
 	users := make([]model.User, 0)
-	pagination, err := function.Pagination(c, &model.User{}, []string{"name", "username", "role"}, &users)
+	pagination, err := function.Pagination(c, &model.User{}, func(query *gorm.DB) *gorm.DB {
+		return query.Where("role = ?", model.UserRoleClient)
+	}, []string{"name", "username", "role"}, &users)
 	if err != nil {
 		return dto.InternalServerError(c, "Failed to prepare pagination", nil)
 	}
 
 	result := make([]map[string]any, 0, len(users))
 	for i := range users {
-		result = append(result, users[i].Map())
+		user := users[i].Map()
+		result = append(result, user)
 	}
 
 	return dto.OK(c, "Success get users", fiber.Map{
@@ -281,7 +285,7 @@ func BulkRemove(c *fiber.Ctx) error {
 		return dto.BadRequest(c, "No IDs provided", nil)
 	}
 
-	// Filter out self and is_fu users
+	// Filter out self
 	validIDs := make([]string, 0, len(req.IDs))
 	for _, idStr := range req.IDs {
 		id, err := uuid.Parse(idStr)
@@ -292,12 +296,11 @@ func BulkRemove(c *fiber.Ctx) error {
 		if id.String() == currentUser.ID.String() {
 			continue
 		}
-		// Skip is_fu users
 		var user model.User
-		if err := variable.Db.First(&user, "id = ?", id.String()).Error; err != nil {
-			continue
-		}
-		if user.IsFu {
+		if err := variable.Db.
+			Where("id = ? AND role = ?", id.String(), model.UserRoleClient).
+			First(&user).
+			Error; err != nil {
 			continue
 		}
 		validIDs = append(validIDs, id.String())

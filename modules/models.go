@@ -20,6 +20,7 @@ func Models() []interface{} {
 		&user.User{},
 		&role.RoleDivision{},
 		&role.Role{},
+		&role.RoleUser{},
 		&rule.Rule{},
 		&notification.Notification{},
 		&setting.Setting{},

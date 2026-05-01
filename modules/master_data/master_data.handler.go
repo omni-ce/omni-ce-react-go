@@ -12,7 +12,7 @@ import (
 
 func GetPaginate(c *fiber.Ctx) error {
 	items := make([]model.MasterData, 0)
-	pagination, err := function.Pagination(c, &model.MasterData{}, []string{"category", "key", "value"}, &items)
+	pagination, err := function.Pagination(c, &model.MasterData{}, nil, []string{"category", "key", "value"}, &items)
 	if err != nil {
 		return dto.InternalServerError(c, "Failed to prepare pagination", nil)
 	}

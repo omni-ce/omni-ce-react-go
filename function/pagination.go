@@ -32,7 +32,7 @@ func (p *PaginationResult) Meta() fiber.Map {
 	}
 }
 
-func Pagination(c *fiber.Ctx, model interface{}, search []string, destination interface{}) (*PaginationResult, error) {
+func Pagination(c *fiber.Ctx, model interface{}, callback func(*gorm.DB) *gorm.DB, search []string, destination interface{}) (*PaginationResult, error) {
 	page := c.QueryInt("page", 1)
 	limit := c.QueryInt("limit", 10)
 	keyword := strings.TrimSpace(c.Query("search", ""))
@@ -91,6 +91,11 @@ func Pagination(c *fiber.Ctx, model interface{}, search []string, destination in
 		Count(&total).
 		Error; err != nil {
 		return nil, err
+	}
+
+	// disini callback query nya
+	if callback != nil {
+		query = callback(query)
 	}
 
 	offset := (page - 1) * limit

@@ -112,7 +112,7 @@ func Create(c *fiber.Ctx) error {
 
 func GetPaginate(c *fiber.Ctx) error {
 	roles := make([]model.Role, 0)
-	pagination, err := function.Pagination(c, &model.Role{}, []string{"name", "description"}, &roles)
+	pagination, err := function.Pagination(c, &model.Role{}, nil, []string{"name", "description"}, &roles)
 	if err != nil {
 		return dto.InternalServerError(c, "Failed to prepare pagination", nil)
 	}

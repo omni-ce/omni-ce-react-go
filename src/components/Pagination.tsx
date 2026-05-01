@@ -275,7 +275,7 @@ function DebouncedInput({
         .finally(() => {
           setLoading(false);
         });
-    }, 3000);
+    }, 1500);
 
     return () => {
       clearTimeout(timer);
@@ -423,15 +423,6 @@ const Pagination = forwardRef(function PaginationInner<T>(
     return false;
   };
 
-  const isRowFu = (row: T): boolean => {
-    return (
-      typeof row === "object" &&
-      row !== null &&
-      "is_fu" in row &&
-      Boolean((row as Record<string, unknown>).is_fu)
-    );
-  };
-
   // ─── Toggle is_active ────────────────────────────────────────────
 
   const handleToggleActive = async (row: T) => {
@@ -468,8 +459,6 @@ const Pagination = forwardRef(function PaginationInner<T>(
       strict: true,
       align: "left",
       render: (row) => {
-        if (isRowFu(row)) return null;
-
         return (
           <div className="flex items-center gap-1">
             {useIsActive && (
@@ -512,7 +501,6 @@ const Pagination = forwardRef(function PaginationInner<T>(
       strict: true,
       align: "center",
       render: (row) => {
-        if (isRowFu(row)) return null;
         const id = getRowId(row);
         return (
           <input
@@ -800,20 +788,14 @@ const Pagination = forwardRef(function PaginationInner<T>(
 
   // ─── Bulk select helpers ──────────────────────────────────────────
 
-  // Get checkable rows (exclude is_fu)
-  const checkableRows = useMemo(() => {
-    return rows.filter((row) => !isRowFu(row));
-  }, [rows]);
-
   const isAllChecked =
-    checkableRows.length > 0 &&
-    checkableRows.every((row) => selectedIds.has(getRowId(row)));
+    rows.length > 0 && rows.every((row) => selectedIds.has(getRowId(row)));
 
   const toggleSelectAll = () => {
     if (isAllChecked) {
       setSelectedIds(new Set());
     } else {
-      const ids = new Set(checkableRows.map((row) => getRowId(row)));
+      const ids = new Set(rows.map((row) => getRowId(row)));
       setSelectedIds(ids);
     }
   };

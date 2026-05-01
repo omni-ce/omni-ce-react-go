@@ -1,5 +1,3 @@
-export type UserRole = "su" | "user";
-
 export interface User {
   id?: string;
   // auth
@@ -9,8 +7,7 @@ export interface User {
   name: string;
   avatar?: string;
   phone_number?: string;
-  role: UserRole;
-  is_fu: boolean; // first user
+  roles: string[];
   is_active: boolean;
   created_at: string;
 }
