@@ -9,11 +9,15 @@ import Pagination, {
   type PaginationHandle,
 } from "@/components/Pagination";
 import BlankUser from "@/assets/blank-user.svg";
+import { usePermission } from "@/hooks/usePermission";
+import RulePermissionPage from "@/pages/error/RulePermissionPage";
 
 interface Props {
   ruleKey?: string;
 }
 export default function UsersPage({ ruleKey }: Props) {
+  const perm = usePermission(ruleKey);
+
   const paginationRef = useRef<PaginationHandle>(null);
   const { languageCode, language } = useLanguageStore();
 
@@ -142,6 +146,7 @@ export default function UsersPage({ ruleKey }: Props) {
     [languageCode, language],
   );
 
+  if (!perm.canRead) return <RulePermissionPage />;
   return (
     <div className="space-y-6">
       {/* Header */}

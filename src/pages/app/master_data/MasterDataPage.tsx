@@ -7,11 +7,15 @@ import Pagination, {
   type PaginationHandle,
 } from "@/components/Pagination";
 import type { MasterDataItem } from "@/services/master_data.service";
+import { usePermission } from "@/hooks/usePermission";
+import RulePermissionPage from "@/pages/error/RulePermissionPage";
 
 interface Props {
   ruleKey?: string;
 }
 export default function MasterDataPage({ ruleKey }: Props) {
+  const perm = usePermission(ruleKey);
+
   const paginationRef = useRef<PaginationHandle>(null);
   const { languageCode, language } = useLanguageStore();
 
@@ -78,6 +82,7 @@ export default function MasterDataPage({ ruleKey }: Props) {
     [languageCode, language],
   );
 
+  if (!perm.canRead) return <RulePermissionPage />;
   return (
     <div className="space-y-6">
       {/* Header */}

@@ -29,7 +29,6 @@ import { useNotificationStore } from "@/stores/notificationStore";
 import { roleService } from "@/services/role.service";
 import RoleStepper from "@/components/RoleStepper";
 import { getSocket } from "@/lib/socket";
-import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import {
   Dialog,
   DialogContent,
@@ -432,34 +431,7 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
 
         {/* Page content */}
         <main className="flex-1 min-h-0 p-4 lg:p-6 overflow-y-auto overflow-x-hidden">
-          {(() => {
-            // Find the current sidebar link by matching path
-            const currentPath = location.pathname.replace("/app/", "");
-            const currentLink = sidebarLinks.find(
-              (link) => link.path === currentPath,
-            );
-
-            // If it's a strict page and user is NOT su, check read permission
-            if (
-              currentLink?.strict &&
-              user?.role !== "su" &&
-              role_selected
-            ) {
-              const roleId = Number(role_selected.role_id);
-              const hasRead = rules.some(
-                (r) =>
-                  r.role_id === roleId &&
-                  r.key === currentLink.path &&
-                  r.action === "read" &&
-                  r.state === true,
-              );
-              if (!hasRead) {
-                return <RulePermissionPage />;
-              }
-            }
-
-            return <Outlet />;
-          })()}
+          <Outlet />
         </main>
       </div>
     </div>

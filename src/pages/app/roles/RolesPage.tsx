@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { useLanguageStore } from "@/stores/languageStore";
 import { usePermission } from "@/hooks/usePermission";
+import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -33,6 +34,7 @@ interface Props {
 }
 export default function RolesPage({ ruleKey }: Props) {
   const perm = usePermission(ruleKey);
+
   const { languageCode, language } = useLanguageStore();
   const [divisions, setDivisions] = useState<DivisionGroup[]>([]);
   const [rules, setRules] = useState<Rule[]>([]);
@@ -149,8 +151,8 @@ export default function RolesPage({ ruleKey }: Props) {
   }, []);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    if (perm.canRead) fetchData();
+  }, [perm, fetchData]);
 
   const getRuleState = useCallback(
     (roleId: number, menuKey: string, action: string): boolean => {
@@ -405,6 +407,8 @@ export default function RolesPage({ ruleKey }: Props) {
       n.has(id) ? n.delete(id) : n.add(id);
       return n;
     });
+
+  if (!perm.canRead) return <RulePermissionPage />;
 
   if (isLoading)
     return (
