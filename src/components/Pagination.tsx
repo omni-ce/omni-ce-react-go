@@ -96,6 +96,7 @@ export interface PaginationField {
   col?: number;
   ref?: string;
   debounce?: string;
+  strict?: boolean;
   children?: PaginationField[];
 }
 
@@ -856,6 +857,13 @@ const Pagination = forwardRef(function PaginationInner<T>(
       if (field.type === "array") {
         const arr = (formData[field.key] || []) as Record<string, unknown>[];
         if (field.required && arr.length === 0) return false;
+        if (field.minLength !== undefined && arr.length < field.minLength)
+          return false;
+        if (field.strict) {
+          const stringified = arr.map((item) => JSON.stringify(item));
+          const unique = new Set(stringified);
+          if (unique.size !== arr.length) return false;
+        }
         if (field.children) {
           for (const item of arr) {
             for (const child of field.children) {
