@@ -28,9 +28,9 @@ import {
 } from "react-icons/hi2";
 
 interface Props {
-  key: string;
+  ruleKey?: string;
 }
-export default function RolesPage({ key }: Props) {
+export default function RolesPage({ ruleKey }: Props) {
   const { languageCode, language } = useLanguageStore();
   const [divisions, setDivisions] = useState<DivisionGroup[]>([]);
   const [rules, setRules] = useState<Rule[]>([]);

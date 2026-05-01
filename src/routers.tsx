@@ -45,7 +45,7 @@ export const sidebarLinks: ISidebarLink[] = [
   {
     label: { id: "Peran", en: "Roles" },
     path: "roles",
-    element: <RolesPage key="roles" />,
+    element: <RolesPage ruleKey="roles" />,
     strict: true,
     icon: HiOutlineShieldCheck,
   },
@@ -53,7 +53,7 @@ export const sidebarLinks: ISidebarLink[] = [
   {
     label: { id: "Pengguna", en: "Users" },
     path: "users",
-    element: <UsersPage key="users" />,
+    element: <UsersPage ruleKey="users" />,
     strict: true,
     icon: HiOutlineUser,
   },
@@ -61,7 +61,7 @@ export const sidebarLinks: ISidebarLink[] = [
   {
     label: { id: "Data Master", en: "Master Data" },
     path: "master-data",
-    element: <MasterDataPage key="master-data" />,
+    element: <MasterDataPage ruleKey="master-data" />,
     strict: true,
     icon: HiOutlineDatabase,
   },

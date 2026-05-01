@@ -9,9 +9,9 @@ import Pagination, {
 import type { MasterDataItem } from "@/services/master_data.service";
 
 interface Props {
-  key: string;
+  ruleKey?: string;
 }
-export default function MasterDataPage({ key }: Props) {
+export default function MasterDataPage({ ruleKey }: Props) {
   const paginationRef = useRef<PaginationHandle>(null);
   const { languageCode, language } = useLanguageStore();
 
@@ -101,6 +101,7 @@ export default function MasterDataPage({ key }: Props) {
         columns={columns}
         module="master-data"
         fields={fields}
+        ruleKey={ruleKey}
       />
     </div>
   );

@@ -11,9 +11,9 @@ import Pagination, {
 import BlankUser from "@/assets/blank-user.svg";
 
 interface Props {
-  key: string;
+  ruleKey?: string;
 }
-export default function UsersPage({ key }: Props) {
+export default function UsersPage({ ruleKey }: Props) {
   const paginationRef = useRef<PaginationHandle>(null);
   const { languageCode, language } = useLanguageStore();
 
@@ -166,6 +166,7 @@ export default function UsersPage({ key }: Props) {
         columns={columns}
         fields={fields}
         useIsActive
+        ruleKey={ruleKey}
       />
     </div>
   );

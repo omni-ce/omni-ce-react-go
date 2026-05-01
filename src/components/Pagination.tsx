@@ -45,6 +45,13 @@ import {
 import { useLanguageStore } from "@/stores/languageStore";
 import satellite from "@/lib/satellite";
 import type { Response, WithPagination } from "@/types/response";
+import { usePermission } from "@/hooks/usePermission";
+
+import type {
+  DynamicFormFieldOption as PaginationFieldOption,
+  DynamicFormField as PaginationField,
+} from "@/components/DynamicForm";
+import DynamicForm from "@/components/DynamicForm";
 
 interface PaginationFetchParams {
   page: number;
@@ -85,14 +92,12 @@ export interface PaginationProps<T> {
   fields?: PaginationField[];
   useIsActive?: boolean;
   extraActions?: PaginationExtraAction<T>[];
+  ruleKey?: string;
 }
 
 export interface PaginationHandle {
   reload: () => Promise<void>;
 }
-
-import type { DynamicFormFieldOption as PaginationFieldOption, DynamicFormField as PaginationField } from "./DynamicForm";
-import DynamicForm from "./DynamicForm";
 
 export type { PaginationFieldOption, PaginationField };
 const Pagination = forwardRef(function PaginationInner<T>(
@@ -103,9 +108,11 @@ const Pagination = forwardRef(function PaginationInner<T>(
     fields,
     useIsActive,
     extraActions,
+    ruleKey,
   }: PaginationProps<T>,
   ref: Ref<PaginationHandle>,
 ) {
+  const perm = usePermission(ruleKey);
   const { language } = useLanguageStore();
   const [rows, setRows] = useState<T[]>([]);
   const [search, setSearch] = useState("");
@@ -216,78 +223,114 @@ const Pagination = forwardRef(function PaginationInner<T>(
   const mergedColumns = useMemo<PaginationColumn<T>[]>(() => {
     if (!hasCrud || !fields) return columns;
 
-    const actionColumn: PaginationColumn<T> = {
-      key: "__action__",
-      header: language({ id: "AKSI", en: "ACTION" }),
-      strict: true,
-      align: "left",
-      render: (row) => {
-        return (
-          <div className="flex items-center gap-1">
-            {useIsActive && (
-              <Switch
-                checked={getRowIsActive(row)}
-                onCheckedChange={() => handleToggleActive(row)}
-                disabled={togglingActiveId === getRowId(row)}
-              />
-            )}
-            {extraActions?.map((action, idx) => (
-              <Button
-                key={`ea-${idx}`}
-                variant="ghost"
-                size="icon"
-                onClick={() => setExtraActionState({ actionIndex: idx, row })}
-              >
-                {action.icon}
-              </Button>
-            ))}
-            <Button variant="ghost" size="icon" onClick={() => openEdit(row)}>
-              <HiOutlinePencil size={16} />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => openDelete(row)}
-              className="text-neon-red hover:bg-neon-red/10"
-            >
-              <HiOutlineTrash size={16} />
-            </Button>
-          </div>
-        );
-      },
-    };
+    // Check if we need the action column at all
+    const showToggle = useIsActive && perm.canSet;
+    const showEdit = perm.canUpdate;
+    const showDelete = perm.canDelete;
+    const hasAnyAction =
+      showToggle ||
+      showEdit ||
+      showDelete ||
+      (extraActions && extraActions.length > 0);
 
-    // Checkbox column for multi-select
-    const checkboxColumn: PaginationColumn<T> = {
-      key: "__checkbox__",
-      header: "#",
-      strict: true,
-      align: "center",
-      render: (row) => {
-        const id = getRowId(row);
-        return (
-          <input
-            type="checkbox"
-            checked={selectedIdsRef.current.has(id)}
-            onChange={(e) => {
-              setSelectedIds((prev) => {
-                const next = new Set(prev);
-                if (e.target.checked) {
-                  next.add(id);
-                } else {
-                  next.delete(id);
-                }
-                return next;
-              });
-            }}
-            className="h-4 w-4 rounded border-dark-500 bg-dark-900/60 text-accent-500 focus:ring-accent-500/30 cursor-pointer accent-accent-500"
-          />
-        );
-      },
-    };
+    const result: PaginationColumn<T>[] = [];
 
-    return [actionColumn, checkboxColumn, ...columns];
-  }, [columns, hasCrud, fields, language, useIsActive, togglingActiveId]);
+    if (hasAnyAction) {
+      const actionColumn: PaginationColumn<T> = {
+        key: "__action__",
+        header: language({ id: "AKSI", en: "ACTION" }),
+        strict: true,
+        align: "left",
+        render: (row) => {
+          return (
+            <div className="flex items-center gap-1">
+              {showToggle && (
+                <Switch
+                  checked={getRowIsActive(row)}
+                  onCheckedChange={() => handleToggleActive(row)}
+                  disabled={togglingActiveId === getRowId(row)}
+                />
+              )}
+              {extraActions?.map((action, idx) => (
+                <Button
+                  key={`ea-${idx}`}
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setExtraActionState({ actionIndex: idx, row })}
+                >
+                  {action.icon}
+                </Button>
+              ))}
+              {showEdit && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => openEdit(row)}
+                >
+                  <HiOutlinePencil size={16} />
+                </Button>
+              )}
+              {showDelete && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => openDelete(row)}
+                  className="text-neon-red hover:bg-neon-red/10"
+                >
+                  <HiOutlineTrash size={16} />
+                </Button>
+              )}
+            </div>
+          );
+        },
+      };
+      result.push(actionColumn);
+    }
+
+    // Checkbox column for multi-select (only if delete is allowed)
+    if (perm.canDelete) {
+      const checkboxColumn: PaginationColumn<T> = {
+        key: "__checkbox__",
+        header: "#",
+        strict: true,
+        align: "center",
+        render: (row) => {
+          const id = getRowId(row);
+          return (
+            <input
+              type="checkbox"
+              checked={selectedIdsRef.current.has(id)}
+              onChange={(e) => {
+                setSelectedIds((prev) => {
+                  const next = new Set(prev);
+                  if (e.target.checked) {
+                    next.add(id);
+                  } else {
+                    next.delete(id);
+                  }
+                  return next;
+                });
+              }}
+              className="h-4 w-4 rounded border-dark-500 bg-dark-900/60 text-accent-500 focus:ring-accent-500/30 cursor-pointer accent-accent-500"
+            />
+          );
+        },
+      };
+      result.push(checkboxColumn);
+    }
+
+    return [...result, ...columns];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    columns,
+    hasCrud,
+    fields,
+    language,
+    useIsActive,
+    togglingActiveId,
+    perm,
+    extraActions,
+  ]);
 
   // Derive searchable field keys from columns with search: true
   // Stabilize reference: only recalculate when the actual keys change
@@ -717,7 +760,7 @@ const Pagination = forwardRef(function PaginationInner<T>(
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <CardTitle className="text-base">{title}</CardTitle>
             <div className="flex items-center gap-3">
-              {hasCrud && (
+              {hasCrud && perm.canCreate && (
                 <Button
                   onClick={openCreate}
                   className="flex items-center gap-2"
@@ -881,7 +924,7 @@ const Pagination = forwardRef(function PaginationInner<T>(
           </Table>
 
           {/* Bulk delete button */}
-          {hasCrud && selectedIds.size > 0 && (
+          {hasCrud && perm.canDelete && selectedIds.size > 0 && (
             <div className="mt-3">
               <Button
                 variant="destructive"
