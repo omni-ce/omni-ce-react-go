@@ -5,6 +5,7 @@ import (
 	"react-go/modules/apikey"
 	"react-go/modules/auth"
 	"react-go/modules/dashboard"
+	"react-go/modules/debounce"
 	"react-go/modules/example"
 	"react-go/modules/master_data"
 	"react-go/modules/notification"
@@ -56,4 +57,7 @@ func SetupRoutes(app *fiber.App, api fiber.Router) {
 	// Option
 	option.PublicRoute(api.Group("/option"))
 	option.ProtectedRoute(api.Group("/option", middlewares.UseToken))
+
+	// Debounce
+	debounce.ProtectedRoute(api.Group("/debounce", middlewares.UseToken))
 }

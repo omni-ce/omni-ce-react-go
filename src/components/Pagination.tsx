@@ -137,7 +137,10 @@ function DynamicSelect({
         if (!refVal) {
           setOpts([]);
           setDisabled(true);
-          if (prevRefVal.current !== undefined && prevRefVal.current !== refVal) {
+          if (
+            prevRefVal.current !== undefined &&
+            prevRefVal.current !== refVal
+          ) {
             onChangeRef.current("");
           }
           prevRefVal.current = refVal;
@@ -163,7 +166,9 @@ function DynamicSelect({
     let isMounted = true;
     setLoading(true);
     satellite
-      .get<Response<{ key: any; value: string }[]>>(`/api/option/${endpoint}`)
+      .get<Response<{ key: unknown; value: string }[]>>(
+        `/api/option/${endpoint}`,
+      )
       .then((res) => {
         if (isMounted) {
           const data = res.data.data || [];
@@ -551,7 +556,11 @@ const Pagination = forwardRef(function PaginationInner<T>(
           const val = (row as Record<string, unknown>)[field.key];
           data[field.key] = val != null ? String(val) : "";
         } else {
-          if (field.type === "select" && Array.isArray(field.options) && field.options.length > 0) {
+          if (
+            field.type === "select" &&
+            Array.isArray(field.options) &&
+            field.options.length > 0
+          ) {
             data[field.key] = field.options[0].value;
           } else {
             data[field.key] = "";
@@ -1072,7 +1081,9 @@ const Pagination = forwardRef(function PaginationInner<T>(
               {fields.map((field) => (
                 <div
                   key={field.key}
-                  style={{ gridColumn: `span ${field.col || 12} / span ${field.col || 12}` }}
+                  style={{
+                    gridColumn: `span ${field.col || 12} / span ${field.col || 12}`,
+                  }}
                 >
                   <Label
                     htmlFor={`field-${field.key}`}
