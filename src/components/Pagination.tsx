@@ -82,10 +82,12 @@ export interface PaginationField {
   key: string;
   label: string;
   type: "text" | "email" | "number" | "password" | "select" | "textarea";
-  options?: PaginationFieldOption[];
+  options?: PaginationFieldOption[] | string;
   required?: boolean;
   minLength?: number;
   maxLength?: number;
+  col?: number;
+  ref?: string;
 }
 
 export interface PaginationExtraAction<T> {
@@ -104,6 +106,104 @@ interface PaginationProps<T> {
 
 export interface PaginationHandle {
   reload: () => Promise<void>;
+}
+
+function DynamicSelect({
+  field,
+  formData,
+  onChange,
+}: {
+  field: PaginationField;
+  formData: Record<string, string>;
+  onChange: (val: string) => void;
+}) {
+  const [opts, setOpts] = useState<PaginationFieldOption[]>([]);
+  const [disabled, setDisabled] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const onChangeRef = useRef(onChange);
+  useEffect(() => {
+    onChangeRef.current = onChange;
+  }, [onChange]);
+
+  const prevRefVal = useRef<string | undefined>(undefined);
+
+  useEffect(() => {
+    let endpoint = "";
+    if (typeof field.options === "string") {
+      endpoint = field.options;
+      if (field.ref) {
+        const refVal = formData[field.ref];
+        if (!refVal) {
+          setOpts([]);
+          setDisabled(true);
+          if (prevRefVal.current !== undefined && prevRefVal.current !== refVal) {
+            onChangeRef.current("");
+          }
+          prevRefVal.current = refVal;
+          return;
+        }
+        setDisabled(false);
+        endpoint = endpoint.replace(`{${field.ref}}`, String(refVal));
+        // We clear the value whenever the parent dependency changes,
+        // so we don't accidentally submit a stale child value.
+        if (prevRefVal.current !== undefined && prevRefVal.current !== refVal) {
+          onChangeRef.current("");
+        }
+        prevRefVal.current = refVal;
+      }
+    } else if (Array.isArray(field.options)) {
+      setOpts(field.options);
+      setDisabled(false);
+      return;
+    } else {
+      return;
+    }
+
+    let isMounted = true;
+    setLoading(true);
+    satellite
+      .get<Response<{ key: any; value: string }[]>>(`/api/option/${endpoint}`)
+      .then((res) => {
+        if (isMounted) {
+          const data = res.data.data || [];
+          const mapped = data.map((d) => ({
+            value: String(d.key),
+            label: d.value,
+          }));
+          setOpts(mapped);
+        }
+      })
+      .catch(() => {
+        if (isMounted) setOpts([]);
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [field.options, field.ref, field.ref ? formData[field.ref] : undefined]);
+
+  return (
+    <Select
+      id={`field-${field.key}`}
+      className="mt-1.5"
+      value={formData[field.key] ?? ""}
+      onChange={(e) => onChange(e.target.value)}
+      disabled={disabled || loading}
+    >
+      <option value="" disabled hidden>
+        {loading ? "Loading..." : "Pilih..."}
+      </option>
+      {opts.map((opt) => (
+        <option key={opt.value} value={opt.value}>
+          {opt.label}
+        </option>
+      ))}
+    </Select>
+  );
 }
 
 const Pagination = forwardRef(function PaginationInner<T>(
@@ -451,10 +551,11 @@ const Pagination = forwardRef(function PaginationInner<T>(
           const val = (row as Record<string, unknown>)[field.key];
           data[field.key] = val != null ? String(val) : "";
         } else {
-          data[field.key] =
-            field.type === "select" && field.options?.length
-              ? field.options[0].value
-              : "";
+          if (field.type === "select" && Array.isArray(field.options) && field.options.length > 0) {
+            data[field.key] = field.options[0].value;
+          } else {
+            data[field.key] = "";
+          }
         }
       }
       return data;
@@ -967,9 +1068,12 @@ const Pagination = forwardRef(function PaginationInner<T>(
                   : language({ id: "Tambah Data", en: "Add Data" })}
               </DialogTitle>
             </DialogHeader>
-            <div className="space-y-4">
+            <div className="grid grid-cols-12 gap-4">
               {fields.map((field) => (
-                <div key={field.key}>
+                <div
+                  key={field.key}
+                  style={{ gridColumn: `span ${field.col || 12} / span ${field.col || 12}` }}
+                >
                   <Label
                     htmlFor={`field-${field.key}`}
                     required={field.required}
@@ -977,23 +1081,13 @@ const Pagination = forwardRef(function PaginationInner<T>(
                     {field.label}
                   </Label>
                   {field.type === "select" ? (
-                    <Select
-                      id={`field-${field.key}`}
-                      className="mt-1.5"
-                      value={formData[field.key] ?? ""}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          [field.key]: e.target.value,
-                        }))
+                    <DynamicSelect
+                      field={field}
+                      formData={formData}
+                      onChange={(val) =>
+                        setFormData((prev) => ({ ...prev, [field.key]: val }))
                       }
-                    >
-                      {field.options?.map((opt) => (
-                        <option key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </option>
-                      ))}
-                    </Select>
+                    />
                   ) : field.type === "textarea" ? (
                     <textarea
                       id={`field-${field.key}`}

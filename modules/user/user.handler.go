@@ -16,7 +16,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func GetMe(on string) func(*fiber.Ctx) error {
+func Me(on string) func(*fiber.Ctx) error {
 	return func(c *fiber.Ctx) error {
 		user, err := function.JwtGetUser(c)
 		if err != nil {
@@ -29,45 +29,43 @@ func GetMe(on string) func(*fiber.Ctx) error {
 	}
 }
 
+func ChangePassword(on string) func(c *fiber.Ctx) error {
+	return func(c *fiber.Ctx) error {
+		existing, err := function.JwtGetUser(c)
+		if err != nil {
+			return dto.Unauthorized(c, "Unauthorized", nil)
+		}
+
+		var body struct {
+			PreviousPassword string `json:"previous_password"`
+			Password         string `json:"password"`
+		}
+		if err := c.BodyParser(&body); err != nil {
+			return dto.BadRequest(c, "Invalid request body", nil)
+		}
+
+		if err := variable.Db.
+			Model(&existing).
+			Update("password", hash.Password(body.Password)).
+			Error; err != nil {
+			return dto.InternalServerError(c, "Failed to update user", nil)
+		}
+
+		// Send notification to user about password change
+		socket.SendNotification(existing.ID.String(), notification.Notification{
+			Type:    notification.NotificationTypeWarning,
+			Title:   "Your password was changed",
+			Message: "An administrator has changed your account password.",
+		})
+
+		return dto.OK(c, "Success update user", fiber.Map{
+			"user": existing.Map(),
+		})
+	}
+}
+
 // TODO: Management
-func GetPaginate(c *fiber.Ctx) error {
-	users := make([]model.User, 0)
-	pagination, err := function.Pagination(c, &model.User{}, []string{"name", "username", "role"}, &users)
-	if err != nil {
-		return dto.InternalServerError(c, "Failed to prepare pagination", nil)
-	}
-
-	result := make([]map[string]any, 0, len(users))
-	for i := range users {
-		result = append(result, users[i].Map())
-	}
-
-	return dto.OK(c, "Success get users", fiber.Map{
-		"rows":       result,
-		"pagination": pagination.Meta(),
-	})
-}
-
-func GetList(c *fiber.Ctx) error {
-	users := make([]model.User, 0)
-	if err := variable.Db.
-		Order("created_at desc").
-		Find(&users).
-		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to fetch users", nil)
-	}
-
-	result := make([]map[string]any, 0, len(users))
-	for i := range users {
-		result = append(result, users[i].Map())
-	}
-
-	return dto.OK(c, "Success get users", fiber.Map{
-		"users": result,
-	})
-}
-
-func CreateUser(c *fiber.Ctx) error {
+func Create(c *fiber.Ctx) error {
 	// Only SU can create users
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
@@ -110,6 +108,24 @@ func CreateUser(c *fiber.Ctx) error {
 	})
 }
 
+func Paginate(c *fiber.Ctx) error {
+	users := make([]model.User, 0)
+	pagination, err := function.Pagination(c, &model.User{}, []string{"name", "username", "role"}, &users)
+	if err != nil {
+		return dto.InternalServerError(c, "Failed to prepare pagination", nil)
+	}
+
+	result := make([]map[string]any, 0, len(users))
+	for i := range users {
+		result = append(result, users[i].Map())
+	}
+
+	return dto.OK(c, "Success get users", fiber.Map{
+		"rows":       result,
+		"pagination": pagination.Meta(),
+	})
+}
+
 func handleAvatarUpload(c *fiber.Ctx, currentAvatar string, userID string) (string, error) {
 	avatarFile, _ := c.FormFile("avatar")
 	if avatarFile == nil {
@@ -146,7 +162,7 @@ func handleAvatarUpload(c *fiber.Ctx, currentAvatar string, userID string) (stri
 	return newFilename, nil
 }
 
-func EditUser(c *fiber.Ctx) error {
+func Edit(c *fiber.Ctx) error {
 	idParam := c.Params("id")
 	id, err := uuid.Parse(idParam)
 	if err != nil {
@@ -210,150 +226,6 @@ func EditUser(c *fiber.Ctx) error {
 	})
 
 	return dto.OK(c, "Success update user", fiber.Map{
-		"user": existing.Map(),
-	})
-}
-
-func ChangePassword(on string) func(c *fiber.Ctx) error {
-	return func(c *fiber.Ctx) error {
-		idParam := c.Params("id")
-		id, err := uuid.Parse(idParam)
-		if err != nil {
-			return dto.BadRequest(c, "Invalid user id", nil)
-		}
-
-		type ChangePasswordRequest struct {
-			PreviousPassword string `json:"previous_password"`
-			Password         string `json:"password"`
-		}
-
-		var req ChangePasswordRequest
-		if err := c.BodyParser(&req); err != nil {
-			return dto.BadRequest(c, "Invalid request body", nil)
-		}
-
-		var existing model.User
-		if err := variable.Db.
-			First(&existing, "id = ?", id.String()).
-			Error; err != nil {
-			return dto.NotFound(c, "User not found", nil)
-		}
-
-		if err := variable.Db.
-			Model(&existing).
-			Update("password", hash.Password(req.Password)).
-			Error; err != nil {
-			return dto.InternalServerError(c, "Failed to update user", nil)
-		}
-		if err := variable.Db.
-			First(&existing, "id = ?", id.String()).
-			Error; err != nil {
-			return dto.InternalServerError(c, "Failed to fetch updated user", nil)
-		}
-
-		// Send notification to user about password change
-		socket.SendNotification(id.String(), notification.Notification{
-			Type:    notification.NotificationTypeWarning,
-			Title:   "Your password was changed",
-			Message: "An administrator has changed your account password.",
-		})
-
-		return dto.OK(c, "Success update user", fiber.Map{
-			"user": existing.Map(),
-		})
-	}
-}
-
-func SetActive(c *fiber.Ctx) error {
-	idParam := c.Params("id")
-	id, err := uuid.Parse(idParam)
-	if err != nil {
-		return dto.BadRequest(c, "Invalid user id", nil)
-	}
-
-	// Only SU can toggle active status
-	currentUser, err := function.JwtGetUser(c)
-	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
-	}
-	if currentUser.Role != model.UserRoleAdmin {
-		return dto.Forbidden(c, "Only super admin can toggle user status", nil)
-	}
-
-	var existing model.User
-	if err := variable.Db.
-		First(&existing, "id = ?", id.String()).
-		Error; err != nil {
-		return dto.NotFound(c, "User not found", nil)
-	}
-
-	// Prevent deactivating self
-	if existing.ID == currentUser.ID {
-		return dto.BadRequest(c, "Cannot deactivate yourself", nil)
-	}
-
-	newStatus := !existing.IsActive
-	if err := variable.Db.
-		Model(&existing).
-		Update("is_active", newStatus).
-		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to toggle user status", nil)
-	}
-
-	return dto.OK(c, "Success toggle user status", fiber.Map{
-		"user": existing.Map(),
-	})
-}
-
-func RoleSwitch(c *fiber.Ctx) error {
-	idParam := c.Params("id")
-	id, err := uuid.Parse(idParam)
-	if err != nil {
-		return dto.BadRequest(c, "Invalid user id", nil)
-	}
-
-	// Only SU can switch roles
-	currentUser, err := function.JwtGetUser(c)
-	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
-	}
-	if currentUser.Role != model.UserRoleAdmin {
-		return dto.Forbidden(c, "Only super admin can switch user roles", nil)
-	}
-
-	var existing model.User
-	if err := variable.Db.
-		First(&existing, "id = ?", id.String()).
-		Error; err != nil {
-		return dto.NotFound(c, "User not found", nil)
-	}
-
-	newRole := model.UserRoleClient
-	if strings.EqualFold(existing.Role, model.UserRoleClient) {
-		newRole = model.UserRoleAdmin
-	}
-
-	if err := variable.Db.
-		Model(&existing).
-		Update("role", newRole).
-		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to switch role", nil)
-	}
-
-	if err := variable.Db.
-		First(&existing, "id = ?", id.String()).
-		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to fetch updated user", nil)
-	}
-
-	// Send notification to user about role change
-	socket.SendNotification(id.String(), notification.Notification{
-		Type:    notification.NotificationTypeSystem,
-		Title:   "Your role has been changed",
-		Message: "An administrator has changed your role to " + newRole + ".",
-	})
-
-	return dto.OK(c, "Success switch role", fiber.Map{
 		"user": existing.Map(),
 	})
 }
@@ -443,5 +315,93 @@ func BulkRemove(c *fiber.Ctx) error {
 
 	return dto.OK(c, "Success bulk delete users", fiber.Map{
 		"deleted_count": len(validIDs),
+	})
+}
+
+func SetActive(c *fiber.Ctx) error {
+	idParam := c.Params("id")
+	id, err := uuid.Parse(idParam)
+	if err != nil {
+		return dto.BadRequest(c, "Invalid user id", nil)
+	}
+
+	// Only SU can toggle active status
+	currentUser, err := function.JwtGetUser(c)
+	if err != nil {
+		return dto.Unauthorized(c, "Unauthorized", nil)
+	}
+	if currentUser.Role != model.UserRoleAdmin {
+		return dto.Forbidden(c, "Only super admin can toggle user status", nil)
+	}
+
+	var existing model.User
+	if err := variable.Db.
+		First(&existing, "id = ?", id.String()).
+		Error; err != nil {
+		return dto.NotFound(c, "User not found", nil)
+	}
+
+	// Prevent deactivating self
+	if existing.ID == currentUser.ID {
+		return dto.BadRequest(c, "Cannot deactivate yourself", nil)
+	}
+
+	newStatus := !existing.IsActive
+	if err := variable.Db.
+		Model(&existing).
+		Update("is_active", newStatus).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to toggle user status", nil)
+	}
+
+	return dto.OK(c, "Success toggle user status", fiber.Map{
+		"user": existing.Map(),
+	})
+}
+
+func RoleSwitch(c *fiber.Ctx) error {
+	idParam := c.Params("id")
+	id, err := uuid.Parse(idParam)
+	if err != nil {
+		return dto.BadRequest(c, "Invalid user id", nil)
+	}
+
+	// Only SU can switch roles
+	currentUser, err := function.JwtGetUser(c)
+	if err != nil {
+		return dto.Unauthorized(c, "Unauthorized", nil)
+	}
+	if currentUser.Role != model.UserRoleAdmin {
+		return dto.Forbidden(c, "Only super admin can switch user roles", nil)
+	}
+
+	var existing model.User
+	if err := variable.Db.
+		First(&existing, "id = ?", id.String()).
+		Error; err != nil {
+		return dto.NotFound(c, "User not found", nil)
+	}
+
+	newRole := model.UserRoleClient
+	if strings.EqualFold(existing.Role, model.UserRoleClient) {
+		newRole = model.UserRoleAdmin
+	}
+
+	if err := variable.Db.
+		Model(&existing).
+		Update("role", newRole).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to switch role", nil)
+	}
+
+	// Send notification to user about role change
+	socket.SendNotification(id.String(), notification.Notification{
+		Type:    notification.NotificationTypeSystem,
+		Title:   "Your role has been changed",
+		Message: "An administrator has changed your role to " + newRole + ".",
+	})
+
+	return dto.OK(c, "Success switch role", fiber.Map{
+		"user": existing.Map(),
 	})
 }

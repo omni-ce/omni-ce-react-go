@@ -8,8 +8,9 @@
 
 # Objectives
 
-- CRUD menu Users
+- CRUD menu Division (new)
 - CRUD menu Roles (new)
+- CRUD menu Users
 - CRUD menu Master Data (new)
 - Dapat notification jika user di edit oleh admin
 - Switch maintenance system (bisa diaktifkan / dimatikan)

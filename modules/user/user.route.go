@@ -5,13 +5,12 @@ import (
 )
 
 func ProtectedRoute(api fiber.Router) {
-	api.Get("/me", GetMe("management"))
-	api.Get("/list", GetList)
+	api.Get("/me", Me("management"))
 
 	// Pagination CRUD convention
-	api.Get("/paginate", GetPaginate)
-	api.Post("/create", CreateUser)
-	api.Put("/edit/:id", EditUser)
+	api.Post("/create", Create)
+	api.Get("/paginate", Paginate)
+	api.Put("/edit/:id", Edit)
 	api.Delete("/remove/:id", Remove)
 	api.Post("/bulk-remove", BulkRemove)
 	api.Patch("/set-active/:id", SetActive)
