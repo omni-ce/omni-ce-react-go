@@ -80,6 +80,9 @@ export default function NotificationPopup({
           setNotifications(data);
         } else {
           addNotification(data);
+          // play sound on /notification.mp3
+          const audio = new Audio("/notification.mp3");
+          audio.play();
         }
       });
       return () => {

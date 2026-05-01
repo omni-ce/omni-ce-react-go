@@ -112,7 +112,8 @@ export default function RolesPage() {
         key: link.path as string,
         label: language(link.label),
       }));
-  }, [language]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [languageCode, language]);
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
