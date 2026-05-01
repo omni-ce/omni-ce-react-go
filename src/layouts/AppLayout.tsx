@@ -26,6 +26,7 @@ import AppIconSvg from "@/assets/react_go.svg";
 import ControlButton from "@/components/ControlButton";
 import NotificationPopup from "@/components/NotificationPopup";
 import { useNotificationStore } from "@/stores/notificationStore";
+import { roleService } from "@/services/role.service";
 import RoleStepper from "@/components/RoleStepper";
 import {
   Dialog,
@@ -53,7 +54,8 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
   const { language } = useLanguageStore();
 
   const { isLoading, validateToken, logout, user } = useAuthStore();
-  const { role_selected, clearRoleSelected, setRoleSelected } = useRuleStore();
+  const { role_selected, clearRoleSelected, setRoleSelected, rules, setRules } =
+    useRuleStore();
 
   const [roleDialogOpen, setRoleDialogOpen] = useState(false);
 
@@ -110,6 +112,17 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
       navigate("/select-role", { replace: true });
     }
   }, [isLoading, user, role_selected, navigate]);
+
+  // Fetch rules for the selected role
+  useEffect(() => {
+    if (!user || user.role === "su" || !role_selected) return;
+    roleService
+      .getRules()
+      .then((res) => {
+        setRules(res.data.rows);
+      })
+      .catch(() => setRules([]));
+  }, [user, role_selected, setRules]);
 
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 1024px)"); // lg
@@ -228,7 +241,25 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
 
         {/* Navigation */}
         <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
-          {sidebarLinks.map((link) => {
+          {sidebarLinks
+            .filter((link) => {
+              // Always show non-strict links (e.g. Dashboard)
+              if (!link.strict) return true;
+              // SU sees everything
+              if (user?.role === "su") return true;
+              // For non-su, check if the selected role has "read" permission
+              if (!role_selected) return false;
+              const roleId = Number(role_selected.role_id);
+              const hasRead = rules.some(
+                (r) =>
+                  r.role_id === roleId &&
+                  r.key === link.path &&
+                  r.action === "read" &&
+                  r.state === true,
+              );
+              return hasRead;
+            })
+            .map((link) => {
             const isActive = location.pathname === `/app/${link.path}`;
             const Icon = link.icon;
             return (
