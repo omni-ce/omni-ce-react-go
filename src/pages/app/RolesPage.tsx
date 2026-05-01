@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { useLanguageStore } from "@/stores/languageStore";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -37,6 +37,7 @@ export default function RolesPage() {
 
   const [openDivisions, setOpenDivisions] = useState<Set<number>>(new Set());
   const [openRoles, setOpenRoles] = useState<Set<number>>(new Set());
+  const initialLoad = useRef(true);
 
   // Division dialog
   const [divDialogOpen, setDivDialogOpen] = useState(false);
@@ -127,10 +128,14 @@ export default function RolesPage() {
       setDivisions(divs);
       setRules(fetchedRules);
       setOriginalRules(fetchedRules);
-      setOpenDivisions(new Set(divs.map((d) => d.id)));
-      const rIds = new Set<number>();
-      divs.forEach((d) => d.roles.forEach((r) => rIds.add(r.id)));
-      setOpenRoles(rIds);
+
+      if (initialLoad.current) {
+        setOpenDivisions(new Set(divs.map((d) => d.id)));
+        const rIds = new Set<number>();
+        divs.forEach((d) => d.roles.forEach((r) => rIds.add(r.id)));
+        setOpenRoles(rIds);
+        initialLoad.current = false;
+      }
     } catch {
       /* silent */
     } finally {
@@ -610,7 +615,9 @@ export default function RolesPage() {
                                       onChange={() =>
                                         toggleCol(role.id, act.key)
                                       }
-                                      disabled={!role.is_active || !division.is_active}
+                                      disabled={
+                                        !role.is_active || !division.is_active
+                                      }
                                       className="w-3.5 h-3.5 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                                     />
                                   </div>
@@ -637,7 +644,9 @@ export default function RolesPage() {
                                       onChange={() =>
                                         toggleRow(role.id, menu.key)
                                       }
-                                      disabled={!role.is_active || !division.is_active}
+                                      disabled={
+                                        !role.is_active || !division.is_active
+                                      }
                                       className="w-3.5 h-3.5 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                                     />
                                     <span className="text-sm text-foreground font-medium">
@@ -659,7 +668,9 @@ export default function RolesPage() {
                                         onChange={() =>
                                           toggleRule(role.id, menu.key, act.key)
                                         }
-                                        disabled={!role.is_active || !division.is_active}
+                                        disabled={
+                                          !role.is_active || !division.is_active
+                                        }
                                         className="w-4 h-4 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
                                       />
                                     </div>
