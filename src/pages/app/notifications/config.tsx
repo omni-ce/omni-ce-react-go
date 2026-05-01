@@ -1,0 +1,55 @@
+import {
+  RiInformationLine,
+  RiCheckboxCircleLine,
+  RiAlertLine,
+  RiErrorWarningLine,
+  RiSettings3Line,
+} from "react-icons/ri";
+
+export const typeConfig = {
+  info: {
+    icon: RiInformationLine,
+    label: { id: "Info", en: "Info" },
+    color: "text-accent-400",
+    bg: "bg-accent-500/10",
+    border: "border-accent-500/20",
+    dot: "bg-accent-400",
+    badge: "bg-accent-500/15 text-accent-400",
+  },
+  success: {
+    icon: RiCheckboxCircleLine,
+    label: { id: "Berhasil", en: "Success" },
+    color: "text-neon-green",
+    bg: "bg-neon-green/10",
+    border: "border-neon-green/20",
+    dot: "bg-neon-green",
+    badge: "bg-neon-green/15 text-neon-green",
+  },
+  warning: {
+    icon: RiAlertLine,
+    label: { id: "Peringatan", en: "Warning" },
+    color: "text-neon-yellow",
+    bg: "bg-neon-yellow/10",
+    border: "border-neon-yellow/20",
+    dot: "bg-neon-yellow",
+    badge: "bg-neon-yellow/15 text-neon-yellow",
+  },
+  error: {
+    icon: RiErrorWarningLine,
+    label: { id: "Error", en: "Error" },
+    color: "text-neon-red",
+    bg: "bg-neon-red/10",
+    border: "border-neon-red/20",
+    dot: "bg-neon-red",
+    badge: "bg-neon-red/15 text-neon-red",
+  },
+  system: {
+    icon: RiSettings3Line,
+    label: { id: "Sistem", en: "System" },
+    color: "text-neon-cyan",
+    bg: "bg-neon-cyan/10",
+    border: "border-neon-cyan/20",
+    dot: "bg-neon-cyan",
+    badge: "bg-neon-cyan/15 text-neon-cyan",
+  },
+};

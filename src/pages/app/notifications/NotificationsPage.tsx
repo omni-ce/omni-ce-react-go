@@ -3,10 +3,6 @@ import {
   RiNotificationLine,
   RiCheckDoubleLine,
   RiInformationLine,
-  RiCheckboxCircleLine,
-  RiAlertLine,
-  RiErrorWarningLine,
-  RiSettings3Line,
   RiDeleteBinLine,
   RiFilterLine,
   RiCheckLine,
@@ -16,56 +12,8 @@ import { useLanguageStore } from "@/stores/languageStore";
 import { useNotificationStore } from "@/stores/notificationStore";
 import type { INotification } from "@/types/notification";
 import { formatTimestamp } from "@/utils/datetime";
-
-const typeConfig = {
-  info: {
-    icon: RiInformationLine,
-    label: { id: "Info", en: "Info" },
-    color: "text-accent-400",
-    bg: "bg-accent-500/10",
-    border: "border-accent-500/20",
-    dot: "bg-accent-400",
-    badge: "bg-accent-500/15 text-accent-400",
-  },
-  success: {
-    icon: RiCheckboxCircleLine,
-    label: { id: "Berhasil", en: "Success" },
-    color: "text-neon-green",
-    bg: "bg-neon-green/10",
-    border: "border-neon-green/20",
-    dot: "bg-neon-green",
-    badge: "bg-neon-green/15 text-neon-green",
-  },
-  warning: {
-    icon: RiAlertLine,
-    label: { id: "Peringatan", en: "Warning" },
-    color: "text-neon-yellow",
-    bg: "bg-neon-yellow/10",
-    border: "border-neon-yellow/20",
-    dot: "bg-neon-yellow",
-    badge: "bg-neon-yellow/15 text-neon-yellow",
-  },
-  error: {
-    icon: RiErrorWarningLine,
-    label: { id: "Error", en: "Error" },
-    color: "text-neon-red",
-    bg: "bg-neon-red/10",
-    border: "border-neon-red/20",
-    dot: "bg-neon-red",
-    badge: "bg-neon-red/15 text-neon-red",
-  },
-  system: {
-    icon: RiSettings3Line,
-    label: { id: "Sistem", en: "System" },
-    color: "text-neon-cyan",
-    bg: "bg-neon-cyan/10",
-    border: "border-neon-cyan/20",
-    dot: "bg-neon-cyan",
-    badge: "bg-neon-cyan/15 text-neon-cyan",
-  },
-};
-
-type FilterType = "all" | INotification["type"];
+import { typeConfig } from "@/pages/app/notifications/config";
+import { filters, type FilterType } from "@/pages/app/notifications/message";
 
 interface NotificationsPageProps {}
 export default function NotificationsPage({}: NotificationsPageProps) {
@@ -114,15 +62,6 @@ export default function NotificationsPage({}: NotificationsPageProps) {
     if (showUnreadOnly && n.is_read) return false;
     return true;
   });
-
-  const filters: { key: FilterType; label: { id: string; en: string } }[] = [
-    { key: "all", label: { id: "Semua", en: "All" } },
-    { key: "info", label: { id: "Info", en: "Info" } },
-    { key: "success", label: { id: "Berhasil", en: "Success" } },
-    { key: "warning", label: { id: "Peringatan", en: "Warning" } },
-    { key: "error", label: { id: "Error", en: "Error" } },
-    { key: "system", label: { id: "Sistem", en: "System" } },
-  ];
 
   // Group notifications by date
   const grouped = filteredNotifs.reduce<Record<string, INotification[]>>(

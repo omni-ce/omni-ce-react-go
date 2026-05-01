@@ -21,11 +21,11 @@ import SelectRolePage from "@/pages/auth/SelectRolePage";
 
 // App: Pages
 import DashboardPage from "@/pages/app/DashboardPage";
-import UsersPage from "@/pages/app/UsersPage";
-import RolesPage from "@/pages/app/RolesPage";
-import MasterDataPage from "@/pages/app/MasterDataPage";
-import SettingsPage from "@/pages/app/SettingPage";
-import NotificationsPage from "@/pages/app/NotificationsPage";
+import UsersPage from "@/pages/app/users/UsersPage";
+import RolesPage from "@/pages/app/roles/RolesPage";
+import MasterDataPage from "@/pages/app/master_data/MasterDataPage";
+import SettingsPage from "@/pages/app/settings/SettingPage";
+import NotificationsPage from "@/pages/app/notifications/NotificationsPage";
 
 // Documentation
 import DocPage from "@/pages/DocPage";
