@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Label } from "@/components/ui/Label";
 import { Input } from "@/components/ui/Input";
-import { Select } from "@/components/ui/Select";
+import { SearchableSelect } from "@/components/ui/SearchableSelect";
 import { Button } from "@/components/ui/Button";
 import { HiOutlineTrash, HiOutlinePlus } from "react-icons/hi";
 import { useLanguageStore } from "@/stores/languageStore";
@@ -121,22 +121,16 @@ function DynamicSelect({
   }, [field.options, field.ref, field.ref ? formData[field.ref] : undefined]);
 
   return (
-    <Select
+    <SearchableSelect
       id={`field-${field.key}`}
       className="mt-1.5"
       value={formData[field.key] ?? ""}
-      onChange={(e) => onChange(e.target.value)}
-      disabled={disabled || loading}
-    >
-      <option value="" disabled hidden>
-        {loading ? "Loading..." : language({ id: "Pilih...", en: "Choose..." })}
-      </option>
-      {opts.map((opt) => (
-        <option key={opt.value} value={opt.value}>
-          {opt.label}
-        </option>
-      ))}
-    </Select>
+      onChange={(val) => onChange(val)}
+      options={opts}
+      placeholder={language({ id: "Pilih...", en: "Choose..." })}
+      disabled={disabled}
+      loading={loading}
+    />
   );
 }
 
