@@ -30,7 +30,7 @@ export default function LoginPage() {
     try {
       const response = await login(username, password);
       if (response.success) {
-        navigate("/app/dashboard", { replace: true });
+        navigate("/select-role", { replace: true });
       } else {
         setError(
           response.message ||

@@ -17,6 +17,7 @@ import LandingPage from "@/pages/public/LandingPage";
 
 // Auth: Pages
 import LoginPage from "@/pages/auth/LoginPage";
+import SelectRolePage from "@/pages/auth/SelectRolePage";
 
 // App: Pages
 import DashboardPage from "@/pages/app/DashboardPage";
@@ -89,6 +90,10 @@ export const routers = createBrowserRouter([
             element: <LoginPage />,
           },
         ],
+      },
+      {
+        path: "select-role",
+        element: <SelectRolePage />,
       },
       {
         path: "app",

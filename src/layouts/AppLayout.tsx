@@ -46,14 +46,14 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
   const { language } = useLanguageStore();
 
   const { isLoading, validateToken, logout, user } = useAuthStore();
-  const { role_selected } = useRuleStore();
+  const { role_selected, clearRoleSelected } = useRuleStore();
 
   const displayRole = useMemo(() => {
     if (!user) return "";
     if (user.role === "su") return "Super Admin";
     if (user.role === "user" || user.role === "client") {
       if (role_selected) {
-        const found = user.roles?.find((r) => r.role_id === String(role_selected));
+        const found = user.roles?.find((r) => r.role_id === role_selected.role_id);
         return found ? found.role_name : "No Role";
       }
       return "No Role Selected";
@@ -81,10 +81,18 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
       const valid = await validateToken("app");
       if (!valid) {
         navigate(no_auth_navigate, { replace: true });
+        return;
       }
     };
     checkAuth();
   }, [validateToken, navigate]);
+
+  // Redirect non-su users without role selected
+  useEffect(() => {
+    if (!isLoading && user && user.role !== "su" && !role_selected) {
+      navigate("/select-role", { replace: true });
+    }
+  }, [isLoading, user, role_selected, navigate]);
 
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 1024px)"); // lg
@@ -102,6 +110,7 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
   }, [setCollapsed]);
 
   const handleLogout = () => {
+    clearRoleSelected();
     logout();
     navigate(no_auth_navigate, { replace: true });
   };
