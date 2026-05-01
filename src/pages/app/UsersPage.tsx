@@ -30,6 +30,7 @@ export default function UsersPage({}: UsersPageProps) {
         label: language({ id: "Username", en: "Username" }),
         type: "text",
         required: true,
+        debounce: "username",
         minLength: 3,
         maxLength: 255,
       },
