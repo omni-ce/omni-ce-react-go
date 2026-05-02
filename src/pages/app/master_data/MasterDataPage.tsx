@@ -49,7 +49,7 @@ export default function MasterDataPage({ ruleKey }: Props) {
         </div>
       </div>
 
-      <Tabs tabs={tabs} useRule={true} />
+      <Tabs tabs={tabs} useRule />
     </div>
   );
 }

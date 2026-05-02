@@ -63,6 +63,16 @@ export const sidebarLinks: ISidebarLink[] = [
     path: "master-data",
     element: <MasterDataPage ruleKey="master-data" />,
     strict: true,
+    extraRuleKeys: [
+      {
+        label: { id: "Kategori Produk", en: "Product Category" },
+        ruleKey: "product_category",
+      },
+      {
+        label: { id: "Merek", en: "Brand" },
+        ruleKey: "brand",
+      },
+    ],
     icon: HiOutlineDatabase,
   },
 ];
