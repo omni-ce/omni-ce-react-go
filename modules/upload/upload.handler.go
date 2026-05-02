@@ -49,3 +49,23 @@ func Profile(c *fiber.Ctx) error {
 		"path": path,
 	})
 }
+
+func BrandLogo(c *fiber.Ctx) error {
+	path, err := uploader(c, "brand-logo")
+	if err != nil {
+		return dto.BadRequest(c, "Failed to upload file", err.Error())
+	}
+	return dto.OK(c, "Success upload file", fiber.Map{
+		"path": path,
+	})
+}
+
+func Product(c *fiber.Ctx) error {
+	path, err := uploader(c, "product")
+	if err != nil {
+		return dto.BadRequest(c, "Failed to upload file", err.Error())
+	}
+	return dto.OK(c, "Success upload file", fiber.Map{
+		"path": path,
+	})
+}
