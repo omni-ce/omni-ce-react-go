@@ -30,6 +30,7 @@ import { Button } from "@/components/ui/Button";
 
 const widgets = [
   {
+    label: "Chart Area",
     key: "chart_area",
     type: "timeline",
     element: WidgetAreaChart,
@@ -49,36 +50,43 @@ Example Response:
      */
   },
   {
+    label: "Chart Column",
     key: "chart_column",
     type: "bar",
     element: WidgetColumnChart,
   },
   {
+    label: "Chart Gauge",
     key: "chart_gauge",
     type: "gauge",
     element: WidgetGaugeChart,
   },
   {
+    label: "Chart Donut",
     key: "chart_donut",
     type: "pie",
     element: WidgetDonutChart,
   },
   {
+    label: "Table List",
     key: "chart_table",
     type: "table",
     element: WidgetTableList,
   },
   {
+    label: "Progress List",
     key: "chart_progress",
     type: "progress",
     element: WidgetProgressList,
   },
   {
+    label: "Traffic Stats",
     key: "chart_traffic",
     type: "traffic",
     element: WidgetTrafficStats,
   },
   {
+    label: "Chart Line",
     key: "chart_line",
     type: "line",
     element: WidgetLineChart,
