@@ -76,12 +76,12 @@ func WidgetCreate(c *fiber.Ctx) error {
 	}
 
 	// Check if combination already exists
-	var existing model.DashboardComponent
+	var existing model.DashboardWidget
 	if err := variable.Db.Where("role_id = ? AND component_key = ? AND key = ?", body.RoleID, body.ComponentKey, body.Key).First(&existing).Error; err == nil {
 		return dto.BadRequest(c, "Widget with this component_key and key already exists for this role", nil)
 	}
 
-	widget := model.DashboardComponent{
+	widget := model.DashboardWidget{
 		RoleID:       body.RoleID,
 		ComponentKey: body.ComponentKey,
 		Key:          body.Key,
@@ -108,7 +108,7 @@ func WidgetList(c *fiber.Ctx) error {
 		return dto.BadRequest(c, "Invalid role_id", nil)
 	}
 
-	widgets := make([]model.DashboardComponent, 0)
+	widgets := make([]model.DashboardWidget, 0)
 	if err := variable.Db.Where("role_id = ?", roleID).Order("component_key ASC").Find(&widgets).Error; err != nil {
 		return dto.InternalServerError(c, "Failed to get widgets", nil)
 	}
@@ -122,7 +122,7 @@ func WidgetEdit(c *fiber.Ctx) error {
 		return dto.BadRequest(c, "ID is required", nil)
 	}
 
-	var widget model.DashboardComponent
+	var widget model.DashboardWidget
 	if err := variable.Db.Where("id = ?", id).First(&widget).Error; err != nil {
 		return dto.NotFound(c, "Widget not found", nil)
 	}
@@ -171,7 +171,7 @@ func WidgetRemove(c *fiber.Ctx) error {
 		return dto.BadRequest(c, "ID is required", nil)
 	}
 
-	var widget model.DashboardComponent
+	var widget model.DashboardWidget
 	if err := variable.Db.Where("id = ?", id).First(&widget).Error; err != nil {
 		return dto.NotFound(c, "Widget not found", nil)
 	}

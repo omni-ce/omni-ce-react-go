@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type DashboardComponent struct {
+type DashboardWidget struct {
 	ID           uuid.UUID `json:"id" gorm:"type:char(36);primaryKey"`
 	RoleID       uint      `json:"role_id" gorm:"type:bigint;not null;uniqueIndex:idx_dashboard_component_key"`
 	ComponentKey string    `json:"component_key" gorm:"type:varchar(255);not null;uniqueIndex:idx_dashboard_component_key"`
@@ -21,7 +21,7 @@ type DashboardComponent struct {
 	Role role.Role `json:"role" gorm:"foreignKey:RoleID;references:ID;constraint:OnDelete:CASCADE"`
 }
 
-func (a *DashboardComponent) BeforeCreate(tx *gorm.DB) error {
+func (a *DashboardWidget) BeforeCreate(tx *gorm.DB) error {
 	if a.ID == uuid.Nil {
 		uuidV7, _ := uuid.NewV7()
 		a.ID = uuidV7
@@ -29,7 +29,7 @@ func (a *DashboardComponent) BeforeCreate(tx *gorm.DB) error {
 	return nil
 }
 
-func (s *DashboardComponent) Map() map[string]any {
+func (s *DashboardWidget) Map() map[string]any {
 	return map[string]any{
 		"id":      s.ID,
 		"role_id": s.RoleID,

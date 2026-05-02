@@ -3,6 +3,7 @@ package modules
 import (
 	apikey "react-go/modules/apikey/model"
 	auth "react-go/modules/auth/model"
+	dashboard "react-go/modules/dashboard/model"
 	master_data "react-go/modules/master_data/model"
 	notification "react-go/modules/notification/model"
 	role "react-go/modules/role/model"
@@ -27,6 +28,7 @@ func Models() []interface{} {
 		&whitelist.Whitelist{},
 		&apikey.ApiKey{},
 		&master_data.MasterData{},
+		&dashboard.DashboardWidget{},
 	}
 }
 

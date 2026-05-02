@@ -1,4 +1,5 @@
 import * as React from "react";
+import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 import { RiCloseLine } from "react-icons/ri";
 import ControlButton from "@/components/ControlButton";
@@ -22,9 +23,9 @@ function Dialog({ open, onClose, width, children }: DialogProps) {
     return () => document.removeEventListener("keydown", handler);
   }, [open, onClose]);
 
-  if (!open) return null;
+  if (!open || typeof document === 'undefined') return null;
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Overlay */}
       <div
@@ -43,7 +44,8 @@ function Dialog({ open, onClose, width, children }: DialogProps) {
       >
         {children}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
@@ -62,7 +64,7 @@ function DialogContent({
   return (
     <div
       className={cn(
-        "rounded-2xl border border-dark-600/40 bg-dark-800/95 backdrop-blur-xl p-6 shadow-2xl shadow-black/30 space-y-5",
+        "rounded-2xl border border-dark-600/40 bg-dark-800/95 backdrop-blur-xl p-6 shadow-2xl shadow-black/30 space-y-5 max-h-[90vh] overflow-y-auto",
         className,
       )}
       {...props}
