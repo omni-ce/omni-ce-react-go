@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   RiPulseLine,
   RiInboxLine,
@@ -9,30 +9,48 @@ import {
 } from "react-icons/ri";
 
 import StatCard from "@/components/StatCard";
-import LineChart from "@/components/LineChart";
 
 import { useDashboardStore } from "@/stores/dashboardStore";
-import { getSocket } from "@/lib/socket";
 import { useLanguageStore } from "@/stores/languageStore";
 import { SearchableSelect } from "@/components/ui/SearchableSelect";
 import satellite from "@/lib/satellite";
 import type { Response } from "@/types/response";
 import type { Option } from "@/types/option";
 
+// Highcharts Widgets
+import WidgetAreaChart from "@/components/widget/WidgetAreaChart";
+import WidgetColumnChart from "@/components/widget/WidgetColumnChart";
+import WidgetGaugeChart from "@/components/widget/WidgetGaugeChart";
+import WidgetDonutChart from "@/components/widget/WidgetDonutChart";
+import WidgetTrafficStats from "@/components/widget/WidgetTrafficStats";
+import WidgetTableList from "@/components/widget/WidgetTableList";
+import WidgetProgressList from "@/components/widget/WidgetProgressList";
+import WidgetLineChart from "@/components/widget/WidgetLineChart";
+
+const MONTHS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+const DAYS_30 = Array.from({ length: 30 }, (_, i) => String(i + 1));
+
 interface DashboardPageProps {}
 export default function DashboardPage({}: DashboardPageProps) {
-  const { stats, queues, fetchStats, setStats } = useDashboardStore();
+  const { fetchStats } = useDashboardStore();
   const { language } = useLanguageStore();
 
   useEffect(() => {
     fetchStats();
   }, [fetchStats]);
-
-  const maxPoints = 60;
-
-  const [seriesData, setSeriesData] = useState<
-    Record<string, Array<[number, number]>>
-  >({});
 
   const [roles, setRoles] = useState<Option[]>([]);
   const [loadingRoles, setLoadingRoles] = useState(false);
@@ -49,68 +67,10 @@ export default function DashboardPage({}: DashboardPageProps) {
       .finally(() => setLoadingRoles(false));
   }, []);
 
-  const queuesRef = useRef(queues);
-  useEffect(() => {
-    queuesRef.current = queues;
-  }, [queues]);
-
-  // Subscribe to live_data socket room for real-time stats updates
-  const socketRef = useRef(getSocket());
-  useEffect(() => {
-    const socket = socketRef.current;
-    socket.emit("join_live_data");
-
-    const onLiveData = (data: typeof stats) => {
-      setStats(data);
-
-      const t = Date.now();
-      const counts = data.queue ?? {};
-
-      setSeriesData((prev) => {
-        const next: Record<string, Array<[number, number]>> = { ...prev };
-
-        for (const q of queuesRef.current) {
-          const key = q.key;
-          const existing = next[key] ?? [];
-          const y = counts[key] ?? 0;
-
-          if (existing.length === 0) {
-            next[key] = Array.from({ length: maxPoints }, (_, i) => {
-              const ts = t - (maxPoints - 1 - i) * 1000;
-              return [ts, 0];
-            });
-          }
-
-          next[key] = [...(next[key] ?? []), [t, y] as [number, number]].slice(
-            -maxPoints,
-          );
-        }
-
-        const activeKeys = new Set(queuesRef.current.map((q) => q.key));
-        for (const k of Object.keys(next)) {
-          if (!activeKeys.has(k)) delete next[k];
-        }
-
-        return next;
-      });
-    };
-
-    socket.on("live_data", onLiveData);
-    return () => {
-      socket.emit("leave_live_data");
-      socket.off("live_data", onLiveData);
-    };
-  }, [setStats]);
-
-  const chartData = useMemo(
-    () =>
-      queues.map((q) => ({
-        name: q.name,
-        color: q.color,
-        data: seriesData[q.key] ?? [],
-      })),
-    [queues, seriesData],
-  );
+  // Period state for charts
+  const [statsPeriod, setStatsPeriod] = useState("Monthly");
+  const [analyticsPeriod, setAnalyticsPeriod] = useState("Monthly");
+  const [trafficPeriod, setTrafficPeriod] = useState("Monthly");
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -148,62 +108,412 @@ export default function DashboardPage({}: DashboardPageProps) {
         </div>
       </div>
 
-      {/* Stats grid */}
+      {/* Stats grid — Row 1 */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
         <StatCard
           label={language({ id: "Total Antrian", en: "Total Queues" })}
-          value={0}
+          value="24.7K"
           icon={RiInboxLine}
           color="indigo"
+          trend={{ value: "+20%", up: true }}
         />
         <StatCard
           label={language({ id: "Total Pesan", en: "Total Messages" })}
-          value={0}
+          value="55.9K"
           icon={RiPulseLine}
           color="green"
+          trend={{ value: "+4%", up: true }}
         />
         <StatCard
           label={language({ id: "Selesai", en: "Completed" })}
-          value={0}
+          value="54%"
           icon={RiCheckboxCircleLine}
           color="cyan"
+          trend={{ value: "-1.59%", up: false }}
         />
         <StatCard
           label={language({ id: "Tertunda", en: "Pending" })}
-          value={0}
+          value="2m 56s"
           icon={RiTimeLine}
           color="yellow"
+          trend={{ value: "+7%", up: true }}
         />
         <StatCard
           label={language({ id: "Waktu", en: "Timing" })}
-          value={0}
+          value="3,782"
           icon={RiTimerLine}
           color="indigo"
+          trend={{ value: "+11.01%", up: true }}
         />
         <StatCard
           label={language({ id: "Gagal", en: "Failed" })}
-          value={0}
+          value="874"
           icon={RiAlertLine}
           color="red"
+          trend={{ value: "-4.5%", up: false }}
         />
       </div>
 
-      {/* Queue chart */}
-      <div className="bg-dark-800/60 border border-dark-600/40 rounded-2xl overflow-hidden">
-        <div className="px-5 py-4 border-b border-dark-600/40">
-          <h3 className="text-sm font-semibold text-foreground">
-            {language({ id: "Antrian Masuk", en: "Queue Incoming" })}
-          </h3>
-          <p className="text-xs text-dark-400 mt-0.5 font-mono">
-            {language({
-              id: "Grafik langsung (update setiap detik) - 1 garis per antrian",
-              en: "Live chart (updates every second) - 1 line per queue",
+      {/* Row 2 — Statistics Area Chart + Monthly Target Gauge */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+        <div className="xl:col-span-2">
+          <WidgetAreaChart
+            title={language({ id: "Statistik", en: "Statistics" })}
+            subtitle={language({
+              id: "Target yang Anda tetapkan setiap bulan",
+              en: "Target you've set for each month",
             })}
-          </p>
+            categories={MONTHS}
+            series={[
+              {
+                name: language({ id: "Pendapatan", en: "Revenue" }),
+                data: [
+                  180, 200, 175, 190, 160, 170, 150, 165, 185, 195, 210, 230,
+                ],
+                color: "#6366f1",
+              },
+              {
+                name: language({ id: "Pengeluaran", en: "Expenses" }),
+                data: [40, 55, 35, 50, 30, 45, 25, 35, 55, 50, 60, 65],
+                color: "#06b6d4",
+              },
+            ]}
+            summaryStats={[
+              {
+                label: language({
+                  id: "Rata-rata Keuntungan Tahunan",
+                  en: "Avg. Yearly Profit",
+                }),
+                value: "$212,142.12",
+                change: "+23.2%",
+                up: true,
+              },
+              {
+                label: language({
+                  id: "Rata-rata Kerugian Tahunan",
+                  en: "Avg. Yearly Loss",
+                }),
+                value: "$30,321.23",
+                change: "-12.3%",
+                up: false,
+              },
+            ]}
+            periodTabs={["Monthly", "Quarterly", "Annually"]}
+            activePeriod={statsPeriod}
+            onPeriodChange={setStatsPeriod}
+            height={320}
+          />
         </div>
-        <div className="p-4">
-          <LineChart data={chartData} />
+        <WidgetGaugeChart
+          title={language({
+            id: "Target Bulanan",
+            en: "Monthly Target",
+          })}
+          subtitle={language({
+            id: "Target yang Anda tetapkan setiap bulan",
+            en: "Target you've set for each month",
+          })}
+          value={75.55}
+          max={100}
+          label="%"
+          color="#6366f1"
+          height={180}
+          bottomStats={[
+            {
+              label: "Target",
+              value: "$20K",
+              change: "3.2%",
+              up: false,
+            },
+            {
+              label: language({ id: "Pendapatan", en: "Revenue" }),
+              value: "$20K",
+              change: "7.8%",
+              up: true,
+            },
+            {
+              label: language({ id: "Hari Ini", en: "Today" }),
+              value: "$20K",
+              change: "12%",
+              up: true,
+            },
+          ]}
+        />
+      </div>
+
+      {/* Row 3 — Analytics Column Chart */}
+      <WidgetColumnChart
+        title={language({ id: "Analitik", en: "Analytics" })}
+        subtitle={language({
+          id: "Analitik pengunjung 30 hari terakhir",
+          en: "Visitor analytics of last 30 days",
+        })}
+        categories={DAYS_30}
+        series={[
+          {
+            name: language({ id: "Pengunjung", en: "Visitors" }),
+            data: [
+              180, 350, 280, 320, 200, 240, 370, 300, 250, 220, 310, 260, 190,
+              280, 170, 210, 380, 340, 290, 150, 230, 270, 310, 350, 290, 200,
+              240, 330, 380, 360,
+            ],
+            color: "#6366f1",
+          },
+        ]}
+        height={300}
+        periodTabs={["Monthly", "Quarterly", "Annually"]}
+        activePeriod={analyticsPeriod}
+        onPeriodChange={setAnalyticsPeriod}
+      />
+
+      {/* Row 4 — Top Channels + Top Pages + Traffic Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <WidgetTableList
+          title={language({
+            id: "Channel Teratas",
+            en: "Top Channels",
+          })}
+          columns={{
+            label: language({ id: "Sumber", en: "Source" }),
+            key: "source",
+          }}
+          rows={[
+            { source: "Google", value: "4.7K" },
+            { source: "Facebook", value: "3.4K" },
+            { source: "Instagram", value: "2.9K" },
+            { source: "Twitter", value: "1.5K" },
+          ]}
+          footerLabel={language({
+            id: "Laporan Channel",
+            en: "Channels Report",
+          })}
+        />
+        <WidgetTableList
+          title={language({
+            id: "Halaman Teratas",
+            en: "Top Pages",
+          })}
+          columns={{
+            label: language({ id: "Sumber", en: "Source" }),
+            key: "value",
+          }}
+          rows={[
+            { source: "app.example.com", value: "4.7K" },
+            { source: "preview.example.com", value: "3.4K" },
+            { source: "docs.example.com", value: "2.9K" },
+            { source: "api.example.com", value: "1.5K" },
+          ]}
+          footerLabel={language({
+            id: "Laporan Halaman",
+            en: "Pages Report",
+          })}
+        />
+        <WidgetTrafficStats
+          title={language({
+            id: "Statistik Traffic",
+            en: "Traffic Stats",
+          })}
+          periodTabs={["Monthly", "Quarterly", "Annually"]}
+          activePeriod={trafficPeriod}
+          onPeriodChange={setTrafficPeriod}
+          stats={[
+            {
+              label: language({
+                id: "Pelanggan Baru",
+                en: "New Subscribers",
+              }),
+              value: "567K",
+              change: "3.85%",
+              up: true,
+              sparkData: [20, 35, 25, 45, 30, 40, 55, 50, 60],
+              color: "#10b981",
+            },
+            {
+              label: language({
+                id: "Tingkat Konversi",
+                en: "Conversion Rate",
+              }),
+              value: "276K",
+              change: "-5.39%",
+              up: false,
+              sparkData: [50, 40, 45, 35, 40, 30, 25, 28, 22],
+              color: "#ef4444",
+            },
+            {
+              label: language({
+                id: "Rasio Pentalan",
+                en: "Page Bounce Rate",
+              }),
+              value: "285",
+              change: "12.74%",
+              up: true,
+              sparkData: [10, 15, 20, 18, 25, 30, 35, 40, 50],
+              color: "#10b981",
+            },
+          ]}
+        />
+      </div>
+
+      {/* Row 5 — Impression Area Chart + Progress List */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+        <div className="xl:col-span-2">
+          <WidgetAreaChart
+            title={language({
+              id: "Impresi & Traffic Data",
+              en: "Impression & Data Traffic",
+            })}
+            subtitle="Jun 1, 2024 - Dec 1, 2025"
+            categories={MONTHS}
+            series={[
+              {
+                name: "Traffic",
+                data: [
+                  120, 180, 165, 190, 150, 170, 140, 130, 145, 160, 175, 200,
+                ],
+                color: "#6366f1",
+              },
+            ]}
+            summaryStats={[
+              {
+                label: language({
+                  id: "Total Pendapatan",
+                  en: "Total Revenue",
+                }),
+                value: "$9,758.00",
+                change: "+7.96%",
+                up: true,
+              },
+            ]}
+            height={300}
+          />
         </div>
+        <WidgetProgressList
+          title={language({
+            id: "Estimasi Pendapatan",
+            en: "Estimated Revenue",
+          })}
+          subtitle={language({
+            id: "Target yang Anda tetapkan setiap bulan",
+            en: "Target you've set for each month",
+          })}
+          items={[
+            {
+              label: "Marketing",
+              value: 85,
+              amount: "$30,569.00",
+              color: "#6366f1",
+            },
+            {
+              label: "Sales",
+              value: 55,
+              amount: "$20,486.00",
+              color: "#6366f1",
+            },
+            {
+              label: "Operations",
+              value: 42,
+              amount: "$12,350.00",
+              color: "#06b6d4",
+            },
+          ]}
+        />
+      </div>
+
+      {/* Row 6 — Donut Chart + Line Chart comparison */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        <WidgetDonutChart
+          title={language({
+            id: "Kategori Penjualan",
+            en: "Sales Category",
+          })}
+          data={[
+            {
+              name: "Affiliate Program",
+              y: 2040,
+              detail: "2,040 Products",
+              color: "#6366f1",
+            },
+            {
+              name: "Direct Buy",
+              y: 1402,
+              detail: "1,402 Products",
+              color: "#10b981",
+            },
+            {
+              name: "Adsense",
+              y: 510,
+              detail: "510 Products",
+              color: "#f59e0b",
+            },
+          ]}
+          centerLabel="Total 3.5K"
+          centerValue="2450"
+          height={200}
+        />
+        <WidgetLineChart
+          title={language({ id: "Performa", en: "Performance" })}
+          subtitle={language({
+            id: "Perbandingan performa bulanan",
+            en: "Monthly performance comparison",
+          })}
+          categories={["Jan", "Feb", "Mar", "Apr", "May", "Jun"]}
+          series={[
+            {
+              name: language({ id: "Tahun Ini", en: "This Year" }),
+              data: [150, 180, 200, 220, 250, 280],
+              color: "#6366f1",
+            },
+            {
+              name: language({ id: "Tahun Lalu", en: "Last Year" }),
+              data: [120, 140, 160, 170, 190, 210],
+              color: "#3d3d5c",
+              dashStyle: "Dash",
+            },
+          ]}
+          height={250}
+        />
+      </div>
+
+      {/* Row 7 — Monthly Sales Column + Stacked Column */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        <WidgetColumnChart
+          title={language({
+            id: "Penjualan Bulanan",
+            en: "Monthly Sales",
+          })}
+          categories={MONTHS}
+          series={[
+            {
+              name: language({ id: "Penjualan", en: "Sales" }),
+              data: [
+                120, 160, 280, 320, 300, 250, 180, 290, 260, 350, 150, 80,
+              ],
+              color: "#6366f1",
+            },
+          ]}
+          height={280}
+        />
+        <WidgetColumnChart
+          title={language({
+            id: "Dividen",
+            en: "Dividend",
+          })}
+          categories={["Jan", "Feb", "Mar", "Apr", "May", "Jun"]}
+          series={[
+            {
+              name: "Q1",
+              data: [80, 120, 300, 250, 180, 220],
+              color: "#6366f1",
+            },
+            {
+              name: "Q2",
+              data: [60, 180, 100, 150, 120, 160],
+              color: "#818cf8",
+            },
+          ]}
+          stacked
+          height={280}
+        />
       </div>
     </div>
   );
