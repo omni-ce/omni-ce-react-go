@@ -20,19 +20,6 @@ import (
 	"gorm.io/gorm"
 )
 
-func Me(on string) func(*fiber.Ctx) error {
-	return func(c *fiber.Ctx) error {
-		user, err := function.JwtGetUser(c)
-		if err != nil {
-			return dto.InternalServerError(c, err.Error(), nil)
-		}
-
-		return dto.OK(c, "Success get user", fiber.Map{
-			"user": user.Map(),
-		})
-	}
-}
-
 func ChangePassword(on string) func(c *fiber.Ctx) error {
 	return func(c *fiber.Ctx) error {
 		existing, err := function.JwtGetUser(c)
@@ -46,6 +33,11 @@ func ChangePassword(on string) func(c *fiber.Ctx) error {
 		}
 		if err := c.BodyParser(&body); err != nil {
 			return dto.BadRequest(c, "Invalid request body", nil)
+		}
+
+		// check if password == previous password
+		if !hash.ValidatePassword(body.PreviousPassword, existing.Password) {
+			return dto.BadRequest(c, "Password and previous password must be different", nil)
 		}
 
 		if err := variable.Db.
@@ -83,6 +75,7 @@ func Create(c *fiber.Ctx) error {
 		Name     string `json:"name" validate:"required,min=3,max=100"`
 		Username string `json:"username" validate:"required,min=5,max=20"`
 		Password string `json:"password" validate:"required,min=8,max=50"`
+		Address  string `json:"address" validate:"required"`
 		Roles    []struct {
 			DivisionID string `json:"division_id"`
 			RoleID     string `json:"role_id"`
@@ -118,6 +111,7 @@ func Create(c *fiber.Ctx) error {
 		Name:     strings.TrimSpace(body.Name),
 		Username: strings.TrimSpace(body.Username),
 		Password: hash.Password(body.Password),
+		Address:  strings.TrimSpace(body.Address),
 		Role:     model.UserRoleClient,
 	}
 
@@ -253,6 +247,7 @@ func Edit(c *fiber.Ctx) error {
 	var body struct {
 		Name     string `json:"name"`
 		Username string `json:"username"`
+		Address  string `json:"address"`
 		Roles    []struct {
 			DivisionID string `json:"division_id"`
 			RoleID     string `json:"role_id"`
@@ -301,6 +296,11 @@ func Edit(c *fiber.Ctx) error {
 			return dto.BadRequest(c, "Username already exists", nil)
 		}
 		updates["username"] = username
+	}
+
+	address := strings.TrimSpace(body.Address)
+	if address != "" {
+		updates["address"] = address
 	}
 
 	if len(updates) == 0 && len(body.Roles) == 0 {

@@ -17,8 +17,9 @@ import AppIconSvg from "@/assets/react_go.svg";
 interface Props {}
 export default function SettingPage({}: Props) {
   const { user } = useAuthStore();
+  const isSu = user?.role === "su";
+
   const { language } = useLanguageStore();
-  const isSu = user?.roles?.some((r) => r.role_name === "su");
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -78,7 +79,7 @@ export default function SettingPage({}: Props) {
 
     setIsSaving(true);
     try {
-      const res = await settingService.setNewPassword(
+      const res = await settingService.changePassword(
         currentPassword,
         newPassword,
       );

@@ -16,11 +16,12 @@ const (
 
 type User struct {
 	ID        uuid.UUID `json:"id" gorm:"type:char(36);primaryKey"`
-	Name      string    `json:"name" gorm:"not null"`
-	Avatar    string    `json:"avatar"`
 	Username  string    `json:"username" gorm:"uniqueIndex"`
 	Password  string    `json:"password" gorm:"not null"`
 	Role      string    `json:"role" gorm:"not null"`
+	Name      string    `json:"name" gorm:"not null"`
+	Avatar    string    `json:"avatar"`
+	Address   string    `json:"address"`
 	IsActive  bool      `json:"is_active" gorm:"not null;default:true"`
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
 }

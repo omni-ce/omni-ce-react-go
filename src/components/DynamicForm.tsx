@@ -119,6 +119,7 @@ function DynamicSelect({
     return () => {
       isMounted = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [field.options, field.ref, field.ref ? formData[field.ref] : undefined]);
 
   return (
@@ -144,10 +145,18 @@ function DynamicAddress({
   onChange: (val: string) => void;
   disabled?: boolean;
 }) {
-  const [provinceOptions, setProvinceOptions] = useState<DynamicFormFieldOption[]>([]);
-  const [regencyOptions, setRegencyOptions] = useState<DynamicFormFieldOption[]>([]);
-  const [districtOptions, setDistrictOptions] = useState<DynamicFormFieldOption[]>([]);
-  const [villageOptions, setVillageOptions] = useState<DynamicFormFieldOption[]>([]);
+  const [provinceOptions, setProvinceOptions] = useState<
+    DynamicFormFieldOption[]
+  >([]);
+  const [regencyOptions, setRegencyOptions] = useState<
+    DynamicFormFieldOption[]
+  >([]);
+  const [districtOptions, setDistrictOptions] = useState<
+    DynamicFormFieldOption[]
+  >([]);
+  const [villageOptions, setVillageOptions] = useState<
+    DynamicFormFieldOption[]
+  >([]);
 
   const [isLoadingProvince, setIsLoadingProvince] = useState(false);
   const [isLoadingRegency, setIsLoadingRegency] = useState(false);
@@ -164,7 +173,12 @@ function DynamicAddress({
   const initRef = useRef(false);
 
   useEffect(() => {
-    if (!initRef.current && value && typeof value === "string" && value.includes(".")) {
+    if (
+      !initRef.current &&
+      value &&
+      typeof value === "string" &&
+      value.includes(".")
+    ) {
       const parts = value.split(".");
       if (parts.length === 4) {
         setSelectedProvince(parts[0] || "");
@@ -233,7 +247,7 @@ function DynamicAddress({
 
   useEffect(() => {
     fetchProvinces();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

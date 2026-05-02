@@ -3,22 +3,17 @@ import type { Response } from "@/types/response";
 
 export const settingService = {
   getAll: async () => {
-    const response = await satellite.get<Response<Record<string, string>>>(
-      "/api/setting/all",
-    );
+    const response =
+      await satellite.get<Response<Record<string, string>>>("/api/setting/all");
     return response.data.data;
   },
 
-  setNewPassword: async (last_password: string, password: string) => {
-    const response = await satellite.put<Response<unknown>>(
-      "/api/setting/set",
+  changePassword: async (previous_password: string, password: string) => {
+    const response = await satellite.post<Response<unknown>>(
+      "/api/user/change-password",
       {
-        auth_password: password,
-      },
-      {
-        headers: {
-          "X-Last-Password": last_password,
-        },
+        previous_password,
+        password,
       },
     );
     return response.data;

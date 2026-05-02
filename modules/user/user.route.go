@@ -5,7 +5,7 @@ import (
 )
 
 func ProtectedRoute(api fiber.Router) {
-	api.Get("/me", Me("management"))
+	api.Post("/change-password", ChangePassword("user"))
 
 	// Pagination CRUD convention
 	api.Post("/create", Create)
