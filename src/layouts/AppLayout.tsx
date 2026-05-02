@@ -43,6 +43,10 @@ export interface ISidebarLink extends Partial<IndexRouteObject> {
   strict?: boolean;
   icon: React.ComponentType<{ size?: number }>;
   isHide?: boolean;
+  extraRuleKeys?: {
+    label: Record<LanguageCode, string>;
+    ruleKey: string;
+  }[];
 }
 
 interface AppLayoutProps {

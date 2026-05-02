@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { useLanguageStore } from "@/stores/languageStore";
 import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
@@ -119,9 +119,26 @@ export default function RolesPage({ ruleKey }: Props) {
       .map((link) => ({
         key: link.path as string,
         label: language(link.label),
+        extraRuleKeys: link.extraRuleKeys?.map((extra) => ({
+          key: extra.ruleKey,
+          label: language(extra.label),
+        })),
       }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [languageCode, language]);
+
+  const allMenuKeys = useMemo(() => {
+    const keys: { key: string; label: string }[] = [];
+    for (const menu of menuList) {
+      keys.push({ key: menu.key, label: menu.label });
+      if (menu.extraRuleKeys) {
+        for (const extra of menu.extraRuleKeys) {
+          keys.push({ key: extra.key, label: extra.label });
+        }
+      }
+    }
+    return keys;
+  }, [menuList]);
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
@@ -207,11 +224,11 @@ export default function RolesPage({ ruleKey }: Props) {
   };
 
   const toggleCol = (roleId: number, action: string) => {
-    const allOn = menuList.every((m) => getRuleState(roleId, m.key, action));
+    const allOn = allMenuKeys.every((m) => getRuleState(roleId, m.key, action));
     const s = !allOn;
     setRules((prev) => {
       const u = [...prev];
-      for (const menu of menuList) {
+      for (const menu of allMenuKeys) {
         const idx = u.findIndex(
           (r) =>
             r.role_id === roleId && r.key === menu.key && r.action === action,
@@ -229,7 +246,7 @@ export default function RolesPage({ ruleKey }: Props) {
     const allRoleIds = new Set<number>();
     divisions.forEach((d) => d.roles.forEach((r) => allRoleIds.add(r.id)));
     for (const roleId of allRoleIds) {
-      for (const menu of menuList) {
+      for (const menu of allMenuKeys) {
         for (const act of ACTIONS) {
           const cur = rules.find(
             (r) =>
@@ -623,7 +640,7 @@ export default function RolesPage({ ruleKey }: Props) {
                                 {language({ id: "Menu", en: "Menu" })}
                               </div>
                               {ACTIONS.map((act) => {
-                                const allOn = menuList.every((m) =>
+                                const allOn = allMenuKeys.every((m) =>
                                   getRuleState(role.id, m.key, act.key),
                                 );
                                 return (
@@ -656,10 +673,10 @@ export default function RolesPage({ ruleKey }: Props) {
                                 getRuleState(role.id, menu.key, a.key),
                               );
                               return (
-                                <div
-                                  key={menu.key}
-                                  className="grid gap-2 min-w-[600px] items-center py-1.5 border-t border-dark-600/20 hover:bg-dark-700/20 rounded transition-colors"
-                                  style={{
+                                <React.Fragment key={menu.key}>
+                                  <div
+                                    className="grid gap-2 min-w-[600px] items-center py-1.5 border-t border-dark-600/20 hover:bg-dark-700/20 rounded transition-colors"
+                                    style={{
                                     gridTemplateColumns:
                                       "minmax(140px, 1fr) repeat(5, 80px)",
                                   }}
@@ -707,6 +724,71 @@ export default function RolesPage({ ruleKey }: Props) {
                                     </div>
                                   ))}
                                 </div>
+
+                                {/* Render Extra Rule Keys */}
+                                {menu.extraRuleKeys?.map((extra) => {
+                                  const extraAllOn = ACTIONS.every((a) =>
+                                    getRuleState(role.id, extra.key, a.key),
+                                  );
+                                  return (
+                                    <div
+                                      key={extra.key}
+                                      className="grid gap-2 min-w-[600px] items-center py-1.5 border-t border-dark-600/10 hover:bg-dark-700/10 rounded transition-colors pl-6"
+                                      style={{
+                                        gridTemplateColumns:
+                                          "minmax(140px, 1fr) repeat(5, 80px)",
+                                      }}
+                                    >
+                                      <div className="flex items-center gap-2 px-2">
+                                        <input
+                                          type="checkbox"
+                                          checked={extraAllOn}
+                                          onChange={() =>
+                                            toggleRow(role.id, extra.key)
+                                          }
+                                          disabled={
+                                            !role.is_active ||
+                                            !division.is_active ||
+                                            !perm.canSet
+                                          }
+                                          className="w-3.5 h-3.5 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                                        />
+                                        <span className="text-sm text-dark-300 font-medium">
+                                          └ {extra.label}
+                                        </span>
+                                      </div>
+                                      {ACTIONS.map((act) => (
+                                        <div
+                                          key={act.key}
+                                          className="flex justify-center"
+                                        >
+                                          <input
+                                            type="checkbox"
+                                            checked={getRuleState(
+                                              role.id,
+                                              extra.key,
+                                              act.key,
+                                            )}
+                                            onChange={() =>
+                                              toggleRule(
+                                                role.id,
+                                                extra.key,
+                                                act.key,
+                                              )
+                                            }
+                                            disabled={
+                                              !role.is_active ||
+                                              !division.is_active ||
+                                              !perm.canSet
+                                            }
+                                            className="w-4 h-4 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
+                                          />
+                                        </div>
+                                      ))}
+                                    </div>
+                                  );
+                                })}
+                                </React.Fragment>
                               );
                             })}
                           </div>
