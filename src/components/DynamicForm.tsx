@@ -7,6 +7,7 @@ import { HiOutlineTrash, HiOutlinePlus } from "react-icons/hi";
 import { useLanguageStore } from "@/stores/languageStore";
 import satellite from "@/lib/satellite";
 import type { Response } from "@/types/response";
+import { HOST_API } from "@/environment";
 
 export interface DynamicFormFieldOption {
   value: string;
@@ -89,6 +90,7 @@ export interface DynamicFormField {
   fileTarget?: string;
   fileMaxSize?: number;
   fileType?: (FileType | FileType[])[];
+  fileTemplate?: "profile" | "default";
 }
 
 function DynamicSelect({
@@ -469,7 +471,7 @@ function DynamicFile({
       return (
         <div className="mt-2 relative w-24 h-24 rounded-lg overflow-hidden border border-dark-600 bg-dark-900/50">
           <img
-            src={value}
+            src={HOST_API + value}
             alt="Preview"
             className="w-full h-full object-cover"
           />

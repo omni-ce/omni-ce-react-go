@@ -31,6 +31,7 @@ export default function UsersPage({ ruleKey }: Props) {
         fileTarget: "profile",
         fileMaxSize: 1024 * 1024 * 5,
         fileType: [FileType.Jpeg, FileType.Png],
+        fileTemplate: "profile",
         required: true,
       },
       {
