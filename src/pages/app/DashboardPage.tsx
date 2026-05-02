@@ -131,41 +131,43 @@ export default function DashboardPage({}: DashboardPageProps) {
         </div>
         <div className="flex items-center gap-3 w-full sm:w-auto">
           {/* Button Add Widget on left side select role */}
-          <Button
-            // onClick={() => setAddWidgetOpen(true)}
-            className="shrink-0 whitespace-nowrap"
-          >
-            {language({ id: "Tambah Widget", en: "Add Widget" })}
-          </Button>
+          {!(selectedRole === "" || selectedRole === "-") && (
+            <Button
+              // onClick={() => setAddWidgetOpen(true)}
+              className="shrink-0 whitespace-nowrap"
+            >
+              {language({ id: "Tambah Widget", en: "Add Widget" })}
+            </Button>
+          )}
 
           {/* Select Role on SU */}
           <div className="w-full sm:w-64">
             <SearchableSelect
-            options={[
-              {
-                label: language({ id: "--Contoh--", en: "--Example--" }),
-                value: "-",
-              },
-              ...roles
-                .sort((a, b) =>
-                  a.label.localeCompare(b.label, undefined, {
-                    numeric: true,
-                    sensitivity: "base",
-                  }),
-                )
-                .map((r) => ({
-                  value: String(r.value),
-                  label: r.label,
-                })),
-            ]}
-            value={selectedRole}
-            onChange={setSelectedRole}
-            loading={loadingRoles}
-            placeholder={language({ id: "Pilih Role", en: "Select Role" })}
-          />
+              options={[
+                {
+                  label: language({ id: "--Contoh--", en: "--Example--" }),
+                  value: "-",
+                },
+                ...roles
+                  .sort((a, b) =>
+                    a.label.localeCompare(b.label, undefined, {
+                      numeric: true,
+                      sensitivity: "base",
+                    }),
+                  )
+                  .map((r) => ({
+                    value: String(r.value),
+                    label: r.label,
+                  })),
+              ]}
+              value={selectedRole}
+              onChange={setSelectedRole}
+              loading={loadingRoles}
+              placeholder={language({ id: "Pilih Role", en: "Select Role" })}
+            />
+          </div>
         </div>
       </div>
-    </div>
 
       {selectedRole === "" && (
         <div className="flex items-center justify-center">
