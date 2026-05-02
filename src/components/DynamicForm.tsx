@@ -135,6 +135,191 @@ function DynamicSelect({
   );
 }
 
+function DynamicAddress({
+  value,
+  onChange,
+  disabled,
+}: {
+  value: string;
+  onChange: (val: string) => void;
+  disabled?: boolean;
+}) {
+  const [provinceOptions, setProvinceOptions] = useState<DynamicFormFieldOption[]>([]);
+  const [regencyOptions, setRegencyOptions] = useState<DynamicFormFieldOption[]>([]);
+  const [districtOptions, setDistrictOptions] = useState<DynamicFormFieldOption[]>([]);
+  const [villageOptions, setVillageOptions] = useState<DynamicFormFieldOption[]>([]);
+
+  const [isLoadingProvince, setIsLoadingProvince] = useState(false);
+  const [isLoadingRegency, setIsLoadingRegency] = useState(false);
+  const [isLoadingDistrict, setIsLoadingDistrict] = useState(false);
+  const [isLoadingVillage, setIsLoadingVillage] = useState(false);
+
+  const [selectedProvince, setSelectedProvince] = useState("");
+  const [selectedRegency, setSelectedRegency] = useState("");
+  const [selectedDistrict, setSelectedDistrict] = useState("");
+  const [selectedVillage, setSelectedVillage] = useState("");
+
+  const [hasFetchedProvince, setHasFetchedProvince] = useState(false);
+
+  const initRef = useRef(false);
+
+  useEffect(() => {
+    if (!initRef.current && value && typeof value === "string" && value.includes(".")) {
+      const parts = value.split(".");
+      if (parts.length === 4) {
+        setSelectedProvince(parts[0] || "");
+        setSelectedRegency(`${parts[0]}.${parts[1]}`);
+        setSelectedDistrict(`${parts[0]}.${parts[1]}.${parts[2]}`);
+        setSelectedVillage(value);
+      }
+      initRef.current = true;
+    }
+  }, [value]);
+
+  const fetchProvinces = () => {
+    if (!hasFetchedProvince) {
+      setHasFetchedProvince(true);
+      setIsLoadingProvince(true);
+      satellite
+        .get("/api/address/provinces")
+        .then((response) => {
+          if (response.data.status === 200 && response.data.data) {
+            setProvinceOptions(response.data.data);
+          }
+        })
+        .catch((error) => console.error("Failed to fetch provinces:", error))
+        .finally(() => setIsLoadingProvince(false));
+    }
+  };
+
+  const fetchRegencies = (provinceCode: string) => {
+    setIsLoadingRegency(true);
+    satellite
+      .get(`/api/address/regencies/${provinceCode}`)
+      .then((response) => {
+        if (response.data.status === 200 && response.data.data) {
+          setRegencyOptions(response.data.data);
+        }
+      })
+      .catch((error) => console.error("Failed to fetch regencies:", error))
+      .finally(() => setIsLoadingRegency(false));
+  };
+
+  const fetchDistricts = (regencyCode: string) => {
+    setIsLoadingDistrict(true);
+    satellite
+      .get(`/api/address/districts/${regencyCode}`)
+      .then((response) => {
+        if (response.data.status === 200 && response.data.data) {
+          setDistrictOptions(response.data.data);
+        }
+      })
+      .catch((error) => console.error("Failed to fetch districts:", error))
+      .finally(() => setIsLoadingDistrict(false));
+  };
+
+  const fetchVillages = (districtCode: string) => {
+    setIsLoadingVillage(true);
+    satellite
+      .get(`/api/address/villages/${districtCode}`)
+      .then((response) => {
+        if (response.data.status === 200 && response.data.data) {
+          setVillageOptions(response.data.data);
+        }
+      })
+      .catch((error) => console.error("Failed to fetch villages:", error))
+      .finally(() => setIsLoadingVillage(false));
+  };
+
+  useEffect(() => {
+    fetchProvinces();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (selectedProvince) {
+      fetchRegencies(selectedProvince);
+    } else {
+      setRegencyOptions([]);
+    }
+  }, [selectedProvince]);
+
+  useEffect(() => {
+    if (selectedRegency) {
+      fetchDistricts(selectedRegency);
+    } else {
+      setDistrictOptions([]);
+    }
+  }, [selectedRegency]);
+
+  useEffect(() => {
+    if (selectedDistrict) {
+      fetchVillages(selectedDistrict);
+    } else {
+      setVillageOptions([]);
+    }
+  }, [selectedDistrict]);
+
+  return (
+    <div className="space-y-3 mt-1.5 p-3 rounded-xl border border-dark-600/50 bg-dark-900/30">
+      <SearchableSelect
+        id="province"
+        options={provinceOptions}
+        value={selectedProvince}
+        onChange={(val) => {
+          setSelectedProvince(val);
+          setSelectedRegency("");
+          setSelectedDistrict("");
+          setSelectedVillage("");
+          onChange("");
+        }}
+        disabled={disabled}
+        loading={isLoadingProvince}
+        placeholder="Pilih Provinsi..."
+      />
+      <SearchableSelect
+        id="regency"
+        options={regencyOptions}
+        value={selectedRegency}
+        onChange={(val) => {
+          setSelectedRegency(val);
+          setSelectedDistrict("");
+          setSelectedVillage("");
+          onChange("");
+        }}
+        disabled={disabled || !selectedProvince}
+        loading={isLoadingRegency}
+        placeholder="Pilih Kabupaten/Kota..."
+      />
+      <SearchableSelect
+        id="district"
+        options={districtOptions}
+        value={selectedDistrict}
+        onChange={(val) => {
+          setSelectedDistrict(val);
+          setSelectedVillage("");
+          onChange("");
+        }}
+        disabled={disabled || !selectedRegency}
+        loading={isLoadingDistrict}
+        placeholder="Pilih Kecamatan..."
+      />
+      <SearchableSelect
+        id="village"
+        options={villageOptions}
+        value={selectedVillage}
+        onChange={(val) => {
+          setSelectedVillage(val);
+          onChange(val);
+        }}
+        disabled={disabled || !selectedDistrict}
+        loading={isLoadingVillage}
+        placeholder="Pilih Desa/Kelurahan..."
+      />
+    </div>
+  );
+}
+
 function ArrayField({
   field,
   value,
@@ -213,6 +398,11 @@ function ArrayField({
                   <DynamicSelect
                     field={child}
                     formData={item as Record<string, string>}
+                    onChange={(val) => handleChildChange(index, child.key, val)}
+                  />
+                ) : child.type === "address" ? (
+                  <DynamicAddress
+                    value={String(item[child.key] ?? "")}
                     onChange={(val) => handleChildChange(index, child.key, val)}
                   />
                 ) : child.type === "textarea" ? (
@@ -422,6 +612,11 @@ export default function DynamicForm({
             <DynamicSelect
               field={field}
               formData={formData as Record<string, string>}
+              onChange={(val) => onChange(field.key, val)}
+            />
+          ) : field.type === "address" ? (
+            <DynamicAddress
+              value={String(formData[field.key] ?? "")}
               onChange={(val) => onChange(field.key, val)}
             />
           ) : field.type === "textarea" ? (

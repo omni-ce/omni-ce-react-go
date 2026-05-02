@@ -50,6 +50,13 @@ export default function UsersPage({ ruleKey }: Props) {
       },
 
       {
+        key: "address",
+        label: language({ id: "Alamat", en: "Address" }),
+        type: "address",
+        required: true,
+      },
+
+      {
         key: "roles",
         label: language({ id: "Roles", en: "Roles" }),
         type: "array",
