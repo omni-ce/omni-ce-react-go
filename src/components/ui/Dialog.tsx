@@ -23,7 +23,7 @@ function Dialog({ open, onClose, width, children }: DialogProps) {
     return () => document.removeEventListener("keydown", handler);
   }, [open, onClose]);
 
-  if (!open || typeof document === 'undefined') return null;
+  if (!open || typeof document === "undefined") return null;
 
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -34,7 +34,7 @@ function Dialog({ open, onClose, width, children }: DialogProps) {
       />
 
       {/* Control Button at top right of overlay */}
-      <div className="fixed top-4 right-4 z-[60] animate-fade-in flex items-center gap-2 bg-white/80 dark:bg-black/20 dark:text-gray-400 backdrop-blur-md rounded-lg p-2 shadow-sm">
+      <div className="fixed top-4 right-4 z-60 animate-fade-in flex items-center gap-2 bg-white/80 dark:bg-black/20 dark:text-gray-400 backdrop-blur-md rounded-lg p-2 shadow-sm">
         <ControlButton />
       </div>
       {/* Content wrapper */}
@@ -45,7 +45,7 @@ function Dialog({ open, onClose, width, children }: DialogProps) {
         {children}
       </div>
     </div>,
-    document.body
+    document.body,
   );
 }
 

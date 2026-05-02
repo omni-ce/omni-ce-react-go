@@ -35,7 +35,15 @@ export default function WidgetDonutChart({
     return () => clearTimeout(timer);
   }, []);
 
-  const defaultColors = ["#6366f1", "#10b981", "#f59e0b", "#ef4444", "#06b6d4", "#8b5cf6", "#ec4899"];
+  const defaultColors = [
+    "#6366f1",
+    "#10b981",
+    "#f59e0b",
+    "#ef4444",
+    "#06b6d4",
+    "#8b5cf6",
+    "#ec4899",
+  ];
 
   const options: Highcharts.Options = {
     chart: {
@@ -85,12 +93,10 @@ export default function WidgetDonutChart({
   return (
     <div className="bg-dark-800/60 border border-dark-600/40 rounded-2xl overflow-hidden p-5">
       <h3 className="text-sm font-semibold text-foreground">{title}</h3>
-      {subtitle && (
-        <p className="text-xs text-dark-400 mt-0.5">{subtitle}</p>
-      )}
+      {subtitle && <p className="text-xs text-dark-400 mt-0.5">{subtitle}</p>}
 
       <div className="flex items-center gap-4 mt-2">
-        <div className="relative flex-shrink-0 w-[160px]">
+        <div className="relative shrink-0 w-[160px]">
           <HighchartsReact
             highcharts={Highcharts}
             options={options}

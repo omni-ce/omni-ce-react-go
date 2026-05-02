@@ -59,7 +59,7 @@ export function SearchableSelect({
     return options.filter(
       (opt) =>
         opt.label.toLowerCase().includes(lowerSearch) ||
-        opt.value.toLowerCase().includes(lowerSearch)
+        opt.value.toLowerCase().includes(lowerSearch),
     );
   }, [options, search]);
 
@@ -73,7 +73,7 @@ export function SearchableSelect({
         disabled={disabled || loading}
         className={cn(
           "w-full px-4 py-2.5 bg-dark-900/60 border border-dark-500/50 rounded-xl text-foreground focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30 transition-all text-sm disabled:opacity-50 flex items-center justify-between text-left",
-          !selectedOption && "text-dark-300"
+          !selectedOption && "text-dark-300",
         )}
         onClick={() => setIsOpen(!isOpen)}
       >
@@ -81,8 +81,8 @@ export function SearchableSelect({
           {loading
             ? "Loading..."
             : selectedOption
-            ? selectedOption.label
-            : placeholder}
+              ? selectedOption.label
+              : placeholder}
         </span>
         {value && !disabled && !loading ? (
           <div className="flex items-center gap-1">
@@ -101,7 +101,7 @@ export function SearchableSelect({
       </button>
 
       {isOpen && (
-        <div className="absolute z-[100] mt-1 w-full bg-dark-800 border border-dark-500/50 rounded-xl shadow-xl overflow-hidden flex flex-col max-h-60">
+        <div className="absolute z-100 mt-1 w-full bg-dark-800 border border-dark-500/50 rounded-xl shadow-xl overflow-hidden flex flex-col max-h-60">
           <div className="p-2 border-b border-dark-500/50 flex items-center gap-2 bg-dark-900/60">
             <HiSearch className="w-4 h-4 text-dark-400 shrink-0" />
             <input
@@ -125,7 +125,9 @@ export function SearchableSelect({
                   type="button"
                   className={cn(
                     "w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-dark-600 transition-colors",
-                    value === opt.value ? "bg-accent-500/20 text-accent-400" : "text-foreground"
+                    value === opt.value
+                      ? "bg-accent-500/20 text-accent-400"
+                      : "text-foreground",
                   )}
                   onClick={() => {
                     onChange(opt.value);
