@@ -14,6 +14,7 @@ import (
 	"react-go/modules/role"
 	"react-go/modules/rule"
 	"react-go/modules/setting"
+	"react-go/modules/upload"
 	"react-go/modules/user"
 	"react-go/modules/whitelist"
 
@@ -21,13 +22,16 @@ import (
 )
 
 func SetupRoutes(app *fiber.App, api fiber.Router) {
-	// /api
+	// Root (Hello World)
 	example.PublicRoute(app)
 
-	// /api/address
+	// Upload
+	upload.ProtectedRoute(api.Group("/upload", middlewares.UseToken))
+
+	// Address
 	address.PublicRoute(api.Group("/address"))
 
-	// /api/auth
+	// Auth
 	auth.PublicRoute(api.Group("/auth"))
 	auth.ProtectedRoute(api.Group("/auth", middlewares.UseToken))
 

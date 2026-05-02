@@ -24,6 +24,13 @@ export default function UsersPage({ ruleKey }: Props) {
   const fields = useMemo<PaginationField[]>(
     () => [
       {
+        key: "avatar",
+        label: language({ id: "Foto Profil", en: "Profile Picture" }),
+        type: "file",
+        fileTarget: "profile",
+        required: true,
+      },
+      {
         key: "name",
         label: language({ id: "Nama", en: "Name" }),
         type: "text",
