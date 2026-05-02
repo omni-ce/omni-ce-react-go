@@ -49,6 +49,8 @@ import WidgetProgressList from "@/components/widget/WidgetProgressList";
 import WidgetLineChart from "@/components/widget/WidgetLineChart";
 import { Button } from "@/components/ui/Button";
 import Stepper from "@/components/ui/Stepper";
+import DynamicForm from "@/components/DynamicForm";
+import type { DynamicFormField } from "@/components/DynamicForm";
 
 interface Widget {
   label: string;
@@ -188,27 +190,66 @@ export default function DashboardPage({}: DashboardPageProps) {
     null,
   );
   const [formType, setFormType] = useState("");
+  const [formLabel, setFormLabel] = useState("");
+  const [formDesc, setFormDesc] = useState("");
   const [formColObj, setFormColObj] = useState({
     col_m: 12,
     col_t: 6,
     col_l: 4,
     col_ll: 3,
   });
-  const [formKey, setFormKey] = useState("");
-  const [formLabel, setFormLabel] = useState("");
-  const [formDesc, setFormDesc] = useState("");
   const [selectedWidgetKey, setSelectedWidgetKey] = useState("");
+  const [addFormData, setAddFormData] = useState<Record<string, unknown>>({
+    label: "",
+    key: "",
+    description: "",
+    col: { col_m: 12, col_t: 6, col_l: 4, col_ll: 3 },
+  });
 
-  // Sync formKey from formLabel with debounce/slugify behavior
+  const addWidgetFields: DynamicFormField[] = [
+    {
+      key: "label",
+      label: language({ id: "Label", en: "Label" }),
+      type: "text",
+      required: true,
+      col: 6,
+    },
+    {
+      key: "key",
+      label: language({ id: "ID / Key", en: "ID / Key" }),
+      type: "text",
+      required: true,
+      col: 6,
+    },
+    {
+      key: "description",
+      label: language({ id: "Deskripsi", en: "Description" }),
+      type: "textarea",
+      col: 12,
+    },
+    {
+      key: "col",
+      label: language({
+        id: "Lebar Kolom Responsif",
+        en: "Responsive Column Width",
+      }),
+      type: "col",
+      col: 12,
+    },
+  ];
+
+  // Sync key from label with slugify
   useEffect(() => {
-    if (addStep === 2 && formLabel && !formKey) {
-      const slug = formLabel
+    const label = addFormData.label as string;
+    const key = addFormData.key as string;
+    if (addStep === 2 && label && !key) {
+      const slug = label
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "_")
         .replace(/(^_|_$)/g, "");
-      setFormKey(slug);
+      setAddFormData((prev) => ({ ...prev, key: slug }));
     }
-  }, [formLabel, addStep]);
+  }, [addFormData.label, addStep]);
 
   const fetchWidgets = useCallback((roleId: string) => {
     if (!roleId || roleId === "" || roleId === "-") return;
@@ -225,9 +266,12 @@ export default function DashboardPage({}: DashboardPageProps) {
   const resetForm = () => {
     setAddStep(1);
     setSelectedWidgetKey("");
-    setFormKey("");
-    setFormLabel("");
-    setFormDesc("");
+    setAddFormData({
+      label: "",
+      key: "",
+      description: "",
+      col: { col_m: 12, col_t: 6, col_l: 4, col_ll: 3 },
+    });
     setFormColObj({ col_m: 12, col_t: 6, col_l: 4, col_ll: 3 });
     setFormType("");
   };
@@ -236,17 +280,18 @@ export default function DashboardPage({}: DashboardPageProps) {
     const w = widgets.find((w) => w.key === selectedWidgetKey);
     if (!w || !selectedRole) return;
     try {
+      const colData = (addFormData.col as { col_m: number; col_t: number; col_l: number; col_ll: number }) || { col_m: 12, col_t: 6, col_l: 4, col_ll: 3 };
       await dashboardService.createWidget({
         role_id: Number(selectedRole),
         component_key: w.key,
-        key: formKey || w.key + "_" + Date.now(),
+        key: (addFormData.key as string) || w.key + "_" + Date.now(),
         type: w.type,
-        col_m: formColObj.col_m,
-        col_t: formColObj.col_t,
-        col_l: formColObj.col_l,
-        col_ll: formColObj.col_ll,
-        label: formLabel || w.label,
-        description: formDesc,
+        col_m: colData.col_m,
+        col_t: colData.col_t,
+        col_l: colData.col_l,
+        col_ll: colData.col_ll,
+        label: (addFormData.label as string) || w.label,
+        description: (addFormData.description as string) || "",
       });
       setAddModalOpen(false);
       resetForm();
@@ -903,125 +948,14 @@ export default function DashboardPage({}: DashboardPageProps) {
                 ))}
               </div>
             ) : (
-              <div className="space-y-4 animate-fade-in">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-medium text-dark-300 mb-1.5 uppercase tracking-wider">
-                      {language({ id: "Label", en: "Label" })}
-                    </label>
-                    <input
-                      type="text"
-                      value={formLabel}
-                      onChange={(e) => setFormLabel(e.target.value)}
-                      placeholder="My Widget"
-                      className="w-full px-4 py-2.5 rounded-xl bg-dark-900/60 border border-dark-600/40 text-foreground text-sm focus:outline-none focus:border-accent-500 transition-all"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-dark-300 mb-1.5 uppercase tracking-wider">
-                      {language({ id: "ID / Key", en: "ID / Key" })}
-                    </label>
-                    <input
-                      type="text"
-                      value={formKey}
-                      onChange={(e) => setFormKey(e.target.value)}
-                      placeholder="widget_key"
-                      className="w-full px-4 py-2.5 rounded-xl bg-dark-900/60 border border-dark-600/40 text-foreground text-sm focus:outline-none focus:border-accent-500 transition-all font-mono"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-medium text-dark-300 mb-1.5 uppercase tracking-wider">
-                    {language({ id: "Deskripsi", en: "Description" })}
-                  </label>
-                  <textarea
-                    value={formDesc}
-                    onChange={(e) => setFormDesc(e.target.value)}
-                    placeholder={language({
-                      id: "Opsional deskripsi widget",
-                      en: "Optional widget description",
-                    })}
-                    rows={2}
-                    className="w-full px-4 py-2.5 rounded-xl bg-dark-900/60 border border-dark-600/40 text-foreground text-sm focus:outline-none focus:border-accent-500 transition-all resize-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-medium text-dark-300 mb-2 uppercase tracking-wider">
-                    {language({
-                      id: "Lebar Kolom Responsif",
-                      en: "Responsive Column Width",
-                    })}
-                  </label>
-                  <div className="grid grid-cols-2 gap-3">
-                    {([
-                      {
-                        key: "col_m" as const,
-                        label: "Mobile",
-                        icon: "📱",
-                        desc: "≤ 425px",
-                      },
-                      {
-                        key: "col_t" as const,
-                        label: "Tablet",
-                        icon: "📋",
-                        desc: "768px",
-                      },
-                      {
-                        key: "col_l" as const,
-                        label: "Laptop",
-                        icon: "💻",
-                        desc: "1024px",
-                      },
-                      {
-                        key: "col_ll" as const,
-                        label: "Large",
-                        icon: "🖥️",
-                        desc: "≥ 1440px",
-                      },
-                    ] as const).map((bp) => (
-                      <div
-                        key={bp.key}
-                        className="bg-dark-900/60 border border-dark-600/40 rounded-xl p-3"
-                      >
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-sm">{bp.icon}</span>
-                            <span className="text-xs font-semibold text-dark-200">
-                              {bp.label}
-                            </span>
-                          </div>
-                          <span className="text-[10px] font-mono text-accent-400 bg-accent-500/10 px-1.5 py-0.5 rounded">
-                            {formColObj[bp.key]}/12
-                          </span>
-                        </div>
-                        <input
-                          type="range"
-                          min={1}
-                          max={12}
-                          step={1}
-                          value={formColObj[bp.key]}
-                          onChange={(e) =>
-                            setFormColObj((prev) => ({
-                              ...prev,
-                              [bp.key]: Number(e.target.value),
-                            }))
-                          }
-                          className="w-full h-1.5 bg-dark-600 rounded-lg appearance-none cursor-pointer accent-accent-500"
-                        />
-                        <div className="flex justify-between mt-1 text-[9px] text-dark-500">
-                          <span>1</span>
-                          <span>6</span>
-                          <span>12</span>
-                        </div>
-                        <p className="text-[9px] text-dark-500 mt-1 text-center">
-                          {bp.desc}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+              <div className="animate-fade-in">
+                <DynamicForm
+                  fields={addWidgetFields}
+                  formData={addFormData}
+                  onChange={(key, value) =>
+                    setAddFormData((prev) => ({ ...prev, [key]: value }))
+                  }
+                />
               </div>
             )}
           </div>
@@ -1048,7 +982,7 @@ export default function DashboardPage({}: DashboardPageProps) {
             )}
 
             {addStep === 2 && (
-              <Button onClick={handleCreate} disabled={!formKey || !formLabel}>
+              <Button onClick={handleCreate} disabled={!addFormData.key || !addFormData.label}>
                 {language({ id: "Tambah", en: "Add" })}
               </Button>
             )}
@@ -1110,7 +1044,7 @@ export default function DashboardPage({}: DashboardPageProps) {
                   en: "Responsive Column Width",
                 })}
               </label>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3">
                 {([
                   {
                     key: "col_m" as const,
