@@ -19,12 +19,12 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<Record<"id" | "en", string> | null>(null);
   const { login } = useAuthStore();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setError("");
+    setError(null);
     setIsLoading(true);
 
     try {
@@ -32,20 +32,16 @@ export default function LoginPage() {
       if (response.success) {
         navigate("/select-role", { replace: true });
       } else {
-        setError(
-          response.message ||
-            language({ id: "Login gagal", en: "Login failed" }),
-        );
+        setError({
+          id: "Username atau password salah",
+          en: "Invalid username or password",
+        });
       }
     } catch (err: unknown) {
-      const errorMessage =
-        err instanceof Error
-          ? err.message
-          : language({
-              id: "Koneksi gagal. Periksa server Anda.",
-              en: "Connection failed. Check your server.",
-            });
-      setError(errorMessage);
+      setError({
+        id: "Username atau password salah",
+        en: "Invalid username or password",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -87,7 +83,9 @@ export default function LoginPage() {
 
           {error && (
             <div className="bg-neon-red/10 border border-neon-red/20 rounded-lg px-4 py-3 mb-4">
-              <p className="text-sm text-neon-red font-mono">{error}</p>
+              <p className="text-sm text-neon-red font-mono">
+                {language(error)}
+              </p>
             </div>
           )}
 

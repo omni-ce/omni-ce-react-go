@@ -37,3 +37,7 @@ func GetStats(c *fiber.Ctx) error {
 
 	return dto.OK(c, "Dashboard stats retrieved successfully", stats)
 }
+
+func HelloWorld(c *fiber.Ctx) error {
+	return dto.OK(c, "Hello World", nil)
+}

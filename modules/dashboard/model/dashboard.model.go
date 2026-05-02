@@ -12,8 +12,8 @@ type DashboardComponent struct {
 	RoleID       uint      `json:"role_id" gorm:"type:bigint;not null;uniqueIndex:idx_dashboard_component_key"`
 	ComponentKey string    `json:"component_key" gorm:"type:varchar(255);not null;uniqueIndex:idx_dashboard_component_key"`
 	Key          string    `json:"key" gorm:"type:varchar(255);not null;uniqueIndex:idx_dashboard_component_key"`
-	Col          int       `json:"col" gorm:"type:int;not null;default:12"`
 	Type         string    `json:"type" gorm:"type:varchar(255);not null"`
+	Col          int       `json:"col" gorm:"type:int;not null;default:12"`
 	Label        string    `json:"label" gorm:"type:varchar(255);not null"`
 	Description  string    `json:"description" gorm:"type:varchar(255)"`
 	Value        float64   `json:"value" gorm:"type:decimal(10,2);not null;default:0"`

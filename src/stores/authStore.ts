@@ -8,10 +8,7 @@ interface AuthState {
   token: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (
-    username: string,
-    password: string,
-  ) => Promise<{ success: boolean; message: string | null }>;
+  login: (username: string, password: string) => Promise<{ success: boolean }>;
   logout: () => Promise<{ success: boolean; message: string | null }>;
   validateToken: (retrigger?: boolean) => Promise<boolean>;
   setAuthenticated: (value: boolean) => void;
@@ -30,13 +27,15 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
         const user = response.data.user;
         localStorage.setItem("token", token);
         set({ token, user, isAuthenticated: true });
-        return { success: true, message: null };
+        return { success: true };
       } else {
-        return { success: false, message: response.message || "Login failed" };
+        return {
+          success: false,
+        };
       }
     } catch (error) {
       console.error("Login failed:", error);
-      return { success: false, message: "Login failed" };
+      return { success: false };
     }
   },
   logout: async () => {
