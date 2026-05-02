@@ -3,14 +3,10 @@ import { useAuthStore } from "@/stores/authStore";
 import { useLanguageStore } from "@/stores/languageStore";
 import satellite from "@/lib/satellite";
 import type { Response } from "@/types/response";
+import type { Option } from "@/types/option";
 import { RiBuilding4Line, RiUserStarLine } from "react-icons/ri";
 import { HiOutlineArrowLeft, HiCheck } from "react-icons/hi2";
 import Loading from "@/components/Loading";
-
-interface OptionItem {
-  key: unknown;
-  value: string;
-}
 
 interface RoleStepperProps {
   onComplete: (divisionId: string, roleId: string) => void;
@@ -18,12 +14,18 @@ interface RoleStepperProps {
   initialRoleId?: string;
 }
 
-export default function RoleStepper({ onComplete, initialDivisionId = "", initialRoleId = "" }: RoleStepperProps) {
+export default function RoleStepper({
+  onComplete,
+  initialDivisionId = "",
+  initialRoleId = "",
+}: RoleStepperProps) {
   const { language } = useLanguageStore();
   const { user } = useAuthStore();
 
   const [step, setStep] = useState<1 | 2>(initialDivisionId ? 2 : 1);
-  const [divisions, setDivisions] = useState<{ value: string; label: string }[]>([]);
+  const [divisions, setDivisions] = useState<
+    { value: string; label: string }[]
+  >([]);
   const [roles, setRoles] = useState<{ value: string; label: string }[]>([]);
   const [divisionId, setDivisionId] = useState(initialDivisionId);
   const [roleId, setRoleId] = useState(initialRoleId);
@@ -34,10 +36,12 @@ export default function RoleStepper({ onComplete, initialDivisionId = "", initia
   useEffect(() => {
     setLoadingDivisions(true);
     satellite
-      .get<Response<OptionItem[]>>("/api/option/divisions")
+      .get<Response<Option[]>>("/api/option/divisions")
       .then((res) => {
         const data = res.data.data || [];
-        setDivisions(data.map((d) => ({ value: String(d.key), label: d.value })));
+        setDivisions(
+          data.map((d) => ({ value: String(d.value), label: d.label })),
+        );
       })
       .catch(() => setDivisions([]))
       .finally(() => setLoadingDivisions(false));
@@ -54,10 +58,10 @@ export default function RoleStepper({ onComplete, initialDivisionId = "", initia
     // don't reset role if we are going backwards and already selected something for THIS division,
     // but usually stepper logic resets it when you pick a NEW division.
     satellite
-      .get<Response<OptionItem[]>>(`/api/option/roles/${divisionId}`)
+      .get<Response<Option[]>>(`/api/option/roles/${divisionId}`)
       .then((res) => {
         const data = res.data.data || [];
-        setRoles(data.map((d) => ({ value: String(d.key), label: d.value })));
+        setRoles(data.map((d) => ({ value: String(d.value), label: d.label })));
       })
       .catch(() => setRoles([]))
       .finally(() => setLoadingRoles(false));
@@ -140,11 +144,17 @@ export default function RoleStepper({ onComplete, initialDivisionId = "", initia
         {step === 1 && (
           <div className="absolute inset-0 animate-fade-in flex flex-col">
             <h3 className="text-lg font-semibold text-foreground mb-4 text-center">
-              {language({ id: "Pilih Divisi Anda", en: "Select Your Division" })}
+              {language({
+                id: "Pilih Divisi Anda",
+                en: "Select Your Division",
+              })}
             </h3>
             {availableDivisions.length === 0 ? (
               <p className="text-sm text-dark-400 text-center py-8">
-                {language({ id: "Tidak ada divisi yang tersedia.", en: "No divisions available." })}
+                {language({
+                  id: "Tidak ada divisi yang tersedia.",
+                  en: "No divisions available.",
+                })}
               </p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 overflow-y-auto max-h-[300px] p-1">
@@ -158,7 +168,9 @@ export default function RoleStepper({ onComplete, initialDivisionId = "", initia
                         : "bg-dark-800 border-dark-600/50 hover:bg-dark-700/50 hover:border-dark-500 text-dark-200"
                     }`}
                   >
-                    <RiBuilding4Line className={`w-8 h-8 mb-2 ${divisionId === div.value ? "text-accent-400" : "text-dark-400"}`} />
+                    <RiBuilding4Line
+                      className={`w-8 h-8 mb-2 ${divisionId === div.value ? "text-accent-400" : "text-dark-400"}`}
+                    />
                     <span className="text-sm font-medium">{div.label}</span>
                   </button>
                 ))}
@@ -182,14 +194,17 @@ export default function RoleStepper({ onComplete, initialDivisionId = "", initia
                 {language({ id: "Pilih Jabatan Anda", en: "Select Your Role" })}
               </h3>
             </div>
-            
+
             {loadingRoles ? (
               <div className="flex justify-center py-8">
                 <Loading />
               </div>
             ) : availableRoles.length === 0 ? (
               <p className="text-sm text-dark-400 text-center py-8">
-                {language({ id: "Tidak ada jabatan yang tersedia untuk divisi ini.", en: "No roles available for this division." })}
+                {language({
+                  id: "Tidak ada jabatan yang tersedia untuk divisi ini.",
+                  en: "No roles available for this division.",
+                })}
               </p>
             ) : (
               <div className="grid grid-cols-1 gap-3 overflow-y-auto max-h-[300px] p-1">
@@ -203,11 +218,19 @@ export default function RoleStepper({ onComplete, initialDivisionId = "", initia
                         : "bg-dark-800 border-dark-600/50 hover:bg-dark-700/50 hover:border-dark-500 text-dark-200"
                     }`}
                   >
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 shrink-0 ${roleId === role.value ? "bg-accent-500/20" : "bg-dark-700"}`}>
-                      <RiUserStarLine className={`w-5 h-5 ${roleId === role.value ? "text-accent-400" : "text-dark-400"}`} />
+                    <div
+                      className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 shrink-0 ${roleId === role.value ? "bg-accent-500/20" : "bg-dark-700"}`}
+                    >
+                      <RiUserStarLine
+                        className={`w-5 h-5 ${roleId === role.value ? "text-accent-400" : "text-dark-400"}`}
+                      />
                     </div>
-                    <span className="text-sm font-medium flex-1">{role.label}</span>
-                    {roleId === role.value && <HiCheck className="w-5 h-5 ml-2 text-accent-400 shrink-0" />}
+                    <span className="text-sm font-medium flex-1">
+                      {role.label}
+                    </span>
+                    {roleId === role.value && (
+                      <HiCheck className="w-5 h-5 ml-2 text-accent-400 shrink-0" />
+                    )}
                   </button>
                 ))}
               </div>

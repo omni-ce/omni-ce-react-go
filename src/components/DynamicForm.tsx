@@ -9,6 +9,7 @@ import satellite from "@/lib/satellite";
 import type { Response } from "@/types/response";
 import { HOST_API } from "@/environment";
 import BlankUser from "@/assets/blank-user.svg";
+import type { Option } from "@/types/option";
 
 export interface DynamicFormFieldOption {
   value: string;
@@ -153,15 +154,13 @@ function DynamicSelect({
     let isMounted = true;
     setLoading(true);
     satellite
-      .get<Response<{ key: unknown; value: string }[]>>(
-        `/api/option/${endpoint}`,
-      )
+      .get<Response<Option[]>>(`/api/option/${endpoint}`)
       .then((res) => {
         if (isMounted) {
           const data = res.data.data || [];
           const mapped = data.map((d) => ({
-            value: String(d.key),
-            label: d.value,
+            value: String(d.value),
+            label: d.label,
           }));
           setOpts(mapped);
         }
@@ -506,12 +505,20 @@ function DynamicFile({
   };
 
   if (field.fileTemplate === "profile") {
-    const imageUrl = value ? (value.startsWith("http") ? value : HOST_API + value) : BlankUser;
+    const imageUrl = value
+      ? value.startsWith("http")
+        ? value
+        : HOST_API + value
+      : BlankUser;
 
     return (
       <div className="mt-1.5 flex flex-row items-center gap-6 p-4 rounded-xl border border-dark-600/50 bg-dark-900/30">
         <div className="shrink-0 w-24 h-24 rounded-full overflow-hidden border-2 border-dark-500 bg-dark-800">
-          <img src={imageUrl} alt="Profile Preview" className="w-full h-full object-cover" />
+          <img
+            src={imageUrl}
+            alt="Profile Preview"
+            className="w-full h-full object-cover"
+          />
         </div>
         <div className="flex flex-col gap-2 flex-1 w-full overflow-hidden">
           <Input
@@ -520,10 +527,16 @@ function DynamicFile({
             onChange={handleFileChange}
             disabled={disabled || loading}
             className={loading ? "opacity-50" : ""}
-            accept={field.fileType ? field.fileType.flat().join(",") : undefined}
+            accept={
+              field.fileType ? field.fileType.flat().join(",") : undefined
+            }
           />
-          {errorMsg && <span className="text-xs text-neon-red">{errorMsg}</span>}
-          {loading && <span className="text-xs text-accent-500">Uploading...</span>}
+          {errorMsg && (
+            <span className="text-xs text-neon-red">{errorMsg}</span>
+          )}
+          {loading && (
+            <span className="text-xs text-accent-500">Uploading...</span>
+          )}
         </div>
       </div>
     );

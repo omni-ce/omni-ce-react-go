@@ -18,8 +18,8 @@ type RoleDivision struct {
 
 func (s *RoleDivision) Option() types.Option {
 	return types.Option{
-		Key:   s.ID,
-		Value: s.Name,
+		Label: s.Name,
+		Value: s.ID,
 	}
 }
 

@@ -21,8 +21,8 @@ type Role struct {
 
 func (s *Role) Option() types.Option {
 	return types.Option{
-		Key:   s.ID,
-		Value: s.Name,
+		Label: s.Name,
+		Value: s.ID,
 	}
 }
 
