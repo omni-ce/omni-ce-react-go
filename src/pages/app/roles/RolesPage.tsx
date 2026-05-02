@@ -267,7 +267,7 @@ export default function RolesPage({ ruleKey }: Props) {
       }
     }
     return false;
-  }, [rules, originalRules, divisions, menuList, ACTIONS]);
+  }, [rules, originalRules, divisions, allMenuKeys, ACTIONS]);
 
   // Save all rules
   const handleSave = async () => {
@@ -281,7 +281,7 @@ export default function RolesPage({ ruleKey }: Props) {
       state: boolean;
     }[] = [];
     for (const roleId of allRoleIds) {
-      for (const menu of menuList) {
+      for (const menu of allMenuKeys) {
         for (const act of ACTIONS) {
           data.push({
             role_id: roleId,
