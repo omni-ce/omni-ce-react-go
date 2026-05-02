@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState, useCallback } from "react";
 import {
   RiPulseLine,
   RiInboxLine,
@@ -6,13 +6,18 @@ import {
   RiAlertLine,
   RiTimerLine,
   RiCheckboxCircleLine,
+  RiEditLine,
+  RiDeleteBinLine,
 } from "react-icons/ri";
 
 import satellite from "@/lib/satellite";
 import StatCard from "@/components/StatCard";
 import { SearchableSelect } from "@/components/ui/SearchableSelect";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/Dialog";
 import { useDashboardStore } from "@/stores/dashboardStore";
 import { useLanguageStore } from "@/stores/languageStore";
+import { useAuthStore } from "@/stores/authStore";
+import { useRuleStore } from "@/stores/ruleStore";
 import type { Response } from "@/types/response";
 import type { Option } from "@/types/option";
 import { DAYS_30, MONTHS } from "@/dummy";
@@ -27,6 +32,18 @@ import WidgetTableList from "@/components/widget/WidgetTableList";
 import WidgetProgressList from "@/components/widget/WidgetProgressList";
 import WidgetLineChart from "@/components/widget/WidgetLineChart";
 import { Button } from "@/components/ui/Button";
+
+interface DashboardWidget {
+  id: string;
+  role_id: number;
+  component_key: string;
+  key: string;
+  type: string;
+  col: number;
+  label: string;
+  description: string;
+  value: number;
+}
 
 const widgets = [
   {
@@ -97,6 +114,8 @@ interface DashboardPageProps {}
 export default function DashboardPage({}: DashboardPageProps) {
   const { fetchStats } = useDashboardStore();
   const { language } = useLanguageStore();
+  const { user } = useAuthStore();
+  const { role_selected } = useRuleStore();
 
   useEffect(() => {
     fetchStats();
@@ -104,7 +123,15 @@ export default function DashboardPage({}: DashboardPageProps) {
 
   const [roles, setRoles] = useState<Option[]>([]);
   const [loadingRoles, setLoadingRoles] = useState(false);
-  const [selectedRole, setSelectedRole] = useState("");
+  const [selectedRole, setSelectedRole] = useState(
+    user?.role !== "su" ? role_selected?.role_id || "" : ""
+  );
+
+  useEffect(() => {
+    if (user?.role !== "su") {
+      setSelectedRole(role_selected?.role_id || "");
+    }
+  }, [user?.role, role_selected?.role_id]);
 
   useEffect(() => {
     setLoadingRoles(true);
@@ -121,6 +148,90 @@ export default function DashboardPage({}: DashboardPageProps) {
   const [statsPeriod, setStatsPeriod] = useState("Monthly");
   const [analyticsPeriod, setAnalyticsPeriod] = useState("Monthly");
   const [trafficPeriod, setTrafficPeriod] = useState("Monthly");
+
+  // Widget CRUD state
+  const [roleWidgets, setRoleWidgets] = useState<DashboardWidget[]>([]);
+  const [addModalOpen, setAddModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [editingWidget, setEditingWidget] = useState<DashboardWidget | null>(null);
+  const [deletingWidget, setDeletingWidget] = useState<DashboardWidget | null>(null);
+  const [formType, setFormType] = useState("");
+  const [formCol, setFormCol] = useState(12);
+  const [formLabel, setFormLabel] = useState("");
+  const [formDesc, setFormDesc] = useState("");
+  const [selectedWidgetKey, setSelectedWidgetKey] = useState("");
+
+  const fetchWidgets = useCallback((roleId: string) => {
+    if (!roleId || roleId === "" || roleId === "-") return;
+    satellite
+      .get<Response<DashboardWidget[]>>(`/api/dashboard/widget/list?role_id=${roleId}`)
+      .then((res) => setRoleWidgets(res.data.data || []))
+      .catch(() => setRoleWidgets([]));
+  }, []);
+
+  useEffect(() => {
+    fetchWidgets(selectedRole);
+  }, [selectedRole, fetchWidgets]);
+
+  const handleCreate = async () => {
+    const w = widgets.find((w) => w.key === selectedWidgetKey);
+    if (!w || !selectedRole) return;
+    try {
+      await satellite.post("/api/dashboard/widget/create", {
+        role_id: Number(selectedRole),
+        component_key: w.key,
+        key: w.key + "_" + Date.now(),
+        type: w.type,
+        col: 12,
+        label: w.label,
+        description: "",
+      });
+      setAddModalOpen(false);
+      setSelectedWidgetKey("");
+      fetchWidgets(selectedRole);
+    } catch (err) {
+      console.error("Failed to create widget:", err);
+    }
+  };
+
+  const openEdit = (w: DashboardWidget) => {
+    setEditingWidget(w);
+    setFormType(w.type);
+    setFormCol(w.col);
+    setFormLabel(w.label);
+    setFormDesc(w.description);
+    setEditModalOpen(true);
+  };
+
+  const handleEdit = async () => {
+    if (!editingWidget) return;
+    try {
+      await satellite.put(`/api/dashboard/widget/edit/${editingWidget.id}`, {
+        type: formType,
+        col: formCol,
+        label: formLabel,
+        description: formDesc,
+      });
+      setEditModalOpen(false);
+      setEditingWidget(null);
+      fetchWidgets(selectedRole);
+    } catch (err) {
+      console.error("Failed to edit widget:", err);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!deletingWidget) return;
+    try {
+      await satellite.delete(`/api/dashboard/widget/remove/${deletingWidget.id}`);
+      setDeleteModalOpen(false);
+      setDeletingWidget(null);
+      fetchWidgets(selectedRole);
+    } catch (err) {
+      console.error("Failed to delete widget:", err);
+    }
+  };
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -139,9 +250,9 @@ export default function DashboardPage({}: DashboardPageProps) {
         </div>
         <div className="flex items-center gap-3 w-full sm:w-auto">
           {/* Button Add Widget on left side select role */}
-          {!(selectedRole === "" || selectedRole === "-") && (
+          {user?.role === "su" && !(selectedRole === "" || selectedRole === "-") && (
             <Button
-              // onClick={() => setAddWidgetOpen(true)}
+              onClick={() => setAddModalOpen(true)}
               className="shrink-0 whitespace-nowrap"
             >
               {language({ id: "Tambah Widget", en: "Add Widget" })}
@@ -149,31 +260,33 @@ export default function DashboardPage({}: DashboardPageProps) {
           )}
 
           {/* Select Role on SU */}
-          <div className="w-full sm:w-64">
-            <SearchableSelect
-              options={[
-                {
-                  label: language({ id: "--Contoh--", en: "--Example--" }),
-                  value: "-",
-                },
-                ...roles
-                  .sort((a, b) =>
-                    a.label.localeCompare(b.label, undefined, {
-                      numeric: true,
-                      sensitivity: "base",
-                    }),
-                  )
-                  .map((r) => ({
-                    value: String(r.value),
-                    label: r.label,
-                  })),
-              ]}
-              value={selectedRole}
-              onChange={setSelectedRole}
-              loading={loadingRoles}
-              placeholder={language({ id: "Pilih Role", en: "Select Role" })}
-            />
-          </div>
+          {user?.role === "su" && (
+            <div className="w-full sm:w-64">
+              <SearchableSelect
+                options={[
+                  {
+                    label: language({ id: "--Contoh--", en: "--Example--" }),
+                    value: "-",
+                  },
+                  ...roles
+                    .sort((a, b) =>
+                      a.label.localeCompare(b.label, undefined, {
+                        numeric: true,
+                        sensitivity: "base",
+                      }),
+                    )
+                    .map((r) => ({
+                      value: String(r.value),
+                      label: r.label,
+                    })),
+                ]}
+                value={selectedRole}
+                onChange={setSelectedRole}
+                loading={loadingRoles}
+                placeholder={language({ id: "Pilih Role", en: "Select Role" })}
+              />
+            </div>
+          )}
         </div>
       </div>
 
@@ -601,8 +714,183 @@ export default function DashboardPage({}: DashboardPageProps) {
           </div>
         </Fragment>
       )}
+      {/* Dynamic widget list from API */}
+      {!(selectedRole === "" || selectedRole === "-") && (
+        <div className="grid grid-cols-12 gap-4">
+          {roleWidgets.length === 0 && (
+            <div className="col-span-12 flex items-center justify-center py-12">
+              <p className="text-sm text-dark-400">
+                {language({ id: "Belum ada widget", en: "No widgets yet" })}
+              </p>
+            </div>
+          )}
+          {roleWidgets.map((rw) => {
+            const widgetDef = widgets.find((w) => w.key === rw.component_key);
+            return (
+              <div
+                key={rw.id}
+                className="relative group"
+                style={{ gridColumn: `span ${rw.col} / span ${rw.col}` }}
+              >
+                {/* SU edit/delete controls */}
+                {user?.role === "su" && (
+                  <div className="absolute top-2 right-2 z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      onClick={() => openEdit(rw)}
+                      className="p-1.5 rounded-lg bg-dark-700/80 backdrop-blur-sm text-dark-300 hover:text-accent-400 hover:bg-dark-600/80 transition-all"
+                      title={language({ id: "Edit", en: "Edit" })}
+                    >
+                      <RiEditLine className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => { setDeletingWidget(rw); setDeleteModalOpen(true); }}
+                      className="p-1.5 rounded-lg bg-dark-700/80 backdrop-blur-sm text-dark-300 hover:text-neon-red hover:bg-dark-600/80 transition-all"
+                      title={language({ id: "Hapus", en: "Delete" })}
+                    >
+                      <RiDeleteBinLine className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+                {/* Widget card */}
+                <div className="bg-dark-800/60 border border-dark-600/40 rounded-2xl p-5">
+                  <h3 className="text-sm font-semibold text-foreground">{rw.label}</h3>
+                  {rw.description && <p className="text-xs text-dark-400 mt-0.5">{rw.description}</p>}
+                  <p className="text-xs text-dark-500 mt-2">
+                    {widgetDef?.label || rw.component_key} · col-{rw.col}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
 
-      {/* !(selectedRole === "" || selectedRole === "-") && */}
+      {/* Add Widget Modal */}
+      <Dialog open={addModalOpen} onClose={() => setAddModalOpen(false)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{language({ id: "Tambah Widget", en: "Add Widget" })}</DialogTitle>
+            <DialogDescription>
+              {language({ id: "Pilih jenis widget untuk ditambahkan", en: "Select widget type to add" })}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid grid-cols-2 gap-3 max-h-[400px] overflow-y-auto">
+            {widgets.map((w) => (
+              <button
+                key={w.key}
+                onClick={() => setSelectedWidgetKey(w.key)}
+                className={`p-4 rounded-xl border text-left transition-all ${
+                  selectedWidgetKey === w.key
+                    ? "border-accent-500 bg-accent-500/10 text-foreground"
+                    : "border-dark-600/40 bg-dark-700/30 text-dark-300 hover:border-dark-500/60 hover:text-foreground"
+                }`}
+              >
+                <p className="text-sm font-semibold">{w.label}</p>
+                <p className="text-xs text-dark-400 mt-1">{w.type}</p>
+              </button>
+            ))}
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setAddModalOpen(false)}>
+              {language({ id: "Batal", en: "Cancel" })}
+            </Button>
+            <Button onClick={handleCreate} disabled={!selectedWidgetKey}>
+              {language({ id: "Tambah", en: "Add" })}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Widget Modal */}
+      <Dialog open={editModalOpen} onClose={() => setEditModalOpen(false)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{language({ id: "Edit Widget", en: "Edit Widget" })}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs font-medium text-dark-300 mb-1.5">
+                {language({ id: "Label", en: "Label" })}
+              </label>
+              <input
+                type="text"
+                value={formLabel}
+                onChange={(e) => setFormLabel(e.target.value)}
+                className="w-full px-3 py-2 rounded-lg bg-dark-700/50 border border-dark-600/40 text-foreground text-sm focus:outline-none focus:border-accent-500"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-dark-300 mb-1.5">
+                {language({ id: "Deskripsi", en: "Description" })}
+              </label>
+              <input
+                type="text"
+                value={formDesc}
+                onChange={(e) => setFormDesc(e.target.value)}
+                className="w-full px-3 py-2 rounded-lg bg-dark-700/50 border border-dark-600/40 text-foreground text-sm focus:outline-none focus:border-accent-500"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-medium text-dark-300 mb-1.5">Type</label>
+                <select
+                  value={formType}
+                  onChange={(e) => setFormType(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg bg-dark-700/50 border border-dark-600/40 text-foreground text-sm focus:outline-none focus:border-accent-500"
+                >
+                  {widgets.map((w) => (
+                    <option key={w.type} value={w.type}>{w.label}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-dark-300 mb-1.5">
+                  Col (1-12)
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  max={12}
+                  value={formCol}
+                  onChange={(e) => setFormCol(Number(e.target.value))}
+                  className="w-full px-3 py-2 rounded-lg bg-dark-700/50 border border-dark-600/40 text-foreground text-sm focus:outline-none focus:border-accent-500"
+                />
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setEditModalOpen(false)}>
+              {language({ id: "Batal", en: "Cancel" })}
+            </Button>
+            <Button onClick={handleEdit}>
+              {language({ id: "Simpan", en: "Save" })}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Modal */}
+      <Dialog open={deleteModalOpen} onClose={() => setDeleteModalOpen(false)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{language({ id: "Hapus Widget", en: "Delete Widget" })}</DialogTitle>
+            <DialogDescription>
+              {language({
+                id: `Apakah Anda yakin ingin menghapus widget "${deletingWidget?.label}"?`,
+                en: `Are you sure you want to delete widget "${deletingWidget?.label}"?`,
+              })}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setDeleteModalOpen(false)}>
+              {language({ id: "Batal", en: "Cancel" })}
+            </Button>
+            <Button variant="destructive" onClick={handleDelete}>
+              {language({ id: "Hapus", en: "Delete" })}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
