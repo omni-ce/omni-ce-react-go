@@ -43,6 +43,10 @@ func GetStats(c *fiber.Ctx) error {
 
 // ─── Widget CRUD ────────────────────────────────────────────────────
 
+func WidgetFunctions(c *fiber.Ctx) error {
+	return dto.OK(c, "Widget deleted successfully", nil)
+}
+
 func WidgetCreate(c *fiber.Ctx) error {
 	var body struct {
 		RoleID       uint           `json:"role_id"`
