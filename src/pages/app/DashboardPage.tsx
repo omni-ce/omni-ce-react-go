@@ -51,6 +51,7 @@ import { Button } from "@/components/ui/Button";
 import Stepper from "@/components/ui/Stepper";
 import DynamicForm from "@/components/DynamicForm";
 import type { DynamicFormField } from "@/components/DynamicForm";
+import { lgMap, mdMap, spanMap, xlMap } from "@/responsive";
 
 interface Widget {
   label: string;
@@ -268,13 +269,12 @@ export default function DashboardPage({}: DashboardPageProps) {
     const w = widgets.find((w) => w.key === selectedWidgetKey);
     if (!w || !selectedRole) return;
     try {
-      const colData =
-        (addFormData.col as {
-          mobile: number;
-          tablet: number;
-          laptop: number;
-          desktop: number;
-        }) || { mobile: 12, tablet: 6, laptop: 4, desktop: 3 };
+      const colData = (addFormData.col as {
+        mobile: number;
+        tablet: number;
+        laptop: number;
+        desktop: number;
+      }) || { mobile: 12, tablet: 6, laptop: 4, desktop: 3 };
       await dashboardService.createWidget({
         role_id: Number(selectedRole),
         component_key: w.key,
@@ -839,14 +839,16 @@ export default function DashboardPage({}: DashboardPageProps) {
           )}
           {roleWidgets.map((rw) => {
             const widgetDef = widgets.find((w) => w.key === rw.component_key);
+
+            const m = rw.col?.mobile || 12;
+            const t = rw.col?.tablet || 6;
+            const l = rw.col?.laptop || 4;
+            const d = rw.col?.desktop || 3;
+
+            const colClass = `${spanMap[m] || "col-span-12"} ${mdMap[t] || "md:col-span-6"} ${lgMap[l] || "lg:col-span-4"} ${xlMap[d] || "xl:col-span-3"}`;
+
             return (
-              <div
-                key={rw.id}
-                className="relative group"
-                style={{
-                  gridColumn: `span ${rw.col?.laptop || 12} / span ${rw.col?.laptop || 12}`,
-                }}
-              >
+              <div key={rw.id} className={`relative group ${colClass}`}>
                 {/* SU edit/delete controls */}
                 {user?.role === "su" && (
                   <div className="absolute top-2 right-2 z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
