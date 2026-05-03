@@ -13,10 +13,7 @@ type DashboardWidget struct {
 	ComponentKey string    `json:"component_key" gorm:"type:varchar(255);not null;uniqueIndex:idx_dashboard_component_key"`
 	Type         string    `json:"type" gorm:"type:varchar(255);not null"`
 	Key          string    `json:"key" gorm:"type:varchar(255);not null;uniqueIndex:idx_dashboard_component_key"`
-	ColM         int       `json:"col_m" gorm:"type:int;not null;default:12"` // Mobile ≤425px
-	ColT         int       `json:"col_t" gorm:"type:int;not null;default:6"`  // Tablet 768px
-	ColL         int       `json:"col_l" gorm:"type:int;not null;default:4"`  // Laptop 1024px
-	ColLL        int       `json:"col_ll" gorm:"type:int;not null;default:3"` // Large Laptop ≥1440px
+	Col          string    `json:"col" gorm:"type:text;not null"`
 	Label        string    `json:"label" gorm:"type:varchar(255);not null"`
 	Description  string    `json:"description" gorm:"type:varchar(255)"`
 	Value        float64   `json:"value" gorm:"type:decimal(10,2);not null;default:0"`

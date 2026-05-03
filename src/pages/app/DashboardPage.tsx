@@ -193,17 +193,17 @@ export default function DashboardPage({}: DashboardPageProps) {
   const [formLabel, setFormLabel] = useState("");
   const [formDesc, setFormDesc] = useState("");
   const [formColObj, setFormColObj] = useState({
-    col_m: 12,
-    col_t: 6,
-    col_l: 4,
-    col_ll: 3,
+    mobile: 12,
+    tablet: 6,
+    laptop: 4,
+    desktop: 3,
   });
   const [selectedWidgetKey, setSelectedWidgetKey] = useState("");
   const [addFormData, setAddFormData] = useState<Record<string, unknown>>({
     label: "",
     key: "",
     description: "",
-    col: { col_m: 12, col_t: 6, col_l: 4, col_ll: 3 },
+    col: { mobile: 12, tablet: 6, laptop: 4, desktop: 3 },
   });
 
   const addWidgetFields: DynamicFormField[] = [
@@ -217,7 +217,7 @@ export default function DashboardPage({}: DashboardPageProps) {
     {
       key: "key",
       label: language({ id: "ID / Key", en: "ID / Key" }),
-      type: "text",
+      type: "key",
       required: true,
       col: 6,
     },
@@ -234,22 +234,10 @@ export default function DashboardPage({}: DashboardPageProps) {
         en: "Responsive Column Width",
       }),
       type: "col",
+      required: true,
       col: 12,
     },
   ];
-
-  // Sync key from label with slugify
-  useEffect(() => {
-    const label = addFormData.label as string;
-    const key = addFormData.key as string;
-    if (addStep === 2 && label && !key) {
-      const slug = label
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "_")
-        .replace(/(^_|_$)/g, "");
-      setAddFormData((prev) => ({ ...prev, key: slug }));
-    }
-  }, [addFormData.label, addStep]);
 
   const fetchWidgets = useCallback((roleId: string) => {
     if (!roleId || roleId === "" || roleId === "-") return;
@@ -270,9 +258,9 @@ export default function DashboardPage({}: DashboardPageProps) {
       label: "",
       key: "",
       description: "",
-      col: { col_m: 12, col_t: 6, col_l: 4, col_ll: 3 },
+      col: { mobile: 12, tablet: 6, laptop: 4, desktop: 3 },
     });
-    setFormColObj({ col_m: 12, col_t: 6, col_l: 4, col_ll: 3 });
+    setFormColObj({ mobile: 12, tablet: 6, laptop: 4, desktop: 3 });
     setFormType("");
   };
 
@@ -280,16 +268,24 @@ export default function DashboardPage({}: DashboardPageProps) {
     const w = widgets.find((w) => w.key === selectedWidgetKey);
     if (!w || !selectedRole) return;
     try {
-      const colData = (addFormData.col as { col_m: number; col_t: number; col_l: number; col_ll: number }) || { col_m: 12, col_t: 6, col_l: 4, col_ll: 3 };
+      const colData =
+        (addFormData.col as {
+          mobile: number;
+          tablet: number;
+          laptop: number;
+          desktop: number;
+        }) || { mobile: 12, tablet: 6, laptop: 4, desktop: 3 };
       await dashboardService.createWidget({
         role_id: Number(selectedRole),
         component_key: w.key,
         key: (addFormData.key as string) || w.key + "_" + Date.now(),
         type: w.type,
-        col_m: colData.col_m,
-        col_t: colData.col_t,
-        col_l: colData.col_l,
-        col_ll: colData.col_ll,
+        col: {
+          mobile: colData.mobile,
+          tablet: colData.tablet,
+          laptop: colData.laptop,
+          desktop: colData.desktop,
+        },
         label: (addFormData.label as string) || w.label,
         description: (addFormData.description as string) || "",
       });
@@ -305,10 +301,10 @@ export default function DashboardPage({}: DashboardPageProps) {
     setEditingWidget(w);
     setFormType(w.type);
     setFormColObj({
-      col_m: w.col_m || 12,
-      col_t: w.col_t || 6,
-      col_l: w.col_l || 4,
-      col_ll: w.col_ll || 3,
+      mobile: w.col?.mobile || 12,
+      tablet: w.col?.tablet || 6,
+      laptop: w.col?.laptop || 4,
+      desktop: w.col?.desktop || 3,
     });
     setFormLabel(w.label);
     setFormDesc(w.description);
@@ -320,10 +316,12 @@ export default function DashboardPage({}: DashboardPageProps) {
     try {
       await dashboardService.editWidget(editingWidget.id, {
         type: formType,
-        col_m: formColObj.col_m,
-        col_t: formColObj.col_t,
-        col_l: formColObj.col_l,
-        col_ll: formColObj.col_ll,
+        col: {
+          mobile: formColObj.mobile,
+          tablet: formColObj.tablet,
+          laptop: formColObj.laptop,
+          desktop: formColObj.desktop,
+        },
         label: formLabel,
         description: formDesc,
       });
@@ -845,7 +843,9 @@ export default function DashboardPage({}: DashboardPageProps) {
               <div
                 key={rw.id}
                 className="relative group"
-                style={{ gridColumn: `span ${rw.col_l || 12} / span ${rw.col_l || 12}` }}
+                style={{
+                  gridColumn: `span ${rw.col?.laptop || 12} / span ${rw.col?.laptop || 12}`,
+                }}
               >
                 {/* SU edit/delete controls */}
                 {user?.role === "su" && (
@@ -880,7 +880,8 @@ export default function DashboardPage({}: DashboardPageProps) {
                     </p>
                   )}
                   <p className="text-xs text-dark-500 mt-2">
-                    {widgetDef?.label || rw.component_key} · {rw.col_m}/{rw.col_t}/{rw.col_l}/{rw.col_ll}
+                    {widgetDef?.label || rw.component_key} · {rw.col?.mobile}/
+                    {rw.col?.tablet}/{rw.col?.laptop}/{rw.col?.desktop}
                   </p>
                 </div>
               </div>
@@ -982,7 +983,10 @@ export default function DashboardPage({}: DashboardPageProps) {
             )}
 
             {addStep === 2 && (
-              <Button onClick={handleCreate} disabled={!addFormData.key || !addFormData.label}>
+              <Button
+                onClick={handleCreate}
+                disabled={!addFormData.key || !addFormData.label}
+              >
                 {language({ id: "Tambah", en: "Add" })}
               </Button>
             )}
@@ -1045,32 +1049,34 @@ export default function DashboardPage({}: DashboardPageProps) {
                 })}
               </label>
               <div className="grid grid-cols-1 gap-3">
-                {([
-                  {
-                    key: "col_m" as const,
-                    label: "Mobile",
-                    icon: "📱",
-                    desc: "≤ 425px",
-                  },
-                  {
-                    key: "col_t" as const,
-                    label: "Tablet",
-                    icon: "📋",
-                    desc: "768px",
-                  },
-                  {
-                    key: "col_l" as const,
-                    label: "Laptop",
-                    icon: "💻",
-                    desc: "1024px",
-                  },
-                  {
-                    key: "col_ll" as const,
-                    label: "Large",
-                    icon: "🖥️",
-                    desc: "≥ 1440px",
-                  },
-                ] as const).map((bp) => (
+                {(
+                  [
+                    {
+                      key: "mobile" as const,
+                      label: "Mobile",
+                      icon: "📱",
+                      desc: "≤ 425px",
+                    },
+                    {
+                      key: "tablet" as const,
+                      label: "Tablet",
+                      icon: "📋",
+                      desc: "768px",
+                    },
+                    {
+                      key: "laptop" as const,
+                      label: "Laptop",
+                      icon: "💻",
+                      desc: "1024px",
+                    },
+                    {
+                      key: "desktop" as const,
+                      label: "Large",
+                      icon: "🖥️",
+                      desc: "≥ 1440px",
+                    },
+                  ] as const
+                ).map((bp) => (
                   <div
                     key={bp.key}
                     className="bg-dark-900/60 border border-dark-600/40 rounded-xl p-3"

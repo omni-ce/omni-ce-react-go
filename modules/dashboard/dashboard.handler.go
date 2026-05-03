@@ -1,6 +1,7 @@
 package dashboard
 
 import (
+	"encoding/json"
 	"react-go/dto"
 	model "react-go/modules/dashboard/model"
 	"react-go/variable"
@@ -44,16 +45,13 @@ func GetStats(c *fiber.Ctx) error {
 
 func WidgetCreate(c *fiber.Ctx) error {
 	var body struct {
-		RoleID       uint   `json:"role_id"`
-		ComponentKey string `json:"component_key"`
-		Key          string `json:"key"`
-		Type         string `json:"type"`
-		ColM         int    `json:"col_m"`
-		ColT         int    `json:"col_t"`
-		ColL         int    `json:"col_l"`
-		ColLL        int    `json:"col_ll"`
-		Label        string `json:"label"`
-		Description  string `json:"description"`
+		RoleID       uint           `json:"role_id"`
+		ComponentKey string         `json:"component_key"`
+		Key          string         `json:"key"`
+		Type         string         `json:"type"`
+		Col          map[string]int `json:"col"`
+		Label        string         `json:"label"`
+		Description  string         `json:"description"`
 	}
 	if err := c.BodyParser(&body); err != nil {
 		return dto.BadRequest(c, "Invalid request body", nil)
@@ -74,17 +72,17 @@ func WidgetCreate(c *fiber.Ctx) error {
 	if body.Label == "" {
 		return dto.BadRequest(c, "label is required", nil)
 	}
-	if body.ColM == 0 {
-		body.ColM = 12
+	if body.Col["mobile"] == 0 {
+		body.Col["mobile"] = 12
 	}
-	if body.ColT == 0 {
-		body.ColT = 6
+	if body.Col["tablet"] == 0 {
+		body.Col["tablet"] = 6
 	}
-	if body.ColL == 0 {
-		body.ColL = 4
+	if body.Col["laptop"] == 0 {
+		body.Col["laptop"] = 4
 	}
-	if body.ColLL == 0 {
-		body.ColLL = 3
+	if body.Col["desktop"] == 0 {
+		body.Col["desktop"] = 3
 	}
 
 	// Check if combination already exists
@@ -93,15 +91,18 @@ func WidgetCreate(c *fiber.Ctx) error {
 		return dto.BadRequest(c, "Widget with this component_key and key already exists for this role", nil)
 	}
 
+	// json stringified
+	colJSON, err := json.Marshal(body.Col)
+	if err != nil {
+		return dto.InternalServerError(c, "Failed to marshal col", nil)
+	}
+
 	widget := model.DashboardWidget{
 		RoleID:       body.RoleID,
 		ComponentKey: body.ComponentKey,
 		Key:          body.Key,
 		Type:         body.Type,
-		ColM:         body.ColM,
-		ColT:         body.ColT,
-		ColL:         body.ColL,
-		ColLL:        body.ColLL,
+		Col:          string(colJSON),
 		Label:        body.Label,
 		Description:  body.Description,
 	}
@@ -128,7 +129,25 @@ func WidgetList(c *fiber.Ctx) error {
 		return dto.InternalServerError(c, "Failed to get widgets", nil)
 	}
 
-	return dto.OK(c, "Widgets retrieved successfully", widgets)
+	rows := make([]map[string]interface{}, 0)
+	for _, widget := range widgets {
+		var col map[string]int
+		if err := json.Unmarshal([]byte(widget.Col), &col); err != nil {
+			return dto.InternalServerError(c, "Failed to unmarshal col", nil)
+		}
+		rows = append(rows, map[string]interface{}{
+			"id":            widget.ID,
+			"component_key": widget.ComponentKey,
+			"key":           widget.Key,
+			"type":          widget.Type,
+			"col":           col,
+			"label":         widget.Label,
+			"description":   widget.Description,
+			"value":         widget.Value,
+		})
+	}
+
+	return dto.OK(c, "Widgets retrieved successfully", rows)
 }
 
 func WidgetEdit(c *fiber.Ctx) error {
@@ -143,13 +162,10 @@ func WidgetEdit(c *fiber.Ctx) error {
 	}
 
 	var body struct {
-		Type        *string `json:"type"`
-		ColM        *int    `json:"col_m"`
-		ColT        *int    `json:"col_t"`
-		ColL        *int    `json:"col_l"`
-		ColLL       *int    `json:"col_ll"`
-		Label       *string `json:"label"`
-		Description *string `json:"description"`
+		Type        *string         `json:"type"`
+		Col         *map[string]int `json:"col"`
+		Label       *string         `json:"label"`
+		Description *string         `json:"description"`
 	}
 	if err := c.BodyParser(&body); err != nil {
 		return dto.BadRequest(c, "Invalid request body", nil)
@@ -159,17 +175,25 @@ func WidgetEdit(c *fiber.Ctx) error {
 	if body.Type != nil {
 		updates["type"] = *body.Type
 	}
-	if body.ColM != nil {
-		updates["col_m"] = *body.ColM
-	}
-	if body.ColT != nil {
-		updates["col_t"] = *body.ColT
-	}
-	if body.ColL != nil {
-		updates["col_l"] = *body.ColL
-	}
-	if body.ColLL != nil {
-		updates["col_ll"] = *body.ColLL
+	if body.Col != nil {
+		col := *body.Col
+		if col["mobile"] == 0 {
+			col["mobile"] = 12
+		}
+		if col["tablet"] == 0 {
+			col["tablet"] = 6
+		}
+		if col["laptop"] == 0 {
+			col["laptop"] = 4
+		}
+		if col["desktop"] == 0 {
+			col["desktop"] = 3
+		}
+		colJSON, err := json.Marshal(col)
+		if err != nil {
+			return dto.InternalServerError(c, "Failed to marshal col", nil)
+		}
+		updates["col"] = string(colJSON)
 	}
 	if body.Label != nil {
 		updates["label"] = *body.Label

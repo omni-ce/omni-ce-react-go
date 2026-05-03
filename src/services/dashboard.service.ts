@@ -6,16 +6,20 @@ export interface DashboardStats {
   queue?: Record<string, number>;
 }
 
+export interface DashboardWidgetCol {
+  mobile: number;
+  tablet: number;
+  laptop: number;
+  desktop: number;
+}
+
 export interface DashboardWidget {
   id: string;
   role_id: number;
   component_key: string;
   key: string;
   type: string;
-  col_m: number;
-  col_t: number;
-  col_l: number;
-  col_ll: number;
+  col: DashboardWidgetCol;
   label: string;
   description: string;
 }

@@ -79,7 +79,8 @@ export interface DynamicFormField {
     | "select"
     | "textarea"
     | "array"
-    | "col";
+    | "col"
+    | "key";
   options?: DynamicFormFieldOption[] | string;
   required?: boolean;
   minLength?: number;
@@ -816,10 +817,10 @@ function DebouncedInput({
 // ─── Col / Responsive Column Picker ──────────────────────────────────
 
 export interface ColValue {
-  col_m: number;
-  col_t: number;
-  col_l: number;
-  col_ll: number;
+  mobile: number;
+  tablet: number;
+  laptop: number;
+  desktop: number;
 }
 
 const COL_BREAKPOINTS: {
@@ -830,29 +831,29 @@ const COL_BREAKPOINTS: {
   defaultVal: number;
 }[] = [
   {
-    key: "col_m",
+    key: "mobile",
     label: "Mobile",
     icon: "📱",
     desc: "≤ 425px",
     defaultVal: 12,
   },
   {
-    key: "col_t",
+    key: "tablet",
     label: "Tablet",
     icon: "📋",
     desc: "768px",
     defaultVal: 6,
   },
   {
-    key: "col_l",
+    key: "laptop",
     label: "Laptop",
     icon: "💻",
     desc: "1024px",
     defaultVal: 4,
   },
   {
-    key: "col_ll",
-    label: "Large",
+    key: "desktop",
+    label: "Desktop",
     icon: "🖥️",
     desc: "≥ 1440px",
     defaultVal: 3,
@@ -868,10 +869,10 @@ function DynamicCol({
 }) {
   const { language } = useLanguageStore();
   const colVal: ColValue = {
-    col_m: value?.col_m ?? 12,
-    col_t: value?.col_t ?? 6,
-    col_l: value?.col_l ?? 4,
-    col_ll: value?.col_ll ?? 3,
+    mobile: value?.mobile ?? 12,
+    tablet: value?.tablet ?? 6,
+    laptop: value?.laptop ?? 4,
+    desktop: value?.desktop ?? 3,
   };
 
   const handleChange = (key: keyof ColValue, v: number) => {
@@ -910,9 +911,7 @@ function DynamicCol({
             <span>6</span>
             <span>12</span>
           </div>
-          <p className="text-[9px] text-dark-500 mt-1 text-center">
-            {bp.desc}
-          </p>
+          <p className="text-[9px] text-dark-500 mt-1 text-center">{bp.desc}</p>
         </div>
       ))}
     </div>
@@ -960,10 +959,10 @@ export default function DynamicForm({
             <DynamicCol
               value={
                 (formData[field.key] as ColValue) || {
-                  col_m: 12,
-                  col_t: 6,
-                  col_l: 4,
-                  col_ll: 3,
+                  mobile: 12,
+                  tablet: 6,
+                  laptop: 4,
+                  desktop: 3,
                 }
               }
               onChange={(val) => onChange(field.key, val)}
@@ -1015,6 +1014,21 @@ export default function DynamicForm({
                     )
                   : ""
               }
+            />
+          ) : field.type === "key" ? (
+            <Input
+              id={`field-${field.key}`}
+              type="text"
+              className="mt-1.5 font-mono"
+              value={String(formData[field.key] ?? "")}
+              onChange={(e) => {
+                const val = e.target.value
+                  .toLowerCase()
+                  .replace(/[^a-z0-9_]/g, "");
+                onChange(field.key, val);
+              }}
+              minLength={field.minLength}
+              maxLength={field.maxLength}
             />
           ) : (
             <Input
