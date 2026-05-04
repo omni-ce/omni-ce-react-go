@@ -14,15 +14,17 @@ type Function struct {
 	Line     []FunctionItem `json:"line"`
 }
 type FunctionRequest struct {
-	RoleID uint `json:"role_id"`
+	RoleID  uint              `json:"role_id"`
+	UserID  string            `json:"user_id"`
+	Headers map[string]string `json:"headers"`
 }
 type FunctionResponse struct {
 	Body any `json:"body"`
 }
 type FunctionItem struct {
-	Label    string                                     `json:"label"`
-	Key      string                                     `json:"key"`
-	Function func(req FunctionRequest) FunctionResponse `json:"-"`
+	Label    string                        `json:"label"`
+	Key      string                        `json:"key"`
+	Function func(req FunctionRequest) any `json:"-"`
 }
 
 // -------------------------------------------------------- //

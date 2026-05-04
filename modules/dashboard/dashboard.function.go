@@ -27,8 +27,20 @@ var functions = Function{
 // -------------------------------------------------------- //
 // -------------------------------------------------------- //
 
-func TestFunctionTimeline(req FunctionRequest) FunctionResponse {
-	return FunctionResponse{
-		Body: "test",
+func TestFunctionTimeline(req FunctionRequest) any {
+	return map[string]any{
+		"body": "test",
 	}
 }
+
+/*
+// SSE Side
+{
+  "widgets": [
+		{
+			"id": "019df3a7-eb44-7733-8233-37424a217ff9",
+			"data": {}
+		}
+  ]
+}
+*/
