@@ -938,16 +938,16 @@ export default function DashboardPage({}: DashboardPageProps) {
           {/* Stepper indicator */}
           <Stepper
             currentStep={addStep}
-            totalSteps={2}
             labels={[
               language({ id: "Pilih Widget", en: "Select Widget" }),
+              language({ id: "Pilih Fungsi", en: "Select Function" }),
               language({ id: "Konfigurasi", en: "Configure" }),
             ]}
           />
 
-          <div className="min-h-[300px]">
+          <div className="min-h-75">
             {addStep === 1 ? (
-              <div className="grid grid-cols-2 gap-3 max-h-[400px] overflow-y-auto p-1 animate-fade-in">
+              <div className="grid grid-cols-2 gap-3 max-h-100 overflow-y-auto p-1 animate-fade-in">
                 {widgets.map((w) => (
                   <button
                     key={w.key}

@@ -3,20 +3,14 @@ import { HiCheck } from "react-icons/hi2";
 interface StepperProps {
   /** Current active step (1-indexed) */
   currentStep: number;
-  /** Total number of steps */
-  totalSteps: number;
   /** Optional labels for each step */
   labels?: string[];
 }
 
-export default function Stepper({
-  currentStep,
-  totalSteps,
-  labels,
-}: StepperProps) {
+export default function Stepper({ currentStep, labels }: StepperProps) {
   return (
     <div className="flex items-center justify-center mb-6">
-      {Array.from({ length: totalSteps }, (_, i) => {
+      {Array.from({ length: (labels || []).length }, (_, i) => {
         const stepNum = i + 1;
         const isActive = currentStep >= stepNum;
         const isCompleted = currentStep > stepNum;
@@ -46,7 +40,7 @@ export default function Stepper({
             </div>
 
             {/* Connector line */}
-            {stepNum < totalSteps && (
+            {stepNum < (labels || []).length && (
               <div
                 className={`h-0.5 w-12 mx-2 rounded transition-all ${
                   currentStep > stepNum ? "bg-accent-500" : "bg-dark-600"

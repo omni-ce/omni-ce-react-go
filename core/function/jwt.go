@@ -10,6 +10,8 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 type JwtClaims struct {
@@ -58,6 +60,7 @@ func JwtGetUser(c *fiber.Ctx) (user.User, error) {
 	current_user_id := claims.ID
 
 	if err := variable.Db.
+		Session(&gorm.Session{Logger: logger.Default.LogMode(logger.Silent)}). // silent mode to avoid noise
 		First(&user, "id = ?", current_user_id).
 		Error; err != nil {
 		return user, fmt.Errorf("user not found: %v", err)
