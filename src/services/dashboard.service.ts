@@ -16,7 +16,7 @@ export interface DashboardWidgetCol {
 export interface DashboardWidget {
   id: string;
   role_id: number;
-  component_key: string;
+  function_key: string;
   key: string;
   type: string;
   col: DashboardWidgetCol;

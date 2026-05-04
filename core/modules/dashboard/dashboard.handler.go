@@ -78,13 +78,13 @@ func WidgetFunctions(c *fiber.Ctx) error {
 
 func WidgetCreate(c *fiber.Ctx) error {
 	var body struct {
-		RoleID       uint           `json:"role_id"`
-		ComponentKey string         `json:"component_key"`
-		Key          string         `json:"key"`
-		Type         string         `json:"type"`
-		Col          map[string]int `json:"col"`
-		Label        string         `json:"label"`
-		Description  string         `json:"description"`
+		RoleID      uint           `json:"role_id"`
+		FunctionKey string         `json:"function_key"`
+		Key         string         `json:"key"`
+		Type        string         `json:"type"`
+		Col         map[string]int `json:"col"`
+		Label       string         `json:"label"`
+		Description string         `json:"description"`
 	}
 	if err := c.BodyParser(&body); err != nil {
 		return dto.BadRequest(c, "Invalid request body", nil)
@@ -93,8 +93,8 @@ func WidgetCreate(c *fiber.Ctx) error {
 	if body.RoleID == 0 {
 		return dto.BadRequest(c, "role_id is required", nil)
 	}
-	if body.ComponentKey == "" {
-		return dto.BadRequest(c, "component_key is required", nil)
+	if body.FunctionKey == "" {
+		return dto.BadRequest(c, "function_key is required", nil)
 	}
 	if body.Key == "" {
 		return dto.BadRequest(c, "key is required", nil)
@@ -120,8 +120,8 @@ func WidgetCreate(c *fiber.Ctx) error {
 
 	// Check if combination already exists
 	var existing model.DashboardWidget
-	if err := variable.Db.Where("role_id = ? AND component_key = ? AND key = ?", body.RoleID, body.ComponentKey, body.Key).First(&existing).Error; err == nil {
-		return dto.BadRequest(c, "Widget with this component_key and key already exists for this role", nil)
+	if err := variable.Db.Where("role_id = ? AND function_key = ? AND key = ?", body.RoleID, body.FunctionKey, body.Key).First(&existing).Error; err == nil {
+		return dto.BadRequest(c, "Widget with this function_key and key already exists for this role", nil)
 	}
 
 	// json stringified
@@ -131,13 +131,13 @@ func WidgetCreate(c *fiber.Ctx) error {
 	}
 
 	widget := model.DashboardWidget{
-		RoleID:       body.RoleID,
-		ComponentKey: body.ComponentKey,
-		Key:          body.Key,
-		Type:         body.Type,
-		Col:          string(colJSON),
-		Label:        body.Label,
-		Description:  body.Description,
+		RoleID:      body.RoleID,
+		FunctionKey: body.FunctionKey,
+		Key:         body.Key,
+		Type:        body.Type,
+		Col:         string(colJSON),
+		Label:       body.Label,
+		Description: body.Description,
 	}
 	if err := variable.Db.Create(&widget).Error; err != nil {
 		return dto.InternalServerError(c, "Failed to create widget", nil)
@@ -158,7 +158,7 @@ func WidgetList(c *fiber.Ctx) error {
 	}
 
 	widgets := make([]model.DashboardWidget, 0)
-	if err := variable.Db.Where("role_id = ?", roleID).Order("component_key ASC").Find(&widgets).Error; err != nil {
+	if err := variable.Db.Where("role_id = ?", roleID).Order("function_key ASC").Find(&widgets).Error; err != nil {
 		return dto.InternalServerError(c, "Failed to get widgets", nil)
 	}
 
@@ -169,13 +169,13 @@ func WidgetList(c *fiber.Ctx) error {
 			return dto.InternalServerError(c, "Failed to unmarshal col", nil)
 		}
 		rows = append(rows, map[string]interface{}{
-			"id":            widget.ID,
-			"component_key": widget.ComponentKey,
-			"key":           widget.Key,
-			"type":          widget.Type,
-			"col":           col,
-			"label":         widget.Label,
-			"description":   widget.Description,
+			"id":           widget.ID,
+			"function_key": widget.FunctionKey,
+			"key":          widget.Key,
+			"type":         widget.Type,
+			"col":          col,
+			"label":        widget.Label,
+			"description":  widget.Description,
 		})
 	}
 

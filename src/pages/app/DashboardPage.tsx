@@ -295,7 +295,7 @@ export default function DashboardPage({}: DashboardPageProps) {
       }) || { mobile: 12, tablet: 6, laptop: 4, desktop: 3 };
       await dashboardService.createWidget({
         role_id: Number(selectedRole),
-        component_key: w.key,
+        function_key: w.key,
         key: (addFormData.key as string) || w.key + "_" + Date.now(),
         type: w.type,
         col: {
@@ -856,7 +856,7 @@ export default function DashboardPage({}: DashboardPageProps) {
             </div>
           )}
           {roleWidgets.map((rw) => {
-            const widgetDef = widgets.find((w) => w.key === rw.component_key);
+            const widgetDef = widgets.find((w) => w.key === rw.function_key);
 
             const m = rw.col?.mobile || 12;
             const t = rw.col?.tablet || 6;
@@ -900,7 +900,7 @@ export default function DashboardPage({}: DashboardPageProps) {
                     </p>
                   )}
                   <p className="text-xs text-dark-500 mt-2">
-                    {widgetDef?.label || rw.component_key} · {rw.col?.mobile}/
+                    {widgetDef?.label || rw.function_key} · {rw.col?.mobile}/
                     {rw.col?.tablet}/{rw.col?.laptop}/{rw.col?.desktop}
                   </p>
                 </div>
