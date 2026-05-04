@@ -72,6 +72,7 @@ func Create(c *fiber.Ctx) error {
 	}
 
 	var body struct {
+		Avatar   string `json:"avatar" validate:"required"`
 		Name     string `json:"name" validate:"required,min=3,max=100"`
 		Username string `json:"username" validate:"required,min=5,max=20"`
 		Password string `json:"password" validate:"required,min=8,max=50"`
@@ -108,6 +109,7 @@ func Create(c *fiber.Ctx) error {
 	}
 
 	user := model.User{
+		Avatar:   body.Avatar,
 		Name:     strings.TrimSpace(body.Name),
 		Username: strings.TrimSpace(body.Username),
 		Password: hash.Password(body.Password),
@@ -174,6 +176,13 @@ func Paginate(c *fiber.Ctx) error {
 		}
 	}
 
+	divisions := make([]role.RoleDivision, 0)
+	if len(roleIds) > 0 {
+		if err := variable.Db.Where("id IN ?", roleIds).Find(&divisions).Error; err != nil {
+			return dto.InternalServerError(c, "Failed to fetch divisions", nil)
+		}
+	}
+
 	result := make([]map[string]any, 0, len(users))
 	for i := range users {
 		user := users[i].Map()
@@ -182,10 +191,18 @@ func Paginate(c *fiber.Ctx) error {
 			if roleUser.UserID.String() == users[i].ID.String() {
 				for _, r := range roles {
 					if r.ID == roleUser.RoleID {
+						divisionName := ""
+						for _, d := range divisions {
+							if d.ID == r.RoleDivisionID {
+								divisionName = d.Name
+								break
+							}
+						}
 						userRoles = append(userRoles, map[string]any{
-							"division_id": fmt.Sprintf("%v", r.RoleDivisionID),
-							"role_id":     fmt.Sprintf("%v", r.ID),
-							"role_name":   r.Name,
+							"division_id":   fmt.Sprintf("%v", r.RoleDivisionID),
+							"role_id":       fmt.Sprintf("%v", r.ID),
+							"role_name":     r.Name,
+							"division_name": divisionName,
 						})
 					}
 				}

@@ -200,22 +200,8 @@ func init() {
 		ticker := time.NewTicker(1 * time.Second)
 		defer ticker.Stop()
 		for range ticker.C {
-			// Fetch live stats
-			stats := fetchLiveStats()
-			statsBytes, _ := json.Marshal(map[string]any{
-				"event": "live_data",
-				"data":  stats,
-			})
-			statsMsg := string(statsBytes)
-
 			dashboardHub.Mutex.RLock()
 			for _, client := range dashboardHub.Clients {
-				// Send live stats
-				select {
-				case client.Chan <- statsMsg:
-				default:
-				}
-
 				// Fetch and evaluate widgets
 				var widgets []dashboardModel.DashboardWidget
 				variable.Db.Where("role_id = ?", client.RoleID).Find(&widgets)
@@ -254,19 +240,4 @@ func init() {
 			dashboardHub.Mutex.RUnlock()
 		}
 	}()
-}
-
-type liveStats struct {
-	TotalQueues    int64          `json:"total_queues"`
-	TotalMessages  int64          `json:"total_messages"`
-	TotalCompleted int64          `json:"total_completed"`
-	TotalFailed    int64          `json:"total_failed"`
-	TotalTiming    int64          `json:"total_timing"`
-	TotalPending   int64          `json:"total_pending"`
-	Queue          map[string]int `json:"queue"`
-}
-
-func fetchLiveStats() liveStats {
-	var s liveStats
-	return s
 }

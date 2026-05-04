@@ -8,7 +8,12 @@ export interface User {
   avatar?: string;
   phone_number?: string;
   role?: string;
-  roles: { role_id: string; role_name: string; division_id: string }[];
+  roles: {
+    role_id: string;
+    role_name: string;
+    division_id: string;
+    division_name: string;
+  }[];
   is_active: boolean;
   created_at: string;
 }

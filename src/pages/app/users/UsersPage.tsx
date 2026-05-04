@@ -12,6 +12,7 @@ import BlankUser from "@/assets/blank-user.svg";
 import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import { FileType } from "@/components/DynamicForm";
+import { HOST_API } from "@/environment";
 
 interface Props {
   ruleKey?: string;
@@ -110,7 +111,7 @@ export default function UsersPage({ ruleKey }: Props) {
           <div className="flex items-center gap-3">
             <Avatar
               size="sm"
-              src={user.avatar ? `/avatar/${user.avatar}` : BlankUser}
+              src={user.avatar ? HOST_API + user.avatar : BlankUser}
               alt={user.name}
               fallback={user.name?.charAt(0)?.toUpperCase()}
             />
@@ -141,7 +142,7 @@ export default function UsersPage({ ruleKey }: Props) {
             {user.roles &&
               user.roles.map((role) => (
                 <Badge key={role.role_id} variant={"secondary"}>
-                  {role.role_name}
+                  {role.division_name} &gt; {role.role_name}
                 </Badge>
               ))}
           </div>
