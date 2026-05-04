@@ -11,11 +11,10 @@ import (
 	"react-go/database"
 	"react-go/dto"
 	"react-go/modules"
-	"react-go/socket"
+	"react-go/sse"
 	"react-go/variable"
 	"strings"
 
-	"github.com/doquangtan/socketio/v4"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/helmet"
@@ -47,9 +46,7 @@ func main() {
 	// Ensure uploads directory exists
 	os.MkdirAll(variable.UploadsPath, 0755)
 
-	io := socketio.New()
-	variable.SocketIO = io
-	socket.Init(io)
+	sse.Init()
 
 	app := fiber.New(fiber.Config{
 		AppName:       variable.ServerName,
@@ -75,18 +72,12 @@ func main() {
 		return c.Next()
 	})
 
-	// Socket.IO (note: with StrictRouting enabled, we must handle both /socket.io and /socket.io/)
-	app.Use("/socket.io", io.FiberMiddleware)
-	app.Use("/socket.io/", io.FiberMiddleware)
-	app.Route("/socket.io", io.FiberRoute)
-	app.Route("/socket.io/", io.FiberRoute)
-
 	// Serve embedded frontend (SPA)
 	distFS, _ := fs.Sub(embedDist, "dist")
 	app.Use(func(c *fiber.Ctx) error {
 		path := c.Path()
 		// skip API and backend routes
-		skips := []string{"/api/", "/queue", "/socket.io", "/subscribe", "/icon", "/file", "/upload", "/ws", "/webhook"}
+		skips := []string{"/api/", "/queue", "/subscribe", "/icon", "/file", "/upload", "/ws", "/webhook"}
 		for _, skip := range skips {
 			if strings.HasPrefix(path, skip) {
 				return c.Next()
@@ -126,8 +117,7 @@ func main() {
 	})
 	app.Static("/upload", variable.UploadsPath)
 
-	api := app.Group("/api")
-	modules.SetupRoutes(app, api)
+	modules.SetupRoutes(app, app.Group("/api"))
 
 	// Catch-all "joke" routes (matching Express behavior)
 	jokeRoutes := []string{"/api/route", "/_next", "/_next/server", "/app"}

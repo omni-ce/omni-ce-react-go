@@ -13,7 +13,7 @@ export default function AuthLayout() {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const valid = await validateToken("auth");
+      const valid = await validateToken();
       if (valid) {
         if (
           !location.pathname.startsWith(

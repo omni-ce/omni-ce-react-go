@@ -50,7 +50,6 @@ cleanupOutdatedCaches();
 // "/api/", "/socket.io", "/ws", "/subscribe", "/icon", "/file", "/upload", "/webhook", "/swagger", "/swagger.json"
 const denylist = [
   "/api",
-  "/socket.io",
   "/ws",
   "/subscribe",
   "/icon",

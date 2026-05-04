@@ -39,3 +39,6 @@ tsconfig.node.tsbuildinfo
 /uploads
 /tmp
 /temp
+
+react-go
+main

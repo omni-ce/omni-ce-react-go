@@ -40,3 +40,16 @@ func UseToken(c *fiber.Ctx) error {
 	c.Locals(string(ClaimsContextKey), claims)
 	return c.Next()
 }
+
+func UseQueryToken(c *fiber.Ctx) error {
+	token := c.Query("token")
+	if token == "" {
+		return dto.Unauthorized(c, "Missing token", nil)
+	}
+	claims, errMsg := validateBearerToken("Bearer " + token)
+	if errMsg != "" {
+		return dto.Unauthorized(c, errMsg, nil)
+	}
+	c.Locals(string(ClaimsContextKey), claims)
+	return c.Next()
+}

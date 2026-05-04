@@ -1,27 +1,77 @@
-import { io, Socket } from "socket.io-client";
 import { HOST_API } from "@/environment";
 
-export let socket: Socket | null = null;
+type Callback<T> = (data: T) => void;
 
-export function getSocket(): Socket {
-  if (!socket) {
+class SSEClient {
+  private eventSource: EventSource | null = null;
+  private listeners: Record<string, Callback<unknown>[]> = {};
+
+  connect() {
+    if (this.eventSource) return;
     const token = localStorage.getItem("token");
-    socket = io(HOST_API, {
-      transports: ["websocket", "polling"],
-      auth: {
-        token,
-      },
-      autoConnect: true,
-      reconnection: true,
-      reconnectionDelay: 3000,
-    });
+    if (!token) return;
+
+    this.eventSource = new EventSource(
+      `${HOST_API}/api/event/stream?token=${token}`,
+    );
+
+    this.eventSource.onmessage = (event) => {
+      try {
+        const payload = JSON.parse(event.data);
+        const { event: eventName, data } = payload;
+        if (eventName && this.listeners[eventName]) {
+          this.listeners[eventName].forEach((cb) => cb(data));
+        }
+      } catch (e) {
+        console.error("Failed to parse SSE data:", e);
+      }
+    };
+
+    this.eventSource.onerror = (error) => {
+      console.error("SSE Error:", error);
+      this.disconnect();
+    };
   }
-  return socket;
+
+  on<T>(event: string, callback: Callback<T>) {
+    if (!this.listeners[event]) {
+      this.listeners[event] = [];
+    }
+    this.listeners[event].push(callback as Callback<unknown>);
+    this.connect(); // ensure connected
+  }
+
+  off<T>(event: string, callback?: Callback<T>) {
+    if (!this.listeners[event]) return;
+    if (callback) {
+      this.listeners[event] = this.listeners[event].filter(
+        (cb) => cb !== callback,
+      );
+    } else {
+      delete this.listeners[event];
+    }
+  }
+
+  emit(event: string, data?: unknown) {
+    // SSE is unidirectional (Server to Client).
+    // Mock emit for legacy code that might still call it (like `socket.emit("join", token)`).
+    console.debug(`[SSEClient] Ignored emit for event: ${event}`, data);
+  }
+
+  disconnect() {
+    if (this.eventSource) {
+      this.eventSource.close();
+      this.eventSource = null;
+    }
+  }
+}
+
+export const sseClient = new SSEClient();
+
+export function getSocket() {
+  return sseClient;
 }
 
 export function disconnectSocket(): void {
-  if (socket) {
-    socket.disconnect();
-    socket = null;
-  }
+  sseClient.disconnect();
 }

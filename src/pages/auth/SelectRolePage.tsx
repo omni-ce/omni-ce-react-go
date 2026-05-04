@@ -18,7 +18,7 @@ export default function SelectRolePage() {
   // Check auth
   useEffect(() => {
     const check = async () => {
-      const valid = await validateToken("app");
+      const valid = await validateToken();
       if (!valid) {
         navigate("/login", { replace: true });
       }

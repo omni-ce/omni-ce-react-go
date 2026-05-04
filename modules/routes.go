@@ -7,6 +7,7 @@ import (
 	"react-go/modules/auth"
 	"react-go/modules/dashboard"
 	"react-go/modules/debounce"
+	"react-go/modules/event"
 	"react-go/modules/example"
 	"react-go/modules/master_data"
 	"react-go/modules/notification"
@@ -25,9 +26,6 @@ func SetupRoutes(app *fiber.App, api fiber.Router) {
 	// Root (Hello World)
 	example.PublicRoute(app)
 
-	// Upload
-	upload.ProtectedRoute(api.Group("/upload", middlewares.UseToken))
-
 	// Address
 	address.PublicRoute(api.Group("/address"))
 
@@ -37,6 +35,12 @@ func SetupRoutes(app *fiber.App, api fiber.Router) {
 
 	// User
 	user.ProtectedRoute(api.Group("/user", middlewares.UseToken))
+
+	// Upload
+	upload.ProtectedRoute(api.Group("/upload", middlewares.UseToken))
+
+	// Event
+	event.ProtectedRoute(api.Group("/event", middlewares.UseQueryToken))
 
 	// Setting
 	setting.ProtectedRoute(api.Group("/setting", middlewares.UseToken))
