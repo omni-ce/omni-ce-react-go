@@ -1,10 +1,4 @@
-import React, {
-  Fragment,
-  useEffect,
-  useState,
-  useCallback,
-  type JSX,
-} from "react";
+import React, { Fragment, useEffect, useState, useCallback } from "react";
 import {
   RiPulseLine,
   RiInboxLine,
@@ -14,7 +8,6 @@ import {
   RiCheckboxCircleLine,
   RiEditLine,
   RiDeleteBinLine,
-  RiCloseLine,
 } from "react-icons/ri";
 
 import {
@@ -22,7 +15,10 @@ import {
   type DashboardWidget,
 } from "@/services/dashboard.service";
 import { HOST_API } from "@/environment";
-import StatCard from "@/components/StatCard";
+import type { Option } from "@/types/option";
+import { lgMap, mdMap, spanMap, xlMap } from "@/responsive";
+import { DAYS_30, MONTHS } from "@/dummy";
+
 import { SearchableSelect } from "@/components/ui/SearchableSelect";
 import {
   Dialog,
@@ -32,12 +28,11 @@ import {
   DialogFooter,
   DialogDescription,
 } from "@/components/ui/Dialog";
-import { useDashboardStore } from "@/stores/dashboardStore";
-import { useLanguageStore } from "@/stores/languageStore";
-import { useAuthStore } from "@/stores/authStore";
-import { useRuleStore } from "@/stores/ruleStore";
-import type { Option } from "@/types/option";
-import { DAYS_30, MONTHS } from "@/dummy";
+import { Button } from "@/components/ui/Button";
+import Stepper from "@/components/ui/Stepper";
+import StatCard from "@/components/StatCard";
+import type { DynamicFormField } from "@/components/DynamicForm";
+import DynamicForm from "@/components/DynamicForm";
 
 // Highcharts Widgets
 import WidgetAreaChart from "@/components/widget/WidgetAreaChart";
@@ -48,11 +43,11 @@ import WidgetTrafficStats from "@/components/widget/WidgetTrafficStats";
 import WidgetTableList from "@/components/widget/WidgetTableList";
 import WidgetProgressList from "@/components/widget/WidgetProgressList";
 import WidgetLineChart from "@/components/widget/WidgetLineChart";
-import { Button } from "@/components/ui/Button";
-import Stepper from "@/components/ui/Stepper";
-import DynamicForm from "@/components/DynamicForm";
-import type { DynamicFormField } from "@/components/DynamicForm";
-import { lgMap, mdMap, spanMap, xlMap } from "@/responsive";
+
+import { useDashboardStore } from "@/stores/dashboardStore";
+import { useLanguageStore } from "@/stores/languageStore";
+import { useAuthStore } from "@/stores/authStore";
+import { useRuleStore } from "@/stores/ruleStore";
 
 interface Widget {
   label: string;
@@ -153,7 +148,9 @@ export default function DashboardPage({}: DashboardPageProps) {
     const token = localStorage.getItem("token");
     if (!token) return;
 
-    const es = new EventSource(`${HOST_API}/api/event/dashboard?token=${token}`);
+    const es = new EventSource(
+      `${HOST_API}/api/event/dashboard?token=${token}`,
+    );
 
     es.onmessage = (event) => {
       try {

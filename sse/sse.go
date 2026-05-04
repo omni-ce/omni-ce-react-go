@@ -38,6 +38,10 @@ func Init() {
 	}()
 }
 
+func liveNotification() {
+	// TODO: implement live notification
+}
+
 func BroadcastEvent(event string, data any) {
 	payloadBytes, err := json.Marshal(map[string]any{
 		"event": event,
@@ -99,8 +103,3 @@ func SendNotification(userId uuid.UUID, notif types.Notification) {
 
 	SendEventToUser(userId.String(), "notification", inserted.Map())
 }
-
-func liveNotification() {
-	// TODO: implement live notification
-}
-
