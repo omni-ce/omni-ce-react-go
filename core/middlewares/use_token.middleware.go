@@ -44,11 +44,11 @@ func UseToken(c *fiber.Ctx) error {
 func UseQueryToken(c *fiber.Ctx) error {
 	token := c.Query("token")
 	if token == "" {
-		return dto.Unauthorized(c, "Missing token", nil)
+		return dto.Unauthorized(c, "Missing token", 1)
 	}
 	claims, errMsg := validateBearerToken("Bearer " + token)
 	if errMsg != "" {
-		return dto.Unauthorized(c, errMsg, nil)
+		return dto.Unauthorized(c, errMsg, 2)
 	}
 	c.Locals(string(ClaimsContextKey), claims)
 	return c.Next()

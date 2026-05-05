@@ -110,23 +110,24 @@ func Stream(c *fiber.Ctx) error {
 func Dashboard(c *fiber.Ctx) error {
 	existing, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, "Unauthorized", 3)
 	}
 	connectedUserID := existing.ID
 
 	roleID := c.Query("role_id")
-
-	var exist int64
-	if err := variable.Db.
-		Where("role_id = ? AND user_id = ?", roleID, connectedUserID).
-		Select("id").
-		Find(&role.RoleUser{}).
-		Count(&exist).
-		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to get roles", nil)
-	}
-	if exist == 0 {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+	if existing.Role != "su" {
+		var exist int64
+		if err := variable.Db.
+			Where("role_id = ? AND user_id = ?", roleID, connectedUserID).
+			Select("id").
+			Find(&role.RoleUser{}).
+			Count(&exist).
+			Error; err != nil {
+			return dto.InternalServerError(c, "Failed to get roles", nil)
+		}
+		if exist == 0 {
+			return dto.Unauthorized(c, "Unauthorized", 4)
+		}
 	}
 
 	roleIDUint, _ := strconv.ParseUint(roleID, 10, 32)
