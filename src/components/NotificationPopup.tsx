@@ -125,7 +125,7 @@ export default function NotificationPopup({
   return (
     <div
       ref={popupRef}
-      className="absolute right-0 top-full mt-2 w-[380px] max-h-[480px] bg-dark-800 border border-dark-600/50 rounded-2xl shadow-2xl shadow-black/30 z-50 overflow-hidden animate-fade-in"
+      className="absolute right-0 top-full mt-2 w-95 max-h-120 bg-dark-800 border border-dark-600/50 rounded-2xl shadow-2xl shadow-black/30 z-50 overflow-hidden animate-fade-in"
     >
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-4 border-b border-dark-600/40">
@@ -134,7 +134,7 @@ export default function NotificationPopup({
             {language({ id: "Notifikasi", en: "Notifications" })}
           </h3>
           {unreadCount > 0 && (
-            <span className="flex items-center justify-center min-w-[20px] h-5 px-1.5 bg-accent-500 text-white text-[10px] font-bold rounded-full">
+            <span className="flex items-center justify-center min-w-5 h-5 px-1.5 bg-accent-500 text-white text-[10px] font-bold rounded-full">
               {unreadCount}
             </span>
           )}
@@ -151,7 +151,7 @@ export default function NotificationPopup({
       </div>
 
       {/* Notification list */}
-      <div className="overflow-y-auto max-h-[340px]">
+      <div className="overflow-y-auto max-h-85">
         {recent.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 px-4">
             <div className="w-12 h-12 rounded-full bg-dark-700/50 flex items-center justify-center mb-3">

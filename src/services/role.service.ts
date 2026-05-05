@@ -1,6 +1,6 @@
 import satellite from "@/lib/satellite";
 import type { Response } from "@/types/response";
-import type { Rule } from "@/stores/ruleStore";
+import type { Rule } from "@/types/rule";
 
 export interface RoleItem {
   id: number;
@@ -20,9 +20,10 @@ export interface DivisionGroup {
 export const roleService = {
   // ─── Division ───────────────────────────────────────────────
   getAll: async () => {
-    const response = await satellite.get<
-      Response<{ divisions: DivisionGroup[] }>
-    >("/api/role/all");
+    const response =
+      await satellite.get<Response<{ divisions: DivisionGroup[] }>>(
+        "/api/role/all",
+      );
     return response.data;
   },
   divisionCreate: async (data: { name: string; description: string }) => {
@@ -49,9 +50,9 @@ export const roleService = {
     return response.data;
   },
   divisionSetActive: async (id: number) => {
-    const response = await satellite.patch<
-      Response<{ is_active: boolean }>
-    >(`/api/role/division/set-active/${id}`);
+    const response = await satellite.patch<Response<{ is_active: boolean }>>(
+      `/api/role/division/set-active/${id}`,
+    );
     return response.data;
   },
 
@@ -81,9 +82,9 @@ export const roleService = {
     return response.data;
   },
   setActive: async (id: number) => {
-    const response = await satellite.patch<
-      Response<{ is_active: boolean }>
-    >(`/api/role/set-active/${id}`);
+    const response = await satellite.patch<Response<{ is_active: boolean }>>(
+      `/api/role/set-active/${id}`,
+    );
     return response.data;
   },
 

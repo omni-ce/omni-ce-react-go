@@ -137,17 +137,6 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
     }
   }, [isLoading, user, role_selected, setRoleSelected]);
 
-  // Fetch rules for the selected role
-  useEffect(() => {
-    if (!user || user.role === "su" || !role_selected) return;
-    roleService
-      .getRules()
-      .then((res) => {
-        setRules(res.data.rows);
-      })
-      .catch(() => setRules([]));
-  }, [user, role_selected, setRules]);
-
   // Listen for real-time rule updates via WebSocket
   useEffect(() => {
     if (!user || user.role === "su" || !role_selected) return;

@@ -207,6 +207,7 @@ export default function DashboardPage({}: DashboardPageProps) {
           console.error("Failed to fetch dashboard functions:", err),
         );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Period state for charts

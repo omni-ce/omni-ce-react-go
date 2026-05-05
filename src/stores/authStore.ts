@@ -63,7 +63,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
       set({ isAuthenticated: false, isLoading: false });
       return { isValid: false };
     }
-    if (isAuthenticated || !retrigger) return { isValid: true };
+    if (isAuthenticated && !retrigger) return { isValid: true };
     try {
       const resp = await authService.validate();
       const user = resp.data.user;
