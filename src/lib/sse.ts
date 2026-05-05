@@ -15,6 +15,7 @@ class Sse {
   private es: EventSource | null = null;
   private listeners: Record<string, Callback<unknown>[]> = {};
   private full_url: string = "";
+  private base_url: string = "";
 
   constructor(url: string, opt?: SseOption) {
     const queries: Record<string, string> = {
@@ -22,6 +23,7 @@ class Sse {
     };
     if (opt?.query) Object.assign(queries, opt.query);
     const query = new URLSearchParams(queries);
+    this.base_url = url;
     this.full_url = `${HOST_API}${url}?${query.toString()}`;
     this.es = new EventSource(this.full_url);
     this.es.onmessage = (event) => {
@@ -79,7 +81,7 @@ class Sse {
       this.es.close();
       this.es = null;
     }
-    urls.delete(this.full_url);
+    urls.delete(this.base_url);
   }
 }
 
