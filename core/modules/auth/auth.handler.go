@@ -3,10 +3,8 @@ package auth
 import (
 	"fmt"
 	"strings"
-	"time"
 
 	"react-go/core/dto"
-	"react-go/core/environment"
 	"react-go/core/function"
 	"react-go/core/function/hash"
 	role "react-go/core/modules/role/model"
@@ -15,36 +13,7 @@ import (
 	"react-go/core/variable"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt/v5"
 )
-
-func GenerateToken(userID string, role string) (string, error) {
-	claims := jwt.MapClaims{
-		"id":   userID,
-		"role": role,
-		"exp":  time.Now().Add(24 * time.Hour).Unix(),
-		"iat":  time.Now().Unix(),
-	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(environment.GetJWTSecret())
-}
-
-func ParseToken(tokenString string) (jwt.MapClaims, error) {
-	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
-		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
-		}
-		return environment.GetJWTSecret(), nil
-	})
-	if err != nil {
-		return nil, err
-	}
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok || !token.Valid {
-		return nil, fmt.Errorf("invalid token")
-	}
-	return claims, nil
-}
 
 func getUserMapWithRoles(user user.User) map[string]any {
 	var roleUsers []role.RoleUser
@@ -69,6 +38,31 @@ func getUserMapWithRoles(user user.User) map[string]any {
 	}
 	userMap["roles"] = userRoles
 	return userMap
+}
+
+func getRules(current_user user.User) ([]map[string]any, error) {
+	rows := make([]map[string]any, 0)
+	if current_user.Role == user.UserRoleClient {
+		roleUsers := make([]role.RoleUser, 0)
+		variable.Db.Where("user_id = ?", current_user.ID).Find(&roleUsers)
+		roleIds := make([]uint, 0)
+		for _, ru := range roleUsers {
+			roleIds = append(roleIds, ru.RoleID)
+		}
+		// -------------------------------------- //
+		rules := make([]rule.Rule, 0)
+		if err := variable.Db.
+			Model(&rule.Rule{}).
+			Where("role_id IN ?", roleIds).
+			Find(&rules).
+			Error; err != nil {
+			return nil, fmt.Errorf("Failed to find role menus")
+		}
+		for _, rule := range rules {
+			rows = append(rows, rule.Map())
+		}
+	}
+	return rows, nil
 }
 
 func Login(c *fiber.Ctx) error {
@@ -101,7 +95,10 @@ func Login(c *fiber.Ctx) error {
 		return dto.Unauthorized(c, "Invalid username or password", nil)
 	}
 
-	token, err := GenerateToken(current_user.ID.String(), current_user.Role)
+	token, err := function.JwtGenerateToken(function.JwtClaims{
+		ID:   current_user.ID.String(),
+		Role: current_user.Role,
+	})
 	if err != nil {
 		return dto.InternalServerError(c, "Failed to generate token", nil)
 	}
@@ -142,29 +139,4 @@ func Validate(c *fiber.Ctx) error {
 		"user":  getUserMapWithRoles(current_user),
 		"rules": rules,
 	})
-}
-
-func getRules(current_user user.User) ([]map[string]any, error) {
-	rows := make([]map[string]any, 0)
-	if current_user.Role == user.UserRoleClient {
-		roleUsers := make([]role.RoleUser, 0)
-		variable.Db.Where("user_id = ?", current_user.ID).Find(&roleUsers)
-		roleIds := make([]uint, 0)
-		for _, ru := range roleUsers {
-			roleIds = append(roleIds, ru.RoleID)
-		}
-		// -------------------------------------- //
-		rules := make([]rule.Rule, 0)
-		if err := variable.Db.
-			Model(&rule.Rule{}).
-			Where("role_id IN ?", roleIds).
-			Find(&rules).
-			Error; err != nil {
-			return nil, fmt.Errorf("Failed to find role menus")
-		}
-		for _, rule := range rules {
-			rows = append(rows, rule.Map())
-		}
-	}
-	return rows, nil
 }
