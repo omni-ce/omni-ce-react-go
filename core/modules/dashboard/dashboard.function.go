@@ -10,9 +10,58 @@ import (
 var registerFunctions = types.Function{
 	Timeline: []types.FunctionItem{
 		{
-			Label:    "Stok Barang",
-			Key:      "stock_barang",
-			Function: funcs.TestFunction,
+			Label:    "Statistik Area",
+			Key:      "timeline_dummy",
+			Function: funcs.TestTimelineFunction,
+		},
+	},
+	Bar: []types.FunctionItem{
+		{
+			Label:    "Statistik Bar",
+			Key:      "bar_dummy",
+			Function: funcs.TestBarFunction,
+		},
+	},
+	Gauge: []types.FunctionItem{
+		{
+			Label:    "Target Gauge",
+			Key:      "gauge_dummy",
+			Function: funcs.TestGaugeFunction,
+		},
+	},
+	Pie: []types.FunctionItem{
+		{
+			Label:    "Donut / Pie Chart",
+			Key:      "pie_dummy",
+			Function: funcs.TestPieFunction,
+		},
+	},
+	Table: []types.FunctionItem{
+		{
+			Label:    "List Table",
+			Key:      "table_dummy",
+			Function: funcs.TestTableFunction,
+		},
+	},
+	Progress: []types.FunctionItem{
+		{
+			Label:    "Progress List",
+			Key:      "progress_dummy",
+			Function: funcs.TestProgressFunction,
+		},
+	},
+	Traffic: []types.FunctionItem{
+		{
+			Label:    "Traffic Data",
+			Key:      "traffic_dummy",
+			Function: funcs.TestTrafficFunction,
+		},
+	},
+	Line: []types.FunctionItem{
+		{
+			Label:    "Line Chart",
+			Key:      "line_dummy",
+			Function: funcs.TestLineFunction,
 		},
 	},
 }

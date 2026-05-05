@@ -447,7 +447,7 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
               >
                 <RiNotificationLine className="w-4.5 h-4.5" />
                 {unreadCount > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center min-w-[16px] h-4 px-1 bg-neon-red text-white text-[9px] font-bold rounded-full animate-pulse">
+                  <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center min-w-4 h-4 px-1 bg-neon-red text-white text-[9px] font-bold rounded-full animate-pulse">
                     {unreadCount}
                   </span>
                 )}

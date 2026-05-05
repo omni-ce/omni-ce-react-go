@@ -35,12 +35,18 @@ import type { DynamicFormField } from "@/components/DynamicForm";
 import DynamicForm from "@/components/DynamicForm";
 
 // Highcharts Widgets
-import WidgetAreaChart from "@/components/widget/WidgetAreaChart";
+import WidgetAreaChart, {
+  type AreaChartSeries,
+} from "@/components/widget/WidgetAreaChart";
 import WidgetColumnChart from "@/components/widget/WidgetColumnChart";
 import WidgetGaugeChart from "@/components/widget/WidgetGaugeChart";
 import WidgetDonutChart from "@/components/widget/WidgetDonutChart";
-import WidgetTrafficStats from "@/components/widget/WidgetTrafficStats";
-import WidgetTableList from "@/components/widget/WidgetTableList";
+import WidgetTrafficStats, {
+  type SparklineStat,
+} from "@/components/widget/WidgetTrafficStats";
+import WidgetTableList, {
+  type TableRow,
+} from "@/components/widget/WidgetTableList";
 import WidgetProgressList from "@/components/widget/WidgetProgressList";
 import WidgetLineChart from "@/components/widget/WidgetLineChart";
 
@@ -163,6 +169,13 @@ export default function DashboardPage({}: DashboardPageProps) {
         const payload = JSON.parse(event.data);
         if (payload.event === "live_data") {
           setStats(payload.data);
+        } else if (payload.event === "live_widgets") {
+          const widgetsList = payload.data?.widgets || [];
+          const newWidgetData: Record<string, unknown> = {};
+          for (const w of widgetsList) {
+            newWidgetData[w.id] = w.data;
+          }
+          setLiveWidgetsData(newWidgetData);
         }
       } catch (e) {
         console.error("Failed to parse dashboard SSE data:", e);
@@ -205,6 +218,9 @@ export default function DashboardPage({}: DashboardPageProps) {
   const [trafficPeriod, setTrafficPeriod] = useState("Monthly");
 
   // Widget CRUD state
+  const [liveWidgetsData, setLiveWidgetsData] = useState<
+    Record<string, unknown>
+  >({});
   const [roleWidgets, setRoleWidgets] = useState<DashboardWidget[]>([]);
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [addStep, setAddStep] = useState<1 | 2 | 3>(1);
@@ -903,20 +919,141 @@ export default function DashboardPage({}: DashboardPageProps) {
                     </button>
                   </div>
                 )}
-                {/* Widget card */}
-                <div className="bg-dark-800/60 border border-dark-600/40 rounded-2xl p-5">
-                  <h3 className="text-sm font-semibold text-foreground">
-                    {rw.label}
-                  </h3>
-                  {rw.description && (
-                    <p className="text-xs text-dark-400 mt-0.5">
-                      {rw.description}
-                    </p>
-                  )}
-                  <p className="text-xs text-dark-500 mt-2">
-                    {widgetDef?.label || rw.function_key} · {rw.col?.mobile}/
-                    {rw.col?.tablet}/{rw.col?.laptop}/{rw.col?.desktop}
-                  </p>
+                {/* Widget Component */}
+                <div className="h-full bg-dark-800/60 border border-dark-600/40 rounded-2xl overflow-hidden relative">
+                  {(() => {
+                    const widgetData = liveWidgetsData[rw.id];
+
+                    if (!widgetData) {
+                      return (
+                        <div className="flex flex-col items-center justify-center h-full min-h-50 text-dark-400 p-5">
+                          <span className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent-500 mb-4"></span>
+                          <h3 className="text-sm font-semibold text-foreground mb-1">
+                            {rw.label}
+                          </h3>
+                          {rw.description && (
+                            <p className="text-xs text-dark-400">
+                              {rw.description}
+                            </p>
+                          )}
+                        </div>
+                      );
+                    }
+
+                    switch (rw.type) {
+                      case "timeline":
+                        return (
+                          <WidgetAreaChart
+                            title={rw.label}
+                            subtitle={rw.description}
+                            {...(widgetData as unknown as {
+                              categories: string[];
+                              series: AreaChartSeries[];
+                            })}
+                          />
+                        );
+                      case "bar":
+                        return (
+                          <WidgetColumnChart
+                            title={rw.label}
+                            subtitle={rw.description}
+                            {...(widgetData as unknown as {
+                              categories: string[];
+                              series: AreaChartSeries[];
+                            })}
+                          />
+                        );
+                      case "gauge":
+                        return (
+                          <WidgetGaugeChart
+                            title={rw.label}
+                            subtitle={rw.description}
+                            {...(widgetData as unknown as {
+                              value: number;
+                              max: number;
+                              label: string;
+                              color: string;
+                              height: number;
+                            })}
+                          />
+                        );
+                      case "pie":
+                        return (
+                          <WidgetDonutChart
+                            title={rw.label}
+                            subtitle={rw.description}
+                            {...(widgetData as unknown as {
+                              data: { name: string; y: number }[];
+                              height: number;
+                            })}
+                          />
+                        );
+                      case "table":
+                        return (
+                          <WidgetTableList
+                            title={rw.label}
+                            {...(widgetData as unknown as {
+                              columns: {
+                                label: string;
+                                key: "source" | "value";
+                              };
+                              rows: TableRow[];
+                              height: number;
+                            })}
+                          />
+                        );
+                      case "progress":
+                        return (
+                          <WidgetProgressList
+                            title={rw.label}
+                            subtitle={rw.description}
+                            {...(widgetData as unknown as {
+                              items: {
+                                label: string;
+                                value: number;
+                                color: string;
+                              }[];
+                              height: number;
+                            })}
+                          />
+                        );
+                      case "traffic":
+                        return (
+                          <WidgetTrafficStats
+                            title={rw.label}
+                            {...(widgetData as unknown as {
+                              stats: SparklineStat[];
+                              periodTabs?: string[];
+                              activePeriod?: string;
+                            })}
+                          />
+                        );
+                      case "line":
+                        return (
+                          <WidgetLineChart
+                            title={rw.label}
+                            subtitle={rw.description}
+                            {...(widgetData as unknown as {
+                              categories: string[];
+                              series: {
+                                name: string;
+                                data: number[];
+                                color?: string;
+                                dashStyle?: string;
+                              }[];
+                            })}
+                          />
+                        );
+                      default:
+                        return (
+                          <div className="p-5">
+                            <p className="text-red-500">
+                              Unknown widget type: {rw.type}
+                            </p>
+                          </div>
+                        );
+                    }
+                  })()}
                 </div>
               </div>
             );

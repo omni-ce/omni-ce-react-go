@@ -1,4 +1,4 @@
-interface TableRow {
+export interface TableRow {
   source: string;
   value: string;
 }
@@ -27,9 +27,7 @@ export default function WidgetTableList({
       <div className="px-5">
         <div className="flex items-center justify-between text-xs text-dark-400 pb-2 border-b border-dark-600/30">
           <span>{columns.label}</span>
-          <span>
-            {columns.key === "source" ? "Source" : columns.label}
-          </span>
+          <span>{columns.key === "source" ? "Source" : columns.label}</span>
         </div>
         <div className="divide-y divide-dark-600/20">
           {rows.map((row, i) => (

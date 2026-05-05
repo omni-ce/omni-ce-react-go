@@ -2,7 +2,7 @@ import { useRef, useEffect } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
-interface SparklineStat {
+export interface SparklineStat {
   label: string;
   value: string;
   change?: string;

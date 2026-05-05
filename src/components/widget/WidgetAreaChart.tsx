@@ -2,7 +2,7 @@ import { useRef, useEffect } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
-interface AreaChartSeries {
+export interface AreaChartSeries {
   name: string;
   data: number[];
   color?: string;
@@ -75,7 +75,11 @@ export default function WidgetAreaChart({
       labels: {
         style: { color: "#6b6b8a", fontSize: "11px" },
         formatter: function () {
-          return valuePrefix + Highcharts.numberFormat(this.value as number, 0) + valueSuffix;
+          return (
+            valuePrefix +
+            Highcharts.numberFormat(this.value as number, 0) +
+            valueSuffix
+          );
         },
       },
       gridLineColor: "#232340",
@@ -117,8 +121,18 @@ export default function WidgetAreaChart({
       fillColor: {
         linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
         stops: [
-          [0, Highcharts.color(s.color || "#6366f1").setOpacity(0.3).get("rgba") as string],
-          [1, Highcharts.color(s.color || "#6366f1").setOpacity(0.02).get("rgba") as string],
+          [
+            0,
+            Highcharts.color(s.color || "#6366f1")
+              .setOpacity(0.3)
+              .get("rgba") as string,
+          ],
+          [
+            1,
+            Highcharts.color(s.color || "#6366f1")
+              .setOpacity(0.02)
+              .get("rgba") as string,
+          ],
         ],
       },
     })),
