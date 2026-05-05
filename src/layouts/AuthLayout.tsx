@@ -4,17 +4,19 @@ import { useAuthStore } from "@/stores/authStore";
 import Loading from "@/components/Loading";
 import { auth_to_app_navigate } from "@/constant";
 import ControlButton from "@/components/ControlButton";
+import { useRuleStore } from "@/stores/ruleStore";
 
 export default function AuthLayout() {
   const navigate = useNavigate();
   const location = useLocation();
 
   const { isLoading, validateToken } = useAuthStore();
+  const { setRules } = useRuleStore();
 
   useEffect(() => {
     const checkAuth = async () => {
-      const valid = await validateToken();
-      if (valid) {
+      const { isValid, rules } = await validateToken();
+      if (isValid) {
         if (
           !location.pathname.startsWith(
             "/" + auth_to_app_navigate.split("/")[1],
@@ -22,9 +24,13 @@ export default function AuthLayout() {
         ) {
           navigate(auth_to_app_navigate, { replace: true });
         }
+        if (rules) {
+          setRules(rules);
+        }
       }
     };
     checkAuth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [validateToken, navigate, location.pathname]);
 
   if (isLoading) {

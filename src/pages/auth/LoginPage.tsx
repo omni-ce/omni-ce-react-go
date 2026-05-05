@@ -10,6 +10,8 @@ import {
 import { Link, useNavigate } from "react-router";
 import { useLanguageStore } from "@/stores/languageStore";
 import AppIconSvg from "@/assets/react_go.svg";
+import { useRuleStore } from "@/stores/ruleStore";
+import type { Rule } from "@/types/rule";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -21,6 +23,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Record<"id" | "en", string> | null>(null);
   const { login } = useAuthStore();
+  const { setRules } = useRuleStore();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -30,6 +33,7 @@ export default function LoginPage() {
     try {
       const response = await login(username, password);
       if (response.success) {
+        setRules((response.rules as Rule[]) || []);
         navigate("/select-role", { replace: true });
       } else {
         setError({

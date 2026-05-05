@@ -104,13 +104,17 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const valid = await validateToken();
-      if (!valid) {
+      const { isValid, rules } = await validateToken();
+      if (!isValid) {
         navigate(no_auth_navigate, { replace: true });
         return;
       }
+      if (rules) {
+        setRules(rules);
+      }
     };
     checkAuth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [validateToken, navigate]);
 
   // Redirect non-su users without role selected or force update if selected role is missing

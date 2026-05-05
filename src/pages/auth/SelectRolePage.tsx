@@ -13,17 +13,21 @@ export default function SelectRolePage() {
   const navigate = useNavigate();
   const { language } = useLanguageStore();
   const { user, isLoading, validateToken } = useAuthStore();
-  const { role_selected, setRoleSelected } = useRuleStore();
+  const { role_selected, setRoleSelected, setRules } = useRuleStore();
 
   // Check auth
   useEffect(() => {
     const check = async () => {
-      const valid = await validateToken();
-      if (!valid) {
+      const { isValid, rules } = await validateToken();
+      if (!isValid) {
         navigate("/login", { replace: true });
+      }
+      if (rules) {
+        setRules(rules);
       }
     };
     check();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [validateToken, navigate]);
 
   // If su, skip this page
@@ -104,7 +108,9 @@ export default function SelectRolePage() {
                 <p className="text-sm text-dark-300">
                   {language({ id: "Selamat datang,", en: "Welcome," })}
                 </p>
-                <p className="text-lg font-semibold text-foreground">{user.name}</p>
+                <p className="text-lg font-semibold text-foreground">
+                  {user.name}
+                </p>
               </div>
             )}
 

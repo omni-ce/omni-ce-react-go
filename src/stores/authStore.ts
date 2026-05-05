@@ -2,15 +2,21 @@ import { create } from "zustand";
 import { authService } from "@/services/auth.service";
 import type { AxiosError } from "axios";
 import type { User } from "@/types/user";
+import type { Rule } from "@/types/rule";
 
 interface AuthState {
   user: User | null;
   token: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (username: string, password: string) => Promise<{ success: boolean }>;
+  login: (
+    username: string,
+    password: string,
+  ) => Promise<{ success: boolean; rules?: Rule[] }>;
   logout: () => Promise<{ success: boolean; message: string | null }>;
-  validateToken: (retrigger?: boolean) => Promise<boolean>;
+  validateToken: (
+    retrigger?: boolean,
+  ) => Promise<{ isValid: boolean; rules?: Rule[] }>;
   setAuthenticated: (value: boolean) => void;
 }
 
@@ -25,9 +31,10 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
       if (response.data?.token) {
         const token = response.data.token;
         const user = response.data.user;
+        const rules = response.data.rules;
         localStorage.setItem("token", token);
         set({ token, user, isAuthenticated: true });
-        return { success: true };
+        return { success: true, rules };
       } else {
         return {
           success: false,
@@ -54,21 +61,22 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     const { token, isAuthenticated } = get();
     if (!token) {
       set({ isAuthenticated: false, isLoading: false });
-      return false;
+      return { isValid: false };
     }
-    if (isAuthenticated && !retrigger) return true;
+    if (isAuthenticated || !retrigger) return { isValid: true };
     try {
       const resp = await authService.validate();
       const user = resp.data.user;
+      const rules = resp.data.rules;
       set({ isAuthenticated: true, isLoading: false, user });
-      return true;
+      return { isValid: true, rules };
     } catch (err) {
       const error = err as AxiosError;
       if (error.response?.status === 401) {
         // localStorage.removeItem("token");
         set({ isAuthenticated: false, token: null, isLoading: false });
       }
-      return false;
+      return { isValid: false };
     }
   },
 }));

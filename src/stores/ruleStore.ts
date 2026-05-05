@@ -1,12 +1,5 @@
+import type { Rule } from "@/types/rule";
 import { create } from "zustand";
-
-export interface Rule {
-  id: number;
-  role_id: number;
-  key: string;
-  action: string;
-  state: boolean;
-}
 
 export interface RoleSelected {
   division_id: string;
