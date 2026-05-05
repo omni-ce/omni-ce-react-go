@@ -51,7 +51,6 @@ import WidgetTableList, {
 import WidgetProgressList from "@/components/widget/WidgetProgressList";
 import WidgetLineChart from "@/components/widget/WidgetLineChart";
 
-import { useDashboardStore } from "@/stores/dashboardStore";
 import { useLanguageStore } from "@/stores/languageStore";
 import { useAuthStore } from "@/stores/authStore";
 import { useRuleStore } from "@/stores/ruleStore";
@@ -145,7 +144,6 @@ Example Response:
 
 interface DashboardPageProps {}
 export default function DashboardPage({}: DashboardPageProps) {
-  const { fetchStats, setStats } = useDashboardStore();
   const { language } = useLanguageStore();
   const { user } = useAuthStore();
   const { role_selected } = useRuleStore();
@@ -157,9 +155,6 @@ export default function DashboardPage({}: DashboardPageProps) {
   );
 
   useEffect(() => {
-    fetchStats();
-  }, [fetchStats]);
-  useEffect(() => {
     if (!selectedRole || selectedRole == "-") return;
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -168,11 +163,6 @@ export default function DashboardPage({}: DashboardPageProps) {
         role_id: selectedRole,
       },
     });
-
-    const handleLiveData = (data: DashboardStats) => {
-      setStats(data);
-    };
-    stream.on("live_data", handleLiveData);
 
     const handleLiveWidget = (data: {
       widgets: { id: string; data: unknown }[];
@@ -186,11 +176,10 @@ export default function DashboardPage({}: DashboardPageProps) {
     };
     stream.on("live_widgets", handleLiveWidget);
     return () => {
-      stream.off("live_data", handleLiveData);
       stream.off("live_widgets", handleLiveWidget);
       stream.disconnect();
     };
-  }, [setStats, selectedRole]);
+  }, [selectedRole]);
 
   useEffect(() => {
     if (user?.role !== "su") {
@@ -200,22 +189,24 @@ export default function DashboardPage({}: DashboardPageProps) {
 
   useEffect(() => {
     setLoadingRoles(true);
-    dashboardService
-      .getRoles()
-      .then((res) => {
-        setRoles(res.data || []);
-      })
-      .catch((err) => console.error("Failed to fetch roles:", err))
-      .finally(() => setLoadingRoles(false));
 
-    dashboardService
-      .getFunctions()
-      .then((data) => {
-        setFunctionsData(data.data);
-      })
-      .catch((err) =>
-        console.error("Failed to fetch dashboard functions:", err),
-      );
+    if (user?.role === "su") {
+      dashboardService
+        .getRoles()
+        .then((res) => {
+          setRoles(res.data || []);
+        })
+        .catch((err) => console.error("Failed to fetch roles:", err))
+        .finally(() => setLoadingRoles(false));
+      dashboardService
+        .getFunctions()
+        .then((data) => {
+          setFunctionsData(data.data);
+        })
+        .catch((err) =>
+          console.error("Failed to fetch dashboard functions:", err),
+        );
+    }
   }, []);
 
   // Period state for charts
