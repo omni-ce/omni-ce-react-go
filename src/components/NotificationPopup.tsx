@@ -13,7 +13,7 @@ import { useLanguageStore } from "@/stores/languageStore";
 import type { INotification } from "@/types/notification";
 import { timeAgo } from "@/utils/datetime";
 import { useAuthStore } from "@/stores/authStore";
-import { getSocket } from "@/lib/socket";
+import { getSseClient } from "@/lib/sse";
 import { useNotificationStore } from "@/stores/notificationStore";
 
 const typeConfig = {
@@ -73,9 +73,7 @@ export default function NotificationPopup({
 
   useEffect(() => {
     if (user?.id) {
-      const socket = getSocket();
-      socket.emit("join", localStorage.getItem("token"));
-      socket.on("notification", (data: INotification | INotification[]) => {
+      const handleUpdate = (data: INotification | INotification[]) => {
         if (Array.isArray(data)) {
           setNotifications(data);
         } else {
@@ -84,9 +82,11 @@ export default function NotificationPopup({
           const audio = new Audio("/notification.mp3");
           audio.play();
         }
-      });
+      };
+      const stream = getSseClient("/api/event/stream");
+      stream.on("notification", handleUpdate);
       return () => {
-        socket.off("notification");
+        stream.off("notification", handleUpdate);
       };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -12,6 +12,7 @@ import {
 
 import {
   dashboardService,
+  type DashboardStats,
   type DashboardWidget,
 } from "@/services/dashboard.service";
 import { HOST_API } from "@/environment";
@@ -54,6 +55,7 @@ import { useDashboardStore } from "@/stores/dashboardStore";
 import { useLanguageStore } from "@/stores/languageStore";
 import { useAuthStore } from "@/stores/authStore";
 import { useRuleStore } from "@/stores/ruleStore";
+import { getSseClient } from "@/lib/sse";
 
 interface Widget {
   label: string;
@@ -161,28 +163,32 @@ export default function DashboardPage({}: DashboardPageProps) {
     if (!selectedRole || selectedRole == "-") return;
     const token = localStorage.getItem("token");
     if (!token) return;
-    const es = new EventSource(
-      `${HOST_API}/api/event/dashboard?token=${token}&role_id=${selectedRole}`,
-    );
-    es.onmessage = (event) => {
-      try {
-        const payload = JSON.parse(event.data);
-        if (payload.event === "live_data") {
-          setStats(payload.data);
-        } else if (payload.event === "live_widgets") {
-          const widgetsList = payload.data?.widgets || [];
-          const newWidgetData: Record<string, unknown> = {};
-          for (const w of widgetsList) {
-            newWidgetData[w.id] = w.data;
-          }
-          setLiveWidgetsData(newWidgetData);
-        }
-      } catch (e) {
-        console.error("Failed to parse dashboard SSE data:", e);
-      }
+    const stream = getSseClient("/api/event/dashboard", {
+      query: {
+        role_id: selectedRole,
+      },
+    });
+
+    const handleLiveData = (data: DashboardStats) => {
+      setStats(data);
     };
+    stream.on("live_data", handleLiveData);
+
+    const handleLiveWidget = (data: {
+      widgets: { id: string; data: unknown }[];
+    }) => {
+      const widgetsList = data?.widgets || [];
+      const newWidgetData: Record<string, unknown> = {};
+      for (const w of widgetsList) {
+        newWidgetData[w.id] = w.data;
+      }
+      setLiveWidgetsData(newWidgetData);
+    };
+    stream.on("live_widgets", handleLiveWidget);
     return () => {
-      es.close();
+      stream.off("live_data", handleLiveData);
+      stream.off("live_widgets", handleLiveWidget);
+      stream.disconnect();
     };
   }, [setStats, selectedRole]);
 

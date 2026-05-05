@@ -79,9 +79,16 @@ class Sse {
       this.es.close();
       this.es = null;
     }
+    urls.delete(this.full_url);
   }
 }
 
 export default Sse;
 
-export const sseStreamClient = new Sse("/api/event/stream");
+const urls = new Map<string, Sse>();
+export const getSseClient = (url: string, opt?: SseOption): Sse => {
+  if (!urls.has(url)) {
+    urls.set(url, new Sse(url, opt));
+  }
+  return urls.get(url)!;
+};

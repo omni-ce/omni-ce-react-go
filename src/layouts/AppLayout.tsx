@@ -28,7 +28,7 @@ import NotificationPopup from "@/components/NotificationPopup";
 import { useNotificationStore } from "@/stores/notificationStore";
 import { roleService } from "@/services/role.service";
 import RoleStepper from "@/components/RoleStepper";
-import { getSocket } from "@/lib/socket";
+import { getSseClient } from "@/lib/sse";
 import {
   Dialog,
   DialogContent,
@@ -147,7 +147,6 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
   // Listen for real-time rule updates via WebSocket
   useEffect(() => {
     if (!user || user.role === "su" || !role_selected) return;
-    const socket = getSocket();
     const handleUpdateRule = () => {
       roleService
         .getRules()
@@ -156,22 +155,23 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
         })
         .catch(() => setRules([]));
     };
-    socket.on("update-rule", handleUpdateRule);
+    const stream = getSseClient("/api/event/stream");
+    stream.on("update-rule", handleUpdateRule);
     return () => {
-      socket.off("update-rule", handleUpdateRule);
+      stream.off("update-rule", handleUpdateRule);
     };
   }, [user, role_selected, setRules]);
 
   // Listen for real-time user updates via WebSocket
   useEffect(() => {
     if (!user) return;
-    const socket = getSocket();
     const handleUpdateUser = () => {
       validateToken(true);
     };
-    socket.on("update-user", handleUpdateUser);
+    const stream = getSseClient("/api/event/stream");
+    stream.on("update-user", handleUpdateUser);
     return () => {
-      socket.off("update-user", handleUpdateUser);
+      stream.off("update-user", handleUpdateUser);
     };
   }, [user, validateToken]);
 
@@ -256,19 +256,21 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
           <div className="flex items-center w-full min-w-0">
             {/* Logo - hidden when collapsed */}
             {(!effectiveCollapsed || isMobileOpen) && (
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="relative shrink-0">
-                  <img src={AppIconSvg} alt="App" className="w-8 h-8" />
+              <Link to={"/"}>
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="relative shrink-0">
+                    <img src={AppIconSvg} alt="App" className="w-8 h-8" />
+                  </div>
+                  <div className="min-w-0">
+                    <h1 className="text-base font-bold text-foreground tracking-tight truncate">
+                      Base Project
+                    </h1>
+                    <p className="text-[10px] text-dark-400 font-mono truncate">
+                      {version}
+                    </p>
+                  </div>
                 </div>
-                <div className="min-w-0">
-                  <h1 className="text-base font-bold text-foreground tracking-tight truncate">
-                    Base Project
-                  </h1>
-                  <p className="text-[10px] text-dark-400 font-mono truncate">
-                    {version}
-                  </p>
-                </div>
-              </div>
+              </Link>
             )}
 
             {/* Desktop collapse hamburger (RIGHT side) */}
