@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"react-go/core/dto"
 	model "react-go/core/modules/dashboard/model"
-	"react-go/core/types"
 	"react-go/core/variable"
 	"strconv"
 
@@ -15,30 +14,6 @@ import (
 
 func ListFunctions(c *fiber.Ctx) error {
 	return dto.OK(c, "Functions retrieved successfully", registerFunctions)
-}
-
-func ExecuteFunction(c *fiber.Ctx) error {
-	_type := c.Params("type")
-	if _type == "" {
-		return dto.BadRequest(c, "type is required", nil)
-	}
-	key := c.Params("key")
-	if key == "" {
-		return dto.BadRequest(c, "key is required", nil)
-	}
-
-	function, err := FindFunction(_type, key)
-	if err != nil {
-		return dto.InternalServerError(c, err.Error(), nil)
-	}
-
-	return dto.OK(c, "Functions retrieved successfully", function(types.FunctionRequest{
-		RoleID: 1,
-		UserID: "1",
-		Headers: map[string]string{
-			"Content-Type": "application/json",
-		},
-	}))
 }
 
 type DashboardStats struct {

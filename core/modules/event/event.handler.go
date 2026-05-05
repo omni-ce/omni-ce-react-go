@@ -213,9 +213,6 @@ func init() {
 						res := fn(types.FunctionRequest{
 							RoleID: client.RoleID,
 							UserID: client.UserID,
-							Headers: map[string]string{
-								"Content-Type": "application/json",
-							},
 						})
 						widgetResults = append(widgetResults, map[string]any{
 							"id":   w.ID,

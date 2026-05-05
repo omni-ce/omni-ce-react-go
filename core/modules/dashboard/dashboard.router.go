@@ -3,13 +3,10 @@ package dashboard
 import "github.com/gofiber/fiber/v2"
 
 func PublicRoute(r fiber.Router) {
-	r.Get("/functions", ListFunctions)
-
-	// comment this on production
-	r.Get("/function/:type/:key", ExecuteFunction)
 }
 
 func ProtectedRoute(r fiber.Router) {
+	r.Get("/functions", ListFunctions)
 	r.Get("/stats", GetStats)
 
 	// CRUD Widget

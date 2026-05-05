@@ -14,9 +14,8 @@ type Function struct {
 	Line     []FunctionItem `json:"line"`
 }
 type FunctionRequest struct {
-	RoleID  uint              `json:"role_id"`
-	UserID  string            `json:"user_id"`
-	Headers map[string]string `json:"headers"`
+	RoleID uint   `json:"role_id"`
+	UserID string `json:"user_id"`
 }
 type FunctionResponse struct {
 	Body any `json:"body"`
