@@ -59,7 +59,6 @@ import { getSseClient } from "@/lib/sse";
 interface Widget {
   label: string;
   key: string;
-  type: string;
   element: React.ComponentType;
 }
 
@@ -67,77 +66,41 @@ const widgets: Widget[] = [
   {
     label: "Chart Area",
     key: "chart_area",
-    type: "timeline",
     element: WidgetAreaChart as React.ComponentType,
-    /**
-Example Response:
-  {
-    "data": {
-      "x_type": "month", // date, day, week, month, year
-      "rows": [
-        {
-          "x": 1, // Jan
-          "y": 100
-        }
-      ]
-    }
-  }
-     */
   },
   {
     label: "Chart Column",
     key: "chart_column",
-    type: "bar",
     element: WidgetColumnChart as React.ComponentType,
-    /**
-Example Response:
-  {
-    "data": {
-      "x_type": "month", // date, day, week, month, year
-      "rows": [
-        {
-          "x": 1, // Jan
-          "y": 100
-        }
-      ]
-    }
-  }
-     */
   },
   {
     label: "Chart Gauge",
     key: "chart_gauge",
-    type: "gauge",
     element: WidgetGaugeChart as React.ComponentType,
   },
   {
-    label: "Chart Donut",
-    key: "chart_donut",
-    type: "pie",
+    label: "Chart Pie",
+    key: "chart_pie",
     element: WidgetDonutChart as React.ComponentType,
   },
   {
     label: "Table List",
     key: "chart_table",
-    type: "table",
     element: WidgetTableList as React.ComponentType,
   },
   {
     label: "Progress List",
     key: "chart_progress",
-    type: "progress",
     element: WidgetProgressList as React.ComponentType,
   },
   {
     label: "Traffic Stats",
     key: "chart_traffic",
-    type: "traffic",
     element: WidgetTrafficStats as React.ComponentType,
   },
   {
     label: "Chart Line",
     key: "chart_line",
-    type: "line",
     element: WidgetLineChart as React.ComponentType,
   },
 ];
@@ -324,7 +287,6 @@ export default function DashboardPage({}: DashboardPageProps) {
         function_key: selectedFunctionKey,
         key:
           (addFormData.key as string) || selectedFunctionKey + "_" + Date.now(),
-        type: w.type,
         col: {
           mobile: colData.mobile,
           tablet: colData.tablet,
@@ -1111,9 +1073,6 @@ export default function DashboardPage({}: DashboardPageProps) {
                     }`}
                   >
                     <p className="text-sm font-semibold">{w.label}</p>
-                    <p className="text-xs text-dark-400 mt-1 uppercase tracking-wider">
-                      {w.type}
-                    </p>
                   </button>
                 ))}
               </div>
@@ -1124,8 +1083,8 @@ export default function DashboardPage({}: DashboardPageProps) {
                     (w) => w.key === selectedWidgetKey,
                   );
                   const funcs =
-                    selectedWidget && functionsData[selectedWidget.type]
-                      ? functionsData[selectedWidget.type]
+                    selectedWidget && functionsData[selectedWidget.key]
+                      ? functionsData[selectedWidget.key]
                       : [];
                   if (funcs.length === 0) {
                     return (
@@ -1245,7 +1204,7 @@ export default function DashboardPage({}: DashboardPageProps) {
                 className="w-full px-3 py-2 rounded-lg bg-dark-700/50 border border-dark-600/40 text-foreground text-sm focus:outline-none focus:border-accent-500"
               >
                 {widgets.map((w) => (
-                  <option key={w.type} value={w.type}>
+                  <option key={w.key} value={w.key}>
                     {w.label}
                   </option>
                 ))}

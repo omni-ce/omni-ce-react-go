@@ -56,7 +56,6 @@ func WidgetCreate(c *fiber.Ctx) error {
 		RoleID      uint           `json:"role_id"`
 		FunctionKey string         `json:"function_key"`
 		Key         string         `json:"key"`
-		Type        string         `json:"type"`
 		Col         map[string]int `json:"col"`
 		Label       string         `json:"label"`
 		Description string         `json:"description"`
@@ -73,9 +72,6 @@ func WidgetCreate(c *fiber.Ctx) error {
 	}
 	if body.Key == "" {
 		return dto.BadRequest(c, "key is required", nil)
-	}
-	if body.Type == "" {
-		return dto.BadRequest(c, "type is required", nil)
 	}
 	if body.Label == "" {
 		return dto.BadRequest(c, "label is required", nil)
@@ -109,7 +105,6 @@ func WidgetCreate(c *fiber.Ctx) error {
 		RoleID:      body.RoleID,
 		FunctionKey: body.FunctionKey,
 		Key:         body.Key,
-		Type:        body.Type,
 		Col:         string(colJSON),
 		Label:       body.Label,
 		Description: body.Description,
@@ -147,7 +142,6 @@ func WidgetList(c *fiber.Ctx) error {
 			"id":           widget.ID,
 			"function_key": widget.FunctionKey,
 			"key":          widget.Key,
-			"type":         widget.Type,
 			"col":          col,
 			"label":        widget.Label,
 			"description":  widget.Description,
@@ -169,7 +163,6 @@ func WidgetEdit(c *fiber.Ctx) error {
 	}
 
 	var body struct {
-		Type        *string         `json:"type"`
 		Col         *map[string]int `json:"col"`
 		Label       *string         `json:"label"`
 		Description *string         `json:"description"`
@@ -179,9 +172,6 @@ func WidgetEdit(c *fiber.Ctx) error {
 	}
 
 	updates := map[string]interface{}{}
-	if body.Type != nil {
-		updates["type"] = *body.Type
-	}
 	if body.Col != nil {
 		col := *body.Col
 		if col["mobile"] == 0 {

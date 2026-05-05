@@ -3,16 +3,7 @@ package types
 // -------------------------------------------------------- //
 // -------------------------------------------------------- //
 
-type Function struct {
-	Timeline []FunctionItem `json:"timeline"`
-	Bar      []FunctionItem `json:"bar"`
-	Gauge    []FunctionItem `json:"gauge"`
-	Pie      []FunctionItem `json:"pie"`
-	Table    []FunctionItem `json:"table"`
-	Progress []FunctionItem `json:"progress"`
-	Traffic  []FunctionItem `json:"traffic"`
-	Line     []FunctionItem `json:"line"`
-}
+type Function map[string][]FunctionItem
 type FunctionRequest struct {
 	RoleID uint   `json:"role_id"`
 	UserID string `json:"user_id"`
