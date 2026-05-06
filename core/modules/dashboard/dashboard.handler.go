@@ -8,12 +8,10 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
-	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 )
 
 func ListFunctions(c *fiber.Ctx) error {
-	return dto.OK(c, "Functions retrieved successfully", registerFunctions)
+	return dto.OK(c, "Functions retrieved successfully", RegisterFunctions)
 }
 
 type DashboardStats struct {
@@ -23,26 +21,6 @@ type DashboardStats struct {
 	TotalFailed    int64 `json:"total_failed"`
 	TotalTiming    int64 `json:"total_timing"`
 	TotalPending   int64 `json:"total_pending"`
-}
-
-func GetStats(c *fiber.Ctx) error {
-	var stats DashboardStats
-
-	db := variable.Db.Session(&gorm.Session{Logger: logger.Default.LogMode(logger.Silent)}) // silent mode to avoid noise
-
-	// Total queues
-	db.Table("queues").Count(&stats.TotalQueues)
-
-	// Total messages (all statuses)
-	db.Table("queue_messages").Count(&stats.TotalMessages)
-
-	// Count by status
-	db.Table("queue_messages").Where("status = ?", "completed").Count(&stats.TotalCompleted)
-	db.Table("queue_messages").Where("status = ? AND is_ack = false", "failed").Count(&stats.TotalFailed)
-	db.Table("queue_messages").Where("status = ?", "timing").Count(&stats.TotalTiming)
-	db.Table("queue_messages").Where("status = ?", "pending").Count(&stats.TotalPending)
-
-	return dto.OK(c, "Dashboard stats retrieved successfully", stats)
 }
 
 // ─── Widget CRUD ────────────────────────────────────────────────────

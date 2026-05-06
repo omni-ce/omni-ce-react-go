@@ -1,13 +1,11 @@
 package dashboard
 
 import (
-	"fmt"
-
 	funcs "react-go/core/modules/dashboard/functions"
 	"react-go/core/types"
 )
 
-var registerFunctions = types.Function{
+var RegisterFunctions = types.Function{
 	"chart_area": []types.FunctionItem{
 		{
 			Label:    "Statistik Area",
@@ -64,22 +62,4 @@ var registerFunctions = types.Function{
 			Function: funcs.TestLineFunction,
 		},
 	},
-}
-
-// -------------------------------------------------------- //
-// -------------------------------------------------------- //
-
-func FindFunction(_type string, key string) (func(req types.FunctionRequest) any, error) {
-	items, ok := registerFunctions[_type]
-	if !ok {
-		return nil, fmt.Errorf("Invalid function type")
-	}
-
-	for _, v := range items {
-		if v.Key == key {
-			return v.Function, nil
-		}
-	}
-
-	return nil, fmt.Errorf("Function not found")
 }

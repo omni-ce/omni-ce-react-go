@@ -11,9 +11,13 @@ import (
 	"sync"
 	"time"
 
+	"github.com/oracle-samples/gorm-oracle/oracle"
+	"gorm.io/driver/clickhouse"
+	"gorm.io/driver/gaussdb"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
+	"gorm.io/driver/sqlserver"
 	"gorm.io/gorm"
 )
 
@@ -105,6 +109,50 @@ func OpenDB() (*gorm.DB, error) {
 		dialector = postgres.Open(dsn)
 		log.Printf("📦 Connecting to PostgreSQL: %s@%s:%s/%s", user, host, port, dbName)
 
+	case "gauss", "gaussdb":
+		if host == "" {
+			host = "localhost"
+		}
+		if port == "" {
+			port = "8000"
+		}
+		dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai",
+			host, user, pass, dbName, port)
+		dialector = gaussdb.Open(dsn)
+		log.Printf("📦 Connecting to GaussDB: %s@%s:%s/%s", user, host, port, dbName)
+
+	case "oracle", "oracledb", "oraclesql":
+		if host == "" {
+			host = "localhost"
+		}
+		if port == "" {
+			port = "1521"
+		}
+		dsn := fmt.Sprintf(`user="%s" password="%s" connectString="%s:%s/%s"`, user, pass, host, port, dbName)
+		dialector = oracle.Open(dsn)
+		log.Printf("📦 Connecting to Oracle: %s@%s:%s/%s", user, host, port, dbName)
+
+	case "sqlserver", "mssql":
+		if host == "" {
+			host = "localhost"
+		}
+		if port == "" {
+			port = "9930"
+		}
+		dsn := fmt.Sprintf("sqlserver://%s:%s@%s:%s?database=%s", user, pass, host, port, dbName)
+		dialector = sqlserver.Open(dsn)
+		log.Printf("📦 Connecting to SQL Server: %s@%s:%s/%s", user, host, port, dbName)
+
+	case "clickhouse":
+		if host == "" {
+			host = "localhost"
+		}
+		if port == "" {
+			port = "9000"
+		}
+		dsn := fmt.Sprintf("tcp://%s:%s?database=%s&username=%s&password=%s&read_timeout=10&write_timeout=20", host, port, dbName, user, pass)
+		dialector = clickhouse.Open(dsn)
+		log.Printf("📦 Connecting to ClickHouse: %s@%s:%s/%s", user, host, port, dbName)
 	case "sqlite":
 		if dbName == "" {
 			dbName = "./database/system.sqlite"

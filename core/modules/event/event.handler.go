@@ -209,7 +209,7 @@ func init() {
 
 				widgetResults := make([]map[string]any, 0)
 				for _, w := range widgets {
-					fn, err := dashboard.FindFunction(w.Key, w.FunctionKey)
+					fn, err := findFunction(dashboard.RegisterFunctions, w.Key, w.FunctionKey)
 					if err == nil {
 						res := fn(types.FunctionRequest{
 							RoleID: client.RoleID,
@@ -238,4 +238,19 @@ func init() {
 			dashboardHub.Mutex.RUnlock()
 		}
 	}()
+}
+
+func findFunction(registerFunctions types.Function, _type string, key string) (func(req types.FunctionRequest) any, error) {
+	items, ok := registerFunctions[_type]
+	if !ok {
+		return nil, fmt.Errorf("Invalid function type")
+	}
+
+	for _, v := range items {
+		if v.Key == key {
+			return v.Function, nil
+		}
+	}
+
+	return nil, fmt.Errorf("Function not found")
 }

@@ -7,7 +7,6 @@ func PublicRoute(r fiber.Router) {
 
 func ProtectedRoute(r fiber.Router) {
 	r.Get("/functions", ListFunctions)
-	r.Get("/stats", GetStats)
 
 	// CRUD Widget
 	r.Post("/widget/functions", WidgetFunctions)

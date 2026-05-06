@@ -31,12 +31,6 @@ export const dashboardService = {
     >("/api/dashboard/functions");
     return response.data;
   },
-  getStats: async () => {
-    const response = await satellite.get<Response<DashboardStats>>(
-      "/api/dashboard/stats",
-    );
-    return response.data;
-  },
 
   getRoles: async () => {
     const response =
