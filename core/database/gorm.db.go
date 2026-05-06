@@ -88,7 +88,8 @@ func OpenDB() (*gorm.DB, error) {
 		"mysql", "postgres",
 		"gaussdb", "oracle",
 		"sqlserver", "clickhouse",
-		"tidb", "sqlite",
+		"tidb", "cockroachdb",
+		"sqlite",
 	}
 	switch provider {
 	case "mysql":
@@ -171,6 +172,18 @@ func OpenDB() (*gorm.DB, error) {
 			user, pass, host, port, dbName)
 		dialector = mysql.Open(dsn)
 		log.Printf("📦 Connecting to TiDB: %s@%s:%s/%s", user, host, port, dbName)
+
+	case "cockroach", "cockroachdb":
+		if host == "" {
+			host = "localhost"
+		}
+		if port == "" {
+			port = "26257"
+		}
+		dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Jakarta",
+			host, user, pass, dbName, port)
+		dialector = postgres.Open(dsn)
+		log.Printf("📦 Connecting to PostgreSQL: %s@%s:%s/%s", user, host, port, dbName)
 
 	case "sqlite":
 		if dbName == "" {
