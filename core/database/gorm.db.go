@@ -84,6 +84,12 @@ func OpenDB() (*gorm.DB, error) {
 	}
 
 	var dialector gorm.Dialector
+	supported := []string{
+		"mysql", "postgres",
+		"gaussdb", "oracle",
+		"sqlserver", "clickhouse",
+		"tidb", "sqlite",
+	}
 	switch provider {
 	case "mysql":
 		if host == "" {
@@ -143,7 +149,7 @@ func OpenDB() (*gorm.DB, error) {
 		dialector = sqlserver.Open(dsn)
 		log.Printf("📦 Connecting to SQL Server: %s@%s:%s/%s", user, host, port, dbName)
 
-	case "clickhouse":
+	case "clickhouse", "clickhousedb", "clickhosesql":
 		if host == "" {
 			host = "localhost"
 		}
@@ -153,6 +159,19 @@ func OpenDB() (*gorm.DB, error) {
 		dsn := fmt.Sprintf("tcp://%s:%s?database=%s&username=%s&password=%s&read_timeout=10&write_timeout=20", host, port, dbName, user, pass)
 		dialector = clickhouse.Open(dsn)
 		log.Printf("📦 Connecting to ClickHouse: %s@%s:%s/%s", user, host, port, dbName)
+
+	case "ti", "tidb":
+		if host == "" {
+			host = "localhost"
+		}
+		if port == "" {
+			port = "4000"
+		}
+		dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+			user, pass, host, port, dbName)
+		dialector = mysql.Open(dsn)
+		log.Printf("📦 Connecting to TiDB: %s@%s:%s/%s", user, host, port, dbName)
+
 	case "sqlite":
 		if dbName == "" {
 			dbName = "./database/system.sqlite"
@@ -165,7 +184,7 @@ func OpenDB() (*gorm.DB, error) {
 		log.Printf("📦 Using SQLite: %s", dbName)
 
 	default:
-		return nil, fmt.Errorf("unsupported database provider: %s (supported: sqlite, mysql, postgres)", provider)
+		return nil, fmt.Errorf("unsupported database provider: %s (supported: %s)", provider, strings.Join(supported, ", "))
 	}
 
 	db, err := gorm.Open(dialector, &gorm.Config{})
