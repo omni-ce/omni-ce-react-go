@@ -2,7 +2,7 @@ import * as flags from "country-flag-icons/react/3x2";
 import { Fragment, useState } from "react";
 import { useLocation, useParams } from "react-router";
 import { useThemeStore } from "@/stores/themeStore";
-import { useLanguageStore } from "@/stores/languageStore";
+import { SUPPORTED_LANGUAGES, useLanguageStore } from "@/stores/languageStore";
 
 export interface Language {
   id: string;
@@ -77,7 +77,7 @@ export default function LanguageSelector({ className = "" }: Props) {
               : "border-gray-200 bg-white"
           }`}
         >
-          {languages.map((lang) => {
+          {SUPPORTED_LANGUAGES.map((lang) => {
             const FlagComponent = (flags as any)[lang.key.toUpperCase()];
             return (
               <button
