@@ -5,12 +5,13 @@ import { IoReload } from "react-icons/io5";
 import { useThemeStore } from "@/stores/themeStore";
 import { cn } from "@/lib/utils";
 
+export type CaptchaSecurity = "low" | "medium" | "strong";
 interface CaptchaProps {
   value?: string;
   onChange?: (value: string) => void;
   disabled?: boolean;
   length?: number;
-  security?: "low" | "medium" | "strong";
+  security?: CaptchaSecurity;
   onReady?: (validateFn: () => Promise<boolean>) => void;
   messagePleaseEnter?: string;
   messageWrong?: string;

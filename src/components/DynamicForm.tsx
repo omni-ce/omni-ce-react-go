@@ -11,7 +11,7 @@ import BlankUser from "@/assets/blank-user.svg";
 import type { Option } from "@/types/option";
 import { IconComponent } from "@/components/ui/IconSelector";
 import CameraSelector from "@/components/ui/CameraSelector";
-import Captcha from "@/components/ui/CaptchaInput";
+import Captcha, { type CaptchaSecurity } from "@/components/ui/CaptchaInput";
 import ColorPickerSelector from "@/components/ui/ColorPickerSelector";
 import CountrySelector from "@/components/ui/CountrySelector";
 import IconSelector from "@/components/ui/IconSelector";
@@ -108,7 +108,7 @@ export interface DynamicFormField {
   fileMaxSize?: number;
   fileType?: (FileType | FileType[])[];
   fileTemplate?: "profile" | "default";
-  captchaSecurity?: "weak" | "medium" | "strong";
+  captchaSecurity?: CaptchaSecurity;
   captchaLength?: number;
   phoneDefaultCountry?: CountryKey;
   phoneFirstAntiZero?: boolean;
