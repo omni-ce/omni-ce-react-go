@@ -2,27 +2,29 @@ import satellite from "@/lib/satellite";
 import type { AxiosError } from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { IoReload } from "react-icons/io5";
+import { useThemeStore } from "@/stores/themeStore";
+import { cn } from "@/lib/utils";
 
 interface CaptchaProps {
   value?: string;
   onChange?: (value: string) => void;
   disabled?: boolean;
   length?: number;
-  security?: "weak" | "medium" | "strong";
+  security?: "low" | "medium" | "strong";
+  onReady?: (validateFn: () => Promise<boolean>) => void;
   messagePleaseEnter?: string;
   messageWrong?: string;
-  onReady?: (validate: () => Promise<boolean>) => void;
 }
 
-export default function Captcha({
+export default function CaptchaInput({
   value,
   onChange,
-  disabled,
+  disabled = false,
   length = 4,
-  security = "weak",
-  messagePleaseEnter,
-  messageWrong,
+  security = "low",
   onReady,
+  messagePleaseEnter = "Please enter verification code",
+  messageWrong = "Verification code is incorrect",
 }: CaptchaProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [captchaId, setCaptchaId] = useState("");
@@ -30,6 +32,7 @@ export default function Captcha({
   const [userInput, setUserInput] = useState(value || "");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const { isDarkMode } = useThemeStore();
 
   const drawCaptcha = useCallback(
     (text: string) => {
@@ -45,8 +48,8 @@ export default function Captcha({
       // Clear canvas
       ctx.clearRect(0, 0, width, height);
 
-      // Background
-      ctx.fillStyle = "#f3f4f6";
+      // Background - match dashboard colors
+      ctx.fillStyle = isDarkMode ? "#0a0a0f" : "#f1f3f8"; // dark-900 or dark-800 light
       ctx.fillRect(0, 0, width, height);
 
       // Character spacing
@@ -63,10 +66,12 @@ export default function Captcha({
         ctx.save();
         ctx.translate(x, y);
 
-        // Random color for each character
-        const r = Math.floor(Math.random() * 100 + 50);
-        const g = Math.floor(Math.random() * 100 + 50);
-        const b = Math.floor(Math.random() * 100 + 50);
+        // Random color for each character - brighter for dark mode, darker for light mode
+        const minColor = isDarkMode ? 150 : 50;
+        const colorRange = 100;
+        const r = Math.floor(Math.random() * colorRange + minColor);
+        const g = Math.floor(Math.random() * colorRange + minColor);
+        const b = Math.floor(Math.random() * colorRange + minColor);
         ctx.fillStyle = `rgb(${r},${g},${b})`;
 
         if (security === "medium" || security === "strong") {
@@ -79,7 +84,7 @@ export default function Captcha({
         ctx.restore();
       }
 
-      // Strong: add 2-3 random colored lines across the text
+      // Strong: add random colored lines across the text
       if (security === "strong") {
         const margin = 6;
 
@@ -92,26 +97,23 @@ export default function Captcha({
           ctx.beginPath();
           ctx.moveTo(x1, y1);
           ctx.lineTo(x2, y2);
-          const lr = Math.floor(Math.random() * 200 + 55);
-          const lg = Math.floor(Math.random() * 200 + 55);
-          const lb = Math.floor(Math.random() * 200 + 55);
+          const minL = isDarkMode ? 100 : 50;
+          const lr = Math.floor(Math.random() * 150 + minL);
+          const lg = Math.floor(Math.random() * 150 + minL);
+          const lb = Math.floor(Math.random() * 150 + minL);
           ctx.strokeStyle = `rgb(${lr},${lg},${lb})`;
           ctx.lineWidth = 1.5;
           ctx.stroke();
         };
 
-        // 1) static dari kiri atas ke kanan bawah
+        // Static lines with random variation
         strokeRandomLine(margin, margin, width - margin, height - margin);
-
-        // 2) static hanya di kiri tengah dan kanan random
         strokeRandomLine(
           margin,
           height / 2,
           width - margin,
           margin + Math.random() * (height - margin * 2),
         );
-
-        // 3) kiri random dan kanan static di tengah
         strokeRandomLine(
           margin,
           margin + Math.random() * (height - margin * 2),
@@ -120,7 +122,7 @@ export default function Captcha({
         );
       }
     },
-    [security],
+    [security, isDarkMode],
   );
 
   const fetchCaptcha = useCallback(
@@ -129,24 +131,25 @@ export default function Captcha({
       if (!opts?.preserveError) setError("");
       setUserInput("");
 
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      length = Number(length);
-      const lengthValid =
-        typeof length === "number" && Number.isFinite(length) && length > 0;
-      const previewQuery = lengthValid ? `?length=${length}` : "";
-
       try {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        const lengthNum = Number(length);
+        const lengthValid =
+          typeof lengthNum === "number" && Number.isFinite(lengthNum) && lengthNum > 0;
+        const previewQuery = lengthValid ? `?length=${lengthNum}` : "";
+
         let response;
         if (lastId) {
-          response = await satellite.post(
-            `/api/captcha/regenerate${previewQuery}`,
-            {
-              last_captcha_id: lastId,
-            },
-          );
+          response = await satellite.post(`/captcha/regenerate${previewQuery}`, {
+            last_captcha_id: lastId,
+          });
         } else {
-          response = await satellite.get(
-            `/api/captcha/generate${previewQuery}`,
+          response = await satellite.get(`/captcha/generate${previewQuery}`);
+        }
+
+        if (response.status !== 200) {
+          throw new Error(
+            response.data?.message || "Failed to generate captcha",
           );
         }
         const data = response.data?.data;
@@ -164,51 +167,48 @@ export default function Captcha({
         setLoading(false);
       }
     },
-    [drawCaptcha, length],
+    [length, drawCaptcha],
   );
 
-  // Initial load
   useEffect(() => {
     fetchCaptcha();
-  }, [fetchCaptcha]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  // Redraw when captchaText or security changes
   useEffect(() => {
-    if (captchaText) {
-      drawCaptcha(captchaText);
+    if (onReady) {
+      const validate = async () => {
+        if (!userInput) {
+          setError(messagePleaseEnter);
+          return false;
+        }
+
+        try {
+          const response = await satellite.post("/captcha/validate", {
+            captcha_id: captchaId,
+            captcha: userInput,
+          });
+
+          if (response.status === 204) {
+            setError("");
+            return true;
+          }
+          return false;
+        } catch (err: unknown) {
+          const error = err as AxiosError<{
+            message: string;
+          }>;
+          const msg =
+            error.response?.data?.message || "Captcha verification failed";
+          setError(messageWrong || msg);
+          // Auto-regenerate on failure
+          fetchCaptcha(captchaId, { preserveError: true });
+          return false;
+        }
+      };
+
+      onReady(validate);
     }
-  }, [captchaText, security, drawCaptcha]);
-
-  // Expose validate function to parent
-  useEffect(() => {
-    if (!onReady) return;
-
-    const validate = async (): Promise<boolean> => {
-      if (!userInput.trim()) {
-        setError(messagePleaseEnter || "Please enter the captcha");
-        return false;
-      }
-      try {
-        await satellite.post("/api/captcha/validate", {
-          captcha_id: captchaId,
-          captcha: userInput.trim(),
-        });
-        setError("");
-        return true;
-      } catch (err) {
-        const error = err as AxiosError<{
-          message: string;
-        }>;
-        const msg =
-          error.response?.data?.message || "Captcha verification failed";
-        setError(messageWrong || msg);
-        // Auto-regenerate on failure
-        fetchCaptcha(captchaId, { preserveError: true });
-        return false;
-      }
-    };
-
-    onReady(validate);
   }, [
     onReady,
     userInput,
@@ -223,40 +223,51 @@ export default function Captcha({
   };
 
   return (
-    <div>
-      <div className="flex items-center gap-2">
-        <canvas
-          ref={canvasRef}
-          width={200}
-          height={50}
-          className="rounded-lg border border-gray-300 bg-gray-100"
-        />
+    <div className="space-y-3">
+      <div className="flex items-center gap-3">
+        <div className="relative overflow-hidden rounded-xl border border-dark-500/50 shadow-sm">
+          <canvas
+            ref={canvasRef}
+            width={200}
+            height={50}
+            className="block h-[50px] w-[200px]"
+          />
+        </div>
         <button
           type="button"
           onClick={handleRegenerate}
           disabled={loading || disabled}
-          className="rounded-lg border border-gray-300 p-2 text-gray-500 transition hover:bg-gray-100 disabled:opacity-50"
+          className="flex h-[50px] w-[50px] items-center justify-center rounded-xl border border-dark-500/50 bg-dark-900/60 text-dark-400 transition-all hover:bg-dark-800 hover:text-foreground focus:ring-1 focus:ring-accent-500/30 disabled:opacity-50"
           title="Regenerate captcha"
         >
           <IoReload className={loading ? "animate-spin" : ""} size={20} />
         </button>
       </div>
-      <input
-        type="text"
-        value={value !== undefined ? value : userInput}
-        disabled={disabled}
-        onChange={(e) => {
-          const val = e.target.value.toUpperCase();
-          setUserInput(val);
-          if (onChange) onChange(val);
-          setError("");
-        }}
-        placeholder="Enter captcha"
-        className={`mt-2 w-full rounded-lg border px-4 py-3 transition outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500 disabled:opacity-50 ${
-          error ? "border-red-500" : "border-gray-300"
-        }`}
-      />
-      {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
+      <div className="relative">
+        <input
+          type="text"
+          value={value !== undefined ? value : userInput}
+          disabled={disabled}
+          onChange={(e) => {
+            const val = e.target.value.toUpperCase();
+            setUserInput(val);
+            if (onChange) onChange(val);
+            setError("");
+          }}
+          placeholder="Enter captcha"
+          className={cn(
+            "w-full rounded-xl border px-4 py-3 text-sm transition-all outline-none focus:ring-1 disabled:opacity-50",
+            error
+              ? "border-red-500/50 bg-red-500/5 focus:ring-red-500/30"
+              : "border-dark-500/50 bg-dark-900/60 text-foreground focus:border-accent-500/60 focus:ring-accent-500/30 hover:bg-dark-800",
+          )}
+        />
+        {error && (
+          <p className="mt-1.5 pl-1 text-xs font-medium text-red-500">
+            {error}
+          </p>
+        )}
+      </div>
     </div>
   );
 }
