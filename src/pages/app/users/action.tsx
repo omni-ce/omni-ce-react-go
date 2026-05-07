@@ -6,6 +6,7 @@ import satellite from "@/lib/satellite";
 import { toast } from "react-toastify";
 import type { User } from "@/types/user";
 import type { AxiosError } from "axios";
+import { CountryKey } from "@/types/language";
 
 interface ChangePasswordProps {
   row: User;
@@ -112,7 +113,7 @@ export const ChangePassword = ({ row, onClose }: ChangePasswordProps) => {
             label: language({ id: "Coba", en: "Test" }),
             type: "phone",
             required: true,
-            phoneDefaultCountry: "id",
+            phoneDefaultCountry: CountryKey.ID,
           },
         ]}
         formData={formData}

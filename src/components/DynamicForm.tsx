@@ -984,6 +984,7 @@ interface DynamicFormProps {
   fieldErrors?: Record<string, string | null>;
   editingRow?: unknown;
   onError?: (key: string, err: string | null) => void;
+  disabled?: boolean;
 }
 
 export default function DynamicForm({
@@ -992,6 +993,8 @@ export default function DynamicForm({
   onChange,
   editingRow,
   onError,
+  fieldErrors: errors = {},
+  disabled = false,
 }: DynamicFormProps) {
   const isCreate = !editingRow;
   const filteredFields = fields.filter((field) => {
@@ -1135,8 +1138,8 @@ export default function DynamicForm({
               value={String(formData[field.key] ?? "")}
               onChange={(val) => onChange(field.key, val)}
               phoneDefaultCountry={field.phoneDefaultCountry}
-              error={errors[field.key as string] as string | undefined}
-              disabled={disabled as boolean | undefined}
+              error={(errors[field.key] as string) || undefined}
+              disabled={disabled}
             />
           ) : (
             <Input
