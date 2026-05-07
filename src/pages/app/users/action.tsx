@@ -109,12 +109,16 @@ export const ChangePassword = ({ row, onClose }: ChangePasswordProps) => {
             minLength: 8,
           },
           {
-            key: "test",
-            label: language({ id: "Coba", en: "Test" }),
+            key: "phone",
+            label: language({ id: "Phone", en: "Phone" }),
             type: "phone",
             required: true,
-            phoneDefaultCountry: CountryKey.ID,
-            phoneFirstAntiZero: true,
+          },
+          {
+            key: "country",
+            label: language({ id: "Negara", en: "Country" }),
+            type: "country",
+            required: true,
           },
         ]}
         formData={formData}

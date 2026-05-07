@@ -53,14 +53,6 @@ export default function CountrySelector({
 
   return (
     <div className="relative">
-      <label
-        className={`mb-2 block text-sm font-medium ${
-          isDarkMode ? "text-gray-300" : "text-gray-700"
-        }`}
-      >
-        {label}
-        {required && <span className="text-red-500">*</span>}
-      </label>
       <button
         type="button"
         onClick={() => setShowDropdown(!showDropdown)}
