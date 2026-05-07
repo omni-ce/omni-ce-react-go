@@ -2,8 +2,8 @@ import * as flags from "country-flag-icons/react/3x2";
 import { useState } from "react";
 import { useThemeStore } from "@/stores/themeStore";
 import { SUPPORTED_LANGUAGES, useLanguageStore } from "@/stores/languageStore";
-import { IconComponent } from "./IconSelector";
-import { countries } from "@/constant";
+import { IconComponent } from "@/components/ui/IconSelector";
+import countries from "@/countries";
 
 interface Props {
   className?: string;
@@ -34,7 +34,21 @@ export default function LanguageSelector({ className = "" }: Props) {
           en: "Switch language",
         })}
       >
-        <IconComponent iconName="Ri/RiTranslate2" className="w-3.5 h-3.5" />
+        {(() => {
+          const FlagComponent = currentCountry
+            ? (
+                flags as unknown as Record<
+                  string,
+                  React.ComponentType<{ className?: string }>
+                >
+              )[currentCountry.flag]
+            : null;
+          return FlagComponent ? (
+            <FlagComponent className="h-3.5 w-5 rounded-xs" />
+          ) : (
+            <IconComponent iconName="Ri/RiTranslate2" className="w-3.5 h-3.5" />
+          );
+        })()}
         <span className="uppercase">{languageCode}</span>
       </button>
     );

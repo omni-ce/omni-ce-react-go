@@ -15,6 +15,10 @@ type DashboardWidget struct {
 	Col         string    `json:"col" gorm:"type:text;not null"`
 	Label       string    `json:"label" gorm:"type:varchar(255);not null"`
 	Description string    `json:"description" gorm:"type:varchar(255)"`
+	// optional fields
+	Icon    string `json:"icon,omitempty" gorm:"type:varchar(255)"`
+	Color   string `json:"color,omitempty" gorm:"type:varchar(255)"`
+	BgColor string `json:"bg_color,omitempty" gorm:"type:varchar(255)"`
 	// relations
 	Role role.Role `json:"role" gorm:"foreignKey:RoleID;references:ID;constraint:OnDelete:CASCADE"`
 }

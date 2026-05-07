@@ -1,7 +1,12 @@
+import { CountryKey } from "@/types/language";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export const SUPPORTED_LANGUAGES = ["id", "en"] as const;
+export const SUPPORTED_LANGUAGES = [
+  CountryKey.ID,
+  CountryKey.EN,
+  // CountryKey.AR,
+] as const;
 export type LanguageCode = (typeof SUPPORTED_LANGUAGES)[number];
 
 interface LanguageState {
@@ -23,7 +28,7 @@ export const useLanguageStore = create<LanguageState>()(
           return { languageCode: SUPPORTED_LANGUAGES[nextIndex] };
         }),
       language: (textMap) =>
-        textMap[get().languageCode] ?? textMap.en ?? SUPPORTED_LANGUAGES[0], // default to first language
+        textMap[get().languageCode] ?? textMap[SUPPORTED_LANGUAGES[0]], // default to first language
     }),
     {
       name: "ketring-language",

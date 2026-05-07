@@ -1,4 +1,4 @@
-import { countries } from "@/constant";
+import countries from "@/countries";
 import * as flags from "country-flag-icons/react/3x2";
 import { useEffect, useRef, useState } from "react";
 import { FaChevronDown, FaSearch } from "react-icons/fa";
