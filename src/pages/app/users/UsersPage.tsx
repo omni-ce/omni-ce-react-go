@@ -195,7 +195,7 @@ export default function UsersPage({ ruleKey }: Props) {
         extraActions={[
           {
             icon: "Hi/HiOutlineKey",
-            component: ChangePassword,
+            component: (row, onClose) => <ChangePassword row={row as User} onClose={onClose} />,
           },
         ]}
       />
