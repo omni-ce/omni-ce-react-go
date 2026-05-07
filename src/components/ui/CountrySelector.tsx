@@ -1,16 +1,15 @@
 import countries from "@/countries";
 import * as flags from "country-flag-icons/react/3x2";
 import { useEffect, useRef, useState } from "react";
-import { FaChevronDown, FaSearch } from "react-icons/fa";
-
-import { useThemeStore } from "@/stores/themeStore";
+import { FaSearch } from "react-icons/fa";
+import { cn } from "@/lib/utils";
+import { IconComponent } from "./IconSelector";
+import { useLanguageStore } from "@/stores/languageStore";
 
 interface Props {
   value: string;
   onChange: (value: string) => void;
   label?: string;
-  required?: boolean;
-  placeholder?: string;
   hideSelected?: boolean;
   disabled?: boolean;
 }
@@ -18,20 +17,43 @@ interface Props {
 export default function CountrySelector({
   value,
   onChange,
-  label = "Country",
-  required = false,
-  placeholder = "Select a country",
+  label,
   hideSelected = false,
   disabled = false,
 }: Props) {
-  const { isDarkMode } = useThemeStore();
+  const { language } = useLanguageStore();
+
   const [showDropdown, setShowDropdown] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const searchInputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (showDropdown && searchInputRef.current) {
-      searchInputRef.current.focus();
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
+        setShowDropdown(false);
+      }
+    };
+    const handleEsc = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setShowDropdown(false);
+      }
+    };
+    if (showDropdown) {
+      document.addEventListener("mousedown", handleOutsideClick);
+      document.addEventListener("keydown", handleEsc);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+      document.removeEventListener("keydown", handleEsc);
+    };
+  }, [showDropdown]);
+
+  useEffect(() => {
+    if (!showDropdown) {
+      setSearchQuery("");
     }
   }, [showDropdown]);
 
@@ -40,7 +62,6 @@ export default function CountrySelector({
   const handleSelect = (country: (typeof countries)[0]) => {
     onChange(country.code);
     setShowDropdown(false);
-    setSearchQuery("");
   };
 
   const filteredCountries = countries.filter((country) => {
@@ -52,21 +73,22 @@ export default function CountrySelector({
   });
 
   return (
-    <div className="relative">
+    <div className="relative mt-1.5" ref={containerRef}>
       <button
         type="button"
         onClick={() => setShowDropdown(!showDropdown)}
         disabled={disabled}
-        className={`flex w-full items-center justify-between rounded-lg border px-4 py-2 ${
-          isDarkMode
-            ? "border-gray-600 bg-gray-700 text-white"
-            : "border-gray-300 bg-white text-gray-900"
-        } focus:border-transparent focus:ring-2 focus:ring-blue-500 disabled:opacity-50`}
+        className={cn(
+          "flex w-full items-center justify-between rounded-xl border px-4 py-2.5 transition-all outline-none focus:ring-1 focus:ring-accent-500/30 disabled:opacity-50",
+          showDropdown
+            ? "border-accent-500/60 ring-1 ring-accent-500/30 bg-dark-800"
+            : "border-dark-500/50 bg-dark-900/60 hover:bg-dark-800",
+        )}
       >
         {selectedCountry ? (
           <div className="flex items-center gap-2">
             {flags[selectedCountry.flag] && (
-              <div className="h-5 w-7 overflow-hidden rounded shadow-sm">
+              <div className="h-4 w-6 overflow-hidden rounded-sm shadow-sm">
                 {(() => {
                   const FlagComponent = flags[selectedCountry.flag];
                   return (
@@ -75,58 +97,47 @@ export default function CountrySelector({
                 })()}
               </div>
             )}
-            <span>{selectedCountry.name}</span>
+            <span className="text-sm text-foreground">
+              {selectedCountry.name}
+            </span>
           </div>
         ) : (
-          <span className={isDarkMode ? "text-gray-400" : "text-gray-500"}>
-            {placeholder}
+          <span className="text-sm text-dark-400">
+            {language({
+              id: `Pilih ${label}...`,
+              en: `Select a ${label}...`,
+            })}
           </span>
         )}
-        <FaChevronDown
-          className={`text-sm transition-transform ${showDropdown ? "rotate-180" : ""}`}
+        <IconComponent
+          iconName="Hi/HiChevronDown"
+          className={cn(
+            "w-4 h-4 text-dark-400 transition-transform duration-200",
+            showDropdown && "rotate-180",
+          )}
         />
       </button>
+
       {showDropdown && (
-        <div
-          className={`absolute z-10 mt-1 w-full rounded-lg border shadow-lg ${
-            isDarkMode
-              ? "border-gray-600 bg-gray-700"
-              : "border-gray-300 bg-white"
-          }`}
-        >
+        <div className="absolute z-100 mt-2 w-full bg-dark-800 border border-dark-500/50 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-80 animate-in fade-in zoom-in-95 duration-200 origin-top">
           {/* Search Input */}
-          <div className="${ isDarkMode ? 'border-gray-600 bg-gray-700' : 'border-gray-200 bg-white' } sticky top-0 border-b p-2">
-            <div className="relative">
-              <FaSearch
-                className={`absolute top-1/2 left-3 -translate-y-1/2 text-sm ${
-                  isDarkMode ? "text-gray-400" : "text-gray-500"
-                }`}
-              />
-              <input
-                ref={searchInputRef}
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search country..."
-                className={`w-full rounded-lg border py-2 pr-3 pl-9 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
-                  isDarkMode
-                    ? "border-gray-600 bg-gray-600 text-white placeholder-gray-400"
-                    : "border-gray-300 bg-white text-gray-900 placeholder-gray-500"
-                }`}
-                onClick={(e) => e.stopPropagation()}
-              />
-            </div>
+          <div className="p-2 border-b border-dark-500/50 flex items-center gap-2 bg-dark-900/60 sticky top-0 z-10">
+            <FaSearch className="text-xs text-dark-400 shrink-0 ml-1" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search country..."
+              className="w-full bg-transparent border-none text-sm text-foreground focus:outline-none placeholder:text-dark-400 py-1"
+              autoFocus
+            />
           </div>
 
           {/* Country List */}
-          <div className="max-h-60 overflow-auto">
+          <div className="overflow-y-auto p-1 scrollbar-hide">
             {filteredCountries.length === 0 ? (
-              <div
-                className={`px-4 py-8 text-center text-sm ${
-                  isDarkMode ? "text-gray-400" : "text-gray-500"
-                }`}
-              >
-                No countries found
+              <div className="p-4 text-center text-sm text-dark-400">
+                No results found
               </div>
             ) : (
               filteredCountries.map((country) => {
@@ -136,20 +147,17 @@ export default function CountrySelector({
                     key={country.code}
                     type="button"
                     onClick={() => handleSelect(country)}
-                    className={`flex w-full items-center gap-3 px-4 py-2 text-left transition-colors ${
+                    className={cn(
+                      "flex w-full items-center gap-3 px-3 py-2 text-left text-sm rounded-lg transition-colors hover:bg-dark-600",
                       value === country.code
-                        ? isDarkMode
-                          ? "bg-blue-900/30 text-blue-400"
-                          : "bg-blue-50 text-blue-600"
-                        : isDarkMode
-                          ? "text-gray-300 hover:bg-gray-600"
-                          : "text-gray-900 hover:bg-gray-100"
-                    }`}
+                        ? "bg-accent-500/20 text-accent-400"
+                        : "text-foreground",
+                    )}
                   >
-                    <div className="h-5 w-7 shrink-0 overflow-hidden rounded shadow-sm">
+                    <div className="h-3.5 w-5 shrink-0 overflow-hidden rounded-sm shadow-sm">
                       <FlagComponent className="h-full w-full object-cover" />
                     </div>
-                    <span>{country.name}</span>
+                    <span className="flex-1 truncate">{country.name}</span>
                   </button>
                 );
               })

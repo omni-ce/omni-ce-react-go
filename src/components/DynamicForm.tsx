@@ -1126,6 +1126,7 @@ export default function DynamicForm({
             />
           ) : field.type === "country" ? (
             <CountrySelector
+              label={field.label}
               value={String(formData[field.key] ?? "")}
               onChange={(val) => onChange(field.key, val)}
             />

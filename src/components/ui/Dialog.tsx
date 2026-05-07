@@ -37,6 +37,7 @@ function Dialog({ open, onClose, width, children }: DialogProps) {
       <div className="fixed top-4 right-4 z-60 animate-fade-in flex items-center gap-2 bg-white/80 dark:bg-black/20 dark:text-gray-400 backdrop-blur-md rounded-lg p-2 shadow-sm">
         <ControlButton />
       </div>
+
       {/* Content wrapper */}
       <div
         className="relative z-10 w-full mx-4 animate-fade-in"

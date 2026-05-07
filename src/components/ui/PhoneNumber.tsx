@@ -133,7 +133,7 @@ export default function PhoneNumber({
 
           {/* Dropdown Menu */}
           {isOpen && (
-            <div className="absolute top-full left-0 z-100 mt-2 w-72 bg-dark-800 border border-dark-500/50 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-80 animate-in fade-in zoom-in-95 duration-200 origin-top-left">
+            <div className="absolute top-full left-0 z-1000 mt-2 w-72 bg-dark-800 border border-dark-500/50 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-80 animate-in fade-in zoom-in-95 duration-200 origin-top-left">
               <div className="p-2 border-b border-dark-500/50 flex items-center gap-2 bg-dark-900/60 sticky top-0 z-10">
                 <IconComponent
                   iconName="Hi/HiSearch"
