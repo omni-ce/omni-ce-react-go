@@ -231,46 +231,54 @@ const Pagination = forwardRef(function PaginationInner<T>(
         key: "__action__",
         header: language({ id: "AKSI", en: "ACTION" }),
         strict: true,
-        align: "left",
+        align: "center",
         render: (row) => {
           return (
-            <div className="flex items-center gap-1">
-              {showToggle && (
-                <Switch
-                  checked={getRowIsActive(row)}
-                  onCheckedChange={() => handleToggleActive(row)}
-                  disabled={togglingActiveId === getRowId(row)}
-                />
+            <div className="flex flex-col items-center gap-1">
+              <div className="flex items-center justify-center gap-1">
+                {showToggle && (
+                  <Switch
+                    checked={getRowIsActive(row)}
+                    onCheckedChange={() => handleToggleActive(row)}
+                    disabled={togglingActiveId === getRowId(row)}
+                  />
+                )}
+                {showEdit && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => openEdit(row)}
+                  >
+                    <IconComponent iconName="Hi/HiOutlinePencil" size={16} />
+                  </Button>
+                )}
+                {showDelete && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => openDelete(row)}
+                    className="text-neon-red hover:bg-neon-red/10"
+                  >
+                    <IconComponent iconName="Hi/HiOutlineTrash" size={16} />
+                  </Button>
+                )}
+              </div>
+              {extraActions && extraActions.length > 0 && (
+                <div className="flex flex-wrap justify-center gap-1 max-w-30">
+                  {extraActions.map((action, idx) => (
+                    <Button
+                      key={`ea-${idx}`}
+                      variant="ghost"
+                      size="icon"
+                      onClick={() =>
+                        setExtraActionState({ actionIndex: idx, row })
+                      }
+                    >
+                      <IconComponent iconName={action.icon} size={16} />
+                    </Button>
+                  ))}
+                </div>
               )}
-              {showEdit && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => openEdit(row)}
-                >
-                  <IconComponent iconName="Hi/HiOutlinePencil" size={16} />
-                </Button>
-              )}
-              {showDelete && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => openDelete(row)}
-                  className="text-neon-red hover:bg-neon-red/10"
-                >
-                  <IconComponent iconName="Hi/HiOutlineTrash" size={16} />
-                </Button>
-              )}
-              {extraActions?.map((action, idx) => (
-                <Button
-                  key={`ea-${idx}`}
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setExtraActionState({ actionIndex: idx, row })}
-                >
-                  <IconComponent iconName={action.icon} size={16} />
-                </Button>
-              ))}
             </div>
           );
         },
@@ -416,6 +424,7 @@ const Pagination = forwardRef(function PaginationInner<T>(
         isFetchingRef.current = false;
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [paginateUrl, searchableFieldsKey],
   );
 
