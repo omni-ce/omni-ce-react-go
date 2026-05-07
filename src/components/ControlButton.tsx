@@ -1,7 +1,8 @@
 import { Fragment } from "react/jsx-runtime";
-import { useLanguageStore } from "@/stores/languageStore";
 import { useThemeStore } from "@/stores/themeStore";
+import { useLanguageStore } from "@/stores/languageStore";
 import { IconComponent } from "./ui/IconSelector";
+import LanguageSelector from "./ui/LanguageSelector";
 
 export default function ControlButton() {
   const { languageCode, toggleLanguage, language } = useLanguageStore();
@@ -10,17 +11,7 @@ export default function ControlButton() {
   return (
     <Fragment>
       {/* Language toggle */}
-      <button
-        onClick={toggleLanguage}
-        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono text-dark-300 hover:text-foreground hover:bg-dark-700/50 rounded-lg transition-all"
-        title={language({
-          id: "Ganti bahasa",
-          en: "Switch language",
-        })}
-      >
-        <IconComponent iconName="Ri/RiTranslate2" className="w-3.5 h-3.5" />
-        <span className="uppercase">{languageCode}</span>
-      </button>
+      <LanguageSelector />
 
       {/* Dark mode toggle */}
       <button

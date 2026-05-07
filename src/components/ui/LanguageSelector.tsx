@@ -1,41 +1,44 @@
 import * as flags from "country-flag-icons/react/3x2";
-import { Fragment, useState } from "react";
-import { useLocation, useParams } from "react-router";
+import { useState } from "react";
 import { useThemeStore } from "@/stores/themeStore";
 import { SUPPORTED_LANGUAGES, useLanguageStore } from "@/stores/languageStore";
-
-export interface Language {
-  id: string;
-  name: string;
-  key: string;
-  is_default: boolean;
-  is_active: boolean;
-  created_at: string;
-}
+import { IconComponent } from "./IconSelector";
+import { countries } from "@/constant";
 
 interface Props {
   className?: string;
 }
 
 export default function LanguageSelector({ className = "" }: Props) {
-  const { route } = useParams();
-  const location = useLocation();
-
   const { isDarkMode } = useThemeStore();
-  const { language, setLanguage } = useLanguageStore();
+  const { languageCode, setLanguage, toggleLanguage, language } =
+    useLanguageStore();
 
-  const [isLoadingLanguage, setLoadingLanguage] = useState<boolean>(false);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState<Language | null>(
-    null,
-  );
 
-  const handleLanguageChange = (lang: Language) => {
-    setLanguage(lang.key);
-    setShowDropdown(false);
+  const getCountryForLanguage = (langKey: string) => {
+    // Default mapped countries for specific languages if multiple exist
+    if (langKey === "en") return countries.find((c) => c.code === "US");
+    return countries.find((c) => c.key === langKey);
   };
 
-  if (languages.length === 0) return null;
+  const currentCountry = getCountryForLanguage(languageCode);
+
+  if (SUPPORTED_LANGUAGES.length <= 2) {
+    return (
+      <button
+        onClick={toggleLanguage}
+        className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono text-dark-300 hover:text-foreground hover:bg-dark-700/50 rounded-lg transition-all ${className}`}
+        title={language({
+          id: "Ganti bahasa",
+          en: "Switch language",
+        })}
+      >
+        <IconComponent iconName="Ri/RiTranslate2" className="w-3.5 h-3.5" />
+        <span className="uppercase">{languageCode}</span>
+      </button>
+    );
+  }
 
   return (
     <div
@@ -50,23 +53,24 @@ export default function LanguageSelector({ className = "" }: Props) {
             : "border-gray-300 bg-white text-gray-800 hover:bg-gray-50"
         }`}
       >
-        {selectedLanguage && (
-          <Fragment>
-            {(() => {
-              const FlagComponent = (flags as any)[
-                selectedLanguage.key.toUpperCase()
-              ];
-              return FlagComponent ? (
-                <FlagComponent className="h-4 w-6" />
-              ) : (
-                <span className="text-sm">🌐</span>
-              );
-            })()}
-            <span className="text-sm font-medium">
-              {selectedLanguage.key.toUpperCase()}
-            </span>
-          </Fragment>
-        )}
+        {(() => {
+          const FlagComponent = currentCountry
+            ? (
+                flags as unknown as Record<
+                  string,
+                  React.ComponentType<{ className?: string }>
+                >
+              )[currentCountry.flag]
+            : null;
+          return FlagComponent ? (
+            <FlagComponent className="h-4 w-6" />
+          ) : (
+            <span className="text-sm">🌐</span>
+          );
+        })()}
+        <span className="text-sm font-medium">
+          {languageCode.toUpperCase()}
+        </span>
       </button>
 
       {showDropdown && (
@@ -77,18 +81,29 @@ export default function LanguageSelector({ className = "" }: Props) {
               : "border-gray-200 bg-white"
           }`}
         >
-          {SUPPORTED_LANGUAGES.map((lang) => {
-            const FlagComponent = (flags as any)[lang.key.toUpperCase()];
+          {SUPPORTED_LANGUAGES.map((langKey) => {
+            const country = getCountryForLanguage(langKey);
+            const FlagComponent = country
+              ? (
+                  flags as unknown as Record<
+                    string,
+                    React.ComponentType<{ className?: string }>
+                  >
+                )[country.flag]
+              : null;
             return (
               <button
-                key={lang.id}
-                onClick={() => handleLanguageChange(lang)}
+                key={langKey}
+                onClick={() => {
+                  setLanguage(langKey);
+                  setShowDropdown(false);
+                }}
                 className={`flex w-full items-center gap-3 px-4 py-2 text-left transition-colors ${
-                  selectedLanguage?.id === lang.id
-                    ? "bg-blue-50"
+                  languageCode === langKey
+                    ? "bg-blue-50 text-blue-700"
                     : isDarkMode
                       ? "text-white hover:bg-gray-700"
-                      : "hover:bg-gray-100"
+                      : "text-gray-800 hover:bg-gray-100"
                 }`}
               >
                 {FlagComponent ? (
@@ -98,15 +113,17 @@ export default function LanguageSelector({ className = "" }: Props) {
                 )}
                 <div className="flex flex-col">
                   <span className="text-sm font-medium">
-                    {lang.key.toUpperCase()}
+                    {langKey.toUpperCase()}
                   </span>
-                  <span
-                    className={`text-xs ${
-                      isDarkMode ? "text-gray-400" : "text-gray-500"
-                    }`}
-                  >
-                    {lang.name}
-                  </span>
+                  {country && (
+                    <span
+                      className={`text-xs ${
+                        isDarkMode ? "text-gray-400" : "text-gray-500"
+                      }`}
+                    >
+                      {country.name}
+                    </span>
+                  )}
                 </div>
               </button>
             );
