@@ -75,7 +75,7 @@ func Create(c *fiber.Ctx) error {
 		Name           string `json:"name" validate:"required"`
 		Description    string `json:"description"`
 	}
-	if err := function.RequestBody(c, &body); err != nil {
+	if err := function.RequestBody(c, body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
 	}
 
@@ -133,7 +133,7 @@ func Update(c *fiber.Ctx) error {
 		Name        string `json:"name" validate:"required"`
 		Description string `json:"description"`
 	}
-	if err := function.RequestBody(c, &body); err != nil {
+	if err := function.RequestBody(c, body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
 	}
 
@@ -224,14 +224,10 @@ func SetActive(c *fiber.Ctx) error {
 
 func BulkDelete(c *fiber.Ctx) error {
 	var body struct {
-		IDs []uint64 `json:"ids"`
+		IDs []uint64 `json:"ids" validate:"required,min=1,dive,gt=0"`
 	}
-	if err := c.BodyParser(&body); err != nil {
-		return dto.BadRequest(c, "Invalid request body", nil)
-	}
-
-	if len(body.IDs) == 0 {
-		return dto.BadRequest(c, "No IDs provided", nil)
+	if err := function.RequestBody(c, body); err != nil {
+		return dto.BadRequest(c, err.Error(), nil)
 	}
 
 	// Cascade: delete rules for these roles

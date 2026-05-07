@@ -3,6 +3,7 @@ package dashboard
 import (
 	"encoding/json"
 	"react-go/core/dto"
+	"react-go/core/function"
 	model "react-go/core/modules/dashboard/model"
 	"react-go/core/variable"
 	"strconv"
@@ -31,29 +32,17 @@ func WidgetFunctions(c *fiber.Ctx) error {
 
 func WidgetCreate(c *fiber.Ctx) error {
 	var body struct {
-		RoleID      uint           `json:"role_id"`
-		FunctionKey string         `json:"function_key"`
-		Key         string         `json:"key"`
-		Col         map[string]int `json:"col"`
-		Label       string         `json:"label"`
-		Description string         `json:"description"`
+		RoleID      uint           `json:"role_id" validate:"required"`
+		FunctionKey string         `json:"function_key" validate:"required"`
+		Key         string         `json:"key" validate:"required"`
+		Col         map[string]int `json:"col" validate:"required"`
+		Label       string         `json:"label" validate:"required"`
+		Description string         `json:"description" validate:"required"`
 	}
-	if err := c.BodyParser(&body); err != nil {
-		return dto.BadRequest(c, "Invalid request body", nil)
+	if err := function.RequestBody(c, body); err != nil {
+		return dto.BadRequest(c, err.Error(), nil)
 	}
 
-	if body.RoleID == 0 {
-		return dto.BadRequest(c, "role_id is required", nil)
-	}
-	if body.FunctionKey == "" {
-		return dto.BadRequest(c, "function_key is required", nil)
-	}
-	if body.Key == "" {
-		return dto.BadRequest(c, "key is required", nil)
-	}
-	if body.Label == "" {
-		return dto.BadRequest(c, "label is required", nil)
-	}
 	if body.Col["mobile"] == 0 {
 		body.Col["mobile"] = 12
 	}
@@ -135,18 +124,18 @@ func WidgetEdit(c *fiber.Ctx) error {
 		return dto.BadRequest(c, "ID is required", nil)
 	}
 
+	var body struct {
+		Col         *map[string]int `json:"col" validate:"omitempty"`
+		Label       *string         `json:"label" validate:"omitempty"`
+		Description *string         `json:"description" validate:"omitempty"`
+	}
+	if err := function.RequestBody(c, body); err != nil {
+		return dto.BadRequest(c, err.Error(), nil)
+	}
+
 	var widget model.DashboardWidget
 	if err := variable.Db.Where("id = ?", id).First(&widget).Error; err != nil {
 		return dto.NotFound(c, "Widget not found", nil)
-	}
-
-	var body struct {
-		Col         *map[string]int `json:"col"`
-		Label       *string         `json:"label"`
-		Description *string         `json:"description"`
-	}
-	if err := c.BodyParser(&body); err != nil {
-		return dto.BadRequest(c, "Invalid request body", nil)
 	}
 
 	updates := map[string]interface{}{}

@@ -20,7 +20,7 @@ func Set(c *fiber.Ctx) error {
 			State  *bool  `json:"state" validate:"required"`
 		} `json:"data" validate:"required,gt=0,dive"`
 	}
-	if err := function.RequestBody(c, &body); err != nil {
+	if err := function.RequestBody(c, body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
 	}
 	if len(body.Data) == 0 {

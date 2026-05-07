@@ -28,11 +28,11 @@ func ChangePassword(on string) func(c *fiber.Ctx) error {
 		}
 
 		var body struct {
-			PreviousPassword string `json:"previous_password"`
-			Password         string `json:"password"`
+			PreviousPassword string `json:"previous_password" validate:"required"`
+			Password         string `json:"password" validate:"required,min=8,max=50"`
 		}
-		if err := c.BodyParser(&body); err != nil {
-			return dto.BadRequest(c, "Invalid request body", nil)
+		if err := function.RequestBody(c, body); err != nil {
+			return dto.BadRequest(c, err.Error(), nil)
 		}
 
 		// check if password == previous password
@@ -82,7 +82,7 @@ func Create(c *fiber.Ctx) error {
 			RoleID     string `json:"role_id"`
 		} `json:"roles" validate:"required,min=1"`
 	}
-	if err := function.RequestBody(c, &body); err != nil {
+	if err := function.RequestBody(c, body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
 	}
 
@@ -235,7 +235,7 @@ func Edit(c *fiber.Ctx) error {
 			RoleID     string `json:"role_id"`
 		} `json:"roles"`
 	}
-	if err := function.RequestBody(c, &body); err != nil {
+	if err := function.RequestBody(c, body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
 	}
 
@@ -396,14 +396,10 @@ func BulkRemove(c *fiber.Ctx) error {
 	}
 
 	var body struct {
-		IDs []string `json:"ids"`
+		IDs []string `json:"ids" validate:"required,min=1,dive,gt=0"`
 	}
-	if err := c.BodyParser(&body); err != nil {
-		return dto.BadRequest(c, "Invalid request body", nil)
-	}
-
-	if len(body.IDs) == 0 {
-		return dto.BadRequest(c, "No IDs provided", nil)
+	if err := function.RequestBody(c, body); err != nil {
+		return dto.BadRequest(c, err.Error(), nil)
 	}
 
 	// Filter out self

@@ -20,15 +20,11 @@ func GetAll(c *fiber.Ctx) error {
 
 func Create(c *fiber.Ctx) error {
 	var body struct {
-		Name      string  `json:"name"`
-		ExpiresAt *string `json:"expires_at,omitempty"` // RFC3339
+		Name      string  `json:"name" validate:"required"`
+		ExpiresAt *string `json:"expires_at,omitempty" validate:"omitempty"` // RFC3339
 	}
-	if err := function.RequestBody(c, &body); err != nil {
+	if err := function.RequestBody(c, body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
-	}
-
-	if body.Name == "" {
-		return dto.BadRequest(c, "Name is required", nil)
 	}
 
 	entry := model.ApiKey{
@@ -56,9 +52,9 @@ func Toggle(c *fiber.Ctx) error {
 	}
 
 	var body struct {
-		IsActive bool `json:"is_active"`
+		IsActive bool `json:"is_active" validate:"required"`
 	}
-	if err := function.RequestBody(c, &body); err != nil {
+	if err := function.RequestBody(c, body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
 	}
 

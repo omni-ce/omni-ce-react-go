@@ -13,7 +13,7 @@ func Username(c *fiber.Ctx) error {
 	var body struct {
 		Value string `json:"value" validate:"required"`
 	}
-	if err := function.RequestBody(c, &body); err != nil {
+	if err := function.RequestBody(c, body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
 	}
 

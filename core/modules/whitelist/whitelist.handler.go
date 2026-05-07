@@ -2,6 +2,7 @@ package whitelist
 
 import (
 	"react-go/core/dto"
+	"react-go/core/function"
 	model "react-go/core/modules/whitelist/model"
 	"react-go/core/variable"
 
@@ -18,12 +19,12 @@ func GetAll(c *fiber.Ctx) error {
 
 func Create(c *fiber.Ctx) error {
 	var body struct {
-		Type  string  `json:"type"`
-		Value string  `json:"value"`
-		Label *string `json:"label,omitempty"`
+		Type  string  `json:"type" validate:"required"`
+		Value string  `json:"value" validate:"required"`
+		Label *string `json:"label,omitempty" validate:"omitempty"`
 	}
-	if err := c.BodyParser(&body); err != nil {
-		return dto.BadRequest(c, "Invalid request body", nil)
+	if err := function.RequestBody(c, body); err != nil {
+		return dto.BadRequest(c, err.Error(), nil)
 	}
 
 	if body.Type != "ip" && body.Type != "domain" {

@@ -67,10 +67,10 @@ func getRules(current_user user.User) ([]map[string]any, error) {
 
 func Login(c *fiber.Ctx) error {
 	var body struct {
-		Username string `json:"username"`
-		Password string `json:"password"`
+		Username string `json:"username" validate:"required"`
+		Password string `json:"password" validate:"required,min=8"`
 	}
-	if err := function.RequestBody(c, &body); err != nil {
+	if err := function.RequestBody(c, body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
 	}
 
