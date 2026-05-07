@@ -3,6 +3,9 @@ package captcha
 import (
 	"math/rand"
 	"react-go/core/dto"
+	"react-go/core/enigma"
+	"react-go/core/environment"
+	"react-go/core/function"
 	"react-go/core/variable"
 	"strconv"
 	"strings"
@@ -26,10 +29,7 @@ func Generate(c *fiber.Ctx) error {
 		return dto.InternalServerError(c, "Failed to generate captcha", nil)
 	}
 
-	return dto.OK(c, "Captcha generated successfully", fiber.Map{
-		"captcha":    record.Captcha,
-		"captcha_id": record.ID.String(),
-	})
+	return returnGenerate(c, record.Captcha, record.ID.String())
 }
 
 func Validate(c *fiber.Ctx) error {
@@ -88,13 +88,23 @@ func Regenerate(c *fiber.Ctx) error {
 		return dto.InternalServerError(c, "Failed to regenerate captcha", nil)
 	}
 
-	return dto.OK(c, "Captcha regenerated successfully", fiber.Map{
-		"captcha":    record.Captcha,
-		"captcha_id": record.ID.String(),
-	})
+	return returnGenerate(c, record.Captcha, record.ID.String())
 }
 
 // ============================================ //
+
+func returnGenerate(c *fiber.Ctx, captchaCode string, captchaId string) error {
+	machineId := environment.GetMachineId()
+	encrypted, err := function.Encryption{}.Encode(enigma.GeneralEnigmaSchema(machineId), captchaCode)
+	if err != nil {
+		return dto.InternalServerError(c, "Failed to encrypt captcha", nil)
+	}
+
+	return dto.OK(c, "Captcha regenerated successfully", fiber.Map{
+		"captcha":    encrypted,
+		"captcha_id": captchaId,
+	})
+}
 
 func generateRandomString(length int) string {
 	const charset = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"

@@ -132,9 +132,7 @@ export default function Captcha({
       // eslint-disable-next-line react-hooks/exhaustive-deps
       length = Number(length);
       const lengthValid =
-        typeof length === "number" &&
-        Number.isFinite(length) &&
-        length > 0;
+        typeof length === "number" && Number.isFinite(length) && length > 0;
       const previewQuery = lengthValid ? `?length=${length}` : "";
 
       try {
@@ -152,10 +150,13 @@ export default function Captcha({
           );
         }
         const data = response.data?.data;
+        const captchaCode = data.captcha;
+        console.log({ captchaCode });
+
         if (data) {
           setCaptchaId(data.captcha_id);
-          setCaptchaText(data.captcha);
-          drawCaptcha(data.captcha);
+          setCaptchaText(captchaCode);
+          drawCaptcha(captchaCode);
         }
       } catch {
         setError("Failed to load captcha");

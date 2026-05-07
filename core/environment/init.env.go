@@ -14,4 +14,6 @@ func init() {
 	} else {
 		log.Println("✅ .env file loaded")
 	}
+
+	log.Printf("⚙️ Machine ID: %s\n", GetMachineId())
 }
