@@ -1,4 +1,4 @@
-import { countries } from "@/constant";
+import countries from "@/countries";
 import { useLanguageStore } from "@/stores/languageStore";
 import * as flags from "country-flag-icons/react/3x2";
 import { useState } from "react";

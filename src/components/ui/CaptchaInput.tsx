@@ -5,7 +5,7 @@ import { IoReload } from "react-icons/io5";
 
 interface CaptchaProps {
   isPreview?: boolean;
-  previewLength?: number;
+  length?: number;
   security?: "weak" | "medium" | "strong";
   messagePleaseEnter?: string;
   messageWrong?: string;
@@ -14,7 +14,7 @@ interface CaptchaProps {
 
 export default function Captcha({
   isPreview = false,
-  previewLength,
+  length,
   security = "weak",
   messagePleaseEnter,
   messageWrong,
@@ -126,13 +126,13 @@ export default function Captcha({
       setUserInput("");
 
       // eslint-disable-next-line react-hooks/exhaustive-deps
-      previewLength = Number(previewLength);
+      length = Number(length);
       const lengthValid =
         isPreview === true &&
-        typeof previewLength === "number" &&
-        Number.isFinite(previewLength) &&
-        previewLength > 0;
-      const previewQuery = lengthValid ? `?length=${previewLength}` : "";
+        typeof length === "number" &&
+        Number.isFinite(length) &&
+        length > 0;
+      const previewQuery = lengthValid ? `?length=${length}` : "";
 
       try {
         let response;
@@ -160,7 +160,7 @@ export default function Captcha({
         setLoading(false);
       }
     },
-    [drawCaptcha, isPreview, previewLength],
+    [drawCaptcha, isPreview, length],
   );
 
   // Initial load
