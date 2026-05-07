@@ -120,6 +120,18 @@ export const ChangePassword = ({ row, onClose }: ChangePasswordProps) => {
             type: "country",
             required: true,
           },
+          {
+            key: "color",
+            label: language({ id: "Warna", en: "Color" }),
+            type: "color",
+            required: true,
+          },
+          {
+            key: "camera",
+            label: language({ id: "Kamera", en: "Camera" }),
+            type: "camera",
+            required: true,
+          },
         ]}
         formData={formData}
         onChange={(key, value) =>

@@ -1,3 +1,5 @@
+import { useLanguageStore } from "@/stores/languageStore";
+
 interface Props {
   value: string;
   onChange: (color: string) => void;
@@ -10,11 +12,13 @@ interface Props {
 export default function ColorPickerSelector({
   value,
   onChange,
-  placeholder = "#2563eb",
+  placeholder = "#22c35b",
   label,
   required = false,
   disabled = false,
 }: Props) {
+  const { language } = useLanguageStore();
+
   return (
     <div>
       {label && (
@@ -44,7 +48,10 @@ export default function ColorPickerSelector({
         />
       </div>
       <p className="mt-1 text-xs text-gray-500">
-        Choose a color using the picker or enter a hex code
+        {language({
+          id: "Pilih warna menggunakan pemilih atau masukkan kode hex",
+          en: "Choose a color using the picker or enter a hex code",
+        })}
       </p>
     </div>
   );
