@@ -669,7 +669,7 @@ function ArrayField({
                 ) : child.type === "textarea" ? (
                   <textarea
                     id={`field-${field.key}-${index}-${child.key}`}
-                    className="mt-1.5 w-full px-4 py-2.5 bg-dark-900/60 border border-dark-500/50 rounded-xl text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30 transition-all font-mono text-sm disabled:opacity-50 min-h-[80px] resize-y"
+                    className="mt-1.5 w-full px-4 py-2.5 bg-dark-900/60 border border-dark-500/50 rounded-xl text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30 transition-all font-mono text-sm disabled:opacity-50 min-h-20 resize-y"
                     value={String(item[child.key] ?? "")}
                     onChange={(e) =>
                       handleChildChange(index, child.key, e.target.value)
@@ -1048,7 +1048,7 @@ export default function DynamicForm({
           ) : field.type === "textarea" ? (
             <textarea
               id={`field-${field.key}`}
-              className="mt-1.5 w-full px-4 py-2.5 bg-dark-900/60 border border-dark-500/50 rounded-xl text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30 transition-all font-mono text-sm disabled:opacity-50 min-h-[80px] resize-y"
+              className="mt-1.5 w-full px-4 py-2.5 bg-dark-900/60 border border-dark-500/50 rounded-xl text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30 transition-all font-mono text-sm disabled:opacity-50 min-h-20 resize-y"
               value={String(formData[field.key] ?? "")}
               onChange={(e) => onChange(field.key, e.target.value)}
               minLength={field.minLength}

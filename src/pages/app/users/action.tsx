@@ -107,6 +107,12 @@ export const ChangePassword = ({ row, onClose }: ChangePasswordProps) => {
             required: true,
             minLength: 8,
           },
+          {
+            key: "test",
+            label: language({ id: "Coba", en: "Test" }),
+            type: "phone",
+            required: true,
+          },
         ]}
         formData={formData}
         onChange={(key, value) =>
