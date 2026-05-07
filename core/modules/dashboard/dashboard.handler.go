@@ -33,8 +33,8 @@ func WidgetFunctions(c *fiber.Ctx) error {
 func WidgetCreate(c *fiber.Ctx) error {
 	var body struct {
 		RoleID      uint           `json:"role_id" validate:"required"`
+		Type        string         `json:"type" validate:"required"`
 		FunctionKey string         `json:"function_key" validate:"required"`
-		Key         string         `json:"key" validate:"required"`
 		Col         map[string]int `json:"col" validate:"required"`
 		Label       string         `json:"label" validate:"required"`
 		Description string         `json:"description" validate:"required"`
@@ -58,7 +58,7 @@ func WidgetCreate(c *fiber.Ctx) error {
 
 	// Check if combination already exists
 	var existing model.DashboardWidget
-	if err := variable.Db.Where("role_id = ? AND function_key = ? AND key = ?", body.RoleID, body.FunctionKey, body.Key).First(&existing).Error; err == nil {
+	if err := variable.Db.Where("role_id = ? AND type = ? AND function_key = ?", body.RoleID, body.Type, body.FunctionKey).First(&existing).Error; err == nil {
 		return dto.BadRequest(c, "Widget with this function_key and key already exists for this role", nil)
 	}
 
@@ -70,8 +70,8 @@ func WidgetCreate(c *fiber.Ctx) error {
 
 	widget := model.DashboardWidget{
 		RoleID:      body.RoleID,
+		Type:        body.Type,
 		FunctionKey: body.FunctionKey,
-		Key:         body.Key,
 		Col:         string(colJSON),
 		Label:       body.Label,
 		Description: body.Description,
@@ -107,8 +107,8 @@ func WidgetList(c *fiber.Ctx) error {
 		}
 		rows = append(rows, map[string]interface{}{
 			"id":           widget.ID,
+			"type":         widget.Type,
 			"function_key": widget.FunctionKey,
-			"key":          widget.Key,
 			"col":          col,
 			"label":        widget.Label,
 			"description":  widget.Description,

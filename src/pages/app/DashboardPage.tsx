@@ -47,7 +47,7 @@ import { getSseClient } from "@/lib/sse";
 
 interface Widget {
   label: string;
-  key: string;
+  key: string; // as type on backend
   element: React.ComponentType;
 }
 
@@ -198,7 +198,6 @@ export default function DashboardPage({}: DashboardPageProps) {
   >({});
   const [addFormData, setAddFormData] = useState<Record<string, unknown>>({
     label: "",
-    key: "",
     description: "",
     col: { mobile: 12, tablet: 6, laptop: 4, desktop: 3 },
   });
@@ -209,14 +208,7 @@ export default function DashboardPage({}: DashboardPageProps) {
       label: language({ id: "Label", en: "Label" }),
       type: "text",
       required: true,
-      col: 6,
-    },
-    {
-      key: "key",
-      label: language({ id: "ID / Key", en: "ID / Key" }),
-      type: "key",
-      required: true,
-      col: 6,
+      col: 12,
     },
     {
       key: "description",
@@ -253,7 +245,6 @@ export default function DashboardPage({}: DashboardPageProps) {
     setSelectedWidgetKey("");
     setAddFormData({
       label: "",
-      key: "",
       description: "",
       col: { mobile: 12, tablet: 6, laptop: 4, desktop: 3 },
     });
@@ -274,8 +265,7 @@ export default function DashboardPage({}: DashboardPageProps) {
       await dashboardService.createWidget({
         role_id: Number(selectedRole),
         function_key: selectedFunctionKey,
-        key:
-          (addFormData.key as string) || selectedFunctionKey + "_" + Date.now(),
+        type: w.key,
         col: {
           mobile: colData.mobile,
           tablet: colData.tablet,

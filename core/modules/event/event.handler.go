@@ -209,7 +209,7 @@ func init() {
 
 				widgetResults := make([]map[string]any, 0)
 				for _, w := range widgets {
-					fn, err := findFunction(dashboard.RegisterFunctions, w.Key, w.FunctionKey)
+					fn, err := findFunction(dashboard.RegisterFunctions, w.Type, w.FunctionKey)
 					if err == nil {
 						res := fn(types.FunctionRequest{
 							RoleID: client.RoleID,

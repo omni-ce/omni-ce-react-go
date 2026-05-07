@@ -16,12 +16,15 @@ export interface DashboardWidgetCol {
 export interface DashboardWidget {
   id: string;
   role_id: number;
-  function_key: string;
-  key: string;
   type: string;
+  function_key: string;
   col: DashboardWidgetCol;
   label: string;
   description: string;
+  // optional
+  icon?: string;
+  color?: string;
+  bg_color?: string;
 }
 
 export const dashboardService = {
