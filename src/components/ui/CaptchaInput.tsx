@@ -4,6 +4,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { IoReload } from "react-icons/io5";
 import { useThemeStore } from "@/stores/themeStore";
 import { cn } from "@/lib/utils";
+import * as encryption from "@/lib/encryption";
+import { GeneralEnigmaSchema } from "@/enigma/general.enigma";
+import { VITE_SECRET } from "@/environment";
 
 export type CaptchaSecurity = "low" | "medium" | "strong";
 interface CaptchaProps {
@@ -121,13 +124,15 @@ export default function CaptchaInput({
         let response;
         if (lastId) {
           response = await satellite.post(
-            `/captcha/regenerate${previewQuery}`,
+            `/api/captcha/regenerate${previewQuery}`,
             {
               last_captcha_id: lastId,
             },
           );
         } else {
-          response = await satellite.get(`/captcha/generate${previewQuery}`);
+          response = await satellite.get(
+            `/api/captcha/generate${previewQuery}`,
+          );
         }
 
         if (response.status !== 200) {
@@ -138,10 +143,17 @@ export default function CaptchaInput({
         const data = response.data?.data;
         const captchaCode = data.captcha;
 
+        console.log({ VITE_SECRET });
+        const decrypted = encryption.decode(
+          GeneralEnigmaSchema(VITE_SECRET),
+          captchaCode,
+        );
+        console.log({ decrypted });
+
         if (data) {
           setCaptchaId(data.captcha_id);
-          setCaptchaText(captchaCode);
-          drawCaptcha(captchaCode);
+          setCaptchaText(decrypted);
+          drawCaptcha(decrypted);
         }
       } catch {
         setError("Failed to load captcha");
