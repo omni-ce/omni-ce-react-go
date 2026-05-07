@@ -13,6 +13,7 @@ import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import { FileType } from "@/components/DynamicForm";
 import { HOST_API } from "@/environment";
+import { ChangePassword } from "@/pages/app/users/action";
 
 interface Props {
   ruleKey?: string;
@@ -191,6 +192,12 @@ export default function UsersPage({ ruleKey }: Props) {
         fields={fields}
         useIsActive
         ruleKey={ruleKey}
+        extraActions={[
+          {
+            icon: "Hi/HiOutlineKey",
+            component: ChangePassword,
+          },
+        ]}
       />
     </div>
   );

@@ -72,7 +72,7 @@ export interface PaginationColumn<T> {
 }
 
 export interface PaginationExtraAction<T> {
-  icon: ReactNode;
+  icon: string;
   component: ReactNode | ((row: T, onClose: () => void) => ReactNode);
 }
 
@@ -242,16 +242,6 @@ const Pagination = forwardRef(function PaginationInner<T>(
                   disabled={togglingActiveId === getRowId(row)}
                 />
               )}
-              {extraActions?.map((action, idx) => (
-                <Button
-                  key={`ea-${idx}`}
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setExtraActionState({ actionIndex: idx, row })}
-                >
-                  {action.icon}
-                </Button>
-              ))}
               {showEdit && (
                 <Button
                   variant="ghost"
@@ -271,6 +261,16 @@ const Pagination = forwardRef(function PaginationInner<T>(
                   <IconComponent iconName="Hi/HiOutlineTrash" size={16} />
                 </Button>
               )}
+              {extraActions?.map((action, idx) => (
+                <Button
+                  key={`ea-${idx}`}
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setExtraActionState({ actionIndex: idx, row })}
+                >
+                  <IconComponent iconName={action.icon} size={16} />
+                </Button>
+              ))}
             </div>
           );
         },
