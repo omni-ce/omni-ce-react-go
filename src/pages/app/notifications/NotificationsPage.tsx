@@ -1,19 +1,11 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import {
-  RiNotificationLine,
-  RiCheckDoubleLine,
-  RiInformationLine,
-  RiDeleteBinLine,
-  RiFilterLine,
-  RiCheckLine,
-  RiLoader4Line,
-} from "react-icons/ri";
 import { useLanguageStore } from "@/stores/languageStore";
 import { useNotificationStore } from "@/stores/notificationStore";
 import type { INotification } from "@/types/notification";
 import { formatTimestamp } from "@/utils/datetime";
 import { typeConfig } from "@/pages/app/notifications/config";
 import { filters, type FilterType } from "@/pages/app/notifications/message";
+import { IconComponent } from "@/components/ui/IconSelector";
 
 interface Props {}
 export default function NotificationsPage({}: Props) {
@@ -97,7 +89,10 @@ export default function NotificationsPage({}: Props) {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-            <RiNotificationLine className="w-5 h-5" />
+            <IconComponent
+              iconName="Ri/RiNotificationLine"
+              className="w-5 h-5"
+            />
             {language({
               id: "Pusat Notifikasi",
               en: "Notification Center",
@@ -118,7 +113,10 @@ export default function NotificationsPage({}: Props) {
               onClick={handleMarkAllRead}
               className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono text-accent-400 hover:text-accent-300 bg-accent-500/10 hover:bg-accent-500/15 border border-accent-500/20 rounded-lg transition-all"
             >
-              <RiCheckDoubleLine className="w-3.5 h-3.5" />
+              <IconComponent
+                iconName="Ri/RiCheckDoubleLine"
+                className="w-3.5 h-3.5"
+              />
               {language({ id: "Tandai semua dibaca", en: "Mark all read" })}
             </button>
           )}
@@ -127,7 +125,10 @@ export default function NotificationsPage({}: Props) {
               onClick={handleClearAll}
               className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono text-dark-400 hover:text-neon-red bg-dark-700/50 hover:bg-neon-red/10 border border-dark-600/30 hover:border-neon-red/20 rounded-lg transition-all"
             >
-              <RiDeleteBinLine className="w-3.5 h-3.5" />
+              <IconComponent
+                iconName="Ri/RiDeleteBinLine"
+                className="w-3.5 h-3.5"
+              />
               {language({ id: "Hapus semua", en: "Clear all" })}
             </button>
           )}
@@ -137,7 +138,10 @@ export default function NotificationsPage({}: Props) {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-3">
         <div className="flex items-center gap-1.5 flex-wrap">
-          <RiFilterLine className="w-4 h-4 text-dark-400 mr-1" />
+          <IconComponent
+            iconName="Ri/RiFilterLine"
+            className="w-4 h-4 text-dark-400 mr-1"
+          />
           {filters.map((f) => {
             const count =
               f.key === "all"
@@ -175,7 +179,12 @@ export default function NotificationsPage({}: Props) {
                 : "border-dark-500"
             }`}
           >
-            {showUnreadOnly && <RiCheckLine className="w-2 h-2 text-white" />}
+            {showUnreadOnly && (
+              <IconComponent
+                iconName="Ri/RiCheckLine"
+                className="w-2 h-2 text-white"
+              />
+            )}
           </div>
           {language({ id: "Belum dibaca saja", en: "Unread only" })}
         </button>
@@ -185,7 +194,10 @@ export default function NotificationsPage({}: Props) {
       {filteredNotifs.length === 0 ? (
         <div className="bg-dark-800/60 border border-dark-600/40 rounded-2xl p-12 text-center">
           <div className="w-16 h-16 rounded-full bg-dark-700/50 flex items-center justify-center mx-auto mb-4">
-            <RiNotificationLine className="w-8 h-8 text-dark-500" />
+            <IconComponent
+              iconName="Ri/RiNotificationLine"
+              className="w-8 h-8 text-dark-500"
+            />
           </div>
           <h3 className="text-sm font-semibold text-dark-300 mb-1">
             {language({
@@ -225,7 +237,6 @@ export default function NotificationsPage({}: Props) {
               <div className="space-y-2">
                 {items.map((notif) => {
                   const config = typeConfig[notif.type];
-                  const Icon = config.icon;
                   return (
                     <div
                       key={notif.id}
@@ -240,7 +251,10 @@ export default function NotificationsPage({}: Props) {
                         <div
                           className={`shrink-0 w-9 h-9 rounded-xl ${config.bg} border ${config.border} flex items-center justify-center`}
                         >
-                          <Icon className={`w-4.5 h-4.5 ${config.color}`} />
+                          <IconComponent
+                            iconName={config.icon}
+                            className={`w-4.5 h-4.5 ${config.color}`}
+                          />
                         </div>
 
                         {/* Content */}
@@ -286,9 +300,15 @@ export default function NotificationsPage({}: Props) {
                                 }
                               >
                                 {notif.is_read ? (
-                                  <RiInformationLine className="w-3.5 h-3.5" />
+                                  <IconComponent
+                                    iconName="Ri/RiInformationLine"
+                                    className="w-3.5 h-3.5"
+                                  />
                                 ) : (
-                                  <RiCheckDoubleLine className="w-3.5 h-3.5" />
+                                  <IconComponent
+                                    iconName="Ri/RiCheckDoubleLine"
+                                    className="w-3.5 h-3.5"
+                                  />
                                 )}
                               </button>
                               <button
@@ -299,7 +319,10 @@ export default function NotificationsPage({}: Props) {
                                   en: "Delete notification",
                                 })}
                               >
-                                <RiDeleteBinLine className="w-3.5 h-3.5" />
+                                <IconComponent
+                                  iconName="Ri/RiDeleteBinLine"
+                                  className="w-3.5 h-3.5"
+                                />
                               </button>
                             </div>
                           </div>
@@ -309,7 +332,10 @@ export default function NotificationsPage({}: Props) {
                             <span
                               className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-medium ${config.badge}`}
                             >
-                              <Icon className="w-2.5 h-2.5" />
+                              <IconComponent
+                                iconName={config.icon}
+                                className="w-2.5 h-2.5"
+                              />
                               {language(config.label)}
                             </span>
                             <span className="text-[10px] font-mono text-dark-500">
@@ -329,7 +355,10 @@ export default function NotificationsPage({}: Props) {
           <div ref={sentinelRef} className="flex justify-center py-4">
             {isLoadingMore && (
               <div className="flex items-center gap-2 text-dark-400 text-xs font-mono">
-                <RiLoader4Line className="w-4 h-4 animate-spin" />
+                <IconComponent
+                  iconName="Ri/RiLoader4Line"
+                  className="w-4 h-4 animate-spin"
+                />
                 {language({ id: "Memuat...", en: "Loading..." })}
               </div>
             )}

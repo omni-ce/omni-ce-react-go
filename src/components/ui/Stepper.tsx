@@ -1,4 +1,4 @@
-import { HiCheck } from "react-icons/hi2";
+import { IconComponent } from "@/components/ui/IconSelector";
 
 interface StepperProps {
   /** Current active step (1-indexed) */
@@ -27,7 +27,7 @@ export default function Stepper({ currentStep, labels }: StepperProps) {
                 }`}
               >
                 {isCompleted ? (
-                  <HiCheck className="w-4 h-4" />
+                  <IconComponent iconName="Hi/HiCheck" className="w-4 h-4" />
                 ) : (
                   String(stepNum)
                 )}

@@ -1,11 +1,4 @@
 import { createBrowserRouter } from "react-router";
-import {
-  HiOutlineCog,
-  HiOutlineHome,
-  HiOutlineUser,
-  HiOutlineShieldCheck,
-  HiOutlineDatabase,
-} from "react-icons/hi";
 
 // Layouts
 import PublicLayout from "@/layouts/PublicLayout";
@@ -39,7 +32,7 @@ export const sidebarLinks: ISidebarLink[] = [
     label: { id: "Dashboard", en: "Dashboard" },
     path: "dashboard",
     element: <DashboardPage />,
-    icon: HiOutlineHome,
+    icon: "Hi/HiOutlineHome",
   },
 
   {
@@ -47,7 +40,7 @@ export const sidebarLinks: ISidebarLink[] = [
     path: "roles",
     element: <RolesPage ruleKey="roles" />,
     strict: true,
-    icon: HiOutlineShieldCheck,
+    icon: "Hi/HiOutlineShieldCheck",
   },
 
   {
@@ -55,7 +48,7 @@ export const sidebarLinks: ISidebarLink[] = [
     path: "users",
     element: <UsersPage ruleKey="users" />,
     strict: true,
-    icon: HiOutlineUser,
+    icon: "Hi/HiOutlineUser",
   },
 
   {
@@ -73,7 +66,7 @@ export const sidebarLinks: ISidebarLink[] = [
         ruleKey: "brand",
       },
     ],
-    icon: HiOutlineDatabase,
+    icon: "Hi/HiOutlineDatabase",
   },
 ];
 

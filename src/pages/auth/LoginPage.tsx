@@ -1,17 +1,11 @@
-import { useState, type FormEvent } from "react";
+import { Fragment, useState, type FormEvent } from "react";
 import { useAuthStore } from "@/stores/authStore";
-import {
-  RiEyeLine,
-  RiEyeOffLine,
-  RiTerminalLine,
-  RiLockLine,
-  RiUserLine,
-} from "react-icons/ri";
 import { Link, useNavigate } from "react-router";
 import { useLanguageStore } from "@/stores/languageStore";
 import AppIconSvg from "@/assets/react_go.svg";
 import { useRuleStore } from "@/stores/ruleStore";
 import type { Rule } from "@/types/rule";
+import { IconComponent } from "@/components/ui/IconSelector";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -76,7 +70,10 @@ export default function LoginPage() {
         <div className="bg-dark-800/80 backdrop-blur-xl border border-dark-600/50 rounded-2xl p-8 shadow-2xl shadow-black/20">
           {/* Header */}
           <div className="flex items-center gap-2 mb-6">
-            <RiLockLine className="w-4 h-4 text-dark-300" />
+            <IconComponent
+              iconName="Ri/RiLockLine"
+              className="w-4 h-4 text-dark-300"
+            />
             <span className="text-sm text-dark-300 font-mono">
               {language({
                 id: "autentikasi diperlukan",
@@ -111,7 +108,10 @@ export default function LoginPage() {
                   className="w-full px-4 py-3 pl-11 bg-dark-900/60 border border-dark-500/50 rounded-xl text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30 transition-all font-mono text-sm"
                   required
                 />
-                <RiUserLine className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" />
+                <IconComponent
+                  iconName="Ri/RiUserLine"
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400"
+                />
               </div>
             </div>
 
@@ -132,16 +132,25 @@ export default function LoginPage() {
                   className="w-full px-4 py-3 pl-11 pr-12 bg-dark-900/60 border border-dark-500/50 rounded-xl text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30 transition-all font-mono text-sm"
                   required
                 />
-                <RiLockLine className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" />
+                <IconComponent
+                  iconName="Ri/RiLockLine"
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400"
+                />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-dark-400 hover:text-dark-200 transition-colors"
                 >
                   {showPassword ? (
-                    <RiEyeOffLine className="w-4 h-4" />
+                    <IconComponent
+                      iconName="Ri/RiEyeOffLine"
+                      className="w-4 h-4"
+                    />
                   ) : (
-                    <RiEyeLine className="w-4 h-4" />
+                    <IconComponent
+                      iconName="Ri/RiEyeLine"
+                      className="w-4 h-4"
+                    />
                   )}
                 </button>
               </div>
@@ -154,7 +163,7 @@ export default function LoginPage() {
               className="w-full py-3 px-4 bg-accent-500 hover:bg-accent-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-accent-500/25 active:scale-[0.98] flex items-center justify-center gap-2"
             >
               {isLoading ? (
-                <>
+                <Fragment>
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   <span>
                     {language({
@@ -162,12 +171,15 @@ export default function LoginPage() {
                       en: "Connecting...",
                     })}
                   </span>
-                </>
+                </Fragment>
               ) : (
-                <>
-                  <RiTerminalLine className="w-4 h-4" />
+                <Fragment>
+                  <IconComponent
+                    iconName="Ri/RiTerminalLine"
+                    className="w-4 h-4"
+                  />
                   <span>{language({ id: "Masuk", en: "Sign In" })}</span>
-                </>
+                </Fragment>
               )}
             </button>
           </form>

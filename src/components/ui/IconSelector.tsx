@@ -177,6 +177,10 @@ async function loadIconLibrary(key: string) {
 
 interface IconComponentProps extends React.SVGProps<SVGSVGElement> {
   iconName: string;
+  children?: React.ReactNode;
+  size?: number;
+  color?: string;
+  title?: string;
 }
 
 export const IconComponent = ({ iconName, ...props }: IconComponentProps) => {
@@ -250,7 +254,9 @@ export default function IconSelector({
   const [isOpen, setIsOpen] = React.useState(false);
   const [search, setSearch] = React.useState("");
   const [selectedLibrary, setSelectedLibrary] = React.useState<string>("");
-  const [loadedIcons, setLoadedIcons] = React.useState<Record<string, Record<string, IconType>>>({});
+  const [loadedIcons, setLoadedIcons] = React.useState<
+    Record<string, Record<string, IconType>>
+  >({});
   const [isLoadingLibrary, setIsLoadingLibrary] = React.useState(false);
 
   // Load icon library when selected
@@ -278,7 +284,8 @@ export default function IconSelector({
     if (!selectedLibrary || !loadedIcons[selectedLibrary]) return [];
 
     const library = loadedIcons[selectedLibrary];
-    const results: Array<{ key: string; name: string; component: IconType }> = [];
+    const results: Array<{ key: string; name: string; component: IconType }> =
+      [];
 
     Object.keys(library).forEach((iconKey) => {
       if (

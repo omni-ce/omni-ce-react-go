@@ -1,14 +1,6 @@
-import {
-  RiInformationLine,
-  RiCheckboxCircleLine,
-  RiAlertLine,
-  RiErrorWarningLine,
-  RiSettings3Line,
-} from "react-icons/ri";
-
 export const typeConfig = {
   info: {
-    icon: RiInformationLine,
+    icon: "Ri/RiInformationLine",
     label: { id: "Info", en: "Info" },
     color: "text-accent-400",
     bg: "bg-accent-500/10",
@@ -17,7 +9,7 @@ export const typeConfig = {
     badge: "bg-accent-500/15 text-accent-400",
   },
   success: {
-    icon: RiCheckboxCircleLine,
+    icon: "Ri/RiCheckboxCircleLine",
     label: { id: "Berhasil", en: "Success" },
     color: "text-neon-green",
     bg: "bg-neon-green/10",
@@ -26,7 +18,7 @@ export const typeConfig = {
     badge: "bg-neon-green/15 text-neon-green",
   },
   warning: {
-    icon: RiAlertLine,
+    icon: "Ri/RiAlertLine",
     label: { id: "Peringatan", en: "Warning" },
     color: "text-neon-yellow",
     bg: "bg-neon-yellow/10",
@@ -35,7 +27,7 @@ export const typeConfig = {
     badge: "bg-neon-yellow/15 text-neon-yellow",
   },
   error: {
-    icon: RiErrorWarningLine,
+    icon: "Ri/RiErrorWarningLine",
     label: { id: "Error", en: "Error" },
     color: "text-neon-red",
     bg: "bg-neon-red/10",
@@ -44,7 +36,7 @@ export const typeConfig = {
     badge: "bg-neon-red/15 text-neon-red",
   },
   system: {
-    icon: RiSettings3Line,
+    icon: "Ri/RiSettings3Line",
     label: { id: "Sistem", en: "System" },
     color: "text-neon-cyan",
     bg: "bg-neon-cyan/10",

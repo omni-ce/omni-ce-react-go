@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
-import { RiArrowLeftLine, RiShieldLine } from "react-icons/ri";
 import { useLanguageStore } from "@/stores/languageStore";
+import { IconComponent } from "@/components/ui/IconSelector";
 
 export default function RulePermissionPage() {
   const navigate = useNavigate();
@@ -13,7 +13,10 @@ export default function RulePermissionPage() {
           {/* Header */}
           <div className="px-6 py-6 border-b border-dark-600/40 flex items-start gap-4">
             <div className="w-12 h-12 rounded-xl bg-neon-red/10 border border-neon-red/20 flex items-center justify-center shrink-0">
-              <RiShieldLine className="w-6 h-6 text-neon-red" />
+              <IconComponent
+                iconName="Ri/RiShieldLine"
+                className="w-6 h-6 text-neon-red"
+              />
             </div>
             <div className="min-w-0">
               <h1 className="text-2xl font-bold text-foreground tracking-tight">
@@ -57,7 +60,10 @@ export default function RulePermissionPage() {
               onClick={() => navigate("/app/dashboard")}
               className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-dark-300 hover:text-foreground border border-dark-600/50 hover:border-dark-500/60 rounded-xl transition-all"
             >
-              <RiArrowLeftLine className="w-4 h-4" />
+              <IconComponent
+                iconName="Ri/RiArrowLeftLine"
+                className="w-4 h-4"
+              />
               {language({
                 id: "Kembali",
                 en: "Go Back",

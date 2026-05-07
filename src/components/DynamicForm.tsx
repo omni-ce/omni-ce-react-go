@@ -3,13 +3,13 @@ import { Label } from "@/components/ui/Label";
 import { Input } from "@/components/ui/Input";
 import { SearchableSelect } from "@/components/ui/SearchableSelect";
 import { Button } from "@/components/ui/Button";
-import { HiOutlineTrash, HiOutlinePlus } from "react-icons/hi";
 import { useLanguageStore } from "@/stores/languageStore";
 import satellite from "@/lib/satellite";
 import type { Response } from "@/types/response";
 import { HOST_API } from "@/environment";
 import BlankUser from "@/assets/blank-user.svg";
 import type { Option } from "@/types/option";
+import { IconComponent } from "@/components/ui/IconSelector";
 
 export interface DynamicFormFieldOption {
   value: string;
@@ -617,7 +617,7 @@ function ArrayField({
             onClick={() => handleRemove(index)}
             className="absolute top-2 right-2 p-1.5 rounded-lg text-dark-400 hover:text-neon-red hover:bg-neon-red/10 transition-colors"
           >
-            <HiOutlineTrash className="w-4 h-4" />
+            <IconComponent iconName="Hi/HiOutlineTrash" className="w-4 h-4" />
           </button>
           <div className="grid grid-cols-12 gap-4 mt-2">
             {field.children?.map((child) => (
@@ -688,7 +688,7 @@ function ArrayField({
         onClick={handleAdd}
         className="w-full flex items-center justify-center gap-2 border-dashed border-dark-500 text-dark-300 hover:text-foreground"
       >
-        <HiOutlinePlus className="w-4 h-4" />
+        <IconComponent iconName="Hi/HiOutlinePlus" className="w-4 h-4" />
         {language({ id: "Tambah", en: "Add" })} {field.label}
       </Button>
     </div>

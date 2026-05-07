@@ -1,21 +1,11 @@
 import { Link, useNavigate } from "react-router";
-import {
-  HiOutlineCode,
-  HiOutlineLightningBolt,
-  HiOutlineTemplate,
-  HiOutlineShieldCheck,
-  HiOutlineArrowRight,
-  HiOutlineColorSwatch,
-  HiOutlineGlobe,
-  HiOutlineDatabase,
-} from "react-icons/hi";
 import { useLanguageStore } from "@/stores/languageStore";
 import { Fragment } from "react/jsx-runtime";
-import { SiNodedotjs, SiBun, SiGo } from "react-icons/si";
+import { IconComponent } from "@/components/ui/IconSelector";
 
 const features = [
   {
-    icon: HiOutlineLightningBolt,
+    icon: "Hi/HiOutlineLightningBolt",
     title: { id: "Sangat Cepat", en: "Blazing Fast" },
     desc: {
       id: "React 19 + Vite untuk HMR instan, Go backend untuk performa terbaik.",
@@ -25,7 +15,7 @@ const features = [
     bg: "bg-neon-green/10 border-neon-green/20",
   },
   {
-    icon: HiOutlineTemplate,
+    icon: "Hi/HiOutlineTemplate",
     title: { id: "Layout Siap Pakai", en: "App Layout Ready" },
     desc: {
       id: "Sidebar, top bar, navigasi responsif, dan mode gelap/terang bawaan.",
@@ -35,7 +25,7 @@ const features = [
     bg: "bg-accent-500/10 border-accent-500/20",
   },
   {
-    icon: HiOutlineShieldCheck,
+    icon: "Hi/HiOutlineShieldCheck",
     title: { id: "Auth & Peran", en: "Auth & Roles" },
     desc: {
       id: "Autentikasi JWT dengan kontrol akses berbasis peran langsung dari kotak.",
@@ -45,7 +35,7 @@ const features = [
     bg: "bg-neon-cyan/10 border-neon-cyan/20",
   },
   {
-    icon: HiOutlineColorSwatch,
+    icon: "Hi/HiOutlineColorSwatch",
     title: { id: "Sistem Tema", en: "Theme System" },
     desc: {
       id: "CSS custom properties dengan TailwindCSS v4. Mode gelap dan terang didukung.",
@@ -55,7 +45,7 @@ const features = [
     bg: "bg-neon-yellow/10 border-neon-yellow/20",
   },
   {
-    icon: HiOutlineGlobe,
+    icon: "Hi/HiOutlineGlobe",
     title: { id: "Multi-Bahasa", en: "Multi-Language" },
     desc: {
       id: "Store i18n bawaan dengan toggle. Tambah bahasa baru dalam hitungan menit.",
@@ -65,7 +55,7 @@ const features = [
     bg: "bg-accent-500/10 border-accent-500/20",
   },
   {
-    icon: HiOutlineDatabase,
+    icon: "Hi/HiOutlineDatabase",
     title: { id: "Database Siap", en: "Database Ready" },
     desc: {
       id: "GORM + SQLite (atau PostgreSQL/MySQL). Auto-migrasi saat startup.",
@@ -177,7 +167,7 @@ export default function LandingPage() {
               className="flex items-center gap-2 px-6 py-3 text-sm font-semibold bg-accent-500 hover:bg-accent-600 text-white rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-accent-500/25 active:scale-[0.98]"
             >
               {language({ id: "Ke Dashboard", en: "Go to Dashboard" })}
-              <HiOutlineArrowRight size={16} />
+              <IconComponent iconName="Hi/HiOutlineArrowRight" size={16} />
             </Link>
             <a
               href="https://github.com/jefripunza/react-go"
@@ -185,7 +175,7 @@ export default function LandingPage() {
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-6 py-3 text-sm font-semibold border border-dark-600/50 text-dark-300 hover:text-foreground hover:border-dark-500/60 rounded-xl transition-all duration-200"
             >
-              <HiOutlineCode size={16} />
+              <IconComponent iconName="Hi/HiOutlineCode" size={16} />
               {language({ id: "Lihat di GitHub", en: "View on GitHub" })}
             </a>
           </div>
@@ -273,7 +263,6 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {features.map((feat, i) => {
-              const Icon = feat.icon;
               return (
                 <div
                   key={language(feat.title)}
@@ -283,7 +272,10 @@ export default function LandingPage() {
                   <div
                     className={`w-10 h-10 rounded-xl border flex items-center justify-center mb-4 ${feat.bg}`}
                   >
-                    <Icon className={`w-5 h-5 ${feat.color}`} />
+                    <IconComponent
+                      iconName={feat.icon}
+                      className={`w-5 h-5 ${feat.color}`}
+                    />
                   </div>
                   <h3 className="text-sm font-semibold text-foreground mb-2">
                     {language(feat.title)}
@@ -308,7 +300,10 @@ export default function LandingPage() {
           </h2>
           <div className="flex flex-wrap justify-center items-center gap-8 sm:gap-16">
             <div className="flex flex-col items-center gap-3">
-              <SiNodedotjs className="w-10 h-10 text-[#339933] drop-shadow-md hover:scale-110 transition-transform" />
+              <IconComponent
+                iconName="Si/SiNodedotjs"
+                className="w-10 h-10 text-[#339933] drop-shadow-md hover:scale-110 transition-transform"
+              />
               <div>
                 <p className="text-sm font-semibold text-foreground">Node.js</p>
                 <p className="text-xs text-dark-300 font-mono mt-1">
@@ -317,14 +312,20 @@ export default function LandingPage() {
               </div>
             </div>
             <div className="flex flex-col items-center gap-3">
-              <SiBun className="w-10 h-10 text-[#fbf0df] drop-shadow-md hover:scale-110 transition-transform" />
+              <IconComponent
+                iconName="Si/SiBun"
+                className="w-10 h-10 text-[#fbf0df] drop-shadow-md hover:scale-110 transition-transform"
+              />
               <div>
                 <p className="text-sm font-semibold text-foreground">Bun</p>
                 <p className="text-xs text-dark-300 font-mono mt-1">v1.3.6+</p>
               </div>
             </div>
             <div className="flex flex-col items-center gap-3">
-              <SiGo className="w-10 h-10 text-[#00ADD8] drop-shadow-md hover:scale-110 transition-transform" />
+              <IconComponent
+                iconName="Si/SiGo"
+                className="w-10 h-10 text-[#00ADD8] drop-shadow-md hover:scale-110 transition-transform"
+              />
               <div>
                 <p className="text-sm font-semibold text-foreground">Go</p>
                 <p className="text-xs text-dark-300 font-mono mt-1">v1.25.6+</p>
@@ -407,7 +408,7 @@ export default function LandingPage() {
               className="flex items-center gap-2 px-6 py-3 text-sm font-semibold bg-accent-500 hover:bg-accent-600 text-white rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-accent-500/25"
             >
               {language({ id: "Buka Dashboard", en: "Open Dashboard" })}
-              <HiOutlineArrowRight size={16} />
+              <IconComponent iconName="Hi/HiOutlineArrowRight" size={16} />
             </Link>
             <button
               onClick={() =>

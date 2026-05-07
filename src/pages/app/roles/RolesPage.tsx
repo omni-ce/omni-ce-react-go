@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState, useRef } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useRef,
+} from "react";
 import { useLanguageStore } from "@/stores/languageStore";
 import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
@@ -14,20 +20,14 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/Dialog";
-import type { Rule } from "@/stores/ruleStore";
+import type { Rule } from "@/types/rule";
 import { sidebarLinks } from "@/routers";
 import {
   roleService,
   type RoleItem,
   type DivisionGroup,
 } from "@/services/role.service";
-import {
-  HiChevronDown,
-  HiChevronRight,
-  HiOutlinePlus,
-  HiOutlinePencilSquare,
-  HiOutlineTrash,
-} from "react-icons/hi2";
+import { IconComponent } from "@/components/ui/IconSelector";
 
 interface Props {
   ruleKey?: string;
@@ -451,7 +451,7 @@ export default function RolesPage({ ruleKey }: Props) {
         </div>
         {perm.canCreate && (
           <Button onClick={openDivCreate} className="gap-2">
-            <HiOutlinePlus size={16} />
+            <IconComponent iconName="Hi2/HiOutlinePlus" size={16} />
             {language({ id: "Tambah Divisi", en: "Add Division" })}
           </Button>
         )}
@@ -469,9 +469,9 @@ export default function RolesPage({ ruleKey }: Props) {
                 <div className="flex items-center gap-3">
                   <span className="text-dark-400">
                     {openDivisions.has(division.id) ? (
-                      <HiChevronDown size={18} />
+                      <IconComponent iconName="Hi2/HiChevronDown" size={18} />
                     ) : (
-                      <HiChevronRight size={18} />
+                      <IconComponent iconName="Hi2/HiChevronRight" size={18} />
                     )}
                   </span>
                   <div>
@@ -494,7 +494,7 @@ export default function RolesPage({ ruleKey }: Props) {
                       className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${division.is_active ? "bg-accent-500" : "bg-dark-600"} ${!perm.canSet ? "opacity-50 cursor-not-allowed" : ""}`}
                     >
                       <span
-                        className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${division.is_active ? "translate-x-[18px]" : "translate-x-[3px]"}`}
+                        className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${division.is_active ? "translate-x-4.5" : "translate-x-0.75"}`}
                       />
                     </button>
                   )}
@@ -507,7 +507,10 @@ export default function RolesPage({ ruleKey }: Props) {
                       }}
                       className="p-1.5 rounded-lg text-dark-400 hover:text-accent-400 hover:bg-dark-700/50 transition-all"
                     >
-                      <HiOutlinePencilSquare size={15} />
+                      <IconComponent
+                        iconName="Hi2/HiOutlinePencilSquare"
+                        size={15}
+                      />
                     </button>
                   )}
                   {/* Delete */}
@@ -523,7 +526,7 @@ export default function RolesPage({ ruleKey }: Props) {
                       }}
                       className="p-1.5 rounded-lg text-dark-400 hover:text-red-400 hover:bg-dark-700/50 transition-all"
                     >
-                      <HiOutlineTrash size={15} />
+                      <IconComponent iconName="Hi2/HiOutlineTrash" size={15} />
                     </button>
                   )}
                   <Badge variant="outline">
@@ -547,7 +550,7 @@ export default function RolesPage({ ruleKey }: Props) {
                         openRoleCreate(division.id);
                       }}
                     >
-                      <HiOutlinePlus size={14} />
+                      <IconComponent iconName="Hi2/HiOutlinePlus" size={14} />
                       {language({ id: "Tambah Peran", en: "Add Role" })}
                     </Button>
                   </div>
@@ -574,9 +577,15 @@ export default function RolesPage({ ruleKey }: Props) {
                         >
                           <span className="text-dark-400">
                             {openRoles.has(role.id) ? (
-                              <HiChevronDown size={16} />
+                              <IconComponent
+                                iconName="Hi2/HiChevronDown"
+                                size={16}
+                              />
                             ) : (
-                              <HiChevronRight size={16} />
+                              <IconComponent
+                                iconName="Hi2/HiChevronRight"
+                                size={16}
+                              />
                             )}
                           </span>
                           <span className="font-medium text-sm text-foreground truncate">
@@ -596,7 +605,7 @@ export default function RolesPage({ ruleKey }: Props) {
                               className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${role.is_active ? "bg-accent-500" : "bg-dark-600"} disabled:opacity-40 disabled:cursor-not-allowed`}
                             >
                               <span
-                                className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${role.is_active ? "translate-x-[18px]" : "translate-x-[3px]"}`}
+                                className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${role.is_active ? "translate-x-4.5" : "translate-x-0.75"}`}
                               />
                             </button>
                           )}
@@ -605,7 +614,10 @@ export default function RolesPage({ ruleKey }: Props) {
                               onClick={() => openRoleEdit(role)}
                               className="p-1.5 rounded-lg text-dark-400 hover:text-accent-400 hover:bg-dark-700/50 transition-all"
                             >
-                              <HiOutlinePencilSquare size={15} />
+                              <IconComponent
+                                iconName="Hi2/HiOutlinePencilSquare"
+                                size={15}
+                              />
                             </button>
                           )}
                           {perm.canDelete && (
@@ -619,7 +631,10 @@ export default function RolesPage({ ruleKey }: Props) {
                               }
                               className="p-1.5 rounded-lg text-dark-400 hover:text-red-400 hover:bg-dark-700/50 transition-all"
                             >
-                              <HiOutlineTrash size={15} />
+                              <IconComponent
+                                iconName="Hi2/HiOutlineTrash"
+                                size={15}
+                              />
                             </button>
                           )}
                         </div>
@@ -630,7 +645,7 @@ export default function RolesPage({ ruleKey }: Props) {
                         <div className="border-t border-dark-600/40 px-4 py-3">
                           <div className="overflow-x-auto">
                             <div
-                              className="grid gap-2 min-w-[600px] items-center mb-2"
+                              className="grid gap-2 min-w-150 items-center mb-2"
                               style={{
                                 gridTemplateColumns:
                                   "minmax(140px, 1fr) repeat(5, 80px)",
@@ -675,119 +690,123 @@ export default function RolesPage({ ruleKey }: Props) {
                               return (
                                 <React.Fragment key={menu.key}>
                                   <div
-                                    className="grid gap-2 min-w-[600px] items-center py-1.5 border-t border-dark-600/20 hover:bg-dark-700/20 rounded transition-colors"
+                                    className="grid gap-2 min-w-150 items-center py-1.5 border-t border-dark-600/20 hover:bg-dark-700/20 rounded transition-colors"
                                     style={{
-                                    gridTemplateColumns:
-                                      "minmax(140px, 1fr) repeat(5, 80px)",
-                                  }}
-                                >
-                                  <div className="flex items-center gap-2 px-2">
-                                    <input
-                                      type="checkbox"
-                                      checked={allOn}
-                                      onChange={() =>
-                                        toggleRow(role.id, menu.key)
-                                      }
-                                      disabled={
-                                        !role.is_active ||
-                                        !division.is_active ||
-                                        !perm.canSet
-                                      }
-                                      className="w-3.5 h-3.5 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-                                    />
-                                    <span className="text-sm text-foreground font-medium">
-                                      {menu.label}
-                                    </span>
-                                  </div>
-                                  {ACTIONS.map((act) => (
-                                    <div
-                                      key={act.key}
-                                      className="flex justify-center"
-                                    >
+                                      gridTemplateColumns:
+                                        "minmax(140px, 1fr) repeat(5, 80px)",
+                                    }}
+                                  >
+                                    <div className="flex items-center gap-2 px-2">
                                       <input
                                         type="checkbox"
-                                        checked={getRuleState(
-                                          role.id,
-                                          menu.key,
-                                          act.key,
-                                        )}
+                                        checked={allOn}
                                         onChange={() =>
-                                          toggleRule(role.id, menu.key, act.key)
+                                          toggleRow(role.id, menu.key)
                                         }
                                         disabled={
                                           !role.is_active ||
                                           !division.is_active ||
                                           !perm.canSet
                                         }
-                                        className="w-4 h-4 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
+                                        className="w-3.5 h-3.5 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                                       />
+                                      <span className="text-sm text-foreground font-medium">
+                                        {menu.label}
+                                      </span>
                                     </div>
-                                  ))}
-                                </div>
-
-                                {/* Render Extra Rule Keys */}
-                                {menu.extraRuleKeys?.map((extra) => {
-                                  const extraAllOn = ACTIONS.every((a) =>
-                                    getRuleState(role.id, extra.key, a.key),
-                                  );
-                                  return (
-                                    <div
-                                      key={extra.key}
-                                      className="grid gap-2 min-w-[600px] items-center py-1.5 border-t border-dark-600/10 hover:bg-dark-700/10 rounded transition-colors pl-6"
-                                      style={{
-                                        gridTemplateColumns:
-                                          "minmax(140px, 1fr) repeat(5, 80px)",
-                                      }}
-                                    >
-                                      <div className="flex items-center gap-2 px-2">
+                                    {ACTIONS.map((act) => (
+                                      <div
+                                        key={act.key}
+                                        className="flex justify-center"
+                                      >
                                         <input
                                           type="checkbox"
-                                          checked={extraAllOn}
+                                          checked={getRuleState(
+                                            role.id,
+                                            menu.key,
+                                            act.key,
+                                          )}
                                           onChange={() =>
-                                            toggleRow(role.id, extra.key)
+                                            toggleRule(
+                                              role.id,
+                                              menu.key,
+                                              act.key,
+                                            )
                                           }
                                           disabled={
                                             !role.is_active ||
                                             !division.is_active ||
                                             !perm.canSet
                                           }
-                                          className="w-3.5 h-3.5 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                                          className="w-4 h-4 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
                                         />
-                                        <span className="text-sm text-dark-300 font-medium">
-                                          └ {extra.label}
-                                        </span>
                                       </div>
-                                      {ACTIONS.map((act) => (
-                                        <div
-                                          key={act.key}
-                                          className="flex justify-center"
-                                        >
+                                    ))}
+                                  </div>
+
+                                  {/* Render Extra Rule Keys */}
+                                  {menu.extraRuleKeys?.map((extra) => {
+                                    const extraAllOn = ACTIONS.every((a) =>
+                                      getRuleState(role.id, extra.key, a.key),
+                                    );
+                                    return (
+                                      <div
+                                        key={extra.key}
+                                        className="grid gap-2 min-w-150 items-center py-1.5 border-t border-dark-600/10 hover:bg-dark-700/10 rounded transition-colors pl-6"
+                                        style={{
+                                          gridTemplateColumns:
+                                            "minmax(140px, 1fr) repeat(5, 80px)",
+                                        }}
+                                      >
+                                        <div className="flex items-center gap-2 px-2">
                                           <input
                                             type="checkbox"
-                                            checked={getRuleState(
-                                              role.id,
-                                              extra.key,
-                                              act.key,
-                                            )}
+                                            checked={extraAllOn}
                                             onChange={() =>
-                                              toggleRule(
-                                                role.id,
-                                                extra.key,
-                                                act.key,
-                                              )
+                                              toggleRow(role.id, extra.key)
                                             }
                                             disabled={
                                               !role.is_active ||
                                               !division.is_active ||
                                               !perm.canSet
                                             }
-                                            className="w-4 h-4 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
+                                            className="w-3.5 h-3.5 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                                           />
+                                          <span className="text-sm text-dark-300 font-medium">
+                                            └ {extra.label}
+                                          </span>
                                         </div>
-                                      ))}
-                                    </div>
-                                  );
-                                })}
+                                        {ACTIONS.map((act) => (
+                                          <div
+                                            key={act.key}
+                                            className="flex justify-center"
+                                          >
+                                            <input
+                                              type="checkbox"
+                                              checked={getRuleState(
+                                                role.id,
+                                                extra.key,
+                                                act.key,
+                                              )}
+                                              onChange={() =>
+                                                toggleRule(
+                                                  role.id,
+                                                  extra.key,
+                                                  act.key,
+                                                )
+                                              }
+                                              disabled={
+                                                !role.is_active ||
+                                                !division.is_active ||
+                                                !perm.canSet
+                                              }
+                                              className="w-4 h-4 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
+                                            />
+                                          </div>
+                                        ))}
+                                      </div>
+                                    );
+                                  })}
                                 </React.Fragment>
                               );
                             })}

@@ -1,21 +1,10 @@
 import React, { Fragment, useEffect, useState, useCallback } from "react";
-import {
-  RiPulseLine,
-  RiInboxLine,
-  RiTimeLine,
-  RiAlertLine,
-  RiTimerLine,
-  RiCheckboxCircleLine,
-  RiEditLine,
-  RiDeleteBinLine,
-} from "react-icons/ri";
+import { IconComponent } from "@/components/ui/IconSelector";
 
 import {
   dashboardService,
-  type DashboardStats,
   type DashboardWidget,
 } from "@/services/dashboard.service";
-import { HOST_API } from "@/environment";
 import type { Option } from "@/types/option";
 import { lgMap, mdMap, spanMap, xlMap } from "@/responsive";
 import { DAYS_30, MONTHS } from "@/dummy";
@@ -428,42 +417,42 @@ export default function DashboardPage({}: DashboardPageProps) {
             <StatCard
               label={language({ id: "Total Antrian", en: "Total Queues" })}
               value="24.7K"
-              icon={RiInboxLine}
+              icon={"Ri/RiInboxLine"}
               color="indigo"
               trend={{ value: "+20%", up: true }}
             />
             <StatCard
               label={language({ id: "Total Pesan", en: "Total Messages" })}
               value="55.9K"
-              icon={RiPulseLine}
+              icon={"Ri/RiPulseLine"}
               color="green"
               trend={{ value: "+4%", up: true }}
             />
             <StatCard
               label={language({ id: "Selesai", en: "Completed" })}
               value="54%"
-              icon={RiCheckboxCircleLine}
+              icon={"Ri/RiCheckboxCircleLine"}
               color="cyan"
               trend={{ value: "-1.59%", up: false }}
             />
             <StatCard
               label={language({ id: "Tertunda", en: "Pending" })}
               value="2m 56s"
-              icon={RiTimeLine}
+              icon={"Ri/RiTimeLine"}
               color="yellow"
               trend={{ value: "+7%", up: true }}
             />
             <StatCard
               label={language({ id: "Waktu", en: "Timing" })}
               value="3,782"
-              icon={RiTimerLine}
+              icon={"Ri/RiTimerLine"}
               color="indigo"
               trend={{ value: "+11.01%", up: true }}
             />
             <StatCard
               label={language({ id: "Gagal", en: "Failed" })}
               value="874"
-              icon={RiAlertLine}
+              icon={"Ri/RiAlertLine"}
               color="red"
               trend={{ value: "-4.5%", up: false }}
             />
@@ -865,7 +854,10 @@ export default function DashboardPage({}: DashboardPageProps) {
                       className="p-1.5 rounded-lg bg-dark-700/80 backdrop-blur-sm text-dark-300 hover:text-accent-400 hover:bg-dark-600/80 transition-all"
                       title={language({ id: "Edit", en: "Edit" })}
                     >
-                      <RiEditLine className="w-4 h-4" />
+                      <IconComponent
+                        iconName="Ri/RiEditLine"
+                        className="w-4 h-4"
+                      />
                     </button>
                     <button
                       onClick={() => {
@@ -875,7 +867,10 @@ export default function DashboardPage({}: DashboardPageProps) {
                       className="p-1.5 rounded-lg bg-dark-700/80 backdrop-blur-sm text-dark-300 hover:text-neon-red hover:bg-dark-600/80 transition-all"
                       title={language({ id: "Hapus", en: "Delete" })}
                     >
-                      <RiDeleteBinLine className="w-4 h-4" />
+                      <IconComponent
+                        iconName="Ri/RiDeleteBinLine"
+                        className="w-4 h-4"
+                      />
                     </button>
                   </div>
                 )}

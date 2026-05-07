@@ -1,4 +1,4 @@
-import { RiCircleFill } from "react-icons/ri";
+import { IconComponent } from "@/components/ui/IconSelector";
 
 export type StatusType = "running" | "idle" | "error";
 
@@ -23,7 +23,7 @@ export default function StatusBadge({ status }: Status) {
     <span
       className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md border text-[11px] font-mono ${c.color}`}
     >
-      <RiCircleFill className="w-1.5 h-1.5" />
+      <IconComponent iconName="Ri/RiCircleFill" className="w-1.5 h-1.5" />
       {status}
     </span>
   );

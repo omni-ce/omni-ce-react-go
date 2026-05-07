@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router";
-import { HiOutlineCode } from "react-icons/hi";
-import { RiTranslate2 } from "react-icons/ri";
 import { useLanguageStore } from "@/stores/languageStore";
-import { useThemeStore } from "@/stores/themeStore";
 import version from "@/version";
 import AppIconSvg from "@/assets/react_go.svg";
 import ControlButton from "@/components/ControlButton";
+import { IconComponent } from "@/components/ui/IconSelector";
 
 export default function MainLayout() {
   const navigate = useNavigate();
@@ -51,7 +49,7 @@ export default function MainLayout() {
               rel="noopener noreferrer"
               className="hidden sm:flex items-center gap-2 px-3 py-1.5 text-xs font-mono text-dark-300 hover:text-foreground transition-colors"
             >
-              <HiOutlineCode size={14} />
+              <IconComponent iconName="Hi/HiOutlineCode" size={14} />
               GitHub
             </a>
 

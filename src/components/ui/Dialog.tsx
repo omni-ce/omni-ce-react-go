@@ -1,8 +1,8 @@
 import * as React from "react";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
-import { RiCloseLine } from "react-icons/ri";
 import ControlButton from "@/components/ControlButton";
+import { IconComponent } from "@/components/ui/IconSelector";
 
 /* ─── Root ───────────────────────────────────────────────────────── */
 
@@ -76,7 +76,7 @@ function DialogContent({
           onClick={onClose}
           className="absolute right-4 top-4 rounded-lg p-2 text-dark-400 hover:text-foreground hover:bg-dark-700/50 transition-all focus:outline-none"
         >
-          <RiCloseLine className="h-4 w-4" />
+          <IconComponent iconName="Ri/RiCloseLine" className="h-4 w-4" />
           <span className="sr-only">Close</span>
         </button>
       )}

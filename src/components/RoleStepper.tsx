@@ -4,9 +4,8 @@ import { useLanguageStore } from "@/stores/languageStore";
 import satellite from "@/lib/satellite";
 import type { Response } from "@/types/response";
 import type { Option } from "@/types/option";
-import { RiBuilding4Line, RiUserStarLine } from "react-icons/ri";
-import { HiOutlineArrowLeft, HiCheck } from "react-icons/hi2";
 import Loading from "@/components/Loading";
+import { IconComponent } from "@/components/ui/IconSelector";
 
 interface RoleStepperProps {
   onComplete: (divisionId: string, roleId: string) => void;
@@ -112,7 +111,11 @@ export default function RoleStepper({
                 : "border-dark-600 text-dark-400 bg-dark-800"
             }`}
           >
-            {step > 1 ? <HiCheck className="w-5 h-5" /> : "1"}
+            {step > 1 ? (
+              <IconComponent iconName="Hi2/HiCheck" className="w-5 h-5" />
+            ) : (
+              "1"
+            )}
           </div>
           <span className="text-xs font-medium text-dark-300 mt-2">
             {language({ id: "Divisi", en: "Division" })}
@@ -168,7 +171,8 @@ export default function RoleStepper({
                         : "bg-dark-800 border-dark-600/50 hover:bg-dark-700/50 hover:border-dark-500 text-dark-200"
                     }`}
                   >
-                    <RiBuilding4Line
+                    <IconComponent
+                      iconName="Ri/RiBuilding4Line"
                       className={`w-8 h-8 mb-2 ${divisionId === div.value ? "text-accent-400" : "text-dark-400"}`}
                     />
                     <span className="text-sm font-medium">{div.label}</span>
@@ -188,7 +192,10 @@ export default function RoleStepper({
                 className="absolute left-0 p-2 text-dark-400 hover:text-foreground hover:bg-dark-700/50 rounded-lg transition-colors"
                 title={language({ id: "Kembali", en: "Back" })}
               >
-                <HiOutlineArrowLeft className="w-5 h-5" />
+                <IconComponent
+                  iconName="Hi2/HiOutlineArrowLeft"
+                  className="w-5 h-5"
+                />
               </button>
               <h3 className="text-lg font-semibold text-foreground text-center w-full">
                 {language({ id: "Pilih Jabatan Anda", en: "Select Your Role" })}
@@ -221,7 +228,8 @@ export default function RoleStepper({
                     <div
                       className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 shrink-0 ${roleId === role.value ? "bg-accent-500/20" : "bg-dark-700"}`}
                     >
-                      <RiUserStarLine
+                      <IconComponent
+                        iconName="Ri/RiUserStarLine"
                         className={`w-5 h-5 ${roleId === role.value ? "text-accent-400" : "text-dark-400"}`}
                       />
                     </div>
@@ -229,7 +237,10 @@ export default function RoleStepper({
                       {role.label}
                     </span>
                     {roleId === role.value && (
-                      <HiCheck className="w-5 h-5 ml-2 text-accent-400 shrink-0" />
+                      <IconComponent
+                        iconName="Hi2/HiCheck"
+                        className="w-5 h-5 ml-2 text-accent-400 shrink-0"
+                      />
                     )}
                   </button>
                 ))}

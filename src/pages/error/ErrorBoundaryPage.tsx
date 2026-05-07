@@ -1,14 +1,6 @@
 import { useMemo, useState } from "react";
 import { isRouteErrorResponse, useRouteError, Link } from "react-router";
-import {
-  RiAlertLine,
-  RiBugLine,
-  RiCheckLine,
-  RiArrowDownSLine,
-  RiArrowUpSLine,
-  RiFileCopyLine,
-  RiHomeLine,
-} from "react-icons/ri";
+import { IconComponent } from "@/components/ui/IconSelector";
 
 function getErrorParts(err: unknown) {
   if (isRouteErrorResponse(err)) {
@@ -70,7 +62,10 @@ export default function ErrorBoundaryPage() {
           <div className="px-6 py-5 border-b border-dark-600/40 flex items-start justify-between gap-4">
             <div className="flex items-start gap-3">
               <div className="rounded-xl flex items-center justify-center">
-                <RiAlertLine className="w-5 h-5 text-accent-400" />
+                <IconComponent
+                  iconName="Ri/RiAlertLine"
+                  className="w-5 h-5 text-accent-400"
+                />
               </div>
               <div>
                 <h1 className="text-lg font-bold text-foreground">{title}</h1>
@@ -84,14 +79,14 @@ export default function ErrorBoundaryPage() {
                 to="/app/dashboard"
                 className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-dark-300 hover:text-foreground border border-dark-600/50 hover:border-dark-500/60 rounded-xl transition-all"
               >
-                <RiHomeLine className="w-4 h-4" />
+                <IconComponent iconName="Ri/RiHomeLine" className="w-4 h-4" />
                 Dashboard
               </Link>
               <Link
                 to="/"
                 className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-dark-300 hover:text-foreground border border-dark-600/50 hover:border-dark-500/60 rounded-xl transition-all"
               >
-                <RiBugLine className="w-4 h-4" />
+                <IconComponent iconName="Ri/RiBugLine" className="w-4 h-4" />
                 Login
               </Link>
             </div>
@@ -104,12 +99,21 @@ export default function ErrorBoundaryPage() {
                 onClick={() => setShowStack((v) => !v)}
                 className="flex items-center gap-2 hover:text-foreground transition-colors"
               >
-                <RiBugLine className="w-4 h-4 text-accent-400" />
+                <IconComponent
+                  iconName="Ri/RiBugLine"
+                  className="w-4 h-4 text-accent-400"
+                />
                 Stack trace
                 {showStack ? (
-                  <RiArrowUpSLine className="w-4 h-4 ml-1" />
+                  <IconComponent
+                    iconName="Ri/RiArrowUpSLine"
+                    className="w-4 h-4 ml-1"
+                  />
                 ) : (
-                  <RiArrowDownSLine className="w-4 h-4 ml-1" />
+                  <IconComponent
+                    iconName="Ri/RiArrowDownSLine"
+                    className="w-4 h-4 ml-1"
+                  />
                 )}
               </button>
 
@@ -120,9 +124,15 @@ export default function ErrorBoundaryPage() {
                 title="Copy stack trace"
               >
                 {copied ? (
-                  <RiCheckLine className="w-4 h-4 text-neon-green" />
+                  <IconComponent
+                    iconName="Ri/RiCheckLine"
+                    className="w-4 h-4 text-neon-green"
+                  />
                 ) : (
-                  <RiFileCopyLine className="w-4 h-4" />
+                  <IconComponent
+                    iconName="Ri/RiFileCopyLine"
+                    className="w-4 h-4"
+                  />
                 )}
                 <span className="text-xs">{copied ? "Copied" : "Copy"}</span>
               </button>

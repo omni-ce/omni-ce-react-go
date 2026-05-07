@@ -3,11 +3,11 @@ import { useNavigate } from "react-router";
 import { useAuthStore } from "@/stores/authStore";
 import { useRuleStore } from "@/stores/ruleStore";
 import { useLanguageStore } from "@/stores/languageStore";
-import { RiShieldCheckLine } from "react-icons/ri";
 import AppIconSvg from "@/assets/react_go.svg";
 import ControlButton from "@/components/ControlButton";
 import Loading from "@/components/Loading";
 import RoleStepper from "@/components/RoleStepper";
+import { IconComponent } from "@/components/ui/IconSelector";
 
 export default function SelectRolePage() {
   const navigate = useNavigate();
@@ -93,7 +93,10 @@ export default function SelectRolePage() {
           <div className="bg-dark-800/80 backdrop-blur-xl border border-dark-600/50 rounded-2xl p-6 sm:p-8 shadow-2xl shadow-black/20">
             {/* Header */}
             <div className="flex items-center justify-center gap-2 mb-6">
-              <RiShieldCheckLine className="w-5 h-5 text-dark-300" />
+              <IconComponent
+                iconName="Ri/RiShieldCheckLine"
+                className="w-5 h-5 text-dark-300"
+              />
               <span className="text-sm text-dark-300 font-mono">
                 {language({
                   id: "pilih divisi dan jabatan",

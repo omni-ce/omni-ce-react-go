@@ -1,10 +1,4 @@
 import { useEffect, useState } from "react";
-import {
-  RiKeyLine,
-  RiEyeLine,
-  RiEyeOffLine,
-  RiSettings3Line,
-} from "react-icons/ri";
 import SectionTitle from "@/components/SectionTitle";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
@@ -13,6 +7,7 @@ import { settingService } from "@/services/setting.service";
 import { useAuthStore } from "@/stores/authStore";
 import { useLanguageStore } from "@/stores/languageStore";
 import AppIconSvg from "@/assets/react_go.svg";
+import { IconComponent } from "@/components/ui/IconSelector";
 
 interface Props {}
 export default function SettingPage({}: Props) {
@@ -150,7 +145,10 @@ export default function SettingPage({}: Props) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-neon-yellow/10 border border-neon-yellow/20 flex items-center justify-center">
-                <RiSettings3Line className="w-5 h-5 text-neon-yellow" />
+                <IconComponent
+                  iconName="Ri/RiSettings3Line"
+                  className="w-5 h-5 text-neon-yellow"
+                />
               </div>
               <div>
                 <p className="text-sm font-semibold text-foreground">
@@ -193,7 +191,10 @@ export default function SettingPage({}: Props) {
           {language({ id: "Ubah Password", en: "Change Password" })}
         </SectionTitle>
         <div className="flex items-center gap-2 mb-2">
-          <RiKeyLine className="w-4 h-4 text-dark-400" />
+          <IconComponent
+            iconName="Ri/RiKeyLine"
+            className="w-4 h-4 text-dark-400"
+          />
           <p className="text-xs text-dark-400 font-mono">
             {language({
               id: "Perbarui password akun Anda",
@@ -223,9 +224,9 @@ export default function SettingPage({}: Props) {
               className="absolute right-3 top-1/2 -translate-y-1/2 text-dark-400 hover:text-foreground transition-colors"
             >
               {showCurrent ? (
-                <RiEyeOffLine className="w-4 h-4" />
+                <IconComponent iconName="Ri/RiEyeOffLine" className="w-4 h-4" />
               ) : (
-                <RiEyeLine className="w-4 h-4" />
+                <IconComponent iconName="Ri/RiEyeLine" className="w-4 h-4" />
               )}
             </button>
           </div>
@@ -253,9 +254,12 @@ export default function SettingPage({}: Props) {
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-dark-400 hover:text-foreground transition-colors"
               >
                 {showNew ? (
-                  <RiEyeOffLine className="w-4 h-4" />
+                  <IconComponent
+                    iconName="Ri/RiEyeOffLine"
+                    className="w-4 h-4"
+                  />
                 ) : (
-                  <RiEyeLine className="w-4 h-4" />
+                  <IconComponent iconName="Ri/RiEyeLine" className="w-4 h-4" />
                 )}
               </button>
             </div>
@@ -286,7 +290,7 @@ export default function SettingPage({}: Props) {
             disabled={isSaving}
             className="flex items-center gap-2 px-5 py-2.5 bg-accent-500 hover:bg-accent-600 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-xl transition-all hover:shadow-lg hover:shadow-accent-500/25"
           >
-            <RiKeyLine className="w-4 h-4" />
+            <IconComponent iconName="Ri/RiKeyLine" className="w-4 h-4" />
             {language({ id: "Ubah Password", en: "Change Password" })}
           </button>
         </div>

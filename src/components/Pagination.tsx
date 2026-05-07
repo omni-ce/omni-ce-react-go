@@ -32,16 +32,6 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/Dialog";
-import {
-  HiOutlineSearch,
-  HiOutlineChevronLeft,
-  HiOutlineChevronRight,
-  HiOutlineChevronUp,
-  HiOutlineChevronDown,
-  HiOutlinePencil,
-  HiOutlineTrash,
-  HiOutlinePlus,
-} from "react-icons/hi";
 import { useLanguageStore } from "@/stores/languageStore";
 import satellite from "@/lib/satellite";
 import type { Response, WithPagination } from "@/types/response";
@@ -52,6 +42,7 @@ import type {
   DynamicFormField as PaginationField,
 } from "@/components/DynamicForm";
 import DynamicForm from "@/components/DynamicForm";
+import { IconComponent } from "@/components/ui/IconSelector";
 
 interface PaginationFetchParams {
   page: number;
@@ -267,7 +258,7 @@ const Pagination = forwardRef(function PaginationInner<T>(
                   size="icon"
                   onClick={() => openEdit(row)}
                 >
-                  <HiOutlinePencil size={16} />
+                  <IconComponent iconName="Hi/HiOutlinePencil" size={16} />
                 </Button>
               )}
               {showDelete && (
@@ -277,7 +268,7 @@ const Pagination = forwardRef(function PaginationInner<T>(
                   onClick={() => openDelete(row)}
                   className="text-neon-red hover:bg-neon-red/10"
                 >
-                  <HiOutlineTrash size={16} />
+                  <IconComponent iconName="Hi/HiOutlineTrash" size={16} />
                 </Button>
               )}
             </div>
@@ -766,12 +757,13 @@ const Pagination = forwardRef(function PaginationInner<T>(
                   className="flex items-center gap-2"
                   size="sm"
                 >
-                  <HiOutlinePlus size={16} />
+                  <IconComponent iconName="Hi/HiOutlinePlus" size={16} />
                   {language({ id: "Tambah Data", en: "Add Data" })}
                 </Button>
               )}
               <div className="relative">
-                <HiOutlineSearch
+                <IconComponent
+                  iconName="Hi/HiOutlineSearch"
                   size={16}
                   className="absolute left-3 top-1/2 -translate-y-1/2 text-dark-400"
                 />
@@ -839,12 +831,19 @@ const Pagination = forwardRef(function PaginationInner<T>(
                         <span className="text-dark-400">
                           {sortBy === column.key ? (
                             sortOrder === "DESC" ? (
-                              <HiOutlineChevronDown size={14} />
+                              <IconComponent
+                                iconName="Hi/HiOutlineChevronDown"
+                                size={14}
+                              />
                             ) : (
-                              <HiOutlineChevronUp size={14} />
+                              <IconComponent
+                                iconName="Hi/HiOutlineChevronUp"
+                                size={14}
+                              />
                             )
                           ) : (
-                            <HiOutlineChevronUp
+                            <IconComponent
+                              iconName="Hi/HiOutlineChevronUp"
                               size={14}
                               className="opacity-30"
                             />
@@ -932,7 +931,7 @@ const Pagination = forwardRef(function PaginationInner<T>(
                 className="flex items-center gap-2"
                 onClick={() => setBulkDeleteDialogOpen(true)}
               >
-                <HiOutlineTrash size={14} />
+                <IconComponent iconName="Hi/HiOutlineTrash" size={14} />
                 {language({ id: "Hapus", en: "Delete" })} {selectedIds.size}{" "}
                 {language({ id: "data", en: "items" })}
               </Button>
@@ -969,7 +968,7 @@ const Pagination = forwardRef(function PaginationInner<T>(
                 onClick={() => setCurrentPage((p) => p - 1)}
                 className="w-8 h-8 p-0 rounded-full"
               >
-                <HiOutlineChevronLeft size={14} />
+                <IconComponent iconName="Hi/HiOutlineChevronLeft" size={14} />
               </Button>
 
               {paginationWindow[0] > 1 && (
@@ -1024,7 +1023,7 @@ const Pagination = forwardRef(function PaginationInner<T>(
                 onClick={() => setCurrentPage((p) => p + 1)}
                 className="w-8 h-8 p-0 rounded-full"
               >
-                <HiOutlineChevronRight size={14} />
+                <IconComponent iconName="Hi/HiOutlineChevronRight" size={14} />
               </Button>
             </div>
           </div>

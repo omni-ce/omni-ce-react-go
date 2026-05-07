@@ -1,14 +1,7 @@
 import { useState } from "react";
-import {
-  RiBookOpenLine,
-  RiRocketLine,
-  RiStackLine,
-  RiSettings3Line,
-  RiArrowRightSLine,
-  RiMenuLine,
-  RiCloseLine,
-} from "react-icons/ri";
 import { Link } from "react-router";
+
+import { IconComponent } from "@/components/ui/IconSelector";
 
 // Content
 import Introduction from "@/pages/doc/Introduction";
@@ -21,7 +14,7 @@ import AddingPages from "@/pages/doc/AddingPages";
 interface DocSection {
   id: string;
   label: string;
-  icon: React.ElementType;
+  icon: string;
   items: DocItem[];
 }
 
@@ -35,7 +28,7 @@ const sections: DocSection[] = [
   {
     id: "getting-started",
     label: "Getting Started",
-    icon: RiRocketLine,
+    icon: "Ri/RiRocketLine",
     items: [
       {
         id: "introduction",
@@ -52,7 +45,7 @@ const sections: DocSection[] = [
   {
     id: "structure",
     label: "Project Structure",
-    icon: RiStackLine,
+    icon: "Ri/RiStackLine",
     items: [
       {
         id: "folder-structure",
@@ -69,7 +62,7 @@ const sections: DocSection[] = [
   {
     id: "customization",
     label: "Customization",
-    icon: RiSettings3Line,
+    icon: "Ri/RiSettings3Line",
     items: [
       {
         id: "theming",
@@ -123,7 +116,10 @@ export default function DocPage() {
         {/* Sidebar header */}
         <div className="h-16 flex items-center gap-3 px-5 border-b border-dark-600/50 shrink-0">
           <div className="w-7 h-7 rounded-lg bg-accent-500/20 border border-accent-500/30 flex items-center justify-center shrink-0">
-            <RiBookOpenLine className="w-4 h-4 text-accent-400" />
+            <IconComponent
+              iconName="Ri/RiBookOpenLine"
+              className="w-4 h-4 text-accent-400"
+            />
           </div>
           <div>
             <p className="text-sm font-bold text-foreground">Docs</p>
@@ -133,14 +129,13 @@ export default function DocPage() {
             onClick={() => setSidebarOpen(false)}
             className="ml-auto lg:hidden text-dark-400 hover:text-foreground"
           >
-            <RiCloseLine className="w-4 h-4" />
+            <IconComponent iconName="Ri/RiCloseLine" className="w-4 h-4" />
           </button>
         </div>
 
         {/* Nav */}
         <nav className="flex-1 py-4 px-3 space-y-1">
           {sections.map((section) => {
-            const Icon = section.icon;
             const isExpanded = activeSection === section.id;
             return (
               <div key={section.id}>
@@ -152,9 +147,13 @@ export default function DocPage() {
                       : "text-dark-300 hover:text-foreground hover:bg-dark-700/50"
                   }`}
                 >
-                  <Icon className="w-4 h-4 shrink-0" />
+                  <IconComponent
+                    iconName={section.icon}
+                    className="w-4 h-4 shrink-0"
+                  />
                   <span className="flex-1 text-left">{section.label}</span>
-                  <RiArrowRightSLine
+                  <IconComponent
+                    iconName="Ri/RiArrowRightSLine"
                     className={`w-3.5 h-3.5 transition-transform ${isExpanded ? "rotate-90" : ""}`}
                   />
                 </button>
@@ -199,7 +198,7 @@ export default function DocPage() {
             onClick={() => setSidebarOpen(true)}
             className="lg:hidden p-2 text-dark-400 hover:text-foreground"
           >
-            <RiMenuLine className="w-5 h-5" />
+            <IconComponent iconName="Ri/RiMenuLine" className="w-5 h-5" />
           </button>
           {/* Breadcrumb */}
           <div className="flex items-center gap-1.5 text-sm font-mono text-dark-400">

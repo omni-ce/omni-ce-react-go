@@ -1,48 +1,40 @@
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
-import {
-  RiCheckDoubleLine,
-  RiInformationLine,
-  RiCheckboxCircleLine,
-  RiAlertLine,
-  RiErrorWarningLine,
-  RiSettings3Line,
-  RiArrowRightLine,
-} from "react-icons/ri";
 import { useLanguageStore } from "@/stores/languageStore";
 import type { INotification } from "@/types/notification";
 import { timeAgo } from "@/utils/datetime";
 import { useAuthStore } from "@/stores/authStore";
 import { getSseClient } from "@/lib/sse";
 import { useNotificationStore } from "@/stores/notificationStore";
+import { IconComponent } from "@/components/ui/IconSelector";
 
 const typeConfig = {
   info: {
-    icon: RiInformationLine,
+    icon: "Ri/RiInformationLine",
     color: "text-accent-400",
     bg: "bg-accent-500/10",
     dot: "bg-accent-400",
   },
   success: {
-    icon: RiCheckboxCircleLine,
+    icon: "Ri/RiCheckboxCircleLine",
     color: "text-neon-green",
     bg: "bg-neon-green/10",
     dot: "bg-neon-green",
   },
   warning: {
-    icon: RiAlertLine,
+    icon: "Ri/RiAlertLine",
     color: "text-neon-yellow",
     bg: "bg-neon-yellow/10",
     dot: "bg-neon-yellow",
   },
   error: {
-    icon: RiErrorWarningLine,
+    icon: "Ri/RiErrorWarningLine",
     color: "text-neon-red",
     bg: "bg-neon-red/10",
     dot: "bg-neon-red",
   },
   system: {
-    icon: RiSettings3Line,
+    icon: "Ri/RiSettings3Line",
     color: "text-neon-cyan",
     bg: "bg-neon-cyan/10",
     dot: "bg-neon-cyan",
@@ -144,7 +136,10 @@ export default function NotificationPopup({
             onClick={onMarkAllRead}
             className="flex items-center gap-1 text-[11px] font-mono text-accent-400 hover:text-accent-300 transition-colors"
           >
-            <RiCheckDoubleLine className="w-3.5 h-3.5" />
+            <IconComponent
+              iconName="Ri/RiCheckDoubleLine"
+              className="w-3.5 h-3.5"
+            />
             {language({ id: "Tandai dibaca", en: "Mark all read" })}
           </button>
         )}
@@ -155,7 +150,10 @@ export default function NotificationPopup({
         {recent.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 px-4">
             <div className="w-12 h-12 rounded-full bg-dark-700/50 flex items-center justify-center mb-3">
-              <RiInformationLine className="w-6 h-6 text-dark-400" />
+              <IconComponent
+                iconName="Ri/RiInformationLine"
+                className="w-6 h-6 text-dark-400"
+              />
             </div>
             <p className="text-sm text-dark-400 font-mono">
               {language({
@@ -167,7 +165,6 @@ export default function NotificationPopup({
         ) : (
           recent.map((notif) => {
             const config = typeConfig[notif.type];
-            const Icon = config.icon;
             return (
               <button
                 key={notif.id}
@@ -183,7 +180,10 @@ export default function NotificationPopup({
                 <div
                   className={`shrink-0 w-8 h-8 rounded-lg ${config.bg} flex items-center justify-center mt-0.5`}
                 >
-                  <Icon className={`w-4 h-4 ${config.color}`} />
+                  <IconComponent
+                    iconName={config.icon}
+                    className={`w-4 h-4 ${config.color}`}
+                  />
                 </div>
 
                 {/* Content */}
@@ -225,7 +225,10 @@ export default function NotificationPopup({
           className="w-full flex items-center justify-center gap-2 px-5 py-3 text-xs font-semibold text-accent-400 hover:text-accent-300 hover:bg-dark-700/30 transition-all"
         >
           {language({ id: "Lihat semua", en: "See all" })}
-          <RiArrowRightLine className="w-3.5 h-3.5" />
+          <IconComponent
+            iconName="Ri/RiArrowRightLine"
+            className="w-3.5 h-3.5"
+          />
         </button>
       </div>
     </div>

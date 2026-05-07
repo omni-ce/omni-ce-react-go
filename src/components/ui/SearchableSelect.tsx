@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect, useMemo } from "react";
-import { HiChevronDown, HiSearch, HiX } from "react-icons/hi";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { cn } from "@/lib/utils";
+import { IconComponent } from "./IconSelector";
 
 interface Option {
   value: string;
@@ -86,24 +86,34 @@ export function SearchableSelect({
         </span>
         {value && !disabled && !loading ? (
           <div className="flex items-center gap-1">
-            <HiX
+            <IconComponent
+              iconName="Hi/HiX"
               className="w-4 h-4 text-dark-400 hover:text-dark-100 cursor-pointer"
               onClick={(e) => {
                 e.stopPropagation();
                 onChange("");
               }}
             />
-            <HiChevronDown className="w-4 h-4 text-dark-400" />
+            <IconComponent
+              iconName="Hi/HiChevronDown"
+              className="w-4 h-4 text-dark-400"
+            />
           </div>
         ) : (
-          <HiChevronDown className="w-4 h-4 text-dark-400" />
+          <IconComponent
+            iconName="Hi/HiChevronDown"
+            className="w-4 h-4 text-dark-400"
+          />
         )}
       </button>
 
       {isOpen && (
         <div className="absolute z-100 mt-1 w-full bg-dark-800 border border-dark-500/50 rounded-xl shadow-xl overflow-hidden flex flex-col max-h-60">
           <div className="p-2 border-b border-dark-500/50 flex items-center gap-2 bg-dark-900/60">
-            <HiSearch className="w-4 h-4 text-dark-400 shrink-0" />
+            <IconComponent
+              iconName="Hi/HiSearch"
+              className="w-4 h-4 text-dark-400 shrink-0"
+            />
             <input
               type="text"
               className="w-full bg-transparent border-none text-sm text-foreground focus:outline-none placeholder:text-dark-400"

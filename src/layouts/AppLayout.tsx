@@ -5,18 +5,10 @@ import {
   type IndexRouteObject,
   Link,
 } from "react-router";
-import { useEffect, useRef, useState, useCallback, useMemo } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { useAuthStore } from "@/stores/authStore";
 import { useSidebarStore } from "@/stores/sidebarStore";
 import { useRuleStore } from "@/stores/ruleStore";
-import {
-  RiLogoutBoxLine,
-  RiMenuLine,
-  RiCloseLine,
-  RiSettings4Line,
-  RiFileTextLine,
-  RiNotificationLine,
-} from "react-icons/ri";
 import Loading from "@/components/Loading";
 import version from "@/version";
 import { no_auth_navigate } from "@/constant";
@@ -35,13 +27,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/Dialog";
+import { IconComponent } from "@/components/ui/IconSelector";
 
 export interface ISidebarLink extends Partial<IndexRouteObject> {
   show_hr?: boolean;
   hr_title?: string;
   label: Record<LanguageCode, string>;
   strict?: boolean;
-  icon: React.ComponentType<{ size?: number }>;
+  icon: string;
   isHide?: boolean;
   extraRuleKeys?: {
     label: Record<LanguageCode, string>;
@@ -272,7 +265,7 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
               className="hidden lg:flex text-dark-300 hover:text-foreground transition-colors shrink-0 ml-auto"
               title={effectiveCollapsed ? "Expand sidebar" : "Collapse sidebar"}
             >
-              <RiMenuLine className="w-5 h-5" />
+              <IconComponent iconName="Ri/RiMenuLine" className="w-5 h-5" />
             </button>
 
             {/* Mobile close button */}
@@ -280,7 +273,7 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
               onClick={() => setMobileOpen(false)}
               className="ml-auto lg:hidden text-dark-300 hover:text-foreground transition-colors"
             >
-              <RiCloseLine className="w-5 h-5" />
+              <IconComponent iconName="Ri/RiCloseLine" className="w-5 h-5" />
             </button>
           </div>
         </div>
@@ -307,7 +300,6 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
             })
             .map((link) => {
               const isActive = location.pathname === `/app/${link.path}`;
-              const Icon = link.icon;
               return (
                 <Link
                   key={`/app/${link.path}`}
@@ -327,7 +319,7 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
                 `}
                   title={effectiveCollapsed ? language(link.label) : undefined}
                 >
-                  <Icon size={20} />
+                  <IconComponent iconName={link.icon} size={20} />
                   {(!effectiveCollapsed || isMobileOpen) && (
                     <span className="truncate">{language(link.label)}</span>
                   )}
@@ -376,7 +368,10 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
             `}
             title={language({ id: "Pengaturan", en: "Settings" })}
           >
-            <RiSettings4Line className="w-4.5 h-4.5 shrink-0" />
+            <IconComponent
+              iconName="Ri/RiSettings4Line"
+              className="w-4.5 h-4.5 shrink-0"
+            />
             {(!effectiveCollapsed || isMobileOpen) && (
               <span>{language({ id: "Pengaturan", en: "Settings" })}</span>
             )}
@@ -388,7 +383,10 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-dark-300 hover:text-foreground hover:bg-dark-700/50 transition-all border border-transparent ${effectiveCollapsed && !isMobileOpen ? "justify-center" : ""}`}
             title={language({ id: "Dokumen", en: "Documentation" })}
           >
-            <RiFileTextLine className="w-4.5 h-4.5 shrink-0" />
+            <IconComponent
+              iconName="Ri/RiFileTextLine"
+              className="w-4.5 h-4.5 shrink-0"
+            />
             {(!effectiveCollapsed || isMobileOpen) && (
               <span>{language({ id: "Dokumen", en: "Documentation" })}</span>
             )}
@@ -400,7 +398,10 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-dark-300 hover:text-neon-red hover:bg-neon-red/5 transition-all border border-transparent ${effectiveCollapsed && !isMobileOpen ? "justify-center" : ""}`}
             title={language({ id: "Keluar", en: "Sign out" })}
           >
-            <RiLogoutBoxLine className="w-4.5 h-4.5 shrink-0" />
+            <IconComponent
+              iconName="Ri/RiLogoutBoxLine"
+              className="w-4.5 h-4.5 shrink-0"
+            />
             {(!effectiveCollapsed || isMobileOpen) && (
               <span>{language({ id: "Keluar", en: "Sign Out" })}</span>
             )}
@@ -417,7 +418,7 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
             onClick={() => setMobileOpen(true)}
             className="lg:hidden text-dark-300 hover:text-foreground transition-colors mr-4"
           >
-            <RiMenuLine className="w-5 h-5" />
+            <IconComponent iconName="Ri/RiMenuLine" className="w-5 h-5" />
           </button>
 
           {/* Page title from route */}
@@ -440,7 +441,10 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
                 className="relative p-2 rounded-lg text-dark-300 hover:text-foreground hover:bg-dark-700/50 transition-all"
                 title={language({ id: "Notifikasi", en: "Notifications" })}
               >
-                <RiNotificationLine className="w-4.5 h-4.5" />
+                <IconComponent
+                  iconName="Ri/RiNotificationLine"
+                  className="w-4.5 h-4.5"
+                />
                 {unreadCount > 0 && (
                   <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center min-w-4 h-4 px-1 bg-neon-red text-white text-[9px] font-bold rounded-full animate-pulse">
                     {unreadCount}

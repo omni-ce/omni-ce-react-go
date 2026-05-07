@@ -1,15 +1,15 @@
-import { RiArrowDownLine, RiArrowUpLine } from "react-icons/ri";
+import { IconComponent } from "@/components/ui/IconSelector";
 
 export default function StatCard({
   label,
   value,
-  icon: Icon,
+  icon,
   color,
   trend,
 }: {
   label: string;
   value: string | number;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: string;
   color: string;
   trend?: { value: string; up: boolean };
 }) {
@@ -27,16 +27,19 @@ export default function StatCard({
         <div
           className={`w-10 h-10 rounded-xl border flex items-center justify-center ${colorMap[color]}`}
         >
-          <Icon className="w-5 h-5" />
+          <IconComponent iconName={icon} className="w-5 h-5" />
         </div>
         {trend && (
           <div
             className={`flex items-center gap-1 text-xs font-mono ${trend.up ? "text-neon-green" : "text-neon-red"}`}
           >
             {trend.up ? (
-              <RiArrowUpLine className="w-3 h-3" />
+              <IconComponent iconName="Ri/RiArrowUpLine" className="w-3 h-3" />
             ) : (
-              <RiArrowDownLine className="w-3 h-3" />
+              <IconComponent
+                iconName="Ri/RiArrowDownLine"
+                className="w-3 h-3"
+              />
             )}
             {trend.value}
           </div>

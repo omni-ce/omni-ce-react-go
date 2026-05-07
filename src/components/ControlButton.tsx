@@ -1,7 +1,7 @@
-import { RiMoonLine, RiSunLine, RiTranslate2 } from "react-icons/ri";
 import { Fragment } from "react/jsx-runtime";
 import { useLanguageStore } from "@/stores/languageStore";
 import { useThemeStore } from "@/stores/themeStore";
+import { IconComponent } from "./ui/IconSelector";
 
 export default function ControlButton() {
   const { languageCode, toggleLanguage, language } = useLanguageStore();
@@ -18,7 +18,7 @@ export default function ControlButton() {
           en: "Switch language",
         })}
       >
-        <RiTranslate2 className="w-3.5 h-3.5" />
+        <IconComponent iconName="Ri/RiTranslate2" className="w-3.5 h-3.5" />
         <span className="uppercase">{languageCode}</span>
       </button>
 
@@ -33,9 +33,9 @@ export default function ControlButton() {
         }
       >
         {isDarkMode ? (
-          <RiSunLine className="w-4 h-4" />
+          <IconComponent iconName="Ri/RiSunLine" className="w-4 h-4" />
         ) : (
-          <RiMoonLine className="w-4 h-4" />
+          <IconComponent iconName="Ri/RiMoonLine" className="w-4 h-4" />
         )}
       </button>
     </Fragment>
