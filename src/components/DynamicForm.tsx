@@ -842,7 +842,17 @@ function DynamicPassword({
   const [show, setShow] = useState(false);
   return (
     <div className="relative mt-1.5 flex items-center">
-      <div className="absolute left-3 z-10 flex items-center justify-center">
+      <Input
+        id={`field-${field.key}`}
+        type={show ? "text" : "password"}
+        className="pr-10"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        minLength={field.minLength}
+        maxLength={field.maxLength}
+        disabled={disabled}
+      />
+      <div className="absolute right-3 z-10 flex items-center justify-center">
         <button
           type="button"
           className="text-dark-400 hover:text-foreground focus:outline-none"
@@ -855,16 +865,6 @@ function DynamicPassword({
           />
         </button>
       </div>
-      <Input
-        id={`field-${field.key}`}
-        type={show ? "text" : "password"}
-        className="pl-10"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        minLength={field.minLength}
-        maxLength={field.maxLength}
-        disabled={disabled}
-      />
     </div>
   );
 }
