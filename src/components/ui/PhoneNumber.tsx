@@ -2,6 +2,7 @@ import countries from "@/countries";
 import { useLanguageStore } from "@/stores/languageStore";
 import * as flags from "country-flag-icons/react/3x2";
 import { useState, useRef, useEffect, useMemo } from "react";
+import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 import { IconComponent } from "./IconSelector";
 
@@ -26,6 +27,8 @@ export default function PhoneNumber({
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0, width: 0 });
 
   // Find country by language code, fallback to ID (Indonesia)
   const defaultCountry = useMemo(() => {
@@ -74,13 +77,31 @@ export default function PhoneNumber({
   }, [search]);
 
   useEffect(() => {
+    if (isOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setDropdownPos({
+        top: rect.bottom + window.scrollY + 8, // 8px for mt-2 spacing
+        left: rect.left + window.scrollX,
+        width: Math.max(rect.width, 288), // min width 72 (288px)
+      });
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
+      // Allow click if it's inside the container (input/button)
       if (
         containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
+        containerRef.current.contains(event.target as Node)
       ) {
-        setIsOpen(false);
+        return;
       }
+      // Also close if click is outside the portal dropdown
+      const portal = document.getElementById("phone-dropdown-portal");
+      if (portal && portal.contains(event.target as Node)) {
+        return;
+      }
+      setIsOpen(false);
     };
     const handleEsc = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -103,6 +124,7 @@ export default function PhoneNumber({
         {/* Country Code Dropdown */}
         <div className="relative">
           <button
+            ref={buttonRef}
             type="button"
             onClick={() => setIsOpen(!isOpen)}
             disabled={disabled}
@@ -131,66 +153,81 @@ export default function PhoneNumber({
             />
           </button>
 
-          {/* Dropdown Menu */}
-          {isOpen && (
-            <div className="absolute top-full left-0 z-1000 mt-2 w-72 bg-dark-800 border border-dark-500/50 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-80 animate-in fade-in zoom-in-95 duration-200 origin-top-left">
-              <div className="p-2 border-b border-dark-500/50 flex items-center gap-2 bg-dark-900/60 sticky top-0 z-10">
-                <IconComponent
-                  iconName="Hi/HiSearch"
-                  className="w-4 h-4 text-dark-400 shrink-0"
-                />
-                <input
-                  type="text"
-                  className="w-full bg-transparent border-none text-sm text-foreground focus:outline-none placeholder:text-dark-400"
-                  placeholder={languageCode === "id" ? "Cari..." : "Search..."}
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  autoFocus
-                />
-              </div>
-              <div className="overflow-y-auto p-1 scrollbar-hide">
-                {filteredCountries.length === 0 ? (
-                  <div className="p-4 text-center text-sm text-dark-400">
-                    {languageCode === "id"
-                      ? "Tidak ditemukan"
-                      : "No results found"}
-                  </div>
-                ) : (
-                  filteredCountries.map((country) => {
-                    const Flag = (
-                      flags as unknown as Record<
-                        string,
-                        React.ComponentType<{ className?: string }>
-                      >
-                    )[country.flag];
-                    return (
-                      <button
-                        key={country.code}
-                        type="button"
-                        onClick={() => handleCountrySelect(country.code)}
-                        className={cn(
-                          "flex w-full items-center gap-3 px-3 py-2 text-left text-sm rounded-lg transition-colors hover:bg-dark-600",
-                          selectedCountry === country.code
-                            ? "bg-accent-500/20 text-accent-400"
-                            : "text-foreground",
-                        )}
-                      >
-                        {Flag && (
-                          <div className="h-3.5 w-5 shrink-0 overflow-hidden rounded-sm shadow-sm">
-                            <Flag className="h-full w-full object-cover" />
-                          </div>
-                        )}
-                        <span className="flex-1 truncate">{country.name}</span>
-                        <span className="text-dark-400 text-xs font-mono">
-                          +{country.phoneCode}
-                        </span>
-                      </button>
-                    );
-                  })
-                )}
-              </div>
-            </div>
-          )}
+          {/* Dropdown Menu Portal */}
+          {isOpen &&
+            typeof document !== "undefined" &&
+            createPortal(
+              <div
+                id="phone-dropdown-portal"
+                className="absolute z-[1000] bg-dark-800 border border-dark-500/50 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-80"
+                style={{
+                  top: `${dropdownPos.top}px`,
+                  left: `${dropdownPos.left}px`,
+                  width: `${dropdownPos.width}px`,
+                }}
+              >
+                <div className="p-2 border-b border-dark-500/50 flex items-center gap-2 bg-dark-900/60 sticky top-0 z-10">
+                  <IconComponent
+                    iconName="Hi/HiSearch"
+                    className="w-4 h-4 text-dark-400 shrink-0"
+                  />
+                  <input
+                    type="text"
+                    className="w-full bg-transparent border-none text-sm text-foreground focus:outline-none placeholder:text-dark-400"
+                    placeholder={
+                      languageCode === "id" ? "Cari..." : "Search..."
+                    }
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    autoFocus
+                  />
+                </div>
+                <div className="overflow-y-auto p-1 scrollbar-hide">
+                  {filteredCountries.length === 0 ? (
+                    <div className="p-4 text-center text-sm text-dark-400">
+                      {languageCode === "id"
+                        ? "Tidak ditemukan"
+                        : "No results found"}
+                    </div>
+                  ) : (
+                    filteredCountries.map((country) => {
+                      const Flag = (
+                        flags as unknown as Record<
+                          string,
+                          React.ComponentType<{ className?: string }>
+                        >
+                      )[country.flag];
+                      return (
+                        <button
+                          key={country.code}
+                          type="button"
+                          onClick={() => handleCountrySelect(country.code)}
+                          className={cn(
+                            "flex w-full items-center gap-3 px-3 py-2 text-left text-sm rounded-lg transition-colors hover:bg-dark-600",
+                            selectedCountry === country.code
+                              ? "bg-accent-500/20 text-accent-400"
+                              : "text-foreground",
+                          )}
+                        >
+                          {Flag && (
+                            <div className="h-3.5 w-5 shrink-0 overflow-hidden rounded-sm shadow-sm">
+                              <Flag className="h-full w-full object-cover" />
+                            </div>
+                          )}
+                          <span className="flex-1 truncate">
+                            {country.name}
+                          </span>
+                          <span className="text-dark-400 text-xs font-mono">
+                            +{country.phoneCode}
+                          </span>
+                        </button>
+                      );
+                    })
+                  )}
+                </div>
+              </div>,
+              document.body,
+            )}
         </div>
 
         {/* Phone Number Input */}
