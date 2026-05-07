@@ -11,6 +11,7 @@ interface Props {
   error?: string;
   disabled?: boolean;
   phoneDefaultCountry?: string;
+  phoneFirstAntiZero?: boolean;
 }
 
 export default function PhoneNumber({
@@ -19,6 +20,7 @@ export default function PhoneNumber({
   error,
   disabled = false,
   phoneDefaultCountry,
+  phoneFirstAntiZero = false,
 }: Props) {
   const { languageCode } = useLanguageStore();
   const [isOpen, setIsOpen] = useState(false);
@@ -197,7 +199,10 @@ export default function PhoneNumber({
           value={value}
           disabled={disabled}
           onChange={(e) => {
-            const numericValue = e.target.value.replace(/\D/g, "");
+            let numericValue = e.target.value.replace(/\D/g, "");
+            if (phoneFirstAntiZero && numericValue.startsWith("0")) {
+              numericValue = numericValue.replace(/^0+/, "");
+            }
             onChange(numericValue);
           }}
           placeholder={languageCode === "id" ? "Nomor telepon" : "Phone number"}

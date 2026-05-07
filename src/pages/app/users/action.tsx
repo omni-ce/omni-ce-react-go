@@ -114,6 +114,7 @@ export const ChangePassword = ({ row, onClose }: ChangePasswordProps) => {
             type: "phone",
             required: true,
             phoneDefaultCountry: CountryKey.ID,
+            phoneFirstAntiZero: true,
           },
         ]}
         formData={formData}

@@ -111,6 +111,7 @@ export interface DynamicFormField {
   captchaSecurity?: "weak" | "medium" | "strong";
   captchaLength?: number;
   phoneDefaultCountry?: CountryKey;
+  phoneFirstAntiZero?: boolean;
 }
 
 function DynamicSelect({
@@ -1138,6 +1139,7 @@ export default function DynamicForm({
               value={String(formData[field.key] ?? "")}
               onChange={(val) => onChange(field.key, val)}
               phoneDefaultCountry={field.phoneDefaultCountry}
+              phoneFirstAntiZero={field.phoneFirstAntiZero}
               error={(errors[field.key] as string) || undefined}
               disabled={disabled}
             />
