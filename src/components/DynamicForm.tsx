@@ -10,6 +10,12 @@ import { HOST_API } from "@/environment";
 import BlankUser from "@/assets/blank-user.svg";
 import type { Option } from "@/types/option";
 import { IconComponent } from "@/components/ui/IconSelector";
+import CameraSelector from "@/components/ui/CameraSelector";
+import Captcha from "@/components/ui/CaptchaInput";
+import ColorPickerSelector from "@/components/ui/ColorPickerSelector";
+import CountrySelector from "@/components/ui/CountrySelector";
+import IconSelector from "@/components/ui/IconSelector";
+import PhoneNumber from "@/components/ui/PhoneNumber";
 
 export interface DynamicFormFieldOption {
   value: string;
@@ -80,7 +86,13 @@ export interface DynamicFormField {
     | "textarea"
     | "array"
     | "col"
-    | "key";
+    | "key"
+    | "camera"
+    | "captcha"
+    | "color"
+    | "country"
+    | "icon"
+    | "phone";
   options?: DynamicFormFieldOption[] | string;
   required?: boolean;
   minLength?: number;
@@ -95,6 +107,8 @@ export interface DynamicFormField {
   fileMaxSize?: number;
   fileType?: (FileType | FileType[])[];
   fileTemplate?: "profile" | "default";
+  captchaSecurity?: "weak" | "medium" | "strong";
+  captchaLength?: number;
 }
 
 function DynamicSelect({
@@ -814,6 +828,47 @@ function DebouncedInput({
   );
 }
 
+function DynamicPassword({
+  field,
+  value,
+  onChange,
+  disabled,
+}: {
+  field: DynamicFormField;
+  value: string;
+  onChange: (val: string) => void;
+  disabled?: boolean;
+}) {
+  const [show, setShow] = useState(false);
+  return (
+    <div className="relative mt-1.5 flex items-center">
+      <div className="absolute left-3 z-10 flex items-center justify-center">
+        <button
+          type="button"
+          className="text-dark-400 hover:text-foreground focus:outline-none"
+          onClick={() => setShow(!show)}
+          tabIndex={-1}
+        >
+          <IconComponent
+            iconName={show ? "Hi/HiOutlineEyeOff" : "Hi/HiOutlineEye"}
+            className="w-5 h-5"
+          />
+        </button>
+      </div>
+      <Input
+        id={`field-${field.key}`}
+        type={show ? "text" : "password"}
+        className="pl-10"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        minLength={field.minLength}
+        maxLength={field.maxLength}
+        disabled={disabled}
+      />
+    </div>
+  );
+}
+
 // ─── Col / Responsive Column Picker ──────────────────────────────────
 
 export interface ColValue {
@@ -1029,6 +1084,54 @@ export default function DynamicForm({
               }}
               minLength={field.minLength}
               maxLength={field.maxLength}
+            />
+          ) : field.type === "password" ? (
+            <DynamicPassword
+              field={field}
+              value={String(formData[field.key] ?? "")}
+              onChange={(val) => onChange(field.key, val)}
+            />
+          ) : field.type === "camera" ? (
+            <CameraSelector
+              value={String(formData[field.key] ?? "")}
+              onChange={(val) => {
+                // Assuming backend expects string/path or we handle blob elsewhere
+                // If it returns a Blob, we should probably upload it or store it.
+                // For now, let's just pass it as string if it's a URL, or as blob if needed.
+                // We'll just pass whatever CameraSelector gives us.
+                if (val instanceof Blob) {
+                  onChange(field.key, URL.createObjectURL(val));
+                } else {
+                  onChange(field.key, val);
+                }
+              }}
+            />
+          ) : field.type === "captcha" ? (
+            <Captcha
+              value={String(formData[field.key] ?? "")}
+              onChange={(val) => onChange(field.key, val)}
+              security={field.captchaSecurity}
+              length={field.captchaLength}
+            />
+          ) : field.type === "color" ? (
+            <ColorPickerSelector
+              value={String(formData[field.key] ?? "")}
+              onChange={(val) => onChange(field.key, val)}
+            />
+          ) : field.type === "country" ? (
+            <CountrySelector
+              value={String(formData[field.key] ?? "")}
+              onChange={(val) => onChange(field.key, val)}
+            />
+          ) : field.type === "icon" ? (
+            <IconSelector
+              value={String(formData[field.key] ?? "")}
+              onChange={(val) => onChange(field.key, val)}
+            />
+          ) : field.type === "phone" ? (
+            <PhoneNumber
+              value={String(formData[field.key] ?? "")}
+              onChange={(val) => onChange(field.key, val)}
             />
           ) : (
             <Input

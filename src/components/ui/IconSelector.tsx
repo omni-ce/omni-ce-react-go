@@ -244,12 +244,14 @@ interface Props {
   value: string;
   onChange: (iconName: string) => void;
   placeholder?: string;
+  disabled?: boolean;
 }
 
 export default function IconSelector({
   value,
   onChange,
   placeholder = "Select an icon",
+  disabled = false,
 }: Props) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [search, setSearch] = React.useState("");

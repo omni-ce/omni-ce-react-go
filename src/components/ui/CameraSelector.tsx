@@ -2,34 +2,33 @@ import { useEffect, useRef, useState } from 'react'
 
 interface Props {
   value?: string | Blob | null
-  onChange: (value: Blob | null) => void
+  onChange: (value: Blob | null | string) => void
   placeholder?: string
+  disabled?: boolean
 }
 
 export default function CameraSelector({
   value,
   onChange,
   placeholder = 'Open Camera',
+  disabled = false,
 }: Props) {
   const [showCamera, setShowCamera] = useState(false)
   const [capturedImage, setCapturedImage] = useState<string | null>(
     typeof value === 'string' ? value : null
   )
-  // @ts-ignore
   const [cameraDevices, setCameraDevices] = useState<MediaDeviceInfo[]>([])
   const [selectedDeviceId, setSelectedDeviceId] = useState<string>('')
-  const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user')
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const streamRef = useRef<MediaStream | null>(null)
 
   const loadCameraDevices = async () => {
     try {
-      // @ts-ignore
+      if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
       const devices = await navigator.mediaDevices.enumerateDevices()
-      // @ts-ignore
       const videoDevices = devices.filter(
-        (device: any) => device.kind === 'videoinput'
+        (device: MediaDeviceInfo) => device.kind === 'videoinput'
       )
       setCameraDevices(videoDevices)
       if (videoDevices.length > 0 && !selectedDeviceId) {
@@ -47,7 +46,6 @@ export default function CameraSelector({
       // Try with specific device if provided
       if (deviceId) {
         try {
-          // @ts-ignore
           stream = await navigator.mediaDevices.getUserMedia({
             video: { deviceId: { exact: deviceId } },
             audio: false,
@@ -55,7 +53,6 @@ export default function CameraSelector({
         } catch (err) {
           console.warn('Failed with exact deviceId, trying without:', err)
           // Fallback to any camera
-          // @ts-ignore
           stream = await navigator.mediaDevices.getUserMedia({
             video: true,
             audio: false,
@@ -63,7 +60,6 @@ export default function CameraSelector({
         }
       } else {
         // First time opening, try simplest approach
-        // @ts-ignore
         stream = await navigator.mediaDevices.getUserMedia({
           video: true,
           audio: false,
@@ -83,22 +79,21 @@ export default function CameraSelector({
       // Set video source after state update
       setTimeout(() => {
         if (videoRef.current && streamRef.current) {
-          // @ts-ignore
           videoRef.current.srcObject = streamRef.current
-          // @ts-ignore
-          videoRef.current.play().catch((err: any) => {
+          videoRef.current.play().catch((err: unknown) => {
             console.error('Error playing video:', err)
           })
         }
       }, 100)
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error accessing camera:', error)
+      const err = error as Error;
       const errorMessage =
-        error.name === 'NotAllowedError'
+        err.name === 'NotAllowedError'
           ? 'Camera permission denied. Please allow camera access in your browser settings.'
-          : error.name === 'NotFoundError'
+          : err.name === 'NotFoundError'
             ? 'No camera found on this device.'
-            : error.name === 'OverconstrainedError'
+            : err.name === 'OverconstrainedError'
               ? 'Camera does not support the requested settings. Trying with default settings...'
               : 'Unable to access camera. Please check your camera and permissions.'
       alert(errorMessage)
@@ -109,8 +104,7 @@ export default function CameraSelector({
     setSelectedDeviceId(deviceId)
     // Stop current camera
     if (streamRef.current) {
-      // @ts-ignore
-      streamRef.current.getTracks().forEach((track: any) => track.stop())
+      streamRef.current.getTracks().forEach((track: MediaStreamTrack) => track.stop())
     }
     // Start new camera
     await startCamera(deviceId)
@@ -118,12 +112,10 @@ export default function CameraSelector({
 
   const stopCamera = () => {
     if (streamRef.current) {
-      // @ts-ignore
-      streamRef.current.getTracks().forEach((track: any) => track.stop())
+      streamRef.current.getTracks().forEach((track: MediaStreamTrack) => track.stop())
       streamRef.current = null
     }
     if (videoRef.current) {
-      // @ts-ignore
       videoRef.current.srcObject = null
     }
     setShowCamera(false)
@@ -133,17 +125,12 @@ export default function CameraSelector({
     if (videoRef.current && canvasRef.current) {
       const video = videoRef.current
       const canvas = canvasRef.current
-      // @ts-ignore
       canvas.width = video.videoWidth
-      // @ts-ignore
       canvas.height = video.videoHeight
-      // @ts-ignore
       const ctx = canvas.getContext('2d')
       if (ctx) {
-        // @ts-ignore
         ctx.drawImage(video, 0, 0)
-        // @ts-ignore
-        canvas.toBlob((blob: Blob) => {
+        canvas.toBlob((blob: Blob | null) => {
           if (blob) {
             const url = URL.createObjectURL(blob)
             setCapturedImage(url)
@@ -164,8 +151,7 @@ export default function CameraSelector({
   useEffect(() => {
     return () => {
       if (streamRef.current) {
-        // @ts-ignore
-        streamRef.current.getTracks().forEach((track: any) => track.stop())
+        streamRef.current.getTracks().forEach((track: MediaStreamTrack) => track.stop())
       }
     }
   }, [])
@@ -176,7 +162,8 @@ export default function CameraSelector({
         <button
           type="button"
           onClick={() => startCamera()}
-          className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-300 px-4 py-3 text-gray-600 transition hover:border-blue-500 hover:text-blue-600"
+          disabled={disabled}
+          className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-300 px-4 py-3 text-gray-600 transition hover:border-blue-500 hover:text-blue-600 disabled:opacity-50"
         >
           <svg
             className="h-6 w-6"
@@ -209,8 +196,8 @@ export default function CameraSelector({
               </label>
               <select
                 value={selectedDeviceId}
-                // @ts-ignore
                 onChange={(e) => switchCamera(e.target.value)}
+                disabled={disabled}
                 className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
               >
                 {cameraDevices.map((device, index) => (
@@ -226,7 +213,8 @@ export default function CameraSelector({
             <button
               type="button"
               onClick={captureImage}
-              className="flex-1 rounded-lg bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
+              disabled={disabled}
+              className="flex-1 rounded-lg bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700 disabled:opacity-50"
             >
               Capture
             </button>
@@ -249,7 +237,8 @@ export default function CameraSelector({
           <button
             type="button"
             onClick={retakePhoto}
-            className="w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-700 transition hover:bg-gray-50"
+            disabled={disabled}
+            className="w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-700 transition hover:bg-gray-50 disabled:opacity-50"
           >
             Retake Photo
           </button>

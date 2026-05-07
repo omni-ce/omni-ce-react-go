@@ -7,11 +7,12 @@ import { useThemeStore } from "@/stores/themeStore";
 
 interface Props {
   value: string;
-  onChange: (country: { name: string; key: string }) => void;
+  onChange: (value: string) => void;
   label?: string;
   required?: boolean;
   placeholder?: string;
   hideSelected?: boolean;
+  disabled?: boolean;
 }
 
 export default function CountrySelector({
@@ -21,6 +22,7 @@ export default function CountrySelector({
   required = false,
   placeholder = "Select a country",
   hideSelected = false,
+  disabled = false,
 }: Props) {
   const { isDarkMode } = useThemeStore();
   const [showDropdown, setShowDropdown] = useState(false);
@@ -36,10 +38,7 @@ export default function CountrySelector({
   const selectedCountry = countries.find((c) => c.code === value);
 
   const handleSelect = (country: (typeof countries)[0]) => {
-    onChange({
-      name: country.name,
-      key: country.flag,
-    });
+    onChange(country.code);
     setShowDropdown(false);
     setSearchQuery("");
   };
@@ -65,11 +64,12 @@ export default function CountrySelector({
       <button
         type="button"
         onClick={() => setShowDropdown(!showDropdown)}
+        disabled={disabled}
         className={`flex w-full items-center justify-between rounded-lg border px-4 py-2 ${
           isDarkMode
             ? "border-gray-600 bg-gray-700 text-white"
             : "border-gray-300 bg-white text-gray-900"
-        } focus:border-transparent focus:ring-2 focus:ring-blue-500`}
+        } focus:border-transparent focus:ring-2 focus:ring-blue-500 disabled:opacity-50`}
       >
         {selectedCountry ? (
           <div className="flex items-center gap-2">

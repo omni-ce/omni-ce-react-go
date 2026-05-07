@@ -7,9 +7,10 @@ interface Props {
   value?: string;
   onChange: (value: string) => void;
   error?: string;
+  disabled?: boolean;
 }
 
-export default function PhoneNumber({ value = "", onChange, error }: Props) {
+export default function PhoneNumber({ value = "", onChange, error, disabled = false }: Props) {
   const { languageCode } = useLanguageStore();
 
   // Find country by language code, fallback to ID (Indonesia)
@@ -42,7 +43,8 @@ export default function PhoneNumber({ value = "", onChange, error }: Props) {
           <button
             type="button"
             onClick={() => setIsOpen(!isOpen)}
-            className={`flex h-12.5 items-center gap-2 rounded-lg border px-3 transition outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 ${
+            disabled={disabled}
+            className={`flex h-12.5 items-center gap-2 rounded-lg border px-3 transition outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 disabled:opacity-50 ${
               error ? "border-red-500" : "border-gray-300"
             }`}
           >
@@ -98,12 +100,13 @@ export default function PhoneNumber({ value = "", onChange, error }: Props) {
         <input
           type="tel"
           value={value}
+          disabled={disabled}
           onChange={(e) => {
             const numericValue = e.target.value.replace(/\D/g, "");
             onChange(numericValue);
           }}
           placeholder="Phone number"
-          className={`flex-1 rounded-lg border px-4 py-3 transition outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
+          className={`flex-1 rounded-lg border px-4 py-3 transition outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500 disabled:opacity-50 ${
             error ? "border-red-500" : "border-gray-300"
           }`}
         />

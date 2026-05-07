@@ -4,7 +4,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { IoReload } from "react-icons/io5";
 
 interface CaptchaProps {
-  isPreview?: boolean;
+  value?: string;
+  onChange?: (value: string) => void;
+  disabled?: boolean;
   length?: number;
   security?: "weak" | "medium" | "strong";
   messagePleaseEnter?: string;
@@ -13,8 +15,10 @@ interface CaptchaProps {
 }
 
 export default function Captcha({
-  isPreview = false,
-  length,
+  value,
+  onChange,
+  disabled,
+  length = 4,
   security = "weak",
   messagePleaseEnter,
   messageWrong,
@@ -23,7 +27,7 @@ export default function Captcha({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [captchaId, setCaptchaId] = useState("");
   const [captchaText, setCaptchaText] = useState("");
-  const [userInput, setUserInput] = useState("");
+  const [userInput, setUserInput] = useState(value || "");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -128,7 +132,6 @@ export default function Captcha({
       // eslint-disable-next-line react-hooks/exhaustive-deps
       length = Number(length);
       const lengthValid =
-        isPreview === true &&
         typeof length === "number" &&
         Number.isFinite(length) &&
         length > 0;
@@ -160,7 +163,7 @@ export default function Captcha({
         setLoading(false);
       }
     },
-    [drawCaptcha, isPreview, length],
+    [drawCaptcha, length],
   );
 
   // Initial load
@@ -230,7 +233,7 @@ export default function Captcha({
         <button
           type="button"
           onClick={handleRegenerate}
-          disabled={loading}
+          disabled={loading || disabled}
           className="rounded-lg border border-gray-300 p-2 text-gray-500 transition hover:bg-gray-100 disabled:opacity-50"
           title="Regenerate captcha"
         >
@@ -239,13 +242,16 @@ export default function Captcha({
       </div>
       <input
         type="text"
-        value={userInput}
+        value={value !== undefined ? value : userInput}
+        disabled={disabled}
         onChange={(e) => {
-          setUserInput(e.target.value.toUpperCase());
+          const val = e.target.value.toUpperCase();
+          setUserInput(val);
+          if (onChange) onChange(val);
           setError("");
         }}
         placeholder="Enter captcha"
-        className={`mt-2 w-full rounded-lg border px-4 py-3 transition outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
+        className={`mt-2 w-full rounded-lg border px-4 py-3 transition outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500 disabled:opacity-50 ${
           error ? "border-red-500" : "border-gray-300"
         }`}
       />
