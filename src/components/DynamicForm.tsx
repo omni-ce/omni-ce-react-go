@@ -16,6 +16,7 @@ import ColorPickerSelector from "@/components/ui/ColorPickerSelector";
 import CountrySelector from "@/components/ui/CountrySelector";
 import IconSelector from "@/components/ui/IconSelector";
 import PhoneNumber from "@/components/ui/PhoneNumber";
+import type { CountryKey } from "@/types/language";
 
 export interface DynamicFormFieldOption {
   value: string;
@@ -109,6 +110,7 @@ export interface DynamicFormField {
   fileTemplate?: "profile" | "default";
   captchaSecurity?: "weak" | "medium" | "strong";
   captchaLength?: number;
+  phoneDefaultCountry?: CountryKey;
 }
 
 function DynamicSelect({
@@ -1132,6 +1134,9 @@ export default function DynamicForm({
             <PhoneNumber
               value={String(formData[field.key] ?? "")}
               onChange={(val) => onChange(field.key, val)}
+              phoneDefaultCountry={field.phoneDefaultCountry}
+              error={errors[field.key as string] as string | undefined}
+              disabled={disabled as boolean | undefined}
             />
           ) : (
             <Input

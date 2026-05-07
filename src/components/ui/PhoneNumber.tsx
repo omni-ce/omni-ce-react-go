@@ -10,6 +10,7 @@ interface Props {
   onChange: (value: string) => void;
   error?: string;
   disabled?: boolean;
+  phoneDefaultCountry?: string;
 }
 
 export default function PhoneNumber({
@@ -17,6 +18,7 @@ export default function PhoneNumber({
   onChange,
   error,
   disabled = false,
+  phoneDefaultCountry,
 }: Props) {
   const { languageCode } = useLanguageStore();
   const [isOpen, setIsOpen] = useState(false);
@@ -24,10 +26,24 @@ export default function PhoneNumber({
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Find country by language code, fallback to ID (Indonesia)
-  const defaultCountry =
-    countries.find((c) => c.key === languageCode)?.code || "ID";
+  const defaultCountry = useMemo(() => {
+    if (phoneDefaultCountry) {
+      return (
+        countries.find(
+          (c) =>
+            c.key === phoneDefaultCountry || c.code === phoneDefaultCountry,
+        )?.code || "ID"
+      );
+    }
+    return countries.find((c) => c.key === languageCode)?.code || "ID";
+  }, [phoneDefaultCountry, languageCode]);
 
   const [selectedCountry, setSelectedCountry] = useState(defaultCountry);
+
+  // Update selected country if defaultCountry changes and user hasn't manually selected one yet
+  useEffect(() => {
+    setSelectedCountry(defaultCountry);
+  }, [defaultCountry]);
 
   const currentCountry = countries.find((c) => c.code === selectedCountry);
   const FlagComponent = currentCountry

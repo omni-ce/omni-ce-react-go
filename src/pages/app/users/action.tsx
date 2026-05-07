@@ -112,6 +112,7 @@ export const ChangePassword = ({ row, onClose }: ChangePasswordProps) => {
             label: language({ id: "Coba", en: "Test" }),
             type: "phone",
             required: true,
+            phoneDefaultCountry: "id",
           },
         ]}
         formData={formData}
