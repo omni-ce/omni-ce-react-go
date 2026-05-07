@@ -5,6 +5,7 @@ import (
 	"react-go/core/modules/address"
 	"react-go/core/modules/apikey"
 	"react-go/core/modules/auth"
+	"react-go/core/modules/captcha"
 	"react-go/core/modules/dashboard"
 	"react-go/core/modules/debounce"
 	"react-go/core/modules/event"
@@ -25,6 +26,9 @@ import (
 func SetupRoutes(app *fiber.App, api fiber.Router) {
 	// Root (Hello World)
 	example.PublicRoute(app)
+
+	// Captcha
+	captcha.PublicRoute(api.Group("/captcha"))
 
 	// Address
 	address.PublicRoute(api.Group("/address"))

@@ -132,6 +132,12 @@ export const ChangePassword = ({ row, onClose }: ChangePasswordProps) => {
             type: "camera",
             required: true,
           },
+          {
+            key: "captcha",
+            label: language({ id: "Kode Verifikasi", en: "Verification Code" }),
+            type: "captcha",
+            required: true,
+          },
         ]}
         formData={formData}
         onChange={(key, value) =>

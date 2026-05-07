@@ -3,6 +3,7 @@ package modules
 import (
 	apikey "react-go/core/modules/apikey/model"
 	auth "react-go/core/modules/auth/model"
+	captcha "react-go/core/modules/captcha/model"
 	dashboard "react-go/core/modules/dashboard/model"
 	master_data "react-go/core/modules/master_data/model"
 	notification "react-go/core/modules/notification/model"
@@ -17,6 +18,7 @@ import (
 
 func Models() []interface{} {
 	return []interface{}{
+		&captcha.Captcha{},
 		&auth.Access{},
 		&user.User{},
 		&role.RoleDivision{},
