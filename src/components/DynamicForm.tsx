@@ -23,6 +23,7 @@ import PhoneNumber from "@/components/ui/PhoneNumber";
 import type { CountryKey } from "@/types/language";
 import { spanMap, mdMap, lgMap, xlMap } from "@/responsive";
 import { formatFileSize } from "@/utils/format";
+import MapPicker, { type MapCoordinates } from "@/components/ui/MapPicker";
 
 export interface DynamicFormFieldOption {
   value: string;
@@ -98,7 +99,8 @@ export type DynamicFormFieldType =
   | "icon"
   | "phone"
   | "checkbox"
-  | "switch";
+  | "switch"
+  | "map";
 
 export type DynamicFormFieldNormal = {
   key: string;
@@ -1204,6 +1206,69 @@ export default function DynamicForm({
   );
 }
 
+function DynamicMapField({
+  field,
+  value,
+  onChange,
+  disabled,
+}: {
+  field: DynamicFormFieldNormal;
+  value: MapCoordinates | undefined;
+  onChange: (val: MapCoordinates) => void;
+  disabled?: boolean;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const { language } = useLanguageStore();
+
+  return (
+    <>
+      <div className="mt-1.5">
+        <div
+          onClick={() => !disabled && setIsOpen(true)}
+          className={`
+            flex items-center gap-3 px-4 py-3 rounded-xl border transition-all cursor-pointer
+            ${
+              value
+                ? "border-accent-500/50 bg-accent-500/5 hover:bg-accent-500/10"
+                : "border-dark-600/50 bg-dark-900/40 hover:bg-dark-800/50"
+            }
+            ${disabled ? "opacity-50 cursor-not-allowed" : ""}
+          `}
+        >
+          <div
+            className={`shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
+              value
+                ? "bg-accent-500 text-white"
+                : "bg-dark-800 text-dark-400"
+            }`}
+          >
+            <IconComponent iconName="Hi/HiOutlineLocationMarker" className="w-5 h-5" />
+          </div>
+          <div className="flex flex-col min-w-0 flex-1">
+            <span className={`text-sm font-medium truncate ${value ? "text-accent-400" : "text-foreground"}`}>
+              {value
+                ? `${value.latitude.toFixed(6)}, ${value.longitude.toFixed(6)}`
+                : language({ id: "Pilih Lokasi di Peta", en: "Pick Location on Map" })}
+            </span>
+            {value && (
+              <span className="text-xs text-dark-400 mt-0.5">
+                {language({ id: "Lokasi telah dipilih", en: "Location selected" })}
+              </span>
+            )}
+          </div>
+          <IconComponent iconName="Hi/HiChevronRight" className="w-4 h-4 text-dark-400 shrink-0" />
+        </div>
+      </div>
+      <MapPicker
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        initialCoords={value}
+        onSelect={onChange}
+      />
+    </>
+  );
+}
+
 function DynamicFieldRenderer({
   field,
   formData,
@@ -1391,6 +1456,13 @@ function DynamicFieldRenderer({
             disabled={disabled}
           />
         </div>
+      ) : field.type === "map" ? (
+        <DynamicMapField
+          field={field as DynamicFormFieldNormal}
+          value={formData[field.key] as MapCoordinates | undefined}
+          onChange={(val) => onChange(field.key!, val)}
+          disabled={disabled}
+        />
       ) : field.type === "text" &&
         (field as DynamicFormFieldNormal).textMultiLanguage ? (
         <div className="space-y-2 mt-1.5">

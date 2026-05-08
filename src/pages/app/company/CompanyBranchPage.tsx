@@ -80,15 +80,9 @@ export default function CompanyBranchPage({ ruleKey }: Props) {
         required: true,
       },
       {
-        key: "longitude",
-        label: language({ id: "Longitude", en: "Longitude" }),
-        type: "number",
-        required: true,
-      },
-      {
-        key: "latitude",
-        label: language({ id: "Latitude", en: "Latitude" }),
-        type: "number",
+        key: "map",
+        label: language({ id: "Peta Lokasi", en: "Location Map" }),
+        type: "map",
         required: true,
       },
     ],
