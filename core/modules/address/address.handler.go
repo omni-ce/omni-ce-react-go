@@ -87,7 +87,7 @@ func Villages(c *fiber.Ctx) error {
 }
 
 func Get(c *fiber.Ctx) error {
-	id := c.Params("id") // 34.02.12.2007
+	id := c.Params("id")
 
 	fullAddress, err, isBadRequest := GetFull(id)
 	if err != nil {

@@ -150,34 +150,34 @@ export default function CompanyBranchPage({ ruleKey }: Props) {
         sort: true,
         search: true,
         render: (item) => (
-          <div className="flex flex-col gap-1 max-w-75">
-            <div className="flex items-start gap-2">
-              <IconComponent
-                iconName="Hi/HiOutlineLocationMarker"
-                className="w-4 h-4 text-dark-400 shrink-0 mt-0.5"
-              />
-              <span className="text-sm text-foreground line-clamp-2 leading-relaxed">
-                {item.address || "-"}
-              </span>
-            </div>
-            {item.full_address && (
-              <div className="flex items-center gap-2 ml-6">
-                <Badge
-                  variant="secondary"
-                  className="text-[10px] px-1.5 py-0 h-4 bg-dark-700/50 text-dark-300"
-                >
-                  {item.full_address}
-                </Badge>
+          <div className="flex flex-col gap-1 py-1 max-w-[300px]">
+            <div className="flex items-start gap-2.5">
+              <div className="mt-0.5 p-1 rounded-md bg-dark-800 border border-dark-600/30 text-dark-400 shrink-0 shadow-sm">
+                <IconComponent
+                  iconName="Hi/HiOutlineLocationMarker"
+                  className="w-3.5 h-3.5"
+                />
               </div>
-            )}
+              <div className="flex flex-col min-w-0">
+                <span className="text-[13px] font-semibold text-foreground line-clamp-1 leading-snug">
+                  {item.address || "-"}
+                </span>
+                {item.full_address && (
+                  <span className="text-[11px] text-dark-400 leading-relaxed mt-0.5 line-clamp-2 italic font-medium">
+                    {item.full_address}
+                  </span>
+                )}
+              </div>
+            </div>
             {item.phone && (
-              <div className="flex items-center gap-2 ml-6">
-                <Badge
-                  variant="secondary"
-                  className="text-[10px] px-1.5 py-0 h-4 bg-dark-700/50 text-dark-300"
-                >
-                  {item.phone}
-                </Badge>
+              <div className="flex items-center gap-2 ml-6 mt-1">
+                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-dark-800 border border-dark-600/30 text-[10px] text-dark-300">
+                  <IconComponent
+                    iconName="Hi/HiOutlinePhone"
+                    className="w-3 h-3"
+                  />
+                  <span>{item.phone}</span>
+                </div>
               </div>
             )}
           </div>
