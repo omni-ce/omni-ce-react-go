@@ -504,7 +504,16 @@ function DynamicFile({
   disabled?: boolean;
 }) {
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [errorMsg, setErrorMsg] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { language } = useLanguageStore();
+
+  const fileName = useMemo(() => {
+    if (!value) return null;
+    const parts = value.split("/");
+    return parts[parts.length - 1];
+  }, [value]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setErrorMsg("");
@@ -546,6 +555,7 @@ function DynamicFile({
     }
 
     setLoading(true);
+    setProgress(0);
     const formData = new FormData();
     formData.append("file", file);
 
@@ -555,6 +565,14 @@ function DynamicFile({
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
+          onUploadProgress: (progressEvent) => {
+            if (progressEvent.total) {
+              const percentCompleted = Math.round(
+                (progressEvent.loaded * 100) / progressEvent.total,
+              );
+              setProgress(percentCompleted);
+            }
+          },
         },
       )
       .then((res) => {
@@ -568,6 +586,7 @@ function DynamicFile({
       })
       .finally(() => {
         setLoading(false);
+        setProgress(0);
       });
   };
 
@@ -616,6 +635,76 @@ function DynamicFile({
     );
   };
 
+  const renderUploader = () => {
+    return (
+      <div className="flex flex-col gap-1.5 w-full">
+        <input
+          type="file"
+          ref={fileInputRef}
+          className="hidden"
+          onChange={handleFileChange}
+          accept={
+            (field as DynamicFormFieldNormal).fileType
+              ? ((field as DynamicFormFieldNormal).fileType as FileType[])
+                  .flat()
+                  .join(",")
+              : undefined
+          }
+        />
+        <div
+          onClick={() => !loading && !disabled && fileInputRef.current?.click()}
+          className={`
+            group flex items-center gap-3 px-4 py-2.5 rounded-xl border border-dashed transition-all cursor-pointer
+            ${
+              loading
+                ? "border-accent-500/50 bg-accent-500/5"
+                : "border-dark-600 hover:border-accent-500/50 hover:bg-dark-800/50 bg-dark-900/40"
+            }
+            ${disabled ? "opacity-50 cursor-not-allowed" : ""}
+          `}
+        >
+          <div className="shrink-0 w-8 h-8 rounded-lg bg-dark-800 flex items-center justify-center text-dark-400 group-hover:text-accent-400 transition-colors">
+            {loading ? (
+              <span className="text-[10px] font-bold text-accent-500">
+                {progress}%
+              </span>
+            ) : (
+              <IconComponent
+                iconName="Hi/HiOutlineCloudUpload"
+                className="w-5 h-5"
+              />
+            )}
+          </div>
+          <div className="flex flex-col min-w-0 flex-1">
+            <span className="text-sm font-medium text-foreground truncate">
+              {loading
+                ? language({ id: "Mengunggah...", en: "Uploading..." })
+                : fileName || language({ id: "Pilih File", en: "Choose File" })}
+            </span>
+            {loading && (
+              <div className="mt-1 w-full h-1 bg-dark-700 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-accent-500 transition-all duration-300"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+
+        {errorMsg && <span className="text-xs text-neon-red">{errorMsg}</span>}
+        {!errorMsg &&
+          !loading &&
+          (field as DynamicFormFieldNormal).fileMaxSize && (
+            <span className="text-[10px] text-dark-400 font-mono">
+              Max:{" "}
+              {formatFileSize((field as DynamicFormFieldNormal).fileMaxSize!)}
+            </span>
+          )}
+      </div>
+    );
+  };
+
   const template = (field as DynamicFormFieldNormal).fileTemplate;
   if (template === "profile" || template === "company") {
     const imageUrl = value
@@ -640,34 +729,7 @@ function DynamicFile({
           />
         </div>
         <div className="flex flex-col gap-2 flex-1 w-full overflow-hidden">
-          <Input
-            id={`field-${field.key}`}
-            type="file"
-            onChange={handleFileChange}
-            disabled={disabled || loading}
-            className={loading ? "opacity-50" : ""}
-            accept={
-              (field as DynamicFormFieldNormal).fileType
-                ? ((field as DynamicFormFieldNormal).fileType as FileType[])
-                    .flat()
-                    .join(",")
-                : undefined
-            }
-          />
-          {errorMsg && (
-            <span className="text-xs text-neon-red">{errorMsg}</span>
-          )}
-          {loading && (
-            <span className="text-xs text-accent-500">Uploading...</span>
-          )}
-          {!errorMsg &&
-            !loading &&
-            (field as DynamicFormFieldNormal).fileMaxSize && (
-              <span className="text-[10px] text-dark-400 font-mono">
-                Max:{" "}
-                {formatFileSize((field as DynamicFormFieldNormal).fileMaxSize!)}
-              </span>
-            )}
+          {renderUploader()}
         </div>
       </div>
     );
@@ -675,29 +737,7 @@ function DynamicFile({
 
   return (
     <div className="mt-1.5 flex flex-col gap-2">
-      <Input
-        id={`field-${field.key}`}
-        type="file"
-        onChange={handleFileChange}
-        disabled={disabled || loading}
-        className={loading ? "opacity-50" : ""}
-        accept={
-          (field as DynamicFormFieldNormal).fileType
-            ? ((field as DynamicFormFieldNormal).fileType as FileType[])
-                .flat()
-                .join(",")
-            : undefined
-        }
-      />
-      {errorMsg && <span className="text-xs text-neon-red">{errorMsg}</span>}
-      {loading && (
-        <span className="text-xs text-accent-500">Uploading...</span>
-      )}
-      {!errorMsg && !loading && (field as DynamicFormFieldNormal).fileMaxSize && (
-        <span className="text-[10px] text-dark-400 font-mono">
-          Max: {formatFileSize((field as DynamicFormFieldNormal).fileMaxSize!)}
-        </span>
-      )}
+      {renderUploader()}
       {renderPreview()}
     </div>
   );

@@ -45,7 +45,7 @@ export default function EntityPage({ ruleKey }: Props) {
       {
         key: "npwp_code",
         label: language({ id: "Nomor NPWP", en: "NPWP Number" }),
-        type: "text",
+        type: "number",
         required: true,
         col: 9,
       },
