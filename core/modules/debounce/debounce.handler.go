@@ -69,3 +69,33 @@ func ProductSKU(c *fiber.Ctx) error {
 		},
 	})
 }
+
+func ProductIMEI(c *fiber.Ctx) error {
+	var body struct {
+		Value string `json:"value" validate:"required"`
+	}
+	if err := function.RequestBody(c, &body); err != nil {
+		return dto.BadRequest(c, err.Error(), nil)
+	}
+
+	var existing product.ProductItem
+	if err := variable.Db.
+		Where("sku_imei = ?", body.Value).
+		First(&existing).
+		Error; err == nil {
+		return dto.OK(c, "SKU IMEI already used", fiber.Map{
+			"available": false,
+			"message": fiber.Map{
+				"id": "SKU IMEI sudah digunakan",
+				"en": "SKU IMEI already used",
+			},
+		})
+	}
+	return dto.OK(c, "SKU IMEI available", fiber.Map{
+		"available": true,
+		"message": fiber.Map{
+			"id": "SKU IMEI tersedia",
+			"en": "SKU IMEI available",
+		},
+	})
+}

@@ -7,4 +7,5 @@ import (
 func ProtectedRoute(api fiber.Router) {
 	api.Post("/username", Username)
 	api.Post("/product-sku", ProductSKU)
+	api.Post("/product-imei", ProductSKU)
 }

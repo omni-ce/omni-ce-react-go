@@ -68,7 +68,7 @@ export default function ProductItemPage({ ruleKey }: Props) {
             required: true,
           },
           {
-            key: "sku-imei",
+            key: "sku_imei",
             label: language({ id: "IMEI", en: "IMEI" }),
             type: "text",
             debounce: "product-imei",
@@ -87,7 +87,18 @@ export default function ProductItemPage({ ruleKey }: Props) {
         header: language({ id: "SKU", en: "SKU" }),
         sort: true,
         search: true,
-        render: (item) => <span className="font-mono text-sm">{item.sku}</span>,
+        render: (item) => (
+          <div className="flex flex-col gap-0.5">
+            <span className="font-mono text-sm font-semibold tracking-tight text-foreground">
+              {item.sku}
+            </span>
+            {item.sku_imei && (
+              <span className="font-mono text-[10px] uppercase">
+                IMEI: {item.sku_imei}
+              </span>
+            )}
+          </div>
+        ),
       },
       {
         key: "category_name",
