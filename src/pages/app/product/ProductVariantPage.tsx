@@ -27,7 +27,7 @@ export default function ProductVarianPage({ ruleKey }: Props) {
         label: language({ id: "Merek", en: "Brand" }),
         type: "select",
         required: true,
-        selectOptions: "brands",
+        selectOptions: "product-brands",
       },
       {
         key: "name",

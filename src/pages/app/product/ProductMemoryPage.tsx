@@ -48,7 +48,7 @@ export default function ProductMemoryPage({ ruleKey }: Props) {
         key: "ram",
         header: language({ id: "RAM", en: "RAM" }),
         sort: true,
-        render: (item) => <span className="font-medium">{item.ram}</span>,
+        render: (item) => <span className="font-medium">{item.ram} GB</span>,
       },
       {
         key: "internal_storage",
@@ -58,7 +58,7 @@ export default function ProductMemoryPage({ ruleKey }: Props) {
         }),
         sort: true,
         render: (item) => (
-          <span className="font-medium">{item.internal_storage}</span>
+          <span className="font-medium">{item.internal_storage} GB</span>
         ),
       },
     ],

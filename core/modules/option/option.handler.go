@@ -100,13 +100,32 @@ func Roles(c *fiber.Ctx) error {
 	return dto.OK(c, "Get roles success", rows)
 }
 
-func Brands(c *fiber.Ctx) error {
+func ProductCategories(c *fiber.Ctx) error {
+	categories := make([]product.ProductCategory, 0)
+	if err := variable.Db.
+		Model(&product.ProductCategory{}).
+		Find(&categories).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to find categories", nil)
+	}
+
+	rows := make([]types.Option, 0)
+	for _, row := range categories {
+		if row.IsActive {
+			rows = append(rows, row.Option())
+		}
+	}
+
+	return dto.OK(c, "Get product categories success", rows)
+}
+
+func ProductBrands(c *fiber.Ctx) error {
 	brands := make([]product.ProductBrand, 0)
 	if err := variable.Db.
 		Model(&product.ProductBrand{}).
 		Find(&brands).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to find brands", nil)
+		return dto.InternalServerError(c, "Failed to find product brands", nil)
 	}
 
 	rows := make([]types.Option, 0)
@@ -116,5 +135,5 @@ func Brands(c *fiber.Ctx) error {
 		}
 	}
 
-	return dto.OK(c, "Get brands success", rows)
+	return dto.OK(c, "Get product brands success", rows)
 }

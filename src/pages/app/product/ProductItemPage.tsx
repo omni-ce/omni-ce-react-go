@@ -23,6 +23,35 @@ export default function ProductItemPage({ ruleKey }: Props) {
   const fields = useMemo<PaginationField[]>(
     () => [
       {
+        key: "category_id",
+        label: language({ id: "Kategori", en: "Category" }),
+        type: "select",
+        required: true,
+        selectOptions: "product-categories",
+      },
+      {
+        key: "brand_id",
+        label: language({ id: "Merek", en: "Brand" }),
+        type: "select",
+        required: true,
+        selectOptions: "product-brands",
+      },
+      {
+        key: "varian_id",
+        label: language({ id: "Varian", en: "Variant" }),
+        type: "select",
+        required: true,
+        ref: "brand_id",
+        selectOptions: "product/variant/{brand_id}",
+      },
+      {
+        key: "color_id",
+        label: language({ id: "Warna", en: "Color" }),
+        type: "select",
+        required: true,
+        selectOptions: "product/color",
+      },
+      {
         label: language({ id: "SKU", en: "SKU" }),
         children: [
           {
@@ -39,35 +68,6 @@ export default function ProductItemPage({ ruleKey }: Props) {
             debounce: "product-imei",
           },
         ],
-      },
-      {
-        key: "category_id",
-        label: language({ id: "Kategori", en: "Category" }),
-        type: "select",
-        required: true,
-        selectOptions: "product/category",
-      },
-      {
-        key: "brand_id",
-        label: language({ id: "Merek", en: "Brand" }),
-        type: "select",
-        required: true,
-        selectOptions: "product/brand",
-      },
-      {
-        key: "varian_id",
-        label: language({ id: "Varian", en: "Variant" }),
-        type: "select",
-        required: true,
-        ref: "brand_id",
-        selectOptions: "product/variant/{brand_id}",
-      },
-      {
-        key: "color_id",
-        label: language({ id: "Warna", en: "Color" }),
-        type: "select",
-        required: true,
-        selectOptions: "product/color",
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
