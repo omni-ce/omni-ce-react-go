@@ -132,10 +132,18 @@ export const ChangePassword = ({ row, onClose }: ChangePasswordProps) => {
           //   type: "camera",
           //   required: true,
           // },
+          // {
+          //   key: "captcha",
+          //   label: language({ id: "Kode Verifikasi", en: "Verification Code" }),
+          //   type: "captcha",
+          //   required: true,
+          //   captchaLength: 6,
+          //   captchaSecurity: "strong",
+          // },
           {
-            key: "captcha",
-            label: language({ id: "Kode Verifikasi", en: "Verification Code" }),
-            type: "captcha",
+            key: "icon",
+            label: language({ id: "Ikon", en: "Icon" }),
+            type: "icon",
             required: true,
           },
         ]}

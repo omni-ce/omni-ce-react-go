@@ -4,7 +4,6 @@ import (
 	"math/rand"
 	"react-go/core/dto"
 	"react-go/core/enigma"
-	"react-go/core/environment"
 	"react-go/core/function"
 	"react-go/core/variable"
 	"strconv"
@@ -94,16 +93,16 @@ func Regenerate(c *fiber.Ctx) error {
 // ============================================ //
 
 func returnGenerate(c *fiber.Ctx, captchaCode string, captchaId string) error {
-	machineId := environment.GetMachineId()
-	encrypted, err := function.Encryption{}.Encode(enigma.GeneralEnigmaSchema(machineId), captchaCode)
+	encrypted, err := function.Encryption{}.Encode(enigma.GeneralEnigmaSchema(c.Get("Origin")), captchaCode)
 	if err != nil {
 		return dto.InternalServerError(c, "Failed to encrypt captcha", nil)
 	}
 
-	// decrypted, err := function.Encryption{}.Decode(enigma.GeneralEnigmaSchema(machineId), encrypted)
+	// decrypted, err := function.Encryption{}.Decode(enigma.GeneralEnigmaSchema(c.Get("Origin")), encrypted)
 	// if err != nil {
 	// 	return dto.InternalServerError(c, "Failed to decrypt captcha", nil)
 	// }
+	// fmt.Printf("Decrypted: %s\n", decrypted)
 
 	return dto.OK(c, "Captcha regenerated successfully", fiber.Map{
 		"captcha":    encrypted,

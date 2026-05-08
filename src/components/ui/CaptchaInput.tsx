@@ -6,7 +6,6 @@ import { useThemeStore } from "@/stores/themeStore";
 import { cn } from "@/lib/utils";
 import * as encryption from "@/lib/encryption";
 import { GeneralEnigmaSchema } from "@/enigma/general.enigma";
-import { VITE_SECRET } from "@/environment";
 
 export type CaptchaSecurity = "low" | "medium" | "strong";
 interface CaptchaProps {
@@ -134,22 +133,18 @@ export default function CaptchaInput({
             `/api/captcha/generate${previewQuery}`,
           );
         }
-
         if (response.status !== 200) {
           throw new Error(
             response.data?.message || "Failed to generate captcha",
           );
         }
         const data = response.data?.data;
-        const captchaCode = data.captcha;
 
-        console.log({ VITE_SECRET });
+        const captchaCode = data.captcha;
         const decrypted = encryption.decode(
-          GeneralEnigmaSchema(VITE_SECRET),
+          GeneralEnigmaSchema(window.location.origin),
           captchaCode,
         );
-        console.log({ decrypted });
-
         if (data) {
           setCaptchaId(data.captcha_id);
           setCaptchaText(decrypted);
