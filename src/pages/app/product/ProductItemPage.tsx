@@ -23,11 +23,22 @@ export default function ProductItemPage({ ruleKey }: Props) {
   const fields = useMemo<PaginationField[]>(
     () => [
       {
-        key: "sku",
         label: language({ id: "SKU", en: "SKU" }),
-        type: "text",
-        debounce: "product-sku",
-        required: true,
+        children: [
+          {
+            key: "sku",
+            label: language({ id: "Produk", en: "Product" }),
+            type: "text",
+            debounce: "product-sku",
+            required: true,
+          },
+          {
+            key: "sku-imei",
+            label: language({ id: "IMEI", en: "IMEI" }),
+            type: "text",
+            debounce: "product-imei",
+          },
+        ],
       },
       {
         key: "category_id",
