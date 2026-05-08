@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter, type RouteObject } from "react-router";
 
 // Layouts
 import PublicLayout from "@/layouts/PublicLayout";
@@ -59,10 +59,6 @@ export const sidebarLinks: ISidebarLink[] = [
     strict: true,
     extraRuleKeys: [
       {
-        label: { id: "Kategori Produk", en: "Product Category" },
-        ruleKey: "product_category",
-      },
-      {
         label: { id: "Merek", en: "Brand" },
         ruleKey: "brand",
       },
@@ -118,10 +114,28 @@ export const routers = createBrowserRouter([
         path: "app",
         element: <AppLayout sidebarLinks={sidebarLinks} />,
         children: [
-          ...sidebarLinks.map((link) => ({
-            path: link.path as string,
-            element: link.element,
-          })),
+          ...(() => {
+            const flatten = (
+              links: ISidebarLink[],
+              base = "",
+            ): RouteObject[] => {
+              return links.flatMap((link) => {
+                const fullPath = base ? `${base}/${link.path}` : link.path;
+                const routes: RouteObject[] = [];
+                if (link.element) {
+                  routes.push({
+                    path: fullPath as string,
+                    element: link.element,
+                  });
+                }
+                if (link.children) {
+                  routes.push(...flatten(link.children, fullPath));
+                }
+                return routes;
+              });
+            };
+            return flatten(sidebarLinks);
+          })(),
           {
             path: "settings",
             element: <SettingsPage />,
