@@ -75,6 +75,7 @@ export default function MapPicker({
   initialCoords,
 }: MapPickerProps) {
   const { language } = useLanguageStore();
+  const [basemap, setBasemap] = useState<"street" | "satellite">("satellite");
   const [position, setPosition] = useState<L.LatLng | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Result[]>([]);
@@ -215,13 +216,46 @@ export default function MapPicker({
               zoom={13}
               style={{ height: "100%", width: "100%" }}
             >
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
+              {basemap === "street" ? (
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+              ) : (
+                <TileLayer
+                  attribution="Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
+                  url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                />
+              )}
               <LocationMarker position={position} setPosition={setPosition} />
               <MapUpdater center={mapCenter} />
             </MapContainer>
+
+            {/* Basemap Switcher */}
+            <div className="absolute bottom-6 right-6 z-[400]">
+              <div className="flex bg-dark-900/80 backdrop-blur-md border border-dark-600/50 rounded-xl p-1 shadow-2xl">
+                <button
+                  onClick={() => setBasemap("street")}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                    basemap === "street"
+                      ? "bg-accent-500 text-white"
+                      : "text-dark-300 hover:text-foreground"
+                  }`}
+                >
+                  {language({ id: "Peta", en: "Street" })}
+                </button>
+                <button
+                  onClick={() => setBasemap("satellite")}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                    basemap === "satellite"
+                      ? "bg-accent-500 text-white"
+                      : "text-dark-300 hover:text-foreground"
+                  }`}
+                >
+                  {language({ id: "Satelit", en: "Satellite" })}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
