@@ -544,12 +544,12 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
           </button>
 
           {/* Page title from route */}
-          <div className="flex items-center gap-2">
+          {/* <div className="flex items-center gap-2">
             <div className="w-1.5 h-1.5 rounded-full bg-neon-green" />
             <span className="text-sm font-mono text-dark-300">
               {location.pathname.replace("/app/", "")}
             </span>
-          </div>
+          </div> */}
 
           {/* Right side */}
           <div className="ml-auto flex items-center gap-3">
