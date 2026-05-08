@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/Input";
 import { SearchableSelect } from "@/components/ui/SearchableSelect";
 import { Button } from "@/components/ui/Button";
 import { useLanguageStore, SUPPORTED_LANGUAGES } from "@/stores/languageStore";
+import { Switch } from "@/components/ui/Switch";
 import * as flags from "country-flag-icons/react/3x2";
 import countries from "@/countries";
 import satellite from "@/lib/satellite";
@@ -92,7 +93,8 @@ export type DynamicFormFieldType =
   | "color"
   | "country"
   | "icon"
-  | "phone";
+  | "phone"
+  | "switch";
 
 export type DynamicFormFieldNormal = {
   key: string;
@@ -113,6 +115,7 @@ export type DynamicFormFieldNormal = {
   phoneFirstAntiZero?: boolean;
   children?: DynamicFormField[];
   textMultiLanguage?: boolean;
+  rule?: string;
 };
 
 type DynamicFormFieldChildren = {
@@ -1277,6 +1280,14 @@ function DynamicFieldRenderer({
           error={(errors[field.key] as string) || undefined}
           disabled={disabled}
         />
+      ) : field.type === "switch" ? (
+        <div className="mt-2">
+          <Switch
+            checked={Boolean(formData[field.key])}
+            onCheckedChange={(val) => onChange(field.key!, val)}
+            disabled={disabled}
+          />
+        </div>
       ) : field.type === "text" &&
         (field as DynamicFormFieldNormal).textMultiLanguage ? (
         <div className="space-y-2 mt-1.5">

@@ -133,7 +133,6 @@ const Pagination = forwardRef(function PaginationInner<T>(
   const setActiveUrl = (id: string | number) => `${baseUrl}/set-active/${id}`;
 
   // CRUD state
-  const hasCrud = Boolean(fields && fields.length > 0);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [editingRow, setEditingRow] = useState<T | null>(null);
@@ -171,6 +170,20 @@ const Pagination = forwardRef(function PaginationInner<T>(
   } | null>(null);
 
   const safeCurrentPage = Math.min(currentPage, totalPages);
+  const filteredFields = useMemo(() => {
+    if (!fields) return undefined;
+    return fields.filter((field) => {
+      const f = field as DynamicFormFieldNormal;
+      if (!f.rule) return true;
+      if (f.rule === "create") return perm.canCreate;
+      if (f.rule === "read") return perm.canRead;
+      if (f.rule === "update") return perm.canUpdate;
+      if (f.rule === "delete") return perm.canDelete;
+      if (f.rule === "set") return perm.canSet;
+      return true;
+    });
+  }, [fields, perm]) as PaginationField[];
+  const hasCrud = Boolean(filteredFields && filteredFields.length > 0);
 
   // ─── Row helpers ──────────────────────────────────────────────────
 
@@ -216,7 +229,7 @@ const Pagination = forwardRef(function PaginationInner<T>(
 
   // Build merged columns (auto action column + user columns)
   const mergedColumns = useMemo<PaginationColumn<T>[]>(() => {
-    if (!hasCrud || !fields) return columns;
+    if (!hasCrud || !filteredFields) return columns;
 
     // Check if we need the action column at all
     const showToggle = useIsActive && perm.canSet;
@@ -338,7 +351,7 @@ const Pagination = forwardRef(function PaginationInner<T>(
   }, [
     columns,
     hasCrud,
-    fields,
+    filteredFields,
     language,
     useIsActive,
     togglingActiveId,
@@ -482,9 +495,9 @@ const Pagination = forwardRef(function PaginationInner<T>(
 
   const initFormData = useCallback(
     (row?: T) => {
-      if (!fields) return {};
+      if (!filteredFields) return {};
       const data: Record<string, unknown> = {};
-      for (const field of fields) {
+      for (const field of filteredFields) {
         if (row && typeof row === "object" && row !== null) {
           const val = (row as Record<string, unknown>)[field.key as string];
           if (field.type === "array") {
@@ -514,7 +527,7 @@ const Pagination = forwardRef(function PaginationInner<T>(
       }
       return data;
     },
-    [fields],
+    [filteredFields],
   );
 
   const openCreate = () => {
@@ -547,8 +560,8 @@ const Pagination = forwardRef(function PaginationInner<T>(
   };
 
   const isFormValid = useCallback(() => {
-    if (!fields) return false;
-    for (const field of fields) {
+    if (!filteredFields) return false;
+    for (const field of filteredFields) {
       const isCreate = !editingRow;
       if (field.only === "create" && !isCreate) continue;
       if (field.only === "update" && isCreate) continue;
@@ -602,15 +615,15 @@ const Pagination = forwardRef(function PaginationInner<T>(
       if (fieldErrors[field.key as string]) return false;
     }
     return true;
-  }, [fields, formData, fieldErrors, editingRow]);
+  }, [filteredFields, formData, fieldErrors, editingRow]);
 
   const handleSave = async () => {
     if (!isFormValid()) return;
     setIsSubmitting(true);
     try {
       const payload: Record<string, unknown> = {};
-      if (fields) {
-        for (const field of fields) {
+      if (filteredFields) {
+        for (const field of filteredFields) {
           const isCreate = !editingRow;
           if (field.only === "create" && !isCreate) continue;
           if (field.only === "update" && isCreate) continue;
@@ -1077,7 +1090,7 @@ const Pagination = forwardRef(function PaginationInner<T>(
       </Card>
 
       {/* ─── Add / Edit Dialog ──────────────────────────────────────── */}
-      {hasCrud && fields && (
+      {hasCrud && filteredFields && (
         <Dialog open={dialogOpen} onClose={() => {}} width="520px">
           <DialogContent onClose={() => setDialogOpen(false)}>
             <DialogHeader>
@@ -1088,9 +1101,9 @@ const Pagination = forwardRef(function PaginationInner<T>(
               </DialogTitle>
             </DialogHeader>
             <div className="overflow-y-auto max-h-[60vh] -mx-6 px-6 py-1">
-              {fields && fields.length > 0 && (
+              {filteredFields && filteredFields.length > 0 && (
                 <DynamicForm
-                  fields={fields}
+                  fields={filteredFields}
                   formData={formData}
                   onChange={(key, val) =>
                     setFormData((prev) => ({ ...prev, [key]: val }))
