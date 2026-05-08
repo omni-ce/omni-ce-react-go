@@ -62,7 +62,7 @@ const SidebarItem = ({
   effectiveCollapsed: boolean;
   isMobileOpen: boolean;
   handleNavClick: (path: string) => void;
-  canViewLink: (link: ISidebarLink) => boolean;
+  canViewLink: (link: ISidebarLink, basePath: string) => boolean;
 }) => {
   const location = useLocation();
   const { language } = useLanguageStore();
@@ -85,7 +85,7 @@ const SidebarItem = ({
   }, [isChildActive]);
 
   // Handle nested children visibility
-  const visibleChildren = link.children?.filter(canViewLink) || [];
+  const visibleChildren = link.children?.filter(child => canViewLink(child, fullPath)) || [];
 
   // Padding based on level (indented for children)
   const plClass = level === 0 ? "px-3" : level === 1 ? "pl-11 pr-3" : "pl-14 pr-3";
@@ -314,9 +314,11 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
   const sidebarWidth = effectiveCollapsed ? "w-[72px]" : "w-65";
 
   // Check if user has permission to view a link or its children
-  const canViewLink = (link: ISidebarLink): boolean => {
+  const canViewLink = (link: ISidebarLink, basePath: string = ""): boolean => {
     // If it's a superuser, they see everything
     if (user?.role === "su") return true;
+
+    const fullPath = basePath ? `${basePath}/${link.path}` : link.path || "";
 
     // Check if the link itself is allowed (if strict)
     let isAllowed = !link.strict;
@@ -325,7 +327,7 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
       isAllowed = rules.some(
         (r) =>
           r.role_id === roleId &&
-          r.key === link.path &&
+          r.key === fullPath &&
           r.action === "read" &&
           r.state === true,
       );
@@ -333,7 +335,7 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
 
     // If it has children, it's visible ONLY if at least one child is visible
     if (link.children && link.children.length > 0) {
-      return link.children.some(canViewLink);
+      return link.children.some(child => canViewLink(child, fullPath));
     }
 
     return isAllowed;
@@ -429,7 +431,7 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
 
         {/* Navigation */}
         <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
-          {sidebarLinks.filter(canViewLink).map((link, idx) => (
+          {sidebarLinks.filter(link => canViewLink(link, "")).map((link, idx) => (
             <SidebarItem
               key={link.path || idx}
               link={link}

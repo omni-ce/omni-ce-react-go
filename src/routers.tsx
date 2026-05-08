@@ -74,7 +74,7 @@ export const sidebarLinks: ISidebarLink[] = [
       {
         label: { id: "Kategori", en: "Category" },
         path: "categories",
-        element: <ProductCategoryPage ruleKey="product-categories" />,
+        element: <ProductCategoryPage ruleKey="products-categories" />,
         strict: true,
         icon: "Hi/HiOutlineTag",
       },
