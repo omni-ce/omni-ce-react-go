@@ -8,7 +8,7 @@
 
 # Objectives
 
-- CRUD menu Master Data (new)
+- CRUD menu Product with all nested
 - Switch maintenance system (bisa diaktifkan / dimatikan)
 
 ---

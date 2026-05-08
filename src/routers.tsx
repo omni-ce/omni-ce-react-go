@@ -1,5 +1,7 @@
 import { createBrowserRouter, type RouteObject } from "react-router";
 
+import sidebarLinks from "@/sidebar";
+
 // Layouts
 import PublicLayout from "@/layouts/PublicLayout";
 import AuthLayout from "@/layouts/AuthLayout";
@@ -14,12 +16,9 @@ import SelectRolePage from "@/pages/auth/SelectRolePage";
 
 // App: Pages
 import DashboardPage from "@/pages/app/DashboardPage";
-import UsersPage from "@/pages/app/users/UsersPage";
 import RolesPage from "@/pages/app/roles/RolesPage";
-import MasterDataPage from "@/pages/app/master_data/MasterDataPage";
 import SettingsPage from "@/pages/app/settings/SettingPage";
 import NotificationsPage from "@/pages/app/notifications/NotificationsPage";
-import ProductCategoryPage from "@/pages/app/product/ProductCategoryPage";
 
 // Documentation
 import DocPage from "@/pages/doc";
@@ -28,57 +27,19 @@ import DocPage from "@/pages/doc";
 import ErrorBoundaryPage from "@/pages/error/ErrorBoundaryPage";
 import NotFoundPage from "@/pages/error/NotFoundPage";
 
-export const sidebarLinks: ISidebarLink[] = [
+export const sidebarSystemLinks: ISidebarLink[] = [
   {
     label: { id: "Dashboard", en: "Dashboard" },
     path: "dashboard",
     element: <DashboardPage />,
     icon: "Hi/HiOutlineHome",
   },
-
   {
     label: { id: "Peran", en: "Roles" },
     path: "roles",
     element: <RolesPage ruleKey="roles" />,
     strict: true,
     icon: "Hi/HiOutlineShieldCheck",
-  },
-
-  {
-    label: { id: "Pengguna", en: "Users" },
-    path: "users",
-    element: <UsersPage ruleKey="users" />,
-    strict: true,
-    icon: "Hi/HiOutlineUser",
-  },
-
-  {
-    label: { id: "Data Master", en: "Master Data" },
-    path: "master-data",
-    element: <MasterDataPage ruleKey="master-data" />,
-    strict: true,
-    extraRuleKeys: [
-      {
-        label: { id: "Merek", en: "Brand" },
-        ruleKey: "brand",
-      },
-    ],
-    icon: "Hi/HiOutlineDatabase",
-  },
-
-  {
-    label: { id: "Produk", en: "Product" },
-    path: "products",
-    icon: "Hi/HiOutlineCube",
-    children: [
-      {
-        label: { id: "Kategori", en: "Category" },
-        path: "categories",
-        element: <ProductCategoryPage ruleKey="products/categories" />,
-        strict: true,
-        icon: "Hi/HiOutlineTag",
-      },
-    ],
   },
 ];
 
@@ -112,7 +73,9 @@ export const routers = createBrowserRouter([
       },
       {
         path: "app",
-        element: <AppLayout sidebarLinks={sidebarLinks} />,
+        element: (
+          <AppLayout sidebarLinks={[...sidebarSystemLinks, ...sidebarLinks]} />
+        ),
         children: [
           ...(() => {
             const flatten = (
@@ -134,7 +97,7 @@ export const routers = createBrowserRouter([
                 return routes;
               });
             };
-            return flatten(sidebarLinks);
+            return flatten([...sidebarSystemLinks, ...sidebarLinks]);
           })(),
           {
             path: "settings",

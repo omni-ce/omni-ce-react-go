@@ -21,7 +21,8 @@ import {
   DialogFooter,
 } from "@/components/ui/Dialog";
 import type { Rule } from "@/types/rule";
-import { sidebarLinks } from "@/routers";
+import { sidebarSystemLinks } from "@/routers";
+import sidebarLinks from "@/sidebar";
 import {
   roleService,
   type RoleItem,
@@ -122,12 +123,16 @@ export default function RolesPage({ ruleKey }: Props) {
   };
 
   const menuList = useMemo(() => {
-    const flatten = (links: typeof sidebarLinks, level = 0, base = ""): MenuListItem[] => {
+    const flatten = (
+      links: typeof sidebarSystemLinks,
+      level = 0,
+      base = "",
+    ): MenuListItem[] => {
       return links.flatMap((link) => {
         if (link.isHide) return [];
         const items: MenuListItem[] = [];
         const fullPath = base ? `${base}/${link.path}` : link.path || "";
-        
+
         const hasStrictChildren = (l: typeof link): boolean => {
           if (l.strict) return true;
           if (l.children) return l.children.some(hasStrictChildren);
@@ -135,7 +140,7 @@ export default function RolesPage({ ruleKey }: Props) {
         };
 
         const hasStrictChild = link.children?.some(hasStrictChildren);
-        
+
         if (link.strict === true && fullPath) {
           items.push({
             key: fullPath as string,
@@ -155,16 +160,16 @@ export default function RolesPage({ ruleKey }: Props) {
             isHeader: true,
           });
         }
-        
+
         if (link.children) {
           items.push(...flatten(link.children, level + 1, fullPath));
         }
-        
+
         return items;
       });
     };
-    
-    return flatten(sidebarLinks);
+
+    return flatten([...sidebarSystemLinks, ...sidebarLinks]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [languageCode, language]);
 
@@ -738,7 +743,9 @@ export default function RolesPage({ ruleKey }: Props) {
                                     >
                                       <div
                                         className="flex items-center gap-2 px-2"
-                                        style={{ paddingLeft: `${menu.level * 24 + 8}px` }}
+                                        style={{
+                                          paddingLeft: `${menu.level * 24 + 8}px`,
+                                        }}
                                       >
                                         <span className="text-[10px] font-bold text-dark-400 uppercase tracking-wider">
                                           {menu.label}
@@ -767,7 +774,9 @@ export default function RolesPage({ ruleKey }: Props) {
                                   >
                                     <div
                                       className="flex items-center gap-2 px-2"
-                                      style={{ paddingLeft: `${menu.level * 24 + 8}px` }}
+                                      style={{
+                                        paddingLeft: `${menu.level * 24 + 8}px`,
+                                      }}
                                     >
                                       <input
                                         type="checkbox"
@@ -783,7 +792,9 @@ export default function RolesPage({ ruleKey }: Props) {
                                         className="w-3.5 h-3.5 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                                       />
                                       <span className="text-sm text-foreground font-medium">
-                                        {menu.level > 0 ? `└ ${menu.label}` : menu.label}
+                                        {menu.level > 0
+                                          ? `└ ${menu.label}`
+                                          : menu.label}
                                       </span>
                                     </div>
                                     {ACTIONS.map((act) => (
@@ -832,7 +843,9 @@ export default function RolesPage({ ruleKey }: Props) {
                                       >
                                         <div
                                           className="flex items-center gap-2 px-2"
-                                          style={{ paddingLeft: `${extra.level * 24 + 8}px` }}
+                                          style={{
+                                            paddingLeft: `${extra.level * 24 + 8}px`,
+                                          }}
                                         >
                                           <input
                                             type="checkbox"

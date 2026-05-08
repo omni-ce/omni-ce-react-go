@@ -71,8 +71,10 @@ const SidebarItem = ({
   const toPath = `/app/${fullPath}`;
 
   // Check if current path matches this link or its children
-  const isExactActive = location.pathname === toPath || location.pathname === `${toPath}/`;
-  const isChildActive = !!link.children && location.pathname.startsWith(toPath + "/");
+  const isExactActive =
+    location.pathname === toPath || location.pathname === `${toPath}/`;
+  const isChildActive =
+    !!link.children && location.pathname.startsWith(toPath + "/");
   const isActive = isExactActive || isChildActive;
 
   const [isExpanded, setIsExpanded] = useState(isChildActive);
@@ -85,10 +87,12 @@ const SidebarItem = ({
   }, [isChildActive]);
 
   // Handle nested children visibility
-  const visibleChildren = link.children?.filter(child => canViewLink(child, fullPath)) || [];
+  const visibleChildren =
+    link.children?.filter((child) => canViewLink(child, fullPath)) || [];
 
   // Padding based on level (indented for children)
-  const plClass = level === 0 ? "px-3" : level === 1 ? "pl-11 pr-3" : "pl-14 pr-3";
+  const plClass =
+    level === 0 ? "px-3" : level === 1 ? "pl-11 pr-3" : "pl-14 pr-3";
 
   if (visibleChildren.length === 0) {
     return (
@@ -150,7 +154,7 @@ const SidebarItem = ({
 
       {/* Children list */}
       {isExpanded && (!effectiveCollapsed || isMobileOpen) && (
-        <div className="space-y-1 relative before:absolute before:left-5 before:top-2 before:bottom-2 before:w-[1px] before:bg-dark-600/50">
+        <div className="space-y-1 relative before:absolute before:left-5 before:top-2 before:bottom-2 before:w-px before:bg-dark-600/50">
           {visibleChildren.map((child, idx) => (
             <SidebarItem
               key={idx}
@@ -335,7 +339,7 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
 
     // If it has children, it's visible ONLY if at least one child is visible
     if (link.children && link.children.length > 0) {
-      return link.children.some(child => canViewLink(child, fullPath));
+      return link.children.some((child) => canViewLink(child, fullPath));
     }
 
     return isAllowed;
@@ -431,17 +435,19 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
 
         {/* Navigation */}
         <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
-          {sidebarLinks.filter(link => canViewLink(link, "")).map((link, idx) => (
-            <SidebarItem
-              key={link.path || idx}
-              link={link}
-              basePath=""
-              effectiveCollapsed={effectiveCollapsed}
-              isMobileOpen={isMobileOpen}
-              handleNavClick={handleNavClick}
-              canViewLink={canViewLink}
-            />
-          ))}
+          {sidebarLinks
+            .filter((link) => canViewLink(link, ""))
+            .map((link, idx) => (
+              <SidebarItem
+                key={link.path || idx}
+                link={link}
+                basePath=""
+                effectiveCollapsed={effectiveCollapsed}
+                isMobileOpen={isMobileOpen}
+                handleNavClick={handleNavClick}
+                canViewLink={canViewLink}
+              />
+            ))}
         </nav>
 
         {/* Sidebar Footer */}
