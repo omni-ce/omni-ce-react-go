@@ -76,13 +76,14 @@ export default function CompanyBranchPage({ ruleKey }: Props) {
       {
         key: "phone",
         label: language({ id: "Nomor Telepon", en: "Phone Number" }),
-        type: "number",
+        type: "phone",
         required: true,
+        phoneFirstAntiZero: true,
       },
       {
         key: "map",
         label: language({ id: "Peta Lokasi", en: "Location Map" }),
-        type: "geolocation",
+        type: "map",
         required: true,
       },
     ],

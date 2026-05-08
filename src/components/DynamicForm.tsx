@@ -100,7 +100,8 @@ export type DynamicFormFieldType =
   | "phone"
   | "checkbox"
   | "switch"
-  | "map";
+  | "map"
+  | "geolocation";
 
 export type DynamicFormFieldNormal = {
   key: string;
@@ -1269,6 +1270,109 @@ function DynamicMapField({
   );
 }
 
+function DynamicGeolocationField({
+  field,
+  value,
+  onChange,
+  disabled,
+}: {
+  field: DynamicFormFieldNormal;
+  value: MapCoordinates | undefined;
+  onChange: (val: MapCoordinates) => void;
+  disabled?: boolean;
+}) {
+  const [loading, setLoading] = useState(false);
+  const { language } = useLanguageStore();
+
+  const handleGetLocation = () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser");
+      return;
+    }
+
+    setLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        onChange({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+        setLoading(false);
+      },
+      (error) => {
+        console.error("Error getting location:", error);
+        setLoading(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
+    );
+  };
+
+  return (
+    <div className="mt-1.5">
+      <div
+        onClick={() => !disabled && !loading && handleGetLocation()}
+        className={`
+          flex items-center gap-3 px-4 py-3 rounded-xl border transition-all cursor-pointer
+          ${
+            value
+              ? "border-accent-500/50 bg-accent-500/5 hover:bg-accent-500/10"
+              : "border-dark-600/50 bg-dark-900/40 hover:bg-dark-800/50"
+          }
+          ${disabled || loading ? "opacity-50 cursor-not-allowed" : ""}
+        `}
+      >
+        <div
+          className={`shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
+            value ? "bg-accent-500 text-white" : "bg-dark-800 text-dark-400"
+          }`}
+        >
+          {loading ? (
+            <IconComponent
+              iconName="Ri/RiLoader4Line"
+              className="w-5 h-5 animate-spin"
+            />
+          ) : (
+            <IconComponent
+              iconName="Hi/HiOutlineLocationMarker"
+              className="w-5 h-5"
+            />
+          )}
+        </div>
+        <div className="flex flex-col min-w-0 flex-1">
+          <span
+            className={`text-sm font-medium truncate ${
+              value ? "text-accent-400" : "text-foreground"
+            }`}
+          >
+            {loading
+              ? language({ id: "Mengambil Lokasi...", en: "Getting Location..." })
+              : value
+                ? `${value.latitude.toFixed(6)}, ${value.longitude.toFixed(6)}`
+                : language({
+                    id: "Ambil Lokasi Saat Ini",
+                    en: "Get Current Location",
+                  })}
+          </span>
+          {value && !loading && (
+            <span className="text-xs text-dark-400 mt-0.5">
+              {language({
+                id: "Lokasi berhasil diambil",
+                en: "Location acquired",
+              })}
+            </span>
+          )}
+        </div>
+        {!loading && (
+          <IconComponent
+            iconName="Hi/HiOutlineRefresh"
+            className="w-4 h-4 text-dark-400 shrink-0"
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
 function DynamicFieldRenderer({
   field,
   formData,
@@ -1458,6 +1562,13 @@ function DynamicFieldRenderer({
         </div>
       ) : field.type === "map" ? (
         <DynamicMapField
+          field={field as DynamicFormFieldNormal}
+          value={formData[field.key] as MapCoordinates | undefined}
+          onChange={(val) => onChange(field.key!, val)}
+          disabled={disabled}
+        />
+      ) : field.type === "geolocation" ? (
+        <DynamicGeolocationField
           field={field as DynamicFormFieldNormal}
           value={formData[field.key] as MapCoordinates | undefined}
           onChange={(val) => onChange(field.key!, val)}
