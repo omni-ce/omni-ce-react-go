@@ -117,6 +117,7 @@ export type DynamicFormFieldNormal = {
   textMultiLanguage?: boolean;
   rule?: string;
   numberSuffix?: string;
+  textareaRows?: number;
 };
 
 type DynamicFormFieldChildren = {
@@ -751,6 +752,7 @@ function ArrayField({
                     }
                     minLength={child.minLength}
                     maxLength={child.maxLength}
+                    rows={(child as DynamicFormFieldNormal).textareaRows}
                   />
                 ) : (
                   <Input
@@ -1215,6 +1217,7 @@ function DynamicFieldRenderer({
           onChange={(e) => onChange(field.key!, e.target.value)}
           minLength={field.minLength}
           maxLength={field.maxLength}
+          rows={(field as DynamicFormFieldNormal).textareaRows}
         />
       ) : field.debounce ? (
         <DebouncedInput

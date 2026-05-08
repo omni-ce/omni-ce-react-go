@@ -43,6 +43,15 @@ export default function EntityPage({ ruleKey }: Props) {
         label: language({ id: "Nomor NPWP", en: "NPWP Number" }),
         type: "text",
         required: true,
+        col: 8,
+      },
+      {
+        key: "is_taxpayer",
+        label: language({ id: "Wajib Pajak", en: "Taxpayer" }),
+        type: "switch",
+        required: true,
+        col: 4,
+        booleanDefault: true,
       },
       {
         key: "npwp_alias",
@@ -56,7 +65,7 @@ export default function EntityPage({ ruleKey }: Props) {
         type: "textarea",
         required: true,
         col: 6,
-        textareaRows: 3,
+        textareaRows: 10,
       },
       {
         key: "address_code",
@@ -64,12 +73,6 @@ export default function EntityPage({ ruleKey }: Props) {
         type: "address",
         required: true,
         col: 6,
-      },
-      {
-        key: "is_taxpayer",
-        label: language({ id: "Wajib Pajak", en: "Taxpayer" }),
-        type: "switch",
-        required: true,
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
