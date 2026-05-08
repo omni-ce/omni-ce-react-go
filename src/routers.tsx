@@ -72,7 +72,7 @@ export const sidebarLinks: ISidebarLink[] = [
     icon: "Hi/HiOutlineCube",
     children: [
       {
-        label: { id: "Kategori Produk", en: "Product Category" },
+        label: { id: "Kategori", en: "Category" },
         path: "categories",
         element: <ProductCategoryPage ruleKey="product-categories" />,
         strict: true,

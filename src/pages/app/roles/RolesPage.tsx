@@ -113,23 +113,65 @@ export default function RolesPage({ ruleKey }: Props) {
     [languageCode, language],
   );
 
+  type MenuListItem = {
+    key: string;
+    label: string;
+    level: number;
+    isHeader?: boolean;
+    extraRuleKeys?: { key: string; label: string; level: number }[];
+  };
+
   const menuList = useMemo(() => {
-    return sidebarLinks
-      .filter((link) => link.path && link.strict === true && !link.isHide)
-      .map((link) => ({
-        key: link.path as string,
-        label: language(link.label),
-        extraRuleKeys: link.extraRuleKeys?.map((extra) => ({
-          key: extra.ruleKey,
-          label: language(extra.label),
-        })),
-      }));
+    const flatten = (links: typeof sidebarLinks, level = 0, base = ""): MenuListItem[] => {
+      return links.flatMap((link) => {
+        if (link.isHide) return [];
+        const items: MenuListItem[] = [];
+        const fullPath = base ? `${base}/${link.path}` : link.path || "";
+        
+        const hasStrictChildren = (l: typeof link): boolean => {
+          if (l.strict) return true;
+          if (l.children) return l.children.some(hasStrictChildren);
+          return false;
+        };
+
+        const hasStrictChild = link.children?.some(hasStrictChildren);
+        
+        if (link.strict === true && fullPath) {
+          items.push({
+            key: fullPath as string,
+            label: language(link.label),
+            level,
+            extraRuleKeys: link.extraRuleKeys?.map((extra) => ({
+              key: extra.ruleKey,
+              label: language(extra.label),
+              level: level + 1,
+            })),
+          });
+        } else if (hasStrictChild) {
+          items.push({
+            key: `header-${fullPath}`,
+            label: language(link.label),
+            level,
+            isHeader: true,
+          });
+        }
+        
+        if (link.children) {
+          items.push(...flatten(link.children, level + 1, fullPath));
+        }
+        
+        return items;
+      });
+    };
+    
+    return flatten(sidebarLinks);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [languageCode, language]);
 
   const allMenuKeys = useMemo(() => {
     const keys: { key: string; label: string }[] = [];
     for (const menu of menuList) {
+      if (menu.isHeader) continue;
       keys.push({ key: menu.key, label: menu.label });
       if (menu.extraRuleKeys) {
         for (const extra of menu.extraRuleKeys) {
@@ -684,6 +726,33 @@ export default function RolesPage({ ruleKey }: Props) {
                               })}
                             </div>
                             {menuList.map((menu) => {
+                              if (menu.isHeader) {
+                                return (
+                                  <React.Fragment key={menu.key}>
+                                    <div
+                                      className="grid gap-2 min-w-150 items-center py-1.5 border-t border-dark-600/20 bg-dark-800/40"
+                                      style={{
+                                        gridTemplateColumns:
+                                          "minmax(140px, 1fr) repeat(5, 80px)",
+                                      }}
+                                    >
+                                      <div
+                                        className="flex items-center gap-2 px-2"
+                                        style={{ paddingLeft: `${menu.level * 24 + 8}px` }}
+                                      >
+                                        <span className="text-sm text-dark-300 font-bold uppercase tracking-wider">
+                                          {menu.label}
+                                        </span>
+                                      </div>
+                                      {/* Empty columns for actions on header */}
+                                      {ACTIONS.map((act) => (
+                                        <div key={act.key} />
+                                      ))}
+                                    </div>
+                                  </React.Fragment>
+                                );
+                              }
+
                               const allOn = ACTIONS.every((a) =>
                                 getRuleState(role.id, menu.key, a.key),
                               );
@@ -696,7 +765,10 @@ export default function RolesPage({ ruleKey }: Props) {
                                         "minmax(140px, 1fr) repeat(5, 80px)",
                                     }}
                                   >
-                                    <div className="flex items-center gap-2 px-2">
+                                    <div
+                                      className="flex items-center gap-2 px-2"
+                                      style={{ paddingLeft: `${menu.level * 24 + 8}px` }}
+                                    >
                                       <input
                                         type="checkbox"
                                         checked={allOn}
@@ -711,7 +783,7 @@ export default function RolesPage({ ruleKey }: Props) {
                                         className="w-3.5 h-3.5 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                                       />
                                       <span className="text-sm text-foreground font-medium">
-                                        {menu.label}
+                                        {menu.level > 0 ? `└ ${menu.label}` : menu.label}
                                       </span>
                                     </div>
                                     {ACTIONS.map((act) => (
@@ -752,13 +824,16 @@ export default function RolesPage({ ruleKey }: Props) {
                                     return (
                                       <div
                                         key={extra.key}
-                                        className="grid gap-2 min-w-150 items-center py-1.5 border-t border-dark-600/10 hover:bg-dark-700/10 rounded transition-colors pl-6"
+                                        className="grid gap-2 min-w-150 items-center py-1.5 border-t border-dark-600/10 hover:bg-dark-700/10 rounded transition-colors"
                                         style={{
                                           gridTemplateColumns:
                                             "minmax(140px, 1fr) repeat(5, 80px)",
                                         }}
                                       >
-                                        <div className="flex items-center gap-2 px-2">
+                                        <div
+                                          className="flex items-center gap-2 px-2"
+                                          style={{ paddingLeft: `${extra.level * 24 + 8}px` }}
+                                        >
                                           <input
                                             type="checkbox"
                                             checked={extraAllOn}
