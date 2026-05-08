@@ -10,6 +10,8 @@ import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import type { Entity } from "@/types/company";
 import { Badge } from "@/components/ui/Badge";
 import { FileType } from "@/components/DynamicForm";
+import { HOST_API } from "@/environment";
+import { Avatar } from "@/components/ui/Avatar";
 
 interface Props {
   ruleKey?: string;
@@ -86,18 +88,17 @@ export default function EntityPage({ ruleKey }: Props) {
         header: language({ id: "Nama", en: "Name" }),
         sort: true,
         search: true,
-        render: (item) => {
-          let name = item.name;
-          try {
-            if (name.startsWith("{")) {
-              const obj = JSON.parse(name);
-              name = language(obj);
-            }
-          } catch (e) {
-            // fallback to raw name
-          }
-          return <span className="font-medium">{name}</span>;
-        },
+        render: (user) => (
+          <div className="flex items-center gap-3">
+            <Avatar
+              size="sm"
+              src={user.logo ? HOST_API + user.logo : "BlankUser"}
+              alt={user.name}
+              fallback={user.name?.charAt(0)?.toUpperCase()}
+            />
+            <span className="font-medium">{user.name}</span>
+          </div>
+        ),
       },
       {
         key: "is_active",
