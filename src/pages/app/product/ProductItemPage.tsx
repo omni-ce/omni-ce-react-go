@@ -118,19 +118,24 @@ export default function ProductItemPage({ ruleKey }: Props) {
         },
       },
       {
-        key: "brand_varian_name",
+        key: "brand_name",
         header: language({ id: "Merek Varian", en: "Brand Variant" }),
         search: true,
         render: (item) => (
-          <span className="max-w-xs truncate block">
-            {item.brand_name} {item.varian_name}
-          </span>
+          <span className="max-w-xs truncate block">{item.brand_name}</span>
+        ),
+      },
+      {
+        key: "varian_name",
+        header: language({ id: "Merek Varian", en: "Brand Variant" }),
+        search: true,
+        render: (item) => (
+          <span className="max-w-xs truncate block">{item.varian_name}</span>
         ),
       },
       {
         key: "memory_name",
         header: language({ id: "Memori", en: "Memory" }),
-        search: true,
         render: (item) => (
           <span className="max-w-xs truncate block">
             {item.memory_name ?? "- "}
@@ -199,6 +204,18 @@ export default function ProductItemPage({ ruleKey }: Props) {
         fields={fields}
         ruleKey={ruleKey}
         useIsActive
+        dataDeleteName={(item) => {
+          let category_name = item.category_name;
+          try {
+            if (category_name.startsWith("{")) {
+              const obj = JSON.parse(category_name);
+              category_name = language(obj);
+            }
+          } catch (e) {
+            // fallback to raw name
+          }
+          return `${category_name} ${item.brand_name} ${item.varian_name} (${item.memory_name ?? "-"}) ${item.color_name}`;
+        }}
       />
     </div>
   );

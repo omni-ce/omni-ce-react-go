@@ -8,6 +8,8 @@ import (
 	"react-go/core/variable"
 
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 func Username(c *fiber.Ctx) error {
@@ -20,6 +22,7 @@ func Username(c *fiber.Ctx) error {
 
 	var existing user.User
 	if err := variable.Db.
+		Session(&gorm.Session{Logger: logger.Default.LogMode(logger.Silent)}). // silent mode to avoid noise
 		Where("username = ?", body.Value).
 		First(&existing).
 		Error; err == nil {
@@ -50,6 +53,7 @@ func ProductSKU(c *fiber.Ctx) error {
 
 	var existing product.ProductItem
 	if err := variable.Db.
+		Session(&gorm.Session{Logger: logger.Default.LogMode(logger.Silent)}). // silent mode to avoid noise
 		Where("sku = ?", body.Value).
 		First(&existing).
 		Error; err == nil {
@@ -80,6 +84,7 @@ func ProductIMEI(c *fiber.Ctx) error {
 
 	var existing product.ProductItem
 	if err := variable.Db.
+		Session(&gorm.Session{Logger: logger.Default.LogMode(logger.Silent)}). // silent mode to avoid noise
 		Where("sku_imei = ?", body.Value).
 		First(&existing).
 		Error; err == nil {

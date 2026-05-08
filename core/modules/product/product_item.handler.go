@@ -10,6 +10,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 func ItemCreate(c *fiber.Ctx) error {
@@ -49,6 +50,7 @@ func ItemCreate(c *fiber.Ctx) error {
 	// Check duplicate SKU
 	var existing model.ProductItem
 	if err := variable.Db.
+		Session(&gorm.Session{Logger: logger.Default.LogMode(logger.Silent)}). // silent mode to avoid noise
 		Where("sku = ?", body.SKU).
 		First(&existing).
 		Error; err == nil {
