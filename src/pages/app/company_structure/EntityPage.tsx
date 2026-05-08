@@ -43,14 +43,14 @@ export default function EntityPage({ ruleKey }: Props) {
         label: language({ id: "Nomor NPWP", en: "NPWP Number" }),
         type: "text",
         required: true,
-        col: 8,
+        col: 9,
       },
       {
         key: "is_taxpayer",
         label: language({ id: "Wajib Pajak", en: "Taxpayer" }),
         type: "switch",
         required: true,
-        col: 4,
+        col: 3,
         booleanDefault: true,
       },
       {
