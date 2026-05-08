@@ -2,7 +2,7 @@ import {
   Outlet,
   useNavigate,
   useLocation,
-  type IndexRouteObject,
+  type RouteObject,
   Link,
 } from "react-router";
 import { useEffect, useRef, useState, useMemo } from "react";
@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/Dialog";
 import { IconComponent } from "@/components/ui/IconSelector";
 
-export interface ISidebarLink extends Partial<IndexRouteObject> {
+export interface ISidebarLink extends Omit<Partial<RouteObject>, "children"> {
   show_hr?: boolean;
   hr_title?: string;
   label: Record<LanguageCode, string>;
@@ -46,6 +46,128 @@ export interface ISidebarLink extends Partial<IndexRouteObject> {
 interface AppLayoutProps {
   sidebarLinks: ISidebarLink[];
 }
+
+const SidebarItem = ({
+  link,
+  basePath,
+  level = 0,
+  effectiveCollapsed,
+  isMobileOpen,
+  handleNavClick,
+  canViewLink,
+}: {
+  link: ISidebarLink;
+  basePath: string;
+  level?: number;
+  effectiveCollapsed: boolean;
+  isMobileOpen: boolean;
+  handleNavClick: (path: string) => void;
+  canViewLink: (link: ISidebarLink) => boolean;
+}) => {
+  const location = useLocation();
+  const { language } = useLanguageStore();
+
+  const fullPath = basePath ? `${basePath}/${link.path}` : link.path || "";
+  const toPath = `/app/${fullPath}`;
+
+  // Check if current path matches this link or its children
+  const isExactActive = location.pathname === toPath || location.pathname === `${toPath}/`;
+  const isChildActive = !!link.children && location.pathname.startsWith(toPath + "/");
+  const isActive = isExactActive || isChildActive;
+
+  const [isExpanded, setIsExpanded] = useState(isChildActive);
+
+  // Auto-expand if a child becomes active
+  useEffect(() => {
+    if (isChildActive) {
+      setIsExpanded(true);
+    }
+  }, [isChildActive]);
+
+  // Handle nested children visibility
+  const visibleChildren = link.children?.filter(canViewLink) || [];
+
+  // Padding based on level (indented for children)
+  const plClass = level === 0 ? "px-3" : level === 1 ? "pl-11 pr-3" : "pl-14 pr-3";
+
+  if (visibleChildren.length === 0) {
+    return (
+      <Link
+        to={toPath}
+        onClick={() => {
+          if (window.innerWidth < 768) handleNavClick(fullPath);
+        }}
+        className={`
+          w-full flex items-center gap-3 ${plClass} py-2.5 rounded-xl text-sm font-medium transition-all duration-200
+          ${
+            isExactActive
+              ? "bg-accent-500/15 text-accent-400 border border-accent-500/20"
+              : "text-dark-300 hover:text-foreground hover:bg-dark-700/50 border border-transparent"
+          }
+          ${effectiveCollapsed && !isMobileOpen ? "justify-center px-0" : ""}
+        `}
+        title={effectiveCollapsed ? language(link.label) : undefined}
+      >
+        <IconComponent iconName={link.icon} size={20} className="shrink-0" />
+        {(!effectiveCollapsed || isMobileOpen) && (
+          <span className="truncate">{language(link.label)}</span>
+        )}
+      </Link>
+    );
+  }
+
+  // Item with children
+  return (
+    <div className="space-y-1">
+      <button
+        onClick={() => {
+          setIsExpanded(!isExpanded);
+        }}
+        className={`
+          w-full flex items-center justify-between ${plClass} py-2.5 rounded-xl text-sm font-medium transition-all duration-200
+          ${
+            isActive && !isExactActive && !isExpanded
+              ? "text-accent-400 bg-accent-500/5 border border-transparent"
+              : "text-dark-300 hover:text-foreground hover:bg-dark-700/50 border border-transparent"
+          }
+          ${effectiveCollapsed && !isMobileOpen ? "justify-center px-0" : ""}
+        `}
+        title={effectiveCollapsed ? language(link.label) : undefined}
+      >
+        <div className="flex items-center gap-3 min-w-0">
+          <IconComponent iconName={link.icon} size={20} className="shrink-0" />
+          {(!effectiveCollapsed || isMobileOpen) && (
+            <span className="truncate">{language(link.label)}</span>
+          )}
+        </div>
+        {(!effectiveCollapsed || isMobileOpen) && (
+          <IconComponent
+            iconName="Hi/HiChevronDown"
+            className={`w-4 h-4 text-dark-400 transition-transform duration-200 shrink-0 ${isExpanded ? "rotate-180" : ""}`}
+          />
+        )}
+      </button>
+
+      {/* Children list */}
+      {isExpanded && (!effectiveCollapsed || isMobileOpen) && (
+        <div className="space-y-1 relative before:absolute before:left-5 before:top-2 before:bottom-2 before:w-[1px] before:bg-dark-600/50">
+          {visibleChildren.map((child, idx) => (
+            <SidebarItem
+              key={idx}
+              link={child}
+              basePath={fullPath}
+              level={level + 1}
+              effectiveCollapsed={effectiveCollapsed}
+              isMobileOpen={isMobileOpen}
+              handleNavClick={handleNavClick}
+              canViewLink={canViewLink}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
   const navigate = useNavigate();
@@ -191,6 +313,33 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
   const effectiveCollapsed = isDesktop ? isCollapsed : false;
   const sidebarWidth = effectiveCollapsed ? "w-[72px]" : "w-65";
 
+  // Check if user has permission to view a link or its children
+  const canViewLink = (link: ISidebarLink): boolean => {
+    if (!link.strict) return true;
+    if (user?.role === "su") return true;
+    if (!role_selected) return false;
+    
+    const roleId = Number(role_selected.role_id);
+    
+    // Check if the link itself is allowed
+    const hasRead = rules.some(
+      (r) =>
+        r.role_id === roleId &&
+        r.key === link.path &&
+        r.action === "read" &&
+        r.state === true,
+    );
+
+    if (hasRead) return true;
+
+    // Check if any child is allowed
+    if (link.children && link.children.length > 0) {
+      return link.children.some(canViewLink);
+    }
+
+    return false;
+  };
+
   if (isLoading) {
     return <Loading />;
   }
@@ -281,52 +430,17 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
 
         {/* Navigation */}
         <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
-          {sidebarLinks
-            .filter((link) => {
-              // Always show non-strict links (e.g. Dashboard)
-              if (!link.strict) return true;
-              // SU sees everything
-              if (user?.role === "su") return true;
-              // For non-su, check if the selected role has "read" permission
-              if (!role_selected) return false;
-              const roleId = Number(role_selected.role_id);
-              const hasRead = rules.some(
-                (r) =>
-                  r.role_id === roleId &&
-                  r.key === link.path &&
-                  r.action === "read" &&
-                  r.state === true,
-              );
-              return hasRead;
-            })
-            .map((link) => {
-              const isActive = location.pathname === `/app/${link.path}`;
-              return (
-                <Link
-                  key={`/app/${link.path}`}
-                  to={`/app/${link.path}`}
-                  onClick={() => {
-                    if (window.innerWidth < 768)
-                      handleNavClick(link.path as string);
-                  }}
-                  className={`
-                  w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200
-                  ${
-                    isActive
-                      ? "bg-accent-500/15 text-accent-400 border border-accent-500/20"
-                      : "text-dark-300 hover:text-foreground hover:bg-dark-700/50 border border-transparent"
-                  }
-                  ${effectiveCollapsed && !isMobileOpen ? "justify-center" : ""}
-                `}
-                  title={effectiveCollapsed ? language(link.label) : undefined}
-                >
-                  <IconComponent iconName={link.icon} size={20} />
-                  {(!effectiveCollapsed || isMobileOpen) && (
-                    <span className="truncate">{language(link.label)}</span>
-                  )}
-                </Link>
-              );
-            })}
+          {sidebarLinks.filter(canViewLink).map((link, idx) => (
+            <SidebarItem
+              key={link.path || idx}
+              link={link}
+              basePath=""
+              effectiveCollapsed={effectiveCollapsed}
+              isMobileOpen={isMobileOpen}
+              handleNavClick={handleNavClick}
+              canViewLink={canViewLink}
+            />
+          ))}
         </nav>
 
         {/* Sidebar Footer */}
