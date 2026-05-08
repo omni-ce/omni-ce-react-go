@@ -497,10 +497,16 @@ const Pagination = forwardRef(function PaginationInner<T>(
             data[field.key] = [];
           } else if (
             field.type === "select" &&
-            Array.isArray(field.options) &&
-            field.options.length > 0
+            Array.isArray((field as DynamicFormFieldNormal).selectOptions) &&
+            (
+              (field as DynamicFormFieldNormal)
+                .selectOptions as PaginationFieldOption[]
+            ).length > 0
           ) {
-            data[field.key] = field.options[0].value;
+            data[field.key as string] = (
+              (field as DynamicFormFieldNormal)
+                .selectOptions as PaginationFieldOption[]
+            )[0].value;
           } else {
             data[field.key as string] = "";
           }
