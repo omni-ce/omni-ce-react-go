@@ -11,6 +11,7 @@ import satellite from "@/lib/satellite";
 import type { Response } from "@/types/response";
 import { HOST_API } from "@/environment";
 import BlankUser from "@/assets/blank-user.svg";
+import BlankCompany from "@/assets/blank-company.svg";
 import type { Option } from "@/types/option";
 import { IconComponent } from "@/components/ui/IconSelector";
 import CameraSelector from "@/components/ui/CameraSelector";
@@ -110,7 +111,7 @@ export type DynamicFormFieldNormal = {
   fileTarget?: string;
   fileMaxSize?: number;
   fileType?: (FileType | FileType[])[];
-  fileTemplate?: "profile" | "default";
+  fileTemplate?: "profile" | "company" | "default";
   captchaSecurity?: CaptchaSecurity;
   captchaLength?: number;
   phoneDefaultCountry?: CountryKey;
@@ -614,19 +615,26 @@ function DynamicFile({
     );
   };
 
-  if ((field as DynamicFormFieldNormal).fileTemplate === "profile") {
+  const template = (field as DynamicFormFieldNormal).fileTemplate;
+  if (template === "profile" || template === "company") {
     const imageUrl = value
       ? value.startsWith("http")
         ? value
         : HOST_API + value
-      : BlankUser;
+      : template === "company"
+        ? BlankCompany
+        : BlankUser;
 
     return (
       <div className="mt-1.5 flex flex-row items-center gap-6 p-4 rounded-xl border border-dark-600/50 bg-dark-900/30">
-        <div className="shrink-0 w-24 h-24 rounded-full overflow-hidden border-2 border-dark-500 bg-dark-800">
+        <div
+          className={`shrink-0 w-24 h-24 ${
+            template === "company" ? "rounded-xl" : "rounded-full"
+          } overflow-hidden border-2 border-dark-500 bg-dark-800`}
+        >
           <img
             src={imageUrl}
-            alt="Profile Preview"
+            alt="Preview"
             className="w-full h-full object-cover"
           />
         </div>

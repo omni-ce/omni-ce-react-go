@@ -32,7 +32,7 @@ export default function EntityPage({ ruleKey }: Props) {
         required: true,
         fileMaxSize: 1024 * 1024 * 2, // MB
         fileTarget: "entity-logo",
-        fileTemplate: "profile",
+        fileTemplate: "company",
         fileType: [FileType.Jpeg, FileType.Png],
       },
       {
