@@ -29,12 +29,6 @@ export default function ProductCategoryPage({ ruleKey }: Props) {
         required: true,
         textMultiLanguage: true,
       },
-      {
-        key: "is_active",
-        label: language({ id: "Status", en: "Status" }),
-        type: "switch",
-        rule: "set",
-      },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [languageCode, language],

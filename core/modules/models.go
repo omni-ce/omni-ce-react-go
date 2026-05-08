@@ -40,6 +40,7 @@ func Models() []interface{} {
 		// Custom
 		&master_data.MasterData{},
 		&product.ProductCategory{},
+		&product.ProductBrand{},
 	}
 }
 
@@ -49,4 +50,8 @@ func SeedAll(db *gorm.DB) {
 	role.RoleDivision{}.Seed(db)
 	role.Role{}.Seed(db)
 	rule.Rule{}.Seed(db)
+
+	// Custom
+	product.ProductCategory{}.Seed(db)
+	product.ProductBrand{}.Seed(db)
 }

@@ -1,6 +1,5 @@
 import { useMemo, useRef } from "react";
 import { useLanguageStore } from "@/stores/languageStore";
-import { formatDateTime } from "@/utils/datetime";
 import Pagination, {
   type PaginationColumn,
   type PaginationField,
@@ -10,6 +9,7 @@ import { type ProductBrand } from "@/types/product";
 import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import { Badge } from "@/components/ui/Badge";
+import { FileType } from "@/components/DynamicForm";
 
 interface Props {
   ruleKey?: string;
@@ -26,18 +26,15 @@ export default function ProductBrandPage({ ruleKey }: Props) {
         key: "logo",
         label: language({ id: "Logo", en: "Logo" }),
         type: "file",
+        fileTarget: "logo-brand",
         fileTemplate: "profile",
+        fileMaxSize: 1024 * 1024 * 1, // 1MB
+        fileType: [FileType.Jpeg, FileType.Png],
         required: true,
       },
       {
         key: "name",
         label: language({ id: "Nama", en: "Name" }),
-        type: "text",
-        required: true,
-      },
-      {
-        key: "description",
-        label: language({ id: "Deskripsi", en: "Description" }),
         type: "text",
         required: true,
       },
@@ -49,36 +46,21 @@ export default function ProductBrandPage({ ruleKey }: Props) {
   const columns = useMemo<PaginationColumn<ProductBrand>[]>(
     () => [
       {
-        key: "logo",
-        header: language({ id: "Logo", en: "Logo" }),
-        render: (item) => (
-          <span className="font-medium text-accent-400">
-            <img src={item.logo} alt={item.name} className="h-6 w-6" />
-          </span>
-        ),
-      },
-      {
         key: "name",
         header: language({ id: "Nama", en: "Name" }),
         sort: true,
         search: true,
         render: (item) => (
-          <span className="font-mono text-sm">{item.name}</span>
-        ),
-      },
-      {
-        key: "description",
-        header: language({ id: "Deskripsi", en: "Description" }),
-        search: true,
-        render: (item) => (
-          <span className="text-dark-300 max-w-xs truncate block">
-            {item.description}
+          <span className="font-medium">
+            <img src={item.logo} alt={item.name} className="h-6 w-6" />
+            <span className="font-mono text-sm">{item.name}</span>
           </span>
         ),
       },
       {
         key: "is_active",
         header: language({ id: "Status", en: "Status" }),
+        rule: "set",
         render: (item) => (
           <Badge variant={item.is_active ? "default" : "destructive"}>
             {item.is_active

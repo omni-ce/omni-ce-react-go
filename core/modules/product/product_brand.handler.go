@@ -10,13 +10,14 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func CategoryCreate(c *fiber.Ctx) error {
+func BrandCreate(c *fiber.Ctx) error {
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
 		return dto.Unauthorized(c, "Unauthorized", nil)
 	}
 
 	var body struct {
+		Logo string `json:"logo" validate:"required"`
 		Name string `json:"name" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
@@ -26,35 +27,36 @@ func CategoryCreate(c *fiber.Ctx) error {
 	key := generateKeyFromName(body.Name)
 
 	// Check duplicate key
-	var existing model.ProductCategory
+	var existing model.ProductBrand
 	if err := variable.Db.
 		Where("`key` = ?", key).
 		First(&existing).
 		Error; err == nil {
-		return dto.BadRequest(c, "Category with this name already exists", nil)
+		return dto.BadRequest(c, "Brand with this name already exists", nil)
 	}
 
-	category := model.ProductCategory{
+	brand := model.ProductBrand{
 		Key:       key,
+		Logo:      body.Logo,
 		Name:      body.Name,
 		CreatedBy: currentUser.ID,
 		UpdatedBy: currentUser.ID,
 	}
 
 	if err := variable.Db.
-		Create(&category).
+		Create(&brand).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to create category", nil)
+		return dto.InternalServerError(c, "Failed to create brand", nil)
 	}
 
-	return dto.Created(c, "Category created", fiber.Map{
-		"category": category.Map(),
+	return dto.Created(c, "Brand created", fiber.Map{
+		"brand": brand.Map(),
 	})
 }
 
-func CategoryPaginate(c *fiber.Ctx) error {
-	var categories []model.ProductCategory
-	pagination, err := function.Pagination(c, &model.ProductCategory{}, nil, []string{"name", "key"}, &categories)
+func BrandPaginate(c *fiber.Ctx) error {
+	var categories []model.ProductBrand
+	pagination, err := function.Pagination(c, &model.ProductBrand{}, nil, []string{"name", "key"}, &categories)
 	if err != nil {
 		return dto.InternalServerError(c, "Failed to prepare pagination", nil)
 	}
@@ -70,7 +72,7 @@ func CategoryPaginate(c *fiber.Ctx) error {
 	})
 }
 
-func CategoryEdit(c *fiber.Ctx) error {
+func BrandEdit(c *fiber.Ctx) error {
 	id := c.Params("id")
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
@@ -78,60 +80,62 @@ func CategoryEdit(c *fiber.Ctx) error {
 	}
 
 	var body struct {
+		Logo string `json:"logo" validate:"required"`
 		Name string `json:"name" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
 	}
 
-	var existing model.ProductCategory
+	var existing model.ProductBrand
 	if err := variable.Db.
 		First(&existing, "id = ?", id).
 		Error; err != nil {
-		return dto.NotFound(c, "Category not found", nil)
+		return dto.NotFound(c, "Brand not found", nil)
 	}
 
 	key := generateKeyFromName(body.Name)
 
 	// Check duplicate key if changed
 	if key != existing.Key {
-		var dup model.ProductCategory
+		var dup model.ProductBrand
 		if err := variable.Db.
 			Where("`key` = ? AND id != ?", key, id).
 			First(&dup).
 			Error; err == nil {
-			return dto.BadRequest(c, "Category with this name already exists", nil)
+			return dto.BadRequest(c, "Brand with this name already exists", nil)
 		}
 	}
 
 	existing.Key = key
+	existing.Logo = body.Logo
 	existing.Name = body.Name
 	existing.UpdatedBy = currentUser.ID
 
 	if err := variable.Db.
 		Save(&existing).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to update category", nil)
+		return dto.InternalServerError(c, "Failed to update brand", nil)
 	}
 
-	return dto.OK(c, "Category updated", fiber.Map{
-		"category": existing.Map(),
+	return dto.OK(c, "Brand updated", fiber.Map{
+		"brand": existing.Map(),
 	})
 }
 
-func CategoryRemove(c *fiber.Ctx) error {
+func BrandRemove(c *fiber.Ctx) error {
 	id := c.Params("id")
 
 	if err := variable.Db.
-		Delete(&model.ProductCategory{}, "id = ?", id).
+		Delete(&model.ProductBrand{}, "id = ?", id).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to delete category", nil)
+		return dto.InternalServerError(c, "Failed to delete brand", nil)
 	}
 
-	return dto.OK(c, "Category deleted", nil)
+	return dto.OK(c, "Brand deleted", nil)
 }
 
-func CategoryBulkRemove(c *fiber.Ctx) error {
+func BrandBulkRemove(c *fiber.Ctx) error {
 	var body struct {
 		IDs []uint `json:"ids" validate:"required,min=1"`
 	}
@@ -140,7 +144,7 @@ func CategoryBulkRemove(c *fiber.Ctx) error {
 	}
 
 	if err := variable.Db.
-		Delete(&model.ProductCategory{}, "id IN ?", body.IDs).
+		Delete(&model.ProductBrand{}, "id IN ?", body.IDs).
 		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to bulk delete categories", nil)
 	}
@@ -148,24 +152,24 @@ func CategoryBulkRemove(c *fiber.Ctx) error {
 	return dto.OK(c, fmt.Sprintf("Success delete %d categories", len(body.IDs)), nil)
 }
 
-func CategorySetActive(c *fiber.Ctx) error {
+func BrandSetActive(c *fiber.Ctx) error {
 	id := c.Params("id")
 
-	var existing model.ProductCategory
+	var existing model.ProductBrand
 	if err := variable.Db.
 		First(&existing, "id = ?", id).
 		Error; err != nil {
-		return dto.NotFound(c, "Category not found", nil)
+		return dto.NotFound(c, "Brand not found", nil)
 	}
 
 	existing.IsActive = !existing.IsActive
 	if err := variable.Db.
 		Save(&existing).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to toggle category status", nil)
+		return dto.InternalServerError(c, "Failed to toggle brand status", nil)
 	}
 
-	return dto.OK(c, "Category status updated", fiber.Map{
-		"category": existing.Map(),
+	return dto.OK(c, "Brand status updated", fiber.Map{
+		"brand": existing.Map(),
 	})
 }
