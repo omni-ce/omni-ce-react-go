@@ -3,12 +3,12 @@ import { useLanguageStore } from "@/stores/languageStore";
 import { useNotificationStore } from "@/stores/notificationStore";
 import type { INotification } from "@/types/notification";
 import { formatTimestamp } from "@/utils/datetime";
-import { typeConfig } from "@/pages/app/notifications/config";
-import { filters, type FilterType } from "@/pages/app/notifications/message";
+import { typeConfig } from "@/pages/app/notification/config";
+import { filters, type FilterType } from "@/pages/app/notification/message";
 import { IconComponent } from "@/components/ui/IconSelector";
 
 interface Props {}
-export default function NotificationsPage({}: Props) {
+export default function NotificationPage({}: Props) {
   const { language } = useLanguageStore();
   const {
     notifications: notifs,

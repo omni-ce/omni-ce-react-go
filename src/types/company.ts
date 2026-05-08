@@ -3,11 +3,11 @@ export interface Entity {
   id: number;
   logo: string;
   name: string;
-  npwp: string;
-  alias: string;
+  npwp_code: string;
+  is_taxpayer: boolean;
+  npwp_alias: string;
   address: string;
-  city: string;
-  category: string;
+  address_code: string;
   is_active: boolean;
   created_at: string;
   created_by: number;

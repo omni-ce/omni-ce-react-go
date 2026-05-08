@@ -16,9 +16,9 @@ import SelectRolePage from "@/pages/auth/SelectRolePage";
 
 // App: Pages
 import DashboardPage from "@/pages/app/DashboardPage";
-import RolesPage from "@/pages/app/roles/RolesPage";
-import SettingsPage from "@/pages/app/settings/SettingPage";
-import NotificationsPage from "@/pages/app/notifications/NotificationsPage";
+import RolePage from "@/pages/app/role/RolePage";
+import SettingPage from "@/pages/app/setting/SettingPage";
+import NotificationPage from "@/pages/app/notification/NotificationPage";
 
 // Documentation
 import DocPage from "@/pages/doc";
@@ -35,9 +35,9 @@ export const sidebarSystemLinks: ISidebarLink[] = [
     icon: "Hi/HiOutlineHome",
   },
   {
-    label: { id: "Peran", en: "Roles" },
-    path: "roles",
-    element: <RolesPage ruleKey="roles" />,
+    label: { id: "Peran", en: "Role" },
+    path: "role",
+    element: <RolePage ruleKey="role" />,
     strict: true,
     icon: "Hi/HiOutlineShieldCheck",
   },
@@ -100,12 +100,12 @@ export const routers = createBrowserRouter([
             return flatten([...sidebarSystemLinks, ...sidebarLinks]);
           })(),
           {
-            path: "settings",
-            element: <SettingsPage />,
+            path: "setting",
+            element: <SettingPage />,
           },
           {
-            path: "notifications",
-            element: <NotificationsPage />,
+            path: "notification",
+            element: <NotificationPage />,
           },
         ],
       },

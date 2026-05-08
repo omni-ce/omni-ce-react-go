@@ -33,7 +33,7 @@ import { IconComponent } from "@/components/ui/IconSelector";
 interface Props {
   ruleKey?: string;
 }
-export default function RolesPage({ ruleKey }: Props) {
+export default function RolePage({ ruleKey }: Props) {
   const perm = usePermission(ruleKey);
 
   const { languageCode, language } = useLanguageStore();

@@ -1,13 +1,13 @@
 import { type ISidebarLink } from "@/layouts/AppLayout";
 
 // Users
-import UsersPage from "@/pages/app/users/UsersPage";
+import UserPage from "@/pages/app/user/UserPage";
 
 // Master Data
 import MasterDataPage from "@/pages/app/master_data/MasterDataPage";
 
 // Company Structure
-import EntityPage from "@/pages/app/company_structure/EntityPage";
+import EntityPage from "@/pages/app/company/EntityPage";
 // import BranchPage from "@/pages/app/company_structure/BranchPage";
 
 // Products
@@ -20,9 +20,9 @@ import ProductItemPage from "@/pages/app/product/ProductItemPage";
 
 const sidebarLinks: ISidebarLink[] = [
   {
-    label: { id: "Pengguna", en: "Users" },
-    path: "users",
-    element: <UsersPage ruleKey="users" />,
+    label: { id: "Pengguna", en: "User" },
+    path: "user",
+    element: <UserPage ruleKey="user" />,
     strict: true,
     icon: "Hi/HiOutlineUser",
   },
@@ -92,14 +92,14 @@ const sidebarLinks: ISidebarLink[] = [
   },
 
   {
-    label: { id: "Struktur Perusahaan", en: "Company Structure" },
-    path: "company-structure",
+    label: { id: "Perusahaan", en: "Company" },
+    path: "company",
     icon: "Pi/PiTreeStructureBold",
     children: [
       {
         label: { id: "Entitas", en: "Entity" },
         path: "entities",
-        element: <EntityPage ruleKey="company-structure/entities" />,
+        element: <EntityPage ruleKey="company/entities" />,
         strict: true,
         icon: "Fa6/FaBuildingCircleCheck",
       },

@@ -13,12 +13,12 @@ import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import { FileType } from "@/components/DynamicForm";
 import { HOST_API } from "@/environment";
-import { ChangePassword } from "@/pages/app/users/action";
+import { ChangePassword } from "@/pages/app/user/action";
 
 interface Props {
   ruleKey?: string;
 }
-export default function UsersPage({ ruleKey }: Props) {
+export default function UserPage({ ruleKey }: Props) {
   const perm = usePermission(ruleKey);
 
   const paginationRef = useRef<PaginationHandle>(null);

@@ -7,7 +7,7 @@ import Pagination, {
 } from "@/components/Pagination";
 import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
-import type { Entity } from "@/types/company_structure";
+import type { Entity } from "@/types/company";
 import { Badge } from "@/components/ui/Badge";
 import { FileType } from "@/components/DynamicForm";
 
@@ -58,7 +58,6 @@ export default function EntityPage({ ruleKey }: Props) {
         label: language({ id: "Alias NPWP", en: "NPWP Alias" }),
         type: "text",
         required: true,
-        colTablet: 6,
       },
       {
         key: "address",
@@ -145,7 +144,7 @@ export default function EntityPage({ ruleKey }: Props) {
           en: "Company Entity List",
         })}
         columns={columns}
-        module="company-structure/entities"
+        module="company/entities"
         fields={fields}
         ruleKey={ruleKey}
         useIsActive
