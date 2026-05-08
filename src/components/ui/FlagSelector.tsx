@@ -1,4 +1,4 @@
-import { countries } from "@/constant";
+import countries from "@/countries";
 import React, { Fragment, useState } from "react";
 import { MdClose, MdSearch } from "react-icons/md";
 

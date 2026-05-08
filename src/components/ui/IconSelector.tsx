@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState, useMemo } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useMemo,
+} from "react";
 import { createPortal } from "react-dom";
 import type { IconType } from "react-icons";
 import { FaSearch } from "react-icons/fa";
@@ -120,10 +126,7 @@ export const IconComponent = ({ iconName, ...props }: IconComponentProps) => {
   if (isLoading) {
     return (
       <div
-        className={cn(
-          "animate-pulse rounded bg-dark-700",
-          props.className,
-        )}
+        className={cn("animate-pulse rounded bg-dark-700", props.className)}
         style={{ width: "1em", height: "1em" }}
       />
     );
@@ -132,10 +135,7 @@ export const IconComponent = ({ iconName, ...props }: IconComponentProps) => {
   if (!IconSelected) {
     return (
       <div
-        className={cn(
-          "rounded border border-dark-500/50",
-          props.className,
-        )}
+        className={cn("rounded border border-dark-500/50", props.className)}
         style={{ width: "1em", height: "1em" }}
       />
     );
@@ -164,7 +164,7 @@ export default function IconSelector({
     Record<string, Record<string, IconType>>
   >({});
   const [isLoadingLibrary, setIsLoadingLibrary] = useState(false);
-  
+
   const containerRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0, width: 0 });
@@ -217,9 +217,13 @@ export default function IconSelector({
   const filteredIcons = useMemo(() => {
     if (!selectedLibrary || !loadedIcons[selectedLibrary]) return [];
     const library = loadedIcons[selectedLibrary];
-    const results: Array<{ key: string; name: string; component: IconType }> = [];
+    const results: Array<{ key: string; name: string; component: IconType }> =
+      [];
     Object.keys(library).forEach((iconKey) => {
-      if (search === "" || iconKey.toLowerCase().includes(search.toLowerCase())) {
+      if (
+        search === "" ||
+        iconKey.toLowerCase().includes(search.toLowerCase())
+      ) {
         results.push({
           key: `${selectedLibrary}/${iconKey}`,
           name: iconKey,
@@ -246,8 +250,13 @@ export default function IconSelector({
       >
         {value ? (
           <div className="flex items-center gap-2">
-            <IconComponent iconName={value} className="text-xl text-foreground" />
-            <span className="text-sm text-foreground">{value.split("/")[1]}</span>
+            <IconComponent
+              iconName={value}
+              className="text-xl text-foreground"
+            />
+            <span className="text-sm text-foreground">
+              {value.split("/")[1]}
+            </span>
           </div>
         ) : (
           <span className="text-sm text-dark-400">{placeholder}</span>
@@ -260,90 +269,106 @@ export default function IconSelector({
         />
       </button>
 
-      {isOpen && typeof document !== "undefined" && createPortal(
-        <div
-          id="icon-dropdown-portal"
-          className="absolute z-1000 bg-dark-800 border border-dark-500/50 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-96"
-          style={{
-            top: `${dropdownPos.top}px`,
-            left: `${dropdownPos.left}px`,
-            width: `${dropdownPos.width}px`,
-          }}
-        >
-          <div className="p-3 space-y-2 bg-dark-900/60 border-b border-dark-500/50">
-            <div className="relative">
-              <select
-                value={selectedLibrary}
-                onChange={(e) => {
-                  setSelectedLibrary(e.target.value);
-                  setSearch("");
-                }}
-                className="w-full appearance-none rounded-xl border border-dark-500/50 bg-dark-800 px-4 py-2 text-sm text-foreground outline-none transition-all focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30"
-              >
-                <option value="" className="bg-dark-800">Select Icon Library</option>
-                {options.map((opt) => (
-                  <option key={opt.key} value={opt.key} className="bg-dark-800">
-                    {opt.name}
+      {isOpen &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div
+            id="icon-dropdown-portal"
+            className="absolute z-1000 bg-dark-800 border border-dark-500/50 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-96"
+            style={{
+              top: `${dropdownPos.top}px`,
+              left: `${dropdownPos.left}px`,
+              width: `${dropdownPos.width}px`,
+            }}
+          >
+            <div className="p-3 space-y-2 bg-dark-900/60 border-b border-dark-500/50">
+              <div className="relative">
+                <select
+                  value={selectedLibrary}
+                  onChange={(e) => {
+                    setSelectedLibrary(e.target.value);
+                    setSearch("");
+                  }}
+                  className="w-full appearance-none rounded-xl border border-dark-500/50 bg-dark-800 px-4 py-2 text-sm text-foreground outline-none transition-all focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30"
+                >
+                  <option value="" className="bg-dark-800">
+                    Select Icon Library
                   </option>
-                ))}
-              </select>
-              <HiChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-dark-400" />
+                  {options.map((opt) => (
+                    <option
+                      key={opt.key}
+                      value={opt.key}
+                      className="bg-dark-800"
+                    >
+                      {opt.name}
+                    </option>
+                  ))}
+                </select>
+                <HiChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-dark-400" />
+              </div>
+
+              {selectedLibrary && (
+                <div className="relative flex items-center gap-2">
+                  <FaSearch className="absolute left-4 text-xs text-dark-400" />
+                  <input
+                    type="text"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Search icons..."
+                    className="w-full rounded-xl border border-dark-500/50 bg-dark-800 pl-10 pr-4 py-2 text-sm text-foreground outline-none transition-all focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30"
+                  />
+                </div>
+              )}
             </div>
 
-            {selectedLibrary && (
-              <div className="relative flex items-center gap-2">
-                <FaSearch className="absolute left-4 text-xs text-dark-400" />
-                <input
-                  type="text"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search icons..."
-                  className="w-full rounded-xl border border-dark-500/50 bg-dark-800 pl-10 pr-4 py-2 text-sm text-foreground outline-none transition-all focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30"
-                />
-              </div>
-            )}
-          </div>
-
-          <div className="flex-1 overflow-y-auto p-2 min-h-[100px]">
-            {!selectedLibrary ? (
-              <div className="flex flex-col items-center justify-center py-8 opacity-50">
-                <div className="text-sm text-dark-400">Please select a library first</div>
-              </div>
-            ) : isLoadingLibrary ? (
-              <div className="flex flex-col items-center justify-center py-8">
-                <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent-500 border-t-transparent" />
-                <div className="mt-2 text-sm text-dark-400">Loading icons...</div>
-              </div>
-            ) : (
-              <div className="grid grid-cols-6 gap-2">
-                {filteredIcons.map((icon) => (
-                  <button
-                    key={icon.key}
-                    type="button"
-                    onClick={() => {
-                      onChange(icon.key);
-                      setIsOpen(false);
-                    }}
-                    className={cn(
-                      "flex items-center justify-center rounded-lg p-2.5 transition-all hover:bg-accent-500/20 hover:scale-110",
-                      value === icon.key ? "bg-accent-500 text-white shadow-lg shadow-accent-500/30" : "text-foreground"
-                    )}
-                    title={icon.name}
-                  >
-                    {React.createElement(icon.component, { className: "text-2xl" })}
-                  </button>
-                ))}
-                {filteredIcons.length === 0 && (
-                  <div className="col-span-6 py-8 text-center text-sm text-dark-400">
-                    No icons found
+            <div className="flex-1 overflow-y-auto p-2 min-h-25">
+              {!selectedLibrary ? (
+                <div className="flex flex-col items-center justify-center py-8 opacity-50">
+                  <div className="text-sm text-dark-400">
+                    Please select a library first
                   </div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>,
-        document.body
-      )}
+                </div>
+              ) : isLoadingLibrary ? (
+                <div className="flex flex-col items-center justify-center py-8">
+                  <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent-500 border-t-transparent" />
+                  <div className="mt-2 text-sm text-dark-400">
+                    Loading icons...
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-6 gap-2">
+                  {filteredIcons.map((icon) => (
+                    <button
+                      key={icon.key}
+                      type="button"
+                      onClick={() => {
+                        onChange(icon.key);
+                        setIsOpen(false);
+                      }}
+                      className={cn(
+                        "flex items-center justify-center rounded-lg p-2.5 transition-all hover:bg-accent-500/20 hover:scale-110",
+                        value === icon.key
+                          ? "bg-accent-500 text-white shadow-lg shadow-accent-500/30"
+                          : "text-foreground",
+                      )}
+                      title={icon.name}
+                    >
+                      {React.createElement(icon.component, {
+                        className: "text-2xl",
+                      })}
+                    </button>
+                  ))}
+                  {filteredIcons.length === 0 && (
+                    <div className="col-span-6 py-8 text-center text-sm text-dark-400">
+                      No icons found
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }

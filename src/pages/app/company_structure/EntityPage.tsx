@@ -58,6 +58,7 @@ export default function EntityPage({ ruleKey }: Props) {
         label: language({ id: "Alias NPWP", en: "NPWP Alias" }),
         type: "text",
         required: true,
+        colTablet: 6,
       },
       {
         key: "address",

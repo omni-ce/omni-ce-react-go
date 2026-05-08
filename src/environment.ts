@@ -6,5 +6,8 @@ if (window.location.hostname.includes("devtunnels.ms")) {
 if (window.location.hostname.includes("localhost")) {
   HOST_API = "http://localhost:3000";
 }
+if (window.location.hostname.includes("192.168.")) {
+  HOST_API = `${window.location.protocol}//${window.location.hostname}:3000`;
+}
 
 export const VITE_SECRET = env.VITE_SECRET || "-";

@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "reinstall": "rm -rf node_modules dist && bun install",
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "tsc -b && vite build",
     "build:go": "go build -o react-go main.go",
     "lint": "eslint .",
