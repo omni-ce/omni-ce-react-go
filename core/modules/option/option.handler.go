@@ -7,6 +7,7 @@ import (
 	"react-go/core/variable"
 	"strconv"
 
+	company "react-go/core/modules/company/model"
 	product "react-go/core/modules/product/model"
 	role "react-go/core/modules/role/model"
 
@@ -98,6 +99,25 @@ func Roles(c *fiber.Ctx) error {
 	}
 
 	return dto.OK(c, "Get roles success", rows)
+}
+
+func CompanyEntities(c *fiber.Ctx) error {
+	entities := make([]company.CompanyEntity, 0)
+	if err := variable.Db.
+		Model(&company.CompanyEntity{}).
+		Find(&entities).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to find categories", nil)
+	}
+
+	rows := make([]types.Option, 0)
+	for _, row := range entities {
+		if row.IsActive {
+			rows = append(rows, row.Option())
+		}
+	}
+
+	return dto.OK(c, "Get company entities success", rows)
 }
 
 func ProductCategories(c *fiber.Ctx) error {
