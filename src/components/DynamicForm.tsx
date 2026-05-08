@@ -94,6 +94,7 @@ export type DynamicFormFieldType =
   | "country"
   | "icon"
   | "phone"
+  | "checkbox"
   | "switch";
 
 export type DynamicFormFieldNormal = {
@@ -118,6 +119,7 @@ export type DynamicFormFieldNormal = {
   rule?: string;
   numberSuffix?: string;
   textareaRows?: number;
+  booleanDefault?: boolean;
 };
 
 type DynamicFormFieldChildren = {
