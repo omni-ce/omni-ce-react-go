@@ -19,6 +19,7 @@ import RolesPage from "@/pages/app/roles/RolesPage";
 import MasterDataPage from "@/pages/app/master_data/MasterDataPage";
 import SettingsPage from "@/pages/app/settings/SettingPage";
 import NotificationsPage from "@/pages/app/notifications/NotificationsPage";
+import ProductCategoryPage from "@/pages/app/product/ProductCategoryPage";
 
 // Documentation
 import DocPage from "@/pages/doc";
@@ -72,14 +73,12 @@ export const sidebarLinks: ISidebarLink[] = [
   {
     label: { id: "Produk", en: "Product" },
     path: "products",
-    element: <UsersPage ruleKey="users" />,
-    strict: true,
     icon: "Hi/HiOutlineUser",
     children: [
       {
         label: { id: "Kategori Produk", en: "Product Category" },
         path: "categories",
-        element: <UsersPage ruleKey="users" />,
+        element: <ProductCategoryPage ruleKey="product-categories" />,
         strict: true,
         icon: "Hi/HiOutlineUser",
       },

@@ -2,8 +2,7 @@ import { useLanguageStore } from "@/stores/languageStore";
 import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import Tabs, { type Tab } from "@/components/Tab";
-import TabProductCategoryPage from "./TabProductCategoryPage";
-import TabBrandPage from "./TabBrandPage";
+import TabBrandPage from "@/pages/app/master_data/TabBrandPage";
 import { useMemo } from "react";
 
 interface Props {
@@ -16,11 +15,6 @@ export default function MasterDataPage({ ruleKey }: Props) {
 
   const tabs = useMemo<Tab[]>(
     () => [
-      {
-        key: "product_category",
-        label: language({ id: "Kategori Produk", en: "Product Category" }),
-        render: () => <TabProductCategoryPage ruleKey="product_category" />,
-      },
       {
         key: "brand",
         label: language({ id: "Merek", en: "Brand" }),

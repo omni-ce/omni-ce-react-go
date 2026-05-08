@@ -13,7 +13,7 @@ import RulePermissionPage from "@/pages/error/RulePermissionPage";
 interface Props {
   ruleKey?: string;
 }
-export default function TabProductCategoryPage({ ruleKey }: Props) {
+export default function ProductCategoryPage({ ruleKey }: Props) {
   const perm = usePermission(ruleKey);
 
   const paginationRef = useRef<PaginationHandle>(null);
