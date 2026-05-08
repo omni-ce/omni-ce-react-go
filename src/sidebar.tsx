@@ -6,6 +6,10 @@ import UsersPage from "@/pages/app/users/UsersPage";
 // Master Data
 import MasterDataPage from "@/pages/app/master_data/MasterDataPage";
 
+// Company Structure
+import EntityPage from "@/pages/app/company_structure/EntityPage";
+// import BranchPage from "@/pages/app/company_structure/BranchPage";
+
 // Products
 import ProductCategoryPage from "@/pages/app/product/ProductCategoryPage";
 import ProductBrandPage from "@/pages/app/product/ProductBrandPage";
@@ -83,6 +87,21 @@ const sidebarLinks: ISidebarLink[] = [
         element: <ProductItemPage ruleKey="products/items" />,
         strict: true,
         icon: "Hi/HiTemplate",
+      },
+    ],
+  },
+
+  {
+    label: { id: "Struktur Perusahaan", en: "Company Structure" },
+    path: "company-structure",
+    icon: "Pi/PiTreeStructureBold",
+    children: [
+      {
+        label: { id: "Entitas", en: "Entity" },
+        path: "entities",
+        element: <EntityPage ruleKey="company-structure/entities" />,
+        strict: true,
+        icon: "Fa6/FaBuildingCircleCheck",
       },
     ],
   },
