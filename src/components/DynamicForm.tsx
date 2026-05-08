@@ -20,6 +20,7 @@ import CountrySelector from "@/components/ui/CountrySelector";
 import IconSelector from "@/components/ui/IconSelector";
 import PhoneNumber from "@/components/ui/PhoneNumber";
 import type { CountryKey } from "@/types/language";
+import { spanMap, mdMap, lgMap, xlMap } from "@/responsive";
 
 export interface DynamicFormFieldOption {
   value: string;
@@ -131,9 +132,35 @@ type DynamicFormFieldChildren = {
 export type DynamicFormField = {
   label: string;
   col?: number;
+  colMobile?: number;
+  colTablet?: number;
+  colLaptop?: number;
+  colDesktop?: number;
   strict?: boolean;
   only?: "create" | "update";
 } & (DynamicFormFieldNormal | DynamicFormFieldChildren);
+
+const getColClass = (field: DynamicFormField | DynamicFormFieldNormal) => {
+  const m =
+    (field as DynamicFormField).colMobile ||
+    (field as DynamicFormField).col ||
+    12;
+  const t =
+    (field as DynamicFormField).colTablet ||
+    (field as DynamicFormField).col ||
+    12;
+  const l =
+    (field as DynamicFormField).colLaptop ||
+    (field as DynamicFormField).col ||
+    12;
+  const d =
+    (field as DynamicFormField).colDesktop ||
+    (field as DynamicFormField).col ||
+    12;
+  return `${spanMap[m] || "col-span-12"} ${mdMap[t] || "md:col-span-12"} ${
+    lgMap[l] || "lg:col-span-12"
+  } ${xlMap[d] || "xl:col-span-12"}`;
+};
 
 function DynamicSelect({
   field,
@@ -715,11 +742,7 @@ function ArrayField({
             {field.children?.map((child) => (
               <div
                 key={child.key}
-                style={{
-                  gridColumn: `span ${child.col || 12} / span ${
-                    child.col || 12
-                  }`,
-                }}
+                className={getColClass(child as DynamicFormFieldNormal)}
               >
                 <Label
                   htmlFor={`field-${field.key}-${index}-${child.key}`}
@@ -1137,10 +1160,9 @@ function DynamicFieldRenderer({
   if (!field.key && field.children) {
     return (
       <div
-        style={{
-          gridColumn: `span ${field.col || 12} / span ${field.col || 12}`,
-        }}
-        className="space-y-4 border border-dark-600/50 rounded-xl p-4 bg-dark-800/30 mt-2"
+        className={`${getColClass(
+          field,
+        )} space-y-4 border border-dark-600/50 rounded-xl p-4 bg-dark-800/30 mt-2`}
       >
         {field.label && (
           <h3 className="font-semibold text-sm text-foreground">
@@ -1168,11 +1190,7 @@ function DynamicFieldRenderer({
   if (!field.key) return null;
 
   return (
-    <div
-      style={{
-        gridColumn: `span ${field.col || 12} / span ${field.col || 12}`,
-      }}
-    >
+    <div className={getColClass(field)}>
       <Label htmlFor={`field-${field.key}`} required={field.required}>
         {field.label}
       </Label>
