@@ -188,7 +188,7 @@ function DynamicSelect({
 
   const prevRefVal = useRef<string | undefined>(undefined);
 
-  useEffect(() => {
+  const fetchOptions = () => {
     let endpoint = "";
     if (
       (field as DynamicFormFieldNormal).selectOptions &&
@@ -200,13 +200,6 @@ function DynamicSelect({
         if (!refVal) {
           setOpts([]);
           setDisabled(true);
-          if (
-            prevRefVal.current !== undefined &&
-            prevRefVal.current !== refVal
-          ) {
-            onChangeRef.current("");
-          }
-          prevRefVal.current = refVal;
           return;
         }
         setDisabled(false);
@@ -214,55 +207,58 @@ function DynamicSelect({
           `{${(field as DynamicFormFieldNormal).ref}}`,
           String(refVal),
         );
-        // We clear the value whenever the parent dependency changes,
-        // so we don't accidentally submit a stale child value.
-        if (prevRefVal.current !== undefined && prevRefVal.current !== refVal) {
-          onChangeRef.current("");
-        }
-        prevRefVal.current = refVal;
       }
-    } else if (Array.isArray((field as DynamicFormFieldNormal).selectOptions)) {
+    } else {
+      return;
+    }
+
+    setLoading(true);
+    satellite
+      .get<Response<Option[]>>(`/api/option/${endpoint}`)
+      .then((res) => {
+        const data = res.data.data || [];
+        const mapped = data.map((d) => ({
+          value: String(d.value),
+          label: d.label,
+        }));
+        setOpts(mapped);
+      })
+      .catch(() => {
+        setOpts([]);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    if (Array.isArray((field as DynamicFormFieldNormal).selectOptions)) {
       setOpts(
         (field as DynamicFormFieldNormal)
           .selectOptions as DynamicFormFieldOption[],
       );
       setDisabled(false);
       return;
-    } else {
-      return;
     }
 
-    let isMounted = true;
-    setLoading(true);
-    satellite
-      .get<Response<Option[]>>(`/api/option/${endpoint}`)
-      .then((res) => {
-        if (isMounted) {
-          const data = res.data.data || [];
-          const mapped = data.map((d) => ({
-            value: String(d.value),
-            label: d.label,
-          }));
-          setOpts(mapped);
-        }
-      })
-      .catch(() => {
-        if (isMounted) setOpts([]);
-      })
-      .finally(() => {
-        if (isMounted) setLoading(false);
-      });
+    if ((field as DynamicFormFieldNormal).ref) {
+      const refVal = formData[(field as DynamicFormFieldNormal).ref!];
+      if (!refVal) {
+        setOpts([]);
+        setDisabled(true);
+      } else {
+        setDisabled(false);
+      }
 
-    return () => {
-      isMounted = false;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+      if (prevRefVal.current !== undefined && prevRefVal.current !== refVal) {
+        onChangeRef.current("");
+        setOpts([]); // Clear options when dependency changes
+      }
+      prevRefVal.current = refVal;
+    }
   }, [
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     (field as DynamicFormFieldNormal).selectOptions,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     (field as DynamicFormFieldNormal).ref,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     (field as DynamicFormFieldNormal).ref
       ? formData[(field as DynamicFormFieldNormal).ref!]
       : undefined,
@@ -290,6 +286,7 @@ function DynamicSelect({
       value={formData[(field as DynamicFormFieldNormal).key] ?? ""}
       onChange={(val) => onChange(val)}
       options={translatedOpts}
+      onOpen={fetchOptions}
       placeholder={language({ id: "Pilih...", en: "Choose..." })}
       disabled={disabled}
       loading={loading}

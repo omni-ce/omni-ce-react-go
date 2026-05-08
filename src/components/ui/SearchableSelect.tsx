@@ -16,6 +16,7 @@ interface SearchableSelectProps {
   placeholder?: string;
   disabled?: boolean;
   loading?: boolean;
+  onOpen?: () => void;
   className?: string;
 }
 
@@ -27,6 +28,7 @@ export function SearchableSelect({
   placeholder = "Choose...",
   disabled = false,
   loading = false,
+  onOpen,
   className,
 }: SearchableSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -105,7 +107,10 @@ export function SearchableSelect({
           "w-full px-4 py-2.5 bg-dark-900/60 border border-dark-500/50 rounded-xl text-foreground focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30 transition-all text-sm disabled:opacity-50 flex items-center justify-between text-left",
           !selectedOption && "text-dark-300",
         )}
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => {
+          if (!isOpen && onOpen) onOpen();
+          setIsOpen(!isOpen);
+        }}
       >
         <span className="truncate">
           {loading

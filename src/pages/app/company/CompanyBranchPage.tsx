@@ -53,12 +53,6 @@ export default function CompanyBranchPage({ ruleKey }: Props) {
         required: true,
       },
       {
-        key: "alias_code",
-        label: language({ id: "Kode Alias", en: "Alias Code" }),
-        type: "text",
-        required: true,
-      },
-      {
         key: "address",
         label: language({ id: "Alamat", en: "Address" }),
         type: "textarea",
