@@ -102,6 +102,12 @@ export default function EntityPage({ ruleKey }: Props) {
         ),
       },
       {
+        key: "npwp_code",
+        header: language({ id: "NPWP", en: "NPWP" }),
+        sort: true,
+        render: (item) => <span className="font-medium">{item.npwp_code}</span>,
+      },
+      {
         key: "is_active",
         header: language({ id: "Status", en: "Status" }),
         rule: "set",
