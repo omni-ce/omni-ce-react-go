@@ -68,6 +68,23 @@ export const sidebarLinks: ISidebarLink[] = [
     ],
     icon: "Hi/HiOutlineDatabase",
   },
+
+  {
+    label: { id: "Produk", en: "Product" },
+    path: "products",
+    element: <UsersPage ruleKey="users" />,
+    strict: true,
+    icon: "Hi/HiOutlineUser",
+    children: [
+      {
+        label: { id: "Kategori Produk", en: "Product Category" },
+        path: "categories",
+        element: <UsersPage ruleKey="users" />,
+        strict: true,
+        icon: "Hi/HiOutlineUser",
+      },
+    ],
+  },
 ];
 
 export const routers = createBrowserRouter([

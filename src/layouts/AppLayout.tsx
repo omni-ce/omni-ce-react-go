@@ -40,6 +40,7 @@ export interface ISidebarLink extends Partial<IndexRouteObject> {
     label: Record<LanguageCode, string>;
     ruleKey: string;
   }[];
+  children?: ISidebarLink[];
 }
 
 interface AppLayoutProps {
