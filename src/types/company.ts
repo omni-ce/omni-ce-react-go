@@ -1,5 +1,5 @@
 // perusahaan / badan hukum
-export interface Entity {
+export interface CompanyEntity {
   id: number;
   logo: string;
   name: string;
@@ -16,18 +16,16 @@ export interface Entity {
 }
 
 // cabang
-export interface Branch {
+export interface CompanyBranch {
   id: number;
   entity_id: number;
   code: string;
-  logo: string;
   name: string;
   alias: string;
   alias_code: string;
   address: string;
-  city: string;
+  address_code: string;
   phone: string;
-  category: string;
   longitude: number;
   latitude: number;
   is_active: boolean;

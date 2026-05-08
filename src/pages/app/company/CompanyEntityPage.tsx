@@ -7,7 +7,7 @@ import Pagination, {
 } from "@/components/Pagination";
 import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
-import type { Entity } from "@/types/company";
+import type { CompanyEntity } from "@/types/company";
 import { Badge } from "@/components/ui/Badge";
 import { FileType } from "@/components/DynamicForm";
 import { HOST_API } from "@/environment";
@@ -83,7 +83,7 @@ export default function EntityPage({ ruleKey }: Props) {
     [languageCode, language],
   );
 
-  const columns = useMemo<PaginationColumn<Entity>[]>(
+  const columns = useMemo<PaginationColumn<CompanyEntity>[]>(
     () => [
       {
         key: "name",

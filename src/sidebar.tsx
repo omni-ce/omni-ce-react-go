@@ -7,7 +7,7 @@ import UserPage from "@/pages/app/user/UserPage";
 import MasterDataPage from "@/pages/app/master_data/MasterDataPage";
 
 // Company Structure
-import EntityPage from "@/pages/app/company/EntityPage";
+import CompanyEntityPage from "@/pages/app/company/CompanyEntityPage";
 // import BranchPage from "@/pages/app/company_structure/BranchPage";
 
 // Products
@@ -47,59 +47,66 @@ const sidebarLinks: ISidebarLink[] = [
     icon: "Pi/PiTreeStructureBold",
     children: [
       {
-        label: { id: "Entitas", en: "Entity" },
-        path: "entities",
-        element: <EntityPage ruleKey="company/entities" />,
+        label: { id: "Entitas Perusahaan", en: "Company Entity" },
+        path: "entity",
+        element: <CompanyEntityPage ruleKey="company/entity" />,
         strict: true,
         icon: "Fa6/FaBuildingCircleCheck",
       },
+      // {
+      //   label: { id: "Cabang Perusahaan", en: "Company Branch" },
+      //   path: "branch",
+      //   element: <CompanyBranchPage ruleKey="company/branch" />,
+      //   strict: true,
+      //   icon: "Fa6/FaBuildingCircleCheck",
+      // },
     ],
   },
 
   {
     label: { id: "Produk", en: "Product" },
-    path: "products",
+    path: "product",
     icon: "Hi/HiOutlineCube",
     children: [
       {
         label: { id: "Kategori", en: "Category" },
-        path: "categories",
-        element: <ProductCategoryPage ruleKey="products/categories" />,
+        path: "category",
+        element: <ProductCategoryPage ruleKey="product/category" />,
         strict: true,
         icon: "Hi/HiOutlineTag",
       },
       {
         label: { id: "Merek", en: "Brand" },
-        path: "brands",
-        element: <ProductBrandPage ruleKey="products/brands" />,
+        path: "brand",
+        element: <ProductBrandPage ruleKey="product/brand" />,
         strict: true,
         icon: "Hi/HiOutlineStar",
       },
       {
         label: { id: "Varian", en: "Variant" },
-        path: "variants",
-        element: <ProductVariantPage ruleKey="products/variants" />,
+        path: "variant",
+        element: <ProductVariantPage ruleKey="product/variant" />,
         strict: true,
         icon: "Hi/HiOutlineCog",
       },
       {
         label: { id: "Memori", en: "Memory" },
-        path: "memories",
-        element: <ProductMemoryPage ruleKey="products/memories" />,
+        path: "memory",
+        element: <ProductMemoryPage ruleKey="product/memory" />,
         strict: true,
         icon: "Gr/GrMemory",
       },
       {
         label: { id: "Warna", en: "Color" },
-        path: "colors",
-        element: <ProductColorPage ruleKey="products/colors" />,
+        path: "color",
+        element: <ProductColorPage ruleKey="product/color" />,
         strict: true,
         icon: "Hi/HiColorSwatch",
       },
       {
         label: { id: "Item (Grup)", en: "Item (Group)" },
-        path: "items",
-        element: <ProductItemPage ruleKey="products/items" />,
+        path: "item",
+        element: <ProductItemPage ruleKey="product/item" />,
         strict: true,
         icon: "Hi/HiTemplate",
       },
