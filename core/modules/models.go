@@ -1,17 +1,23 @@
 package modules
 
 import (
+	// No Reference
 	apikey "react-go/core/modules/apikey/model"
 	auth "react-go/core/modules/auth/model"
 	captcha "react-go/core/modules/captcha/model"
+	setting "react-go/core/modules/setting/model"
+	whitelist "react-go/core/modules/whitelist/model"
+
+	// Master
 	dashboard "react-go/core/modules/dashboard/model"
-	master_data "react-go/core/modules/master_data/model"
 	notification "react-go/core/modules/notification/model"
 	role "react-go/core/modules/role/model"
 	rule "react-go/core/modules/rule/model"
-	setting "react-go/core/modules/setting/model"
 	user "react-go/core/modules/user/model"
-	whitelist "react-go/core/modules/whitelist/model"
+
+	// Custom
+	master_data "react-go/core/modules/master_data/model"
+	product "react-go/core/modules/product/model"
 
 	"gorm.io/gorm"
 )
@@ -20,6 +26,7 @@ func Models() []interface{} {
 	return []interface{}{
 		&captcha.Captcha{},
 		&auth.Access{},
+		//
 		&user.User{},
 		&role.RoleDivision{},
 		&role.Role{},
@@ -29,8 +36,10 @@ func Models() []interface{} {
 		&setting.Setting{},
 		&whitelist.Whitelist{},
 		&apikey.ApiKey{},
-		&master_data.MasterData{},
 		&dashboard.DashboardWidget{},
+		// Custom
+		&master_data.MasterData{},
+		&product.ProductCategory{},
 	}
 }
 

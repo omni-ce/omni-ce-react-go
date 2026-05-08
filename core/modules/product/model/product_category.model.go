@@ -4,6 +4,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -15,9 +16,9 @@ type ProductCategory struct {
 
 	// SLA: create & update by user
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
-	CreatedBy uint      `json:"created_by" gorm:"not null"`
+	CreatedBy uuid.UUID `json:"created_by" gorm:"not null"`
 	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime"`
-	UpdatedBy uint      `json:"updated_by" gorm:"not null"`
+	UpdatedBy uuid.UUID `json:"updated_by" gorm:"not null"`
 }
 
 func (s *ProductCategory) Map() map[string]any {
