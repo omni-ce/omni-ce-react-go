@@ -29,7 +29,7 @@ func Create(c *fiber.Ctx) error {
 		Key      string `json:"key" validate:"required"`
 		Value    string `json:"value" validate:"required"`
 	}
-	if err := function.RequestBody(c, body); err != nil {
+	if err := function.RequestBody(c, &body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
 	}
 
@@ -62,7 +62,7 @@ func Update(c *fiber.Ctx) error {
 		Key      string `json:"key" validate:"required"`
 		Value    string `json:"value" validate:"required"`
 	}
-	if err := function.RequestBody(c, body); err != nil {
+	if err := function.RequestBody(c, &body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
 	}
 
@@ -109,7 +109,7 @@ func BulkDelete(c *fiber.Ctx) error {
 	var body struct {
 		IDs []uint64 `json:"ids" validate:"required,dive,min=1"`
 	}
-	if err := function.RequestBody(c, body); err != nil {
+	if err := function.RequestBody(c, &body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
 	}
 

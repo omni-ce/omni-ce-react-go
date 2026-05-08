@@ -82,7 +82,7 @@ export default function TabBrandPage({ ruleKey }: Props) {
     <div className="space-y-6">
       <Pagination
         ref={paginationRef}
-        title={language({ id: "Daftar Brand", en: "Brand List" })}
+        title={language({ id: "Daftar Merek", en: "Brand List" })}
         columns={columns}
         module="master-data"
         fields={fields}

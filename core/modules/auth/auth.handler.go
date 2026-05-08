@@ -70,7 +70,7 @@ func Login(c *fiber.Ctx) error {
 		Username string `json:"username" validate:"required"`
 		Password string `json:"password" validate:"required,min=8"`
 	}
-	if err := function.RequestBody(c, body); err != nil {
+	if err := function.RequestBody(c, &body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
 	}
 

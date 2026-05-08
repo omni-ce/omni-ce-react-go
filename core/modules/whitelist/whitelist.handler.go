@@ -23,7 +23,7 @@ func Create(c *fiber.Ctx) error {
 		Value string  `json:"value" validate:"required"`
 		Label *string `json:"label,omitempty" validate:"omitempty"`
 	}
-	if err := function.RequestBody(c, body); err != nil {
+	if err := function.RequestBody(c, &body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
 	}
 

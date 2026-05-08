@@ -16,7 +16,7 @@ func DivisionCreate(c *fiber.Ctx) error {
 		Name        string `json:"name" validate:"required"`
 		Description string `json:"description"`
 	}
-	if err := function.RequestBody(c, body); err != nil {
+	if err := function.RequestBody(c, &body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
 	}
 
@@ -52,7 +52,7 @@ func DivisionUpdate(c *fiber.Ctx) error {
 		Name        string `json:"name" validate:"required"`
 		Description string `json:"description"`
 	}
-	if err := function.RequestBody(c, body); err != nil {
+	if err := function.RequestBody(c, &body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
 	}
 

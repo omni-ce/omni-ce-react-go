@@ -100,6 +100,11 @@ func returnGenerate(c *fiber.Ctx, captchaCode string, captchaId string) error {
 		return dto.InternalServerError(c, "Failed to encrypt captcha", nil)
 	}
 
+	// decrypted, err := function.Encryption{}.Decode(enigma.GeneralEnigmaSchema(machineId), encrypted)
+	// if err != nil {
+	// 	return dto.InternalServerError(c, "Failed to decrypt captcha", nil)
+	// }
+
 	return dto.OK(c, "Captcha regenerated successfully", fiber.Map{
 		"captcha":    encrypted,
 		"captcha_id": captchaId,

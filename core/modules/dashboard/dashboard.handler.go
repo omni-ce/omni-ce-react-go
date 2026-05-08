@@ -39,7 +39,7 @@ func WidgetCreate(c *fiber.Ctx) error {
 		Label       string         `json:"label" validate:"required"`
 		Description string         `json:"description" validate:"required"`
 	}
-	if err := function.RequestBody(c, body); err != nil {
+	if err := function.RequestBody(c, &body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
 	}
 
@@ -129,7 +129,7 @@ func WidgetEdit(c *fiber.Ctx) error {
 		Label       *string         `json:"label" validate:"omitempty"`
 		Description *string         `json:"description" validate:"omitempty"`
 	}
-	if err := function.RequestBody(c, body); err != nil {
+	if err := function.RequestBody(c, &body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
 	}
 

@@ -50,7 +50,7 @@ func MarkRead(c *fiber.Ctx) error {
 	var body struct {
 		IDs []uint `json:"ids" validate:"required,dive,min=1"`
 	}
-	if err := function.RequestBody(c, body); err != nil {
+	if err := function.RequestBody(c, &body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
 	}
 
@@ -80,7 +80,7 @@ func ToggleRead(c *fiber.Ctx) error {
 	var body struct {
 		ID uint `json:"id" validate:"required,dive,min=1"`
 	}
-	if err := function.RequestBody(c, body); err != nil {
+	if err := function.RequestBody(c, &body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
 	}
 
