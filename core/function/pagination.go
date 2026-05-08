@@ -56,6 +56,12 @@ func Pagination(c *fiber.Ctx, model interface{}, callback func(*gorm.DB) *gorm.D
 	columnMap := getModelColumnMap(model)
 	effectiveSearch := filterSearchFields(search, searchFieldsQuery, columnMap)
 
+	tableName := ""
+	stmt := &gorm.Statement{DB: variable.Db}
+	if err := stmt.Parse(model); err == nil && stmt.Schema != nil {
+		tableName = stmt.Schema.Table
+	}
+
 	query := variable.Db.Model(model)
 	if keyword != "" && len(effectiveSearch) > 0 {
 		lowerKeyword := "%" + strings.ToLower(keyword) + "%"
@@ -68,7 +74,12 @@ func Pagination(c *fiber.Ctx, model interface{}, callback func(*gorm.DB) *gorm.D
 				continue
 			}
 
-			conditions = append(conditions, fmt.Sprintf("LOWER(%s) LIKE ?", field))
+			columnSelector := field
+			if tableName != "" {
+				columnSelector = fmt.Sprintf("`%s`.`%s`", tableName, field)
+			}
+
+			conditions = append(conditions, fmt.Sprintf("LOWER(%s) LIKE ?", columnSelector))
 			args = append(args, lowerKeyword)
 		}
 
@@ -100,7 +111,7 @@ func Pagination(c *fiber.Ctx, model interface{}, callback func(*gorm.DB) *gorm.D
 
 	offset := (page - 1) * limit
 	paginatedQuery := query.
-		Order(clause.OrderByColumn{Column: clause.Column{Name: sortBy}, Desc: sortOrder == "DESC"}).
+		Order(clause.OrderByColumn{Column: clause.Column{Table: tableName, Name: sortBy}, Desc: sortOrder == "DESC"}).
 		Offset(offset).
 		Limit(limit)
 
@@ -152,6 +163,12 @@ func PaginationScoped(c *fiber.Ctx, scopedDb *gorm.DB, model interface{}, search
 	columnMap := getModelColumnMap(model)
 	effectiveSearch := filterSearchFields(search, searchFieldsQuery, columnMap)
 
+	tableName := ""
+	stmt := &gorm.Statement{DB: variable.Db}
+	if err := stmt.Parse(model); err == nil && stmt.Schema != nil {
+		tableName = stmt.Schema.Table
+	}
+
 	query := scopedDb.Model(model)
 	if keyword != "" && len(effectiveSearch) > 0 {
 		lowerKeyword := "%" + strings.ToLower(keyword) + "%"
@@ -164,7 +181,12 @@ func PaginationScoped(c *fiber.Ctx, scopedDb *gorm.DB, model interface{}, search
 				continue
 			}
 
-			conditions = append(conditions, fmt.Sprintf("LOWER(%s) LIKE ?", field))
+			columnSelector := field
+			if tableName != "" {
+				columnSelector = fmt.Sprintf("`%s`.`%s`", tableName, field)
+			}
+
+			conditions = append(conditions, fmt.Sprintf("LOWER(%s) LIKE ?", columnSelector))
 			args = append(args, lowerKeyword)
 		}
 
@@ -191,7 +213,7 @@ func PaginationScoped(c *fiber.Ctx, scopedDb *gorm.DB, model interface{}, search
 
 	offset := (page - 1) * limit
 	paginatedQuery := query.
-		Order(clause.OrderByColumn{Column: clause.Column{Name: sortBy}, Desc: sortOrder == "DESC"}).
+		Order(clause.OrderByColumn{Column: clause.Column{Table: tableName, Name: sortBy}, Desc: sortOrder == "DESC"}).
 		Offset(offset).
 		Limit(limit)
 
