@@ -1122,6 +1122,7 @@ const Pagination = forwardRef(function PaginationInner<T>(
                 {editingRow
                   ? language({ id: "Edit Data", en: "Edit Data" })
                   : language({ id: "Tambah Data", en: "Add Data" })}
+                : {title}
               </DialogTitle>
             </DialogHeader>
             <div className="overflow-y-auto max-h-[60vh] -mx-6 px-6 py-1">
@@ -1161,7 +1162,7 @@ const Pagination = forwardRef(function PaginationInner<T>(
           <DialogContent onClose={() => setDeleteDialogOpen(false)}>
             <DialogHeader>
               <DialogTitle>
-                {language({ id: "Hapus Data", en: "Delete Data" })}
+                {language({ id: "Hapus Data", en: "Delete Data" })}: {title}
               </DialogTitle>
             </DialogHeader>
             <p className="text-sm text-dark-300">
@@ -1203,7 +1204,7 @@ const Pagination = forwardRef(function PaginationInner<T>(
           <DialogContent onClose={() => setBulkDeleteDialogOpen(false)}>
             <DialogHeader>
               <DialogTitle>
-                {language({ id: "Hapus Data", en: "Delete Data" })}
+                {language({ id: "Hapus Data", en: "Delete Data" })}: {title}
               </DialogTitle>
             </DialogHeader>
             <p className="text-sm text-dark-300">

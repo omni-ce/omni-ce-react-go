@@ -42,6 +42,21 @@ const sidebarLinks: ISidebarLink[] = [
   },
 
   {
+    label: { id: "Perusahaan", en: "Company" },
+    path: "company",
+    icon: "Pi/PiTreeStructureBold",
+    children: [
+      {
+        label: { id: "Entitas", en: "Entity" },
+        path: "entities",
+        element: <EntityPage ruleKey="company/entities" />,
+        strict: true,
+        icon: "Fa6/FaBuildingCircleCheck",
+      },
+    ],
+  },
+
+  {
     label: { id: "Produk", en: "Product" },
     path: "products",
     icon: "Hi/HiOutlineCube",
@@ -87,21 +102,6 @@ const sidebarLinks: ISidebarLink[] = [
         element: <ProductItemPage ruleKey="products/items" />,
         strict: true,
         icon: "Hi/HiTemplate",
-      },
-    ],
-  },
-
-  {
-    label: { id: "Perusahaan", en: "Company" },
-    path: "company",
-    icon: "Pi/PiTreeStructureBold",
-    children: [
-      {
-        label: { id: "Entitas", en: "Entity" },
-        path: "entities",
-        element: <EntityPage ruleKey="company/entities" />,
-        strict: true,
-        icon: "Fa6/FaBuildingCircleCheck",
       },
     ],
   },
