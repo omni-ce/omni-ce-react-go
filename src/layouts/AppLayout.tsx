@@ -315,29 +315,28 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
 
   // Check if user has permission to view a link or its children
   const canViewLink = (link: ISidebarLink): boolean => {
-    if (!link.strict) return true;
+    // If it's a superuser, they see everything
     if (user?.role === "su") return true;
-    if (!role_selected) return false;
-    
-    const roleId = Number(role_selected.role_id);
-    
-    // Check if the link itself is allowed
-    const hasRead = rules.some(
-      (r) =>
-        r.role_id === roleId &&
-        r.key === link.path &&
-        r.action === "read" &&
-        r.state === true,
-    );
 
-    if (hasRead) return true;
+    // Check if the link itself is allowed (if strict)
+    let isAllowed = !link.strict;
+    if (link.strict && role_selected) {
+      const roleId = Number(role_selected.role_id);
+      isAllowed = rules.some(
+        (r) =>
+          r.role_id === roleId &&
+          r.key === link.path &&
+          r.action === "read" &&
+          r.state === true,
+      );
+    }
 
-    // Check if any child is allowed
+    // If it has children, it's visible ONLY if at least one child is visible
     if (link.children && link.children.length > 0) {
       return link.children.some(canViewLink);
     }
 
-    return false;
+    return isAllowed;
   };
 
   if (isLoading) {
