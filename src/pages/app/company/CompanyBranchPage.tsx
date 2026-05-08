@@ -7,7 +7,7 @@ import Pagination, {
 } from "@/components/Pagination";
 import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
-import type { CompanyEntity } from "@/types/company";
+import type { CompanyBranch } from "@/types/company";
 import { Badge } from "@/components/ui/Badge";
 import { FileType } from "@/components/DynamicForm";
 import { HOST_API } from "@/environment";
@@ -18,7 +18,7 @@ import { IconComponent } from "@/components/ui/IconSelector";
 interface Props {
   ruleKey?: string;
 }
-export default function CompanyEntityPage({ ruleKey }: Props) {
+export default function CompanyBranchPage({ ruleKey }: Props) {
   const perm = usePermission(ruleKey);
 
   const paginationRef = useRef<PaginationHandle>(null);
@@ -27,14 +27,17 @@ export default function CompanyEntityPage({ ruleKey }: Props) {
   const fields = useMemo<PaginationField[]>(
     () => [
       {
-        key: "logo",
-        label: language({ id: "Logo", en: "Logo" }),
-        type: "file",
+        key: "entity_id",
+        label: language({ id: "Entitas", en: "Entity" }),
+        type: "select",
         required: true,
-        fileMaxSize: 1024 * 1024 * 2, // MB
-        fileTarget: "entity-logo",
-        fileTemplate: "company",
-        fileType: [FileType.Jpeg, FileType.Png],
+        selectOptions: "company-entities",
+      },
+      {
+        key: "code",
+        label: language({ id: "Kode", en: "Code" }),
+        type: "text",
+        required: true,
       },
       {
         key: "name",
@@ -42,24 +45,16 @@ export default function CompanyEntityPage({ ruleKey }: Props) {
         type: "text",
         required: true,
       },
+
       {
-        key: "npwp_code",
-        label: language({ id: "Nomor NPWP", en: "NPWP Number" }),
-        type: "number",
+        key: "alias",
+        label: language({ id: "Alias", en: "Alias" }),
+        type: "text",
         required: true,
-        col: 9,
       },
       {
-        key: "is_taxpayer",
-        label: language({ id: "Wajib Pajak", en: "Taxpayer" }),
-        type: "switch",
-        required: true,
-        col: 3,
-        booleanDefault: true,
-      },
-      {
-        key: "npwp_alias",
-        label: language({ id: "Alias NPWP", en: "NPWP Alias" }),
+        key: "alias_code",
+        label: language({ id: "Kode Alias", en: "Alias Code" }),
         type: "text",
         required: true,
       },
@@ -78,56 +73,79 @@ export default function CompanyEntityPage({ ruleKey }: Props) {
         required: true,
         col: 6,
       },
+      {
+        key: "phone",
+        label: language({ id: "Nomor Telepon", en: "Phone Number" }),
+        type: "number",
+        required: true,
+      },
+      {
+        key: "longitude",
+        label: language({ id: "Longitude", en: "Longitude" }),
+        type: "number",
+        required: true,
+      },
+      {
+        key: "latitude",
+        label: language({ id: "Latitude", en: "Latitude" }),
+        type: "number",
+        required: true,
+      },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [languageCode, language],
   );
 
-  const columns = useMemo<PaginationColumn<CompanyEntity>[]>(
+  const columns = useMemo<PaginationColumn<CompanyBranch>[]>(
     () => [
+      {
+        key: "entity_name",
+        header: language({ id: "Entitas", en: "Entity" }),
+        sort: true,
+        search: true,
+        render: (item) => (
+          <div className="flex items-center gap-3">
+            <span className="font-medium">{item.entity_name}</span>
+          </div>
+        ),
+      },
+      {
+        key: "code",
+        header: language({ id: "Kode", en: "Code" }),
+        sort: true,
+        search: true,
+        render: (item) => (
+          <div className="flex items-center gap-3">
+            <span className="font-medium">{item.code}</span>
+          </div>
+        ),
+      },
       {
         key: "name",
         header: language({ id: "Nama", en: "Name" }),
         sort: true,
         search: true,
-        render: (user) => (
+        render: (item) => (
           <div className="flex items-center gap-3">
-            <Avatar
-              size="sm"
-              shape="square"
-              src={user.logo ? HOST_API + user.logo : BlankCompany}
-              alt={user.name}
-              fallback={user.name?.charAt(0)?.toUpperCase()}
-            />
-            <span className="font-medium">{user.name}</span>
+            <span className="font-medium">{item.name}</span>
           </div>
         ),
       },
       {
-        key: "npwp_code",
-        header: language({ id: "NPWP", en: "NPWP" }),
+        key: "alias",
+        header: language({ id: "Alias", en: "Alias" }),
         sort: true,
         search: true,
         render: (item) => (
           <div className="flex flex-col gap-0.5">
             <div className="flex items-center gap-2">
               <span className="font-mono text-sm tracking-wider text-foreground">
-                {item.npwp_code || "-"}
+                {item.alias || "-"}
               </span>
-              {item.is_taxpayer && (
-                <Badge
-                  variant="outline"
-                  className="text-[10px] px-1 py-0 h-4 border-accent-500/50 text-accent-400 bg-accent-500/5"
-                >
-                  {language({ id: "Wajib Pajak", en: "Taxpayer" })}
-                </Badge>
-              )}
             </div>
-            {item.npwp_alias && (
-              <span className="text-[11px] text-dark-400 font-medium italic">
-                {item.npwp_alias}
-              </span>
-            )}
+            <span className="text-[11px] text-dark-400 font-medium italic">
+              {item.alias_code}
+            </span>
           </div>
         ),
       },
@@ -157,6 +175,31 @@ export default function CompanyEntityPage({ ruleKey }: Props) {
                 </Badge>
               </div>
             )}
+            {item.phone && (
+              <div className="flex items-center gap-2 ml-6">
+                <Badge
+                  variant="secondary"
+                  className="text-[10px] px-1.5 py-0 h-4 bg-dark-700/50 text-dark-300"
+                >
+                  {item.phone}
+                </Badge>
+              </div>
+            )}
+          </div>
+        ),
+      },
+      {
+        key: "map",
+        header: language({ id: "Peta", en: "Map" }),
+        sort: true,
+        search: true,
+        render: (item) => (
+          <div className="flex flex-col gap-1 max-w-75">
+            <div className="flex items-start gap-2">
+              <span className="text-sm text-foreground line-clamp-2 leading-relaxed">
+                {item.address || "-"}
+              </span>
+            </div>
           </div>
         ),
       },
@@ -185,14 +228,14 @@ export default function CompanyEntityPage({ ruleKey }: Props) {
         <div>
           <h1 className="font-heading text-2xl font-bold text-foreground">
             {language({
-              id: "Entitas Perusahaan",
-              en: "Company Entity",
+              id: "Cabang Perusahaan",
+              en: "Company Branch",
             })}
           </h1>
           <p className="mt-1 text-sm text-dark-400">
             {language({
-              id: "Kelola semua entitas perusahaan pada sistem",
-              en: "Manage all company entities in the system",
+              id: "Kelola semua cabang perusahaan pada sistem",
+              en: "Manage all company branches in the system",
             })}
           </p>
         </div>
@@ -201,11 +244,11 @@ export default function CompanyEntityPage({ ruleKey }: Props) {
       <Pagination
         ref={paginationRef}
         title={language({
-          id: "Daftar Entitas Perusahaan",
-          en: "Company Entity List",
+          id: "Daftar Cabang Perusahaan",
+          en: "Company Branch List",
         })}
         columns={columns}
-        module="company/entity"
+        module="company/branch"
         fields={fields}
         ruleKey={ruleKey}
         useIsActive

@@ -19,6 +19,7 @@ export interface CompanyEntity {
 export interface CompanyBranch {
   id: number;
   entity_id: number;
+  entity_name: string;
   code: string;
   name: string;
   alias: string;

@@ -8,7 +8,7 @@ import MasterDataPage from "@/pages/app/master_data/MasterDataPage";
 
 // Company Structure
 import CompanyEntityPage from "@/pages/app/company/CompanyEntityPage";
-// import BranchPage from "@/pages/app/company_structure/BranchPage";
+import CompanyBranchPage from "@/pages/app/company/CompanyBranchPage";
 
 // Products
 import ProductCategoryPage from "@/pages/app/product/ProductCategoryPage";
@@ -53,13 +53,13 @@ const sidebarLinks: ISidebarLink[] = [
         strict: true,
         icon: "Fa6/FaBuildingCircleCheck",
       },
-      // {
-      //   label: { id: "Cabang Perusahaan", en: "Company Branch" },
-      //   path: "branch",
-      //   element: <CompanyBranchPage ruleKey="company/branch" />,
-      //   strict: true,
-      //   icon: "Fa6/FaBuildingCircleCheck",
-      // },
+      {
+        label: { id: "Cabang Perusahaan", en: "Company Branch" },
+        path: "branch",
+        element: <CompanyBranchPage ruleKey="company/branch" />,
+        strict: true,
+        icon: "Tb/TbGitBranch",
+      },
     ],
   },
 
