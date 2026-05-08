@@ -22,6 +22,7 @@ import IconSelector from "@/components/ui/IconSelector";
 import PhoneNumber from "@/components/ui/PhoneNumber";
 import type { CountryKey } from "@/types/language";
 import { spanMap, mdMap, lgMap, xlMap } from "@/responsive";
+import { formatFileSize } from "@/utils/format";
 
 export interface DynamicFormFieldOption {
   value: string;
@@ -659,6 +660,14 @@ function DynamicFile({
           {loading && (
             <span className="text-xs text-accent-500">Uploading...</span>
           )}
+          {!errorMsg &&
+            !loading &&
+            (field as DynamicFormFieldNormal).fileMaxSize && (
+              <span className="text-[10px] text-dark-400 font-mono">
+                Max:{" "}
+                {formatFileSize((field as DynamicFormFieldNormal).fileMaxSize!)}
+              </span>
+            )}
         </div>
       </div>
     );
@@ -681,8 +690,15 @@ function DynamicFile({
         }
       />
       {errorMsg && <span className="text-xs text-neon-red">{errorMsg}</span>}
-      {loading && <span className="text-xs text-accent-500">Uploading...</span>}
-      {!loading && renderPreview()}
+      {loading && (
+        <span className="text-xs text-accent-500">Uploading...</span>
+      )}
+      {!errorMsg && !loading && (field as DynamicFormFieldNormal).fileMaxSize && (
+        <span className="text-[10px] text-dark-400 font-mono">
+          Max: {formatFileSize((field as DynamicFormFieldNormal).fileMaxSize!)}
+        </span>
+      )}
+      {renderPreview()}
     </div>
   );
 }
