@@ -5,6 +5,7 @@ import (
 	"react-go/core/function"
 	"react-go/core/modules/company/model"
 	"react-go/core/variable"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
@@ -17,7 +18,7 @@ func BranchCreate(c *fiber.Ctx) error {
 	}
 
 	var body struct {
-		EntityID    uint   `json:"entity_id" validate:"required"`
+		EntityID    string `json:"entity_id" validate:"required"`
 		Code        string `json:"code" validate:"required"`
 		Name        string `json:"name" validate:"required"`
 		Alias       string `json:"alias"`
@@ -34,8 +35,13 @@ func BranchCreate(c *fiber.Ctx) error {
 		return dto.BadRequest(c, err.Error(), nil)
 	}
 
+	entityID, err := strconv.Atoi(body.EntityID)
+	if err != nil {
+		return dto.BadRequest(c, "Invalid entity ID", nil)
+	}
+
 	branch := model.CompanyBranch{
-		EntityID:    body.EntityID,
+		EntityID:    uint(entityID),
 		Code:        body.Code,
 		Name:        body.Name,
 		Alias:       body.Alias,
@@ -68,8 +74,15 @@ func BranchPaginate(c *fiber.Ctx) error {
 		return dto.InternalServerError(c, "Failed to prepare pagination", nil)
 	}
 
+	rows := make([]any, 0)
+	for _, row := range branches {
+		branch := row.Map()
+		branch["entity_name"] = row.Entity.Name
+		rows = append(rows, branch)
+	}
+
 	return dto.OK(c, "Success get branches", fiber.Map{
-		"rows":       branches,
+		"rows":       rows,
 		"pagination": pagination.Meta(),
 	})
 }
@@ -82,7 +95,7 @@ func BranchEdit(c *fiber.Ctx) error {
 	}
 
 	var body struct {
-		EntityID    uint   `json:"entity_id"`
+		EntityID    string `json:"entity_id"`
 		Code        string `json:"code"`
 		Name        string `json:"name"`
 		Alias       string `json:"alias"`
@@ -108,8 +121,12 @@ func BranchEdit(c *fiber.Ctx) error {
 		"updated_by": currentUser.ID,
 	}
 
-	if body.EntityID != 0 {
-		updates["entity_id"] = body.EntityID
+	if body.EntityID != "" {
+		entityID, err := strconv.Atoi(body.EntityID)
+		if err != nil {
+			return dto.BadRequest(c, "Invalid entity ID", nil)
+		}
+		updates["entity_id"] = uint(entityID)
 	}
 	if body.Code != "" {
 		updates["code"] = body.Code
