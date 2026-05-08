@@ -116,6 +116,7 @@ export type DynamicFormFieldNormal = {
   children?: DynamicFormField[];
   textMultiLanguage?: boolean;
   rule?: string;
+  numberSuffix?: string;
 };
 
 type DynamicFormFieldChildren = {
@@ -1333,15 +1334,25 @@ function DynamicFieldRenderer({
           })}
         </div>
       ) : (
-        <Input
-          id={`field-${field.key}`}
-          type={field.type}
-          className="mt-1.5"
-          value={String(formData[field.key] ?? "")}
-          onChange={(e) => onChange(field.key!, e.target.value)}
-          minLength={(field as DynamicFormFieldNormal).minLength}
-          maxLength={(field as DynamicFormFieldNormal).maxLength}
-        />
+        <div className="relative mt-1.5 flex items-center">
+          <Input
+            id={`field-${field.key}`}
+            type={field.type}
+            className={(field as DynamicFormFieldNormal).numberSuffix ? "pr-12" : ""}
+            value={String(formData[field.key] ?? "")}
+            onChange={(e) => onChange(field.key!, e.target.value)}
+            minLength={(field as DynamicFormFieldNormal).minLength}
+            maxLength={(field as DynamicFormFieldNormal).maxLength}
+            disabled={disabled}
+          />
+          {(field as DynamicFormFieldNormal).numberSuffix && (
+            <div className="absolute right-3 flex items-center pointer-events-none">
+              <span className="text-sm font-semibold text-dark-400 uppercase tracking-wider">
+                {(field as DynamicFormFieldNormal).numberSuffix}
+              </span>
+            </div>
+          )}
+        </div>
       )}
     </div>
   );

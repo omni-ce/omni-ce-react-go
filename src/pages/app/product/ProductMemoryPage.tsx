@@ -27,6 +27,7 @@ export default function ProductMemoryPage({ ruleKey }: Props) {
         type: "number",
         col: 6,
         required: true,
+        numberSuffix: "GB",
       },
       {
         key: "internal_storage",
@@ -34,6 +35,7 @@ export default function ProductMemoryPage({ ruleKey }: Props) {
         type: "number",
         col: 6,
         required: true,
+        numberSuffix: "GB",
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
