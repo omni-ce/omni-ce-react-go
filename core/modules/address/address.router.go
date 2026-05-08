@@ -2,9 +2,9 @@ package address
 
 import "github.com/gofiber/fiber/v2"
 
-func PublicRoute(r fiber.Router) {
-	r.Get("/provinces", Provinces)
-	r.Get("/regencies/:id", Regencies)
-	r.Get("/districts/:id", Districts)
-	r.Get("/villages/:id", Villages)
+func PublicRoute(api fiber.Router) {
+	api.Get("/provinces", Provinces)
+	api.Get("/regencies/:id", Regencies)
+	api.Get("/districts/:id", Districts)
+	api.Get("/villages/:id", Villages)
 }

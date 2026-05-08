@@ -4,6 +4,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func ProtectedRoute(r fiber.Router) {
-	r.Post("/username", Username)
+func ProtectedRoute(api fiber.Router) {
+	api.Post("/username", Username)
 }

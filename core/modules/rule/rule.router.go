@@ -6,7 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func ProtectedRoute(r fiber.Router) {
-	r.Post("/set", middlewares.UseRoleMenu("roles", "set"), Set)
-	r.Get("/list", middlewares.UseRoleMenu("roles", "read"), List)
+func ProtectedRoute(api fiber.Router) {
+	api.Post("/set", middlewares.UseRoleMenu("roles", "set"), Set)
+	api.Get("/list", middlewares.UseRoleMenu("roles", "read"), List)
 }

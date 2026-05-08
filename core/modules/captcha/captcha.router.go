@@ -2,8 +2,8 @@ package captcha
 
 import "github.com/gofiber/fiber/v2"
 
-func PublicRoute(r fiber.Router) {
-	r.Get("/generate", Generate)
-	r.Post("/validate", Validate)
-	r.Post("/regenerate", Regenerate)
+func PublicRoute(api fiber.Router) {
+	api.Get("/generate", Generate)
+	api.Post("/validate", Validate)
+	api.Post("/regenerate", Regenerate)
 }

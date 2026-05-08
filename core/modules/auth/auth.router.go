@@ -4,11 +4,11 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func PublicRoute(r fiber.Router) {
-	r.Post("/login", Login)
+func PublicRoute(api fiber.Router) {
+	api.Post("/login", Login)
 }
 
-func ProtectedRoute(r fiber.Router) {
-	r.Post("/logout", Logout)
-	r.Get("/validate", Validate)
+func ProtectedRoute(api fiber.Router) {
+	api.Post("/logout", Logout)
+	api.Get("/validate", Validate)
 }

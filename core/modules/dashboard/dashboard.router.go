@@ -2,16 +2,16 @@ package dashboard
 
 import "github.com/gofiber/fiber/v2"
 
-func PublicRoute(r fiber.Router) {
+func PublicRoute(api fiber.Router) {
 }
 
-func ProtectedRoute(r fiber.Router) {
-	r.Get("/functions", ListFunctions)
+func ProtectedRoute(api fiber.Router) {
+	api.Get("/functions", ListFunctions)
 
 	// CRUD Widget
-	r.Post("/widget/functions", WidgetFunctions)
-	r.Post("/widget/create", WidgetCreate)
-	r.Get("/widget/list", WidgetList)
-	r.Put("/widget/edit/:id", WidgetEdit)
-	r.Delete("/widget/remove/:id", WidgetRemove)
+	api.Post("/widget/functions", WidgetFunctions)
+	api.Post("/widget/create", WidgetCreate)
+	api.Get("/widget/list", WidgetList)
+	api.Put("/widget/edit/:id", WidgetEdit)
+	api.Delete("/widget/remove/:id", WidgetRemove)
 }

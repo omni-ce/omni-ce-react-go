@@ -4,10 +4,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func ProtectedRoute(r fiber.Router) {
-	r.Get("/next/:id", NextData)
-	r.Post("/mark-read", MarkRead)
-	r.Post("/toggle-read", ToggleRead)
-	r.Delete("/delete/:id", Delete)
-	r.Delete("/clear-all", ClearAll)
+func ProtectedRoute(api fiber.Router) {
+	api.Get("/next/:id", NextData)
+	api.Post("/mark-read", MarkRead)
+	api.Post("/toggle-read", ToggleRead)
+	api.Delete("/delete/:id", Delete)
+	api.Delete("/clear-all", ClearAll)
 }

@@ -27,12 +27,7 @@ export default function ProductCategoryPage({ ruleKey }: Props) {
         label: language({ id: "Nama", en: "Name" }),
         type: "text",
         required: true,
-      },
-      {
-        key: "description",
-        label: language({ id: "Deskripsi", en: "Description" }),
-        type: "text",
-        required: true,
+        textMultiLanguage: true,
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -47,16 +42,6 @@ export default function ProductCategoryPage({ ruleKey }: Props) {
         sort: true,
         search: true,
         render: (item) => <span className="font-medium">{item.name}</span>,
-      },
-      {
-        key: "description",
-        header: language({ id: "Deskripsi", en: "Description" }),
-        search: true,
-        render: (item) => (
-          <span className="text-dark-300 max-w-xs truncate block">
-            {item.description}
-          </span>
-        ),
       },
       {
         key: "is_active",
