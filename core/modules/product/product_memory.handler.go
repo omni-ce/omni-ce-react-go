@@ -10,15 +10,14 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func ColorCreate(c *fiber.Ctx) error {
+func MemoryCreate(c *fiber.Ctx) error {
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
 		return dto.Unauthorized(c, "Unauthorized", nil)
 	}
 
 	var body struct {
-		Name    string `json:"name" validate:"required"`
-		HexCode string `json:"hex_code" validate:"required"`
+		Name string `json:"name" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
@@ -27,52 +26,51 @@ func ColorCreate(c *fiber.Ctx) error {
 	key := generateKeyFromName(body.Name)
 
 	// Check duplicate key
-	var existing model.ProductColor
+	var existing model.ProductMemory
 	if err := variable.Db.
 		Where("`key` = ?", key).
 		First(&existing).
 		Error; err == nil {
-		return dto.BadRequest(c, "Color with this name already exists", nil)
+		return dto.BadRequest(c, "Memory with this name already exists", nil)
 	}
 
-	color := model.ProductColor{
+	memory := model.ProductMemory{
 		Key:       key,
 		Name:      body.Name,
-		HexCode:   body.HexCode,
 		CreatedBy: currentUser.ID,
 		UpdatedBy: currentUser.ID,
 	}
 
 	if err := variable.Db.
-		Create(&color).
+		Create(&memory).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to create color", nil)
+		return dto.InternalServerError(c, "Failed to create memory", nil)
 	}
 
-	return dto.Created(c, "Color created", fiber.Map{
-		"color": color.Map(),
+	return dto.Created(c, "Memory created", fiber.Map{
+		"memory": memory.Map(),
 	})
 }
 
-func ColorPaginate(c *fiber.Ctx) error {
-	var categories []model.ProductColor
-	pagination, err := function.Pagination(c, &model.ProductColor{}, nil, []string{"name", "key"}, &categories)
+func MemoryPaginate(c *fiber.Ctx) error {
+	var memories []model.ProductMemory
+	pagination, err := function.Pagination(c, &model.ProductMemory{}, nil, []string{"name", "key"}, &memories)
 	if err != nil {
 		return dto.InternalServerError(c, "Failed to prepare pagination", nil)
 	}
 
-	rows := make([]map[string]any, 0, len(categories))
-	for _, cat := range categories {
+	rows := make([]map[string]any, 0, len(memories))
+	for _, cat := range memories {
 		rows = append(rows, cat.Map())
 	}
 
-	return dto.OK(c, "Success get categories", fiber.Map{
+	return dto.OK(c, "Success get memories", fiber.Map{
 		"rows":       rows,
 		"pagination": pagination.Meta(),
 	})
 }
 
-func ColorEdit(c *fiber.Ctx) error {
+func MemoryEdit(c *fiber.Ctx) error {
 	id := c.Params("id")
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
@@ -80,62 +78,60 @@ func ColorEdit(c *fiber.Ctx) error {
 	}
 
 	var body struct {
-		Name    string `json:"name" validate:"required"`
-		HexCode string `json:"hex_code" validate:"required"`
+		Name string `json:"name" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
 	}
 
-	var existing model.ProductColor
+	var existing model.ProductMemory
 	if err := variable.Db.
 		First(&existing, "id = ?", id).
 		Error; err != nil {
-		return dto.NotFound(c, "Color not found", nil)
+		return dto.NotFound(c, "Memory not found", nil)
 	}
 
 	key := generateKeyFromName(body.Name)
 
 	// Check duplicate key if changed
 	if key != existing.Key {
-		var dup model.ProductColor
+		var dup model.ProductMemory
 		if err := variable.Db.
 			Where("`key` = ? AND id != ?", key, id).
 			First(&dup).
 			Error; err == nil {
-			return dto.BadRequest(c, "Color with this name already exists", nil)
+			return dto.BadRequest(c, "Memory with this name already exists", nil)
 		}
 	}
 
 	existing.Key = key
 	existing.Name = body.Name
-	existing.HexCode = body.HexCode
 	existing.UpdatedBy = currentUser.ID
 
 	if err := variable.Db.
 		Save(&existing).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to update color", nil)
+		return dto.InternalServerError(c, "Failed to update memory", nil)
 	}
 
-	return dto.OK(c, "Color updated", fiber.Map{
-		"color": existing.Map(),
+	return dto.OK(c, "Memory updated", fiber.Map{
+		"memory": existing.Map(),
 	})
 }
 
-func ColorRemove(c *fiber.Ctx) error {
+func MemoryRemove(c *fiber.Ctx) error {
 	id := c.Params("id")
 
 	if err := variable.Db.
-		Delete(&model.ProductColor{}, "id = ?", id).
+		Delete(&model.ProductMemory{}, "id = ?", id).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to delete color", nil)
+		return dto.InternalServerError(c, "Failed to delete memory", nil)
 	}
 
-	return dto.OK(c, "Color deleted", nil)
+	return dto.OK(c, "Memory deleted", nil)
 }
 
-func ColorBulkRemove(c *fiber.Ctx) error {
+func MemoryBulkRemove(c *fiber.Ctx) error {
 	var body struct {
 		IDs []uint `json:"ids" validate:"required,min=1"`
 	}
@@ -144,10 +140,10 @@ func ColorBulkRemove(c *fiber.Ctx) error {
 	}
 
 	if err := variable.Db.
-		Delete(&model.ProductColor{}, "id IN ?", body.IDs).
+		Delete(&model.ProductMemory{}, "id IN ?", body.IDs).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to bulk delete categories", nil)
+		return dto.InternalServerError(c, "Failed to bulk delete memories", nil)
 	}
 
-	return dto.OK(c, fmt.Sprintf("Success delete %d categories", len(body.IDs)), nil)
+	return dto.OK(c, fmt.Sprintf("Success delete %d memories", len(body.IDs)), nil)
 }

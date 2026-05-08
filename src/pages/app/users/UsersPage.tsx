@@ -136,8 +136,6 @@ export default function UsersPage({ ruleKey }: Props) {
       {
         key: "role",
         header: language({ id: "Role", en: "Role" }),
-        sort: true,
-        search: true,
         render: (user) => (
           <div className="flex flex-wrap items-center gap-2">
             {user.roles &&

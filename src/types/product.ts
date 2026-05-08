@@ -21,6 +21,12 @@ export interface ProductVarian {
   description: string;
   is_active: boolean;
 }
+export interface ProductMemory {
+  id: number;
+  key: string;
+  ram: string;
+  internal_storage: string;
+}
 export interface ProductColor {
   id: number;
   key: string;

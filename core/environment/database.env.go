@@ -15,3 +15,12 @@ func GetDatabase() (string, string, string, string, string, string) {
 
 	return provider, host, port, user, pass, dbName
 }
+
+func GetDatabaseMigrate() bool {
+	migrate := os.Getenv("DATABASE_MIGRATE")
+	isMigrate := false
+	if migrate == "true" || migrate == "" {
+		isMigrate = true
+	}
+	return isMigrate
+}

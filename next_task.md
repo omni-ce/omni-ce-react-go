@@ -13,6 +13,8 @@
 - Profile Setting
 - di sidebar cuman ada nama dan role padahal ada foto dan divisi yang belum muncul
 - Switch maintenance system (bisa diaktifkan / dimatikan)
+- dynamic field: country, nama negara bukan nama bahasa
+- dynamic field: email, masih belum work
 - jika ending, full halaman dokumentasi di update
 
 ---

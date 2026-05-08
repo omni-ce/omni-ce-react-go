@@ -10,6 +10,7 @@ import MasterDataPage from "@/pages/app/master_data/MasterDataPage";
 import ProductCategoryPage from "@/pages/app/product/ProductCategoryPage";
 import ProductBrandPage from "@/pages/app/product/ProductBrandPage";
 import ProductVariantPage from "@/pages/app/product/ProductVariantPage";
+import ProductMemoryPage from "@/pages/app/product/ProductMemoryPage";
 import ProductColorPage from "@/pages/app/product/ProductColorPage";
 import ProductItemPage from "@/pages/app/product/ProductItemPage";
 
@@ -61,6 +62,13 @@ const sidebarLinks: ISidebarLink[] = [
         element: <ProductVariantPage ruleKey="products/variants" />,
         strict: true,
         icon: "Hi/HiOutlineCog",
+      },
+      {
+        label: { id: "Memori", en: "Memory" },
+        path: "memories",
+        element: <ProductMemoryPage ruleKey="products/memories" />,
+        strict: true,
+        icon: "Gr/GrMemory",
       },
       {
         label: { id: "Warna", en: "Color" },

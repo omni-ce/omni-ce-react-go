@@ -210,10 +210,12 @@ func OpenDB() (*gorm.DB, error) {
 		db.Exec("PRAGMA foreign_keys = ON;")
 	}
 
-	if err := db.AutoMigrate(modules.Models()...); err != nil {
-		return nil, err
+	if environment.GetDatabaseMigrate() {
+		if err := db.AutoMigrate(modules.Models()...); err != nil {
+			return nil, err
+		}
+		log.Println("✅ Database migrated successfully!")
 	}
-	log.Println("✅ Database migrated successfully!")
 
 	variable.Db = db
 	return db, nil

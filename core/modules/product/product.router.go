@@ -31,11 +31,17 @@ func ProtectedRoute(api fiber.Router) {
 	api.Post("/variant/bulk-remove", VariantBulkRemove)
 	api.Patch("/variant/set-active/:id", VariantSetActive)
 
+	// Memory
+	api.Post("/memory/create", MemoryCreate)
+	api.Get("/memory/paginate", MemoryPaginate)
+	api.Put("/memory/edit/:id", MemoryEdit)
+	api.Delete("/memory/remove/:id", MemoryRemove)
+	api.Post("/memory/bulk-remove", MemoryBulkRemove)
+
 	// Color
 	api.Post("/color/create", ColorCreate)
 	api.Get("/color/paginate", ColorPaginate)
 	api.Put("/color/edit/:id", ColorEdit)
 	api.Delete("/color/remove/:id", ColorRemove)
 	api.Post("/color/bulk-remove", ColorBulkRemove)
-	api.Patch("/color/set-active/:id", ColorSetActive)
 }

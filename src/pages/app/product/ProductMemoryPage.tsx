@@ -1,6 +1,5 @@
 import { useMemo, useRef } from "react";
 import { useLanguageStore } from "@/stores/languageStore";
-import { formatDateTime } from "@/utils/datetime";
 import Pagination, {
   type PaginationColumn,
   type PaginationField,
@@ -8,12 +7,13 @@ import Pagination, {
 } from "@/components/Pagination";
 import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
-import type { ProductColor } from "@/types/product";
+import type { ProductMemory } from "@/types/product";
+import { FileTypeGroup } from "@/components/DynamicForm";
 
 interface Props {
   ruleKey?: string;
 }
-export default function ProductColorPage({ ruleKey }: Props) {
+export default function ProductMemoryPage({ ruleKey }: Props) {
   const perm = usePermission(ruleKey);
 
   const paginationRef = useRef<PaginationHandle>(null);
@@ -23,14 +23,16 @@ export default function ProductColorPage({ ruleKey }: Props) {
     () => [
       {
         key: "name",
-        label: language({ id: "Nama", en: "Name" }),
-        type: "text",
+        label: language({ id: "RAM", en: "RAM" }),
+        type: "number",
+        col: 6,
         required: true,
       },
       {
-        key: "hex_code",
-        label: language({ id: "Hex Code", en: "Hex Code" }),
-        type: "color",
+        key: "internal_storage",
+        label: language({ id: "Penyimpanan Internal", en: "Internal Storage" }),
+        type: "number",
+        col: 6,
         required: true,
       },
     ],
@@ -38,28 +40,23 @@ export default function ProductColorPage({ ruleKey }: Props) {
     [languageCode, language],
   );
 
-  const columns = useMemo<PaginationColumn<ProductColor>[]>(
+  const columns = useMemo<PaginationColumn<ProductMemory>[]>(
     () => [
       {
-        key: "name",
-        header: language({ id: "Nama", en: "Name" }),
+        key: "ram",
+        header: language({ id: "RAM", en: "RAM" }),
         sort: true,
-        search: true,
-        render: (item) => <span className="font-medium">{item.name}</span>,
+        render: (item) => <span className="font-medium">{item.ram}</span>,
       },
       {
-        key: "hex_code",
-        header: language({ id: "Hex Code", en: "Hex Code" }),
+        key: "internal_storage",
+        header: language({
+          id: "Penyimpanan Internal",
+          en: "Internal Storage",
+        }),
+        sort: true,
         render: (item) => (
-          <div className="flex items-center gap-2">
-            <div
-              className="h-6 w-6 rounded-full border border-dark-600"
-              style={{ backgroundColor: item.hex_code }}
-            />
-            <span className="text-dark-300 max-w-xs truncate block">
-              {item.hex_code}
-            </span>
-          </div>
+          <span className="font-medium">{item.internal_storage}</span>
         ),
       },
     ],
@@ -74,12 +71,12 @@ export default function ProductColorPage({ ruleKey }: Props) {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="font-heading text-2xl font-bold text-foreground">
-            {language({ id: "Warna Produk", en: "Product Colors" })}
+            {language({ id: "Memori Produk", en: "Product Memories" })}
           </h1>
           <p className="mt-1 text-sm text-dark-400">
             {language({
-              id: "Kelola semua warna produk pada sistem",
-              en: "Manage all product colors in the system",
+              id: "Kelola semua memori produk pada sistem",
+              en: "Manage all product memories in the system",
             })}
           </p>
         </div>
@@ -88,11 +85,11 @@ export default function ProductColorPage({ ruleKey }: Props) {
       <Pagination
         ref={paginationRef}
         title={language({
-          id: "Daftar Warna Produk",
-          en: "Product Color List",
+          id: "Daftar Memori Produk",
+          en: "Product Memory List",
         })}
         columns={columns}
-        module="product/color"
+        module="product/memory"
         fields={fields}
         ruleKey={ruleKey}
       />
