@@ -131,10 +131,6 @@ type DynamicFormFieldChildren = {
 export type DynamicFormField = {
   label: string;
   col?: number;
-  colMobile?: number;
-  colTablet?: number;
-  colLaptop?: number;
-  colDesktop?: number;
   strict?: boolean;
   only?: "create" | "update";
 } & (DynamicFormFieldNormal | DynamicFormFieldChildren);
@@ -719,15 +715,11 @@ function ArrayField({
             {field.children?.map((child) => (
               <div
                 key={child.key}
-                style={
-                  {
-                    "--col-xs": child.colMobile || child.col || 12,
-                    "--col-sm": child.colTablet || child.col || 12,
-                    "--col-md": child.colLaptop || child.col || 12,
-                    "--col-lg": child.colDesktop || child.col || 12,
-                  } as React.CSSProperties
-                }
-                className="col-span-(--col-xs) sm:col-span-(--col-sm) md:col-span-(--col-md) lg:col-span-(--col-lg)"
+                style={{
+                  gridColumn: `span ${child.col || 12} / span ${
+                    child.col || 12
+                  }`,
+                }}
               >
                 <Label
                   htmlFor={`field-${field.key}-${index}-${child.key}`}
@@ -1145,15 +1137,10 @@ function DynamicFieldRenderer({
   if (!field.key && field.children) {
     return (
       <div
-        style={
-          {
-            "--col-xs": field.colMobile || field.col || 12,
-            "--col-sm": field.colTablet || field.col || 12,
-            "--col-md": field.colLaptop || field.col || 12,
-            "--col-lg": field.colDesktop || field.col || 12,
-          } as React.CSSProperties
-        }
-        className="col-span-(--col-xs) sm:col-span-(--col-sm) md:col-span-(--col-md) lg:col-span-(--col-lg) space-y-4 border border-dark-600/50 rounded-xl p-4 bg-dark-800/30 mt-2"
+        style={{
+          gridColumn: `span ${field.col || 12} / span ${field.col || 12}`,
+        }}
+        className="space-y-4 border border-dark-600/50 rounded-xl p-4 bg-dark-800/30 mt-2"
       >
         {field.label && (
           <h3 className="font-semibold text-sm text-foreground">
@@ -1182,15 +1169,9 @@ function DynamicFieldRenderer({
 
   return (
     <div
-      style={
-        {
-          "--col-xs": field.colMobile || field.col || 12,
-          "--col-sm": field.colTablet || field.col || 12,
-          "--col-md": field.colLaptop || field.col || 12,
-          "--col-lg": field.colDesktop || field.col || 12,
-        } as React.CSSProperties
-      }
-      className="col-span-(--col-xs) sm:col-span-(--col-sm) md:col-span-(--col-md) lg:col-span-(--col-lg)"
+      style={{
+        gridColumn: `span ${field.col || 12} / span ${field.col || 12}`,
+      }}
     >
       <Label htmlFor={`field-${field.key}`} required={field.required}>
         {field.label}
