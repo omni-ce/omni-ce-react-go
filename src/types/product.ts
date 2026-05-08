@@ -37,12 +37,14 @@ export interface ProductItem {
   id: number;
   key: string;
   sku: string;
+  sku_imei?: string;
   category_id: number;
   category_name: string;
   varian_id: number;
-  brand_varian_name: string;
+  brand_name: string;
+  varian_name: string;
   color_id?: number;
   color_name?: string;
-  color_hex_code?: string;
+  color_hex?: string;
   is_active: boolean;
 }

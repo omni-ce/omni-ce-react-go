@@ -44,6 +44,7 @@ func Models() []interface{} {
 		&product.ProductVariant{},
 		&product.ProductMemory{},
 		&product.ProductColor{},
+		&product.ProductItem{},
 	}
 }
 

@@ -95,6 +95,19 @@ export interface PaginationHandle {
 }
 
 export type { PaginationFieldOption, PaginationField };
+
+const flattenFields = (fields: PaginationField[]): PaginationField[] => {
+  const result: PaginationField[] = [];
+  for (const field of fields) {
+    if (!field.key && field.children && field.type !== "array") {
+      result.push(...flattenFields(field.children as PaginationField[]));
+    } else {
+      result.push(field);
+    }
+  }
+  return result;
+};
+
 const Pagination = forwardRef(function PaginationInner<T>(
   {
     title,
@@ -497,7 +510,8 @@ const Pagination = forwardRef(function PaginationInner<T>(
     (row?: T) => {
       if (!filteredFields) return {};
       const data: Record<string, unknown> = {};
-      for (const field of filteredFields) {
+      const flatFields = flattenFields(filteredFields);
+      for (const field of flatFields) {
         if (row && typeof row === "object" && row !== null) {
           const val = (row as Record<string, unknown>)[field.key as string];
           if (field.type === "array") {
@@ -561,7 +575,8 @@ const Pagination = forwardRef(function PaginationInner<T>(
 
   const isFormValid = useCallback(() => {
     if (!filteredFields) return false;
-    for (const field of filteredFields) {
+    const flatFields = flattenFields(filteredFields);
+    for (const field of flatFields) {
       const isCreate = !editingRow;
       if (field.only === "create" && !isCreate) continue;
       if (field.only === "update" && isCreate) continue;
@@ -623,7 +638,8 @@ const Pagination = forwardRef(function PaginationInner<T>(
     try {
       const payload: Record<string, unknown> = {};
       if (filteredFields) {
-        for (const field of filteredFields) {
+        const flatFields = flattenFields(filteredFields);
+        for (const field of flatFields) {
           const isCreate = !editingRow;
           if (field.only === "create" && !isCreate) continue;
           if (field.only === "update" && isCreate) continue;

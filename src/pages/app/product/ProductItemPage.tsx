@@ -93,19 +93,26 @@ export default function ProductItemPage({ ruleKey }: Props) {
         key: "category_name",
         header: language({ id: "Kategori", en: "Category" }),
         search: true,
-        render: (item) => (
-          <span className="text-dark-300 max-w-xs truncate block">
-            {item.category_name}
-          </span>
-        ),
+        render: (item) => {
+          let name = item.category_name;
+          try {
+            if (name.startsWith("{")) {
+              const obj = JSON.parse(name);
+              name = language(obj);
+            }
+          } catch (e) {
+            // fallback to raw name
+          }
+          return <span className="font-medium">{name}</span>;
+        },
       },
       {
         key: "brand_varian_name",
         header: language({ id: "Merek Varian", en: "Brand Variant" }),
         search: true,
         render: (item) => (
-          <span className="text-dark-300 max-w-xs truncate block">
-            {item.brand_varian_name}
+          <span className="max-w-xs truncate block">
+            {item.brand_name} {item.varian_name}
           </span>
         ),
       },
@@ -116,7 +123,7 @@ export default function ProductItemPage({ ruleKey }: Props) {
           <div className="flex items-center gap-2">
             <div
               className="h-6 w-6 rounded-full border border-dark-600"
-              style={{ backgroundColor: item.color_hex_code }}
+              style={{ backgroundColor: item.color_hex }}
             />
             <span className="text-dark-300 max-w-xs truncate block">
               {item.color_name}
