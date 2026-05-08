@@ -10,6 +10,7 @@ import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import { Badge } from "@/components/ui/Badge";
 import { FileType } from "@/components/DynamicForm";
+import { HOST_API } from "@/environment";
 
 interface Props {
   ruleKey?: string;
@@ -54,7 +55,7 @@ export default function ProductBrandPage({ ruleKey }: Props) {
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 overflow-hidden rounded-lg border border-dark-600 bg-dark-800/50 p-1.5 flex items-center justify-center group-hover:border-accent-500/30 transition-colors">
               <img
-                src={item.logo}
+                src={HOST_API + item.logo}
                 alt={item.name}
                 className="max-h-full max-w-full object-contain"
               />

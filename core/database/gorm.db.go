@@ -205,6 +205,11 @@ func OpenDB() (*gorm.DB, error) {
 		return nil, err
 	}
 
+	// Enable foreign keys for SQLite
+	if provider == "sqlite" {
+		db.Exec("PRAGMA foreign_keys = ON;")
+	}
+
 	if err := db.AutoMigrate(modules.Models()...); err != nil {
 		return nil, err
 	}

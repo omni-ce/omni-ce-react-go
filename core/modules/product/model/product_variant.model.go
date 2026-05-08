@@ -15,7 +15,7 @@ type ProductVariant struct {
 	IsActive    bool   `json:"is_active" gorm:"default:true"`
 
 	// relations
-	Brand ProductBrand `json:"brand" gorm:"foreignKey:BrandID;references:ID;onDelete:CASCADE"`
+	Brand ProductBrand `json:"brand" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 
 	// SLA: create & update by user
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`

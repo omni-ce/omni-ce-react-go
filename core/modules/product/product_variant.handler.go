@@ -6,6 +6,7 @@ import (
 	"react-go/core/function"
 	"react-go/core/modules/product/model"
 	"react-go/core/variable"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
@@ -18,10 +19,17 @@ func VariantCreate(c *fiber.Ctx) error {
 	}
 
 	var body struct {
-		Name string `json:"name" validate:"required"`
+		BrandID     string `json:"brand_id" validate:"required"`
+		Name        string `json:"name" validate:"required"`
+		Description string `json:"description"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
+	}
+
+	brandID, err := strconv.Atoi(body.BrandID)
+	if err != nil {
+		return dto.BadRequest(c, "Invalid brand id", nil)
 	}
 
 	key := generateKeyFromName(body.Name)
@@ -36,10 +44,12 @@ func VariantCreate(c *fiber.Ctx) error {
 	}
 
 	variant := model.ProductVariant{
-		Key:       key,
-		Name:      body.Name,
-		CreatedBy: currentUser.ID,
-		UpdatedBy: currentUser.ID,
+		BrandID:     uint(brandID),
+		Key:         key,
+		Name:        body.Name,
+		Description: body.Description,
+		CreatedBy:   currentUser.ID,
+		UpdatedBy:   currentUser.ID,
 	}
 
 	if err := variable.Db.
@@ -83,7 +93,9 @@ func VariantEdit(c *fiber.Ctx) error {
 	}
 
 	var body struct {
-		Name string `json:"name" validate:"required"`
+		BrandID     string `json:"brand_id" validate:"required"`
+		Name        string `json:"name" validate:"required"`
+		Description string `json:"description"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
@@ -109,8 +121,12 @@ func VariantEdit(c *fiber.Ctx) error {
 		}
 	}
 
+	if brandID, err := strconv.Atoi(body.BrandID); err == nil {
+		existing.BrandID = uint(brandID)
+	}
 	existing.Key = key
 	existing.Name = body.Name
+	existing.Description = body.Description
 	existing.UpdatedBy = currentUser.ID
 
 	if err := variable.Db.
