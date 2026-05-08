@@ -8,7 +8,7 @@ import Pagination, {
 } from "@/components/Pagination";
 import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
-import type { ProductColor } from "@/services/product.service";
+import type { ProductColor } from "@/types/product";
 import { Badge } from "@/components/ui/Badge";
 
 interface Props {

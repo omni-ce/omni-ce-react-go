@@ -8,7 +8,7 @@ import Pagination, {
 } from "@/components/Pagination";
 import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
-import type { ProductCategory } from "@/services/product.service";
+import type { ProductCategory } from "@/types/product";
 import { Badge } from "@/components/ui/Badge";
 
 interface Props {
@@ -57,6 +57,7 @@ export default function ProductCategoryPage({ ruleKey }: Props) {
       {
         key: "is_active",
         header: language({ id: "Status", en: "Status" }),
+        rule: "set",
         render: (item) => (
           <Badge variant={item.is_active ? "default" : "destructive"}>
             {item.is_active

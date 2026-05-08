@@ -6,7 +6,7 @@ import Pagination, {
   type PaginationField,
   type PaginationHandle,
 } from "@/components/Pagination";
-import { type ProductVarian } from "@/services/product.service";
+import { type ProductVarian } from "@/types/product";
 import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import { Badge } from "@/components/ui/Badge";
