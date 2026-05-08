@@ -88,6 +88,7 @@ export interface PaginationProps<T> {
   useIsActive?: boolean;
   extraActions?: PaginationExtraAction<T>[];
   ruleKey?: string;
+  dataDeleteName?: (row: T) => string;
 }
 
 export interface PaginationHandle {
@@ -117,6 +118,7 @@ const Pagination = forwardRef(function PaginationInner<T>(
     useIsActive,
     extraActions,
     ruleKey,
+    dataDeleteName,
   }: PaginationProps<T>,
   ref: Ref<PaginationHandle>,
 ) {
@@ -564,6 +566,7 @@ const Pagination = forwardRef(function PaginationInner<T>(
   };
 
   const getRowLabel = (row: T): string => {
+    if (dataDeleteName) return dataDeleteName(row);
     if (typeof row === "object" && row !== null) {
       const obj = row as Record<string, unknown>;
       if (typeof obj.name === "string") return obj.name;
