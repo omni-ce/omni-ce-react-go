@@ -81,14 +81,39 @@ func ItemCreate(c *fiber.Ctx) error {
 }
 
 func ItemPaginate(c *fiber.Ctx) error {
+	/*
+		http://localhost:3000/api/product/item/paginate
+		?page=1&limit=10
+		&search_fields=sku,category_name,brand_name,varian_name
+		&col_sku=a&col_category_name=b&col_brand_name=c&col_varian_name=d
+	*/
+	col_sku := c.Query("col_sku")
+	col_category_name := c.Query("col_category_name")
+	col_brand_name := c.Query("col_brand_name")
+	col_varian_name := c.Query("col_varian_name")
+
 	items := make([]model.ProductItem, 0)
 	pagination, err := function.Pagination(c, &model.ProductItem{}, func(db *gorm.DB) *gorm.DB {
-		return db.Preload("Category").
+		new_db := db.Preload("Category").
 			Preload("Brand").
 			Preload("Variant").
 			Preload("Memory").
 			Preload("Color")
-	}, []string{"sku", "sku_imei"}, &items)
+		if col_sku != "" {
+			search_sku := "%" + col_sku + "%"
+			new_db = new_db.Where("sku LIKE ? OR sku_imei LIKE ?", search_sku, search_sku)
+		}
+		if col_category_name != "" {
+			new_db = new_db.Where("category_name LIKE ?", "%"+col_category_name+"%")
+		}
+		if col_brand_name != "" {
+			new_db = new_db.Where("brand_name LIKE ?", "%"+col_brand_name+"%")
+		}
+		if col_varian_name != "" {
+			new_db = new_db.Where("varian_name LIKE ?", "%"+col_varian_name+"%")
+		}
+		return new_db
+	}, []string{}, &items)
 
 	if err != nil {
 		return dto.InternalServerError(c, "Failed to prepare pagination", nil)
