@@ -13,6 +13,7 @@ import { FileType } from "@/components/DynamicForm";
 import { HOST_API } from "@/environment";
 import { Avatar } from "@/components/ui/Avatar";
 import BlankCompany from "@/assets/blank-company.svg";
+import { IconComponent } from "@/components/ui/IconSelector";
 
 interface Props {
   ruleKey?: string;
@@ -134,9 +135,28 @@ export default function EntityPage({ ruleKey }: Props) {
         key: "address",
         header: language({ id: "Alamat", en: "Address" }),
         sort: true,
+        search: true,
         render: (item) => (
-          <div className="flex items-center gap-3">
-            <span className="font-medium">{item.address}</span>
+          <div className="flex flex-col gap-1 max-w-75">
+            <div className="flex items-start gap-2">
+              <IconComponent
+                iconName="Hi/HiOutlineLocationMarker"
+                className="w-4 h-4 text-dark-400 shrink-0 mt-0.5"
+              />
+              <span className="text-sm text-foreground line-clamp-2 leading-relaxed">
+                {item.address || "-"}
+              </span>
+            </div>
+            {item.address_code && (
+              <div className="flex items-center gap-2 ml-6">
+                <Badge
+                  variant="secondary"
+                  className="text-[10px] px-1.5 py-0 h-4 bg-dark-700/50 text-dark-300"
+                >
+                  {item.address_code}
+                </Badge>
+              </div>
+            )}
           </div>
         ),
       },
