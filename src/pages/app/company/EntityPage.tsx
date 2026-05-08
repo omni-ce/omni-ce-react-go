@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/Badge";
 import { FileType } from "@/components/DynamicForm";
 import { HOST_API } from "@/environment";
 import { Avatar } from "@/components/ui/Avatar";
+import BlankCompany from "@/assets/blank-company.svg";
 
 interface Props {
   ruleKey?: string;
@@ -92,7 +93,7 @@ export default function EntityPage({ ruleKey }: Props) {
           <div className="flex items-center gap-3">
             <Avatar
               size="sm"
-              src={user.logo ? HOST_API + user.logo : "BlankUser"}
+              src={user.logo ? HOST_API + user.logo : BlankCompany}
               alt={user.name}
               fallback={user.name?.charAt(0)?.toUpperCase()}
             />
