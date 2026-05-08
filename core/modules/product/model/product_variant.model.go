@@ -1,11 +1,9 @@
 package model
 
 import (
-	"log"
 	"time"
 
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
 type ProductVariant struct {
@@ -38,33 +36,5 @@ func (s *ProductVariant) Map() map[string]any {
 		"created_by":  s.CreatedBy,
 		"updated_at":  s.UpdatedAt,
 		"updated_by":  s.UpdatedBy,
-	}
-}
-
-func (ProductVariant) Seed(db *gorm.DB) {
-	var count int64
-	db.Model(&ProductVariant{}).Count(&count)
-
-	if count == 0 {
-		stats := []ProductVariant{
-			{
-				BrandID: 2,
-				Key:     "z-fold-512",
-				Name:    "Z Fold 512",
-			},
-			{
-				BrandID: 2,
-				Key:     "z-fold-256",
-				Name:    "Z Fold 256",
-			},
-		}
-
-		for _, s := range stats {
-			db.Create(&s)
-		}
-
-		log.Println("✅ Product Variant seeded")
-	} else {
-		log.Println("⚠️ Product Variant already seeded")
 	}
 }

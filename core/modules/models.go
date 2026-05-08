@@ -54,6 +54,4 @@ func SeedAll(db *gorm.DB) {
 
 	// Custom
 	product.ProductCategory{}.Seed(db)
-	product.ProductBrand{}.Seed(db)
-	product.ProductVariant{}.Seed(db)
 }

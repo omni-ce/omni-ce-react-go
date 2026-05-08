@@ -8,6 +8,7 @@ import (
 	"react-go/core/variable"
 
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
 )
 
 func VariantCreate(c *fiber.Ctx) error {
@@ -54,37 +55,17 @@ func VariantCreate(c *fiber.Ctx) error {
 
 func VariantPaginate(c *fiber.Ctx) error {
 	variants := make([]model.ProductVariant, 0)
-	pagination, err := function.Pagination(c, &model.ProductVariant{}, nil, []string{"name", "key"}, &variants)
+	pagination, err := function.Pagination(c, &model.ProductVariant{}, func(db *gorm.DB) *gorm.DB {
+		return db.Preload("Brand")
+	}, []string{"name", "key"}, &variants)
 	if err != nil {
 		return dto.InternalServerError(c, "Failed to prepare pagination", nil)
 	}
-	brandIds := make([]uint, 0)
-	for _, row := range variants {
-		brandIds = append(brandIds, row.BrandID)
-	}
-	fmt.Printf("brandIds : %+v\n", brandIds)
 
-	brands := make([]model.ProductBrand, 0)
-	if err := variable.Db.
-		Model(&model.ProductBrand{}).
-		Where("id IN ?", brandIds).
-		Find(&brands).
-		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to get brands", nil)
-	}
-	fmt.Printf("Brands : %+v\n", brands)
-
-	rows := make([]map[string]any, 0)
+	rows := make([]map[string]any, 0, len(variants))
 	for _, row := range variants {
 		variant := row.Map()
-		var brand model.ProductBrand
-		for _, b := range brands {
-			if b.ID == row.BrandID {
-				brand = b
-				break
-			}
-		}
-		variant["brand_name"] = brand.Name
+		variant["brand_name"] = row.Brand.Name
 		rows = append(rows, variant)
 	}
 

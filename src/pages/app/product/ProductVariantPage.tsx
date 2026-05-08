@@ -39,7 +39,6 @@ export default function ProductVarianPage({ ruleKey }: Props) {
         key: "description",
         label: language({ id: "Deskripsi", en: "Description" }),
         type: "text",
-        required: true,
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -54,7 +53,9 @@ export default function ProductVarianPage({ ruleKey }: Props) {
         sort: true,
         search: true,
         render: (item) => (
-          <span className="font-mono text-sm">{item.name}</span>
+          <span className="font-mono text-sm">
+            {item.brand_name} {item.name}
+          </span>
         ),
       },
       {

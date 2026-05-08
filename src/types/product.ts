@@ -16,6 +16,7 @@ export interface ProductVarian {
   id: number;
   key: string;
   brand_id: number;
+  brand_name: string;
   name: string;
   description: string;
   is_active: boolean;
