@@ -41,7 +41,18 @@ export default function ProductCategoryPage({ ruleKey }: Props) {
         header: language({ id: "Nama", en: "Name" }),
         sort: true,
         search: true,
-        render: (item) => <span className="font-medium">{item.name}</span>,
+        render: (item) => {
+          let name = item.name;
+          try {
+            if (name.startsWith("{")) {
+              const obj = JSON.parse(name);
+              name = language(obj);
+            }
+          } catch (e) {
+            // fallback to raw name
+          }
+          return <span className="font-medium">{name}</span>;
+        },
       },
       {
         key: "is_active",
@@ -84,7 +95,7 @@ export default function ProductCategoryPage({ ruleKey }: Props) {
           en: "Product Category List",
         })}
         columns={columns}
-        module="master-data"
+        module="product/category"
         fields={fields}
         ruleKey={ruleKey}
         useIsActive

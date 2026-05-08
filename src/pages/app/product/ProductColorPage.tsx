@@ -93,7 +93,7 @@ export default function ProductColorPage({ ruleKey }: Props) {
           en: "Product Color List",
         })}
         columns={columns}
-        module="master-data"
+        module="product/color"
         fields={fields}
         ruleKey={ruleKey}
         useIsActive

@@ -98,7 +98,7 @@ export default function ProductVarianPage({ ruleKey }: Props) {
         ref={paginationRef}
         title={language({ id: "Daftar Merek", en: "Brand List" })}
         columns={columns}
-        module="master-data"
+        module="product/varian"
         fields={fields}
         ruleKey={ruleKey}
         useIsActive

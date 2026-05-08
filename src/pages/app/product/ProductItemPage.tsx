@@ -156,7 +156,7 @@ export default function ProductItemPage({ ruleKey }: Props) {
         ref={paginationRef}
         title={language({ id: "Daftar Merek", en: "Brand List" })}
         columns={columns}
-        module="master-data"
+        module="product/item"
         fields={fields}
         ruleKey={ruleKey}
         useIsActive

@@ -13,6 +13,7 @@ import (
 	"react-go/core/modules/master_data"
 	"react-go/core/modules/notification"
 	"react-go/core/modules/option"
+	"react-go/core/modules/product"
 	"react-go/core/modules/role"
 	"react-go/core/modules/rule"
 	"react-go/core/modules/setting"
@@ -24,8 +25,14 @@ import (
 )
 
 func SetupRoutes(app *fiber.App, api fiber.Router) {
+	// ------------------------------------------------------------------- //
+	// ------------------------------------------------------------------- //
+
 	// Root (Hello World)
 	example.PublicRoute(app)
+
+	// Upload
+	upload.ProtectedRoute(api.Group("/upload", middlewares.UseToken))
 
 	// Captcha
 	captcha.PublicRoute(api.Group("/captcha"))
@@ -33,18 +40,34 @@ func SetupRoutes(app *fiber.App, api fiber.Router) {
 	// Address
 	address.PublicRoute(api.Group("/address"))
 
+	// ------------------------------------------------------------------- //
+	// ------------------------------------------------------------------- //
+
+	// Event
+	event.ProtectedRoute(api.Group("/event", middlewares.UseQueryToken))
+
+	// Notification
+	notification.ProtectedRoute(api.Group("/notification", middlewares.UseToken))
+
+	// ------------------------------------------------------------------- //
+	// ------------------------------------------------------------------- //
+
+	// Option
+	option.PublicRoute(api.Group("/option"))
+	option.ProtectedRoute(api.Group("/option", middlewares.UseToken))
+
+	// Debounce
+	debounce.ProtectedRoute(api.Group("/debounce", middlewares.UseToken))
+
+	// ------------------------------------------------------------------- //
+	// ------------------------------------------------------------------- //
+
 	// Auth
 	auth.PublicRoute(api.Group("/auth"))
 	auth.ProtectedRoute(api.Group("/auth", middlewares.UseToken))
 
 	// User
 	user.ProtectedRoute(api.Group("/user", middlewares.UseToken))
-
-	// Upload
-	upload.ProtectedRoute(api.Group("/upload", middlewares.UseToken))
-
-	// Event
-	event.ProtectedRoute(api.Group("/event", middlewares.UseQueryToken))
 
 	// Setting
 	setting.ProtectedRoute(api.Group("/setting", middlewares.UseToken))
@@ -55,14 +78,14 @@ func SetupRoutes(app *fiber.App, api fiber.Router) {
 	// Rule
 	rule.ProtectedRoute(api.Group("/rule", middlewares.UseToken))
 
-	// Notification
-	notification.ProtectedRoute(api.Group("/notification", middlewares.UseToken))
-
 	// Whitelist
 	whitelist.ProtectedRoute(api.Group("/whitelist", middlewares.UseToken))
 
 	// API Key
 	apikey.ProtectedRoute(api.Group("/apikey", middlewares.UseToken))
+
+	// ------------------------------------------------------------------- //
+	// ------------------------------------------------------------------- //
 
 	// Dashboard
 	dashboard.PublicRoute(api.Group("/dashboard"))
@@ -71,10 +94,10 @@ func SetupRoutes(app *fiber.App, api fiber.Router) {
 	// Master Data
 	master_data.ProtectedRoute(api.Group("/master-data", middlewares.UseToken))
 
-	// Option
-	option.PublicRoute(api.Group("/option"))
-	option.ProtectedRoute(api.Group("/option", middlewares.UseToken))
+	// Product
+	product.PublicRoute(api.Group("/product"))
+	product.ProtectedRoute(api.Group("/product", middlewares.UseToken))
 
-	// Debounce
-	debounce.ProtectedRoute(api.Group("/debounce", middlewares.UseToken))
+	// ------------------------------------------------------------------- //
+	// ------------------------------------------------------------------- //
 }

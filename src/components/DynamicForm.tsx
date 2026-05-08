@@ -3,7 +3,9 @@ import { Label } from "@/components/ui/Label";
 import { Input } from "@/components/ui/Input";
 import { SearchableSelect } from "@/components/ui/SearchableSelect";
 import { Button } from "@/components/ui/Button";
-import { useLanguageStore } from "@/stores/languageStore";
+import { useLanguageStore, SUPPORTED_LANGUAGES } from "@/stores/languageStore";
+import * as flags from "country-flag-icons/react/3x2";
+import countries from "@/countries";
 import satellite from "@/lib/satellite";
 import type { Response } from "@/types/response";
 import { HOST_API } from "@/environment";
@@ -110,6 +112,7 @@ type DynamicFormFieldNormal = {
   phoneDefaultCountry?: CountryKey;
   phoneFirstAntiZero?: boolean;
   children?: DynamicFormField[];
+  textMultiLanguage?: boolean;
 };
 
 type DynamicFormFieldChildren = {
@@ -1265,11 +1268,55 @@ function DynamicFieldRenderer({
         <PhoneNumber
           value={String(formData[field.key] ?? "")}
           onChange={(val) => onChange(field.key!, val)}
-          phoneDefaultCountry={field.phoneDefaultCountry}
-          phoneFirstAntiZero={field.phoneFirstAntiZero}
+          phoneDefaultCountry={(field as DynamicFormFieldNormal).phoneDefaultCountry}
+          phoneFirstAntiZero={(field as DynamicFormFieldNormal).phoneFirstAntiZero}
           error={(errors[field.key] as string) || undefined}
           disabled={disabled}
         />
+      ) : field.type === "text" &&
+        (field as DynamicFormFieldNormal).textMultiLanguage ? (
+        <div className="space-y-2 mt-1.5">
+          {SUPPORTED_LANGUAGES.map((langCode) => {
+            const country = countries.find((c) => c.key === langCode);
+            const Flag = country ? flags[country.flag] : null;
+
+            let valObj: Record<string, string> = {};
+            try {
+              const rawVal = formData[field.key!];
+              if (typeof rawVal === "string" && rawVal.startsWith("{")) {
+                valObj = JSON.parse(rawVal);
+              } else if (typeof rawVal === "object" && rawVal !== null) {
+                valObj = rawVal as Record<string, string>;
+              }
+            } catch (e) {
+              // fallback
+            }
+
+            return (
+              <div key={langCode} className="relative flex items-center">
+                <div className="absolute left-3 z-10 flex items-center justify-center w-5 h-4 overflow-hidden rounded-sm border border-dark-600/50">
+                  {Flag ? (
+                    <Flag className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-[8px] uppercase font-bold text-dark-400">
+                      {langCode}
+                    </span>
+                  )}
+                </div>
+                <Input
+                  className="pl-11"
+                  placeholder={`${field.label} (${langCode.toUpperCase()})`}
+                  value={valObj[langCode] ?? ""}
+                  onChange={(e) => {
+                    const newValObj = { ...valObj, [langCode]: e.target.value };
+                    onChange(field.key!, JSON.stringify(newValObj));
+                  }}
+                  disabled={disabled}
+                />
+              </div>
+            );
+          })}
+        </div>
       ) : (
         <Input
           id={`field-${field.key}`}
@@ -1277,8 +1324,8 @@ function DynamicFieldRenderer({
           className="mt-1.5"
           value={String(formData[field.key] ?? "")}
           onChange={(e) => onChange(field.key!, e.target.value)}
-          minLength={field.minLength}
-          maxLength={field.maxLength}
+          minLength={(field as DynamicFormFieldNormal).minLength}
+          maxLength={(field as DynamicFormFieldNormal).maxLength}
         />
       )}
     </div>
