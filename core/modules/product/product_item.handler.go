@@ -7,6 +7,7 @@ import (
 	"react-go/core/modules/product/model"
 	"react-go/core/variable"
 	"strconv"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
@@ -93,27 +94,34 @@ func ItemPaginate(c *fiber.Ctx) error {
 	col_varian_name := c.Query("col_varian_name")
 
 	items := make([]model.ProductItem, 0)
-	pagination, err := function.Pagination(c, &model.ProductItem{}, func(db *gorm.DB) *gorm.DB {
-		new_db := db.Preload("Category").
-			Preload("Brand").
-			Preload("Variant").
-			Preload("Memory").
-			Preload("Color")
-		if col_sku != "" {
-			search_sku := "%" + col_sku + "%"
-			new_db = new_db.Where("sku LIKE ? OR sku_imei LIKE ?", search_sku, search_sku)
-		}
-		if col_category_name != "" {
-			new_db = new_db.Where("category_name LIKE ?", "%"+col_category_name+"%")
-		}
-		if col_brand_name != "" {
-			new_db = new_db.Where("brand_name LIKE ?", "%"+col_brand_name+"%")
-		}
-		if col_varian_name != "" {
-			new_db = new_db.Where("varian_name LIKE ?", "%"+col_varian_name+"%")
-		}
-		return new_db
-	}, []string{}, &items)
+
+	// Buat query dasar dengan Preload untuk data dan Joins untuk filter
+	query := variable.Db.Model(&model.ProductItem{}).
+		Preload("Category").
+		Preload("Brand").
+		Preload("Variant").
+		Preload("Memory").
+		Preload("Color")
+
+	// Filter SKU & IMEI (Manual karena butuh OR)
+	if col_sku != "" {
+		search := "%" + strings.ToLower(col_sku) + "%"
+		query = query.Where("LOWER(product_items.sku) LIKE ? OR LOWER(product_items.sku_imei) LIKE ?", search, search)
+	}
+
+	// Filter Kolom Join (Harus pakai Joins agar tabel tersedia untuk Where)
+	if col_category_name != "" {
+		query = query.Joins("Category").Where("LOWER(Category.name) LIKE ?", "%"+strings.ToLower(col_category_name)+"%")
+	}
+	if col_brand_name != "" {
+		query = query.Joins("Brand").Where("LOWER(Brand.name) LIKE ?", "%"+strings.ToLower(col_brand_name)+"%")
+	}
+	if col_varian_name != "" {
+		query = query.Joins("Variant").Where("LOWER(Variant.name) LIKE ?", "%"+strings.ToLower(col_varian_name)+"%")
+	}
+
+	// Gunakan PaginationScoped agar Count menyertakan filter Join & Where di atas
+	pagination, err := function.PaginationScoped(c, query, &model.ProductItem{}, []string{}, &items)
 
 	if err != nil {
 		return dto.InternalServerError(c, "Failed to prepare pagination", nil)
