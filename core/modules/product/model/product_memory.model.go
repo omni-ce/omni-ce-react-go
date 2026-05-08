@@ -8,9 +8,10 @@ import (
 )
 
 type ProductMemory struct {
-	ID   uint   `json:"id" gorm:"autoIncrement;primaryKey"`
-	Key  string `json:"key" gorm:"type:varchar(255);uniqueIndex;not null"`
-	Name string `json:"name" gorm:"type:varchar(255);not null"`
+	ID              uint   `json:"id" gorm:"autoIncrement;primaryKey"`
+	Key             string `json:"key" gorm:"type:varchar(255);uniqueIndex;not null"`
+	Ram             string `json:"ram" gorm:"type:varchar(255);not null"`
+	InternalStorage string `json:"internal_storage" gorm:"type:varchar(255);not null"`
 
 	// SLA: create & update by user
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
@@ -21,19 +22,20 @@ type ProductMemory struct {
 
 func (s *ProductMemory) Map() map[string]any {
 	return map[string]any{
-		"id":         s.ID,
-		"key":        s.Key,
-		"name":       s.Name,
-		"created_at": s.CreatedAt,
-		"created_by": s.CreatedBy,
-		"updated_at": s.UpdatedAt,
-		"updated_by": s.UpdatedBy,
+		"id":               s.ID,
+		"key":              s.Key,
+		"ram":              s.Ram,
+		"internal_storage": s.InternalStorage,
+		"created_at":       s.CreatedAt,
+		"created_by":       s.CreatedBy,
+		"updated_at":       s.UpdatedAt,
+		"updated_by":       s.UpdatedBy,
 	}
 }
 
 func (s *ProductMemory) Option() types.Option {
 	return types.Option{
-		Label: s.Name,
+		Label: s.Ram + " GB / " + s.InternalStorage + " GB",
 		Value: s.ID,
 	}
 }

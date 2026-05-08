@@ -15,8 +15,5 @@
 - Switch maintenance system (bisa diaktifkan / dimatikan)
 - dynamic field: country, nama negara bukan nama bahasa
 - dynamic field: email, masih belum work
+- dynamic field: key col, harusnya ke banyak versi
 - jika ending, full halaman dokumentasi di update
-
----
-
-# Done

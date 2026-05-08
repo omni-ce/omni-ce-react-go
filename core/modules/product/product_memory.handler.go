@@ -17,7 +17,8 @@ func MemoryCreate(c *fiber.Ctx) error {
 	}
 
 	var body struct {
-		Name string `json:"name" validate:"required"`
+		Ram             string `json:"ram" validate:"required"`
+		InternalStorage string `json:"internal_storage" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
