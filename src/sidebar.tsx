@@ -1,8 +1,14 @@
 import { type ISidebarLink } from "@/layouts/AppLayout";
 
+// Users
 import UsersPage from "@/pages/app/users/UsersPage";
+
+// Master Data
 import MasterDataPage from "@/pages/app/master_data/MasterDataPage";
+
+// Products
 import ProductCategoryPage from "@/pages/app/product/ProductCategoryPage";
+import ProductColorPage from "@/pages/app/product/ProductColorPage";
 
 const sidebarLinks: ISidebarLink[] = [
   {
@@ -38,6 +44,13 @@ const sidebarLinks: ISidebarLink[] = [
         element: <ProductCategoryPage ruleKey="products/categories" />,
         strict: true,
         icon: "Hi/HiOutlineTag",
+      },
+      {
+        label: { id: "Warna", en: "Color" },
+        path: "colors",
+        element: <ProductColorPage ruleKey="products/colors" />,
+        strict: true,
+        icon: "Hi/HiColorSwatch",
       },
     ],
   },

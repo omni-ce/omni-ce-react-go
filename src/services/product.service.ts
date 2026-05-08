@@ -7,6 +7,11 @@ export interface ProductCategory {
   is_active: boolean;
 }
 
+export interface ProductColor {
+  name: string;
+  hex_code: string;
+}
+
 export const productService = {
   // Product
   product: async () => {
