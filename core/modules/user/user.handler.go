@@ -353,52 +353,6 @@ func Edit(c *fiber.Ctx) error {
 	})
 }
 
-func ChangePasswordFromUser(c *fiber.Ctx) error {
-	idParam := c.Params("id")
-	id, err := uuid.Parse(idParam)
-	if err != nil {
-		return dto.BadRequest(c, "Invalid user id", nil)
-	}
-
-	var body struct {
-		Password string `json:"password" validate:"required,min=8,max=50"`
-	}
-	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
-	}
-
-	var current_user model.User
-	if err := variable.Db.
-		Where("id = ?", id.String()).
-		First(&current_user).
-		Error; err != nil {
-		return dto.Unauthorized(c, "Invalid user id", nil)
-	}
-
-	// check if password == previous password
-	if !hash.ValidatePassword(body.Password, current_user.Password) {
-		return dto.BadRequest(c, "Password and previous password must be different", nil)
-	}
-
-	if err := variable.Db.
-		Model(&current_user).
-		Update("password", hash.Password(body.Password)).
-		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to update user password", nil)
-	}
-
-	// Send notification to user about password change
-	sse.SendNotification(id, types.Notification{
-		Type:    notification.NotificationTypeWarning,
-		Title:   types.Language{Id: "Kata sandi Anda diubah", En: "Your password was changed"},
-		Message: types.Language{Id: "Administrator telah mengubah kata sandi akun Anda.", En: "An administrator has changed your account password."},
-	})
-
-	return dto.OK(c, "Success update user", fiber.Map{
-		"user": current_user.Map(),
-	})
-}
-
 func Remove(c *fiber.Ctx) error {
 	idParam := c.Params("id")
 	id, err := uuid.Parse(idParam)
@@ -520,6 +474,54 @@ func SetActive(c *fiber.Ctx) error {
 
 	return dto.OK(c, "Success toggle user status", fiber.Map{
 		"user": existing.Map(),
+	})
+}
+
+// --- //
+
+func ChangePasswordFromUser(c *fiber.Ctx) error {
+	idParam := c.Params("id")
+	id, err := uuid.Parse(idParam)
+	if err != nil {
+		return dto.BadRequest(c, "Invalid user id", nil)
+	}
+
+	var body struct {
+		Password string `json:"password" validate:"required,min=8,max=50"`
+	}
+	if err := function.RequestBody(c, &body); err != nil {
+		return dto.BadRequest(c, err.Error(), nil)
+	}
+
+	var current_user model.User
+	if err := variable.Db.
+		Where("id = ?", id.String()).
+		First(&current_user).
+		Error; err != nil {
+		return dto.Unauthorized(c, "Invalid user id", nil)
+	}
+
+	// check if password == previous password
+	if !hash.ValidatePassword(body.Password, current_user.Password) {
+		return dto.BadRequest(c, "Password and previous password must be different", nil)
+	}
+
+	if err := variable.Db.
+		Model(&current_user).
+		Update("password", hash.Password(body.Password)).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to update user password", nil)
+	}
+
+	// Send notification to user about password change
+	sse.SendNotification(id, types.Notification{
+		Type:    notification.NotificationTypeWarning,
+		Title:   types.Language{Id: "Kata sandi Anda diubah", En: "Your password was changed"},
+		Message: types.Language{Id: "Administrator telah mengubah kata sandi akun Anda.", En: "An administrator has changed your account password."},
+	})
+
+	return dto.OK(c, "Success update user", fiber.Map{
+		"user": current_user.Map(),
 	})
 }
 
