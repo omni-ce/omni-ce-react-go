@@ -1,6 +1,7 @@
 package function
 
 import (
+	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/des"
@@ -45,124 +46,121 @@ func ReverseStrings(s string) string {
 	return string(runes)
 }
 
+// PKCS7 Padding
+func pkcs7Padding(ciphertext []byte, blockSize int) []byte {
+	padding := blockSize - len(ciphertext)%blockSize
+	padtext := bytes.Repeat([]byte{byte(padding)}, padding)
+	return append(ciphertext, padtext...)
+}
+
+// PKCS7 Unpadding
+func pkcs7Unpadding(origData []byte) ([]byte, error) {
+	length := len(origData)
+	if length == 0 {
+		return nil, errors.New("empty data")
+	}
+	unpadding := int(origData[length-1])
+	if unpadding > length {
+		return nil, errors.New("invalid padding")
+	}
+	return origData[:(length - unpadding)], nil
+}
+
+// Generic CBC Encryption
+func encryptCBC(block cipher.Block, plaintext string) (string, error) {
+	blockSize := block.BlockSize()
+	content := pkcs7Padding([]byte(plaintext), blockSize)
+
+	ciphertext := make([]byte, blockSize+len(content))
+	iv := ciphertext[:blockSize]
+	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
+		return "", err
+	}
+
+	mode := cipher.NewCBCEncrypter(block, iv)
+	mode.CryptBlocks(ciphertext[blockSize:], content)
+
+	return base64.StdEncoding.EncodeToString(ciphertext), nil
+}
+
+// Generic CBC Decryption
+func decryptCBC(block cipher.Block, ciphertext string) (string, error) {
+	data, err := base64.StdEncoding.DecodeString(ciphertext)
+	if err != nil {
+		return "", err
+	}
+
+	blockSize := block.BlockSize()
+	if len(data) < blockSize {
+		return "", errors.New("ciphertext too short")
+	}
+
+	iv := data[:blockSize]
+	data = data[blockSize:]
+
+	if len(data)%blockSize != 0 {
+		return "", errors.New("ciphertext is not a multiple of the block size")
+	}
+
+	mode := cipher.NewCBCDecrypter(block, iv)
+	mode.CryptBlocks(data, data)
+
+	res, err := pkcs7Unpadding(data)
+	if err != nil {
+		return "", err
+	}
+	return string(res), nil
+}
+
 // AES Encryption and Decryption
 func encryptAES(key []byte, plaintext string) (string, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return "", err
 	}
-
-	ciphertext := make([]byte, aes.BlockSize+len(plaintext))
-	iv := ciphertext[:aes.BlockSize]
-
-	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
-		return "", err
-	}
-
-	stream := cipher.NewCFBEncrypter(block, iv)
-	stream.XORKeyStream(ciphertext[aes.BlockSize:], []byte(plaintext))
-
-	return base64.StdEncoding.EncodeToString(ciphertext), nil
+	return encryptCBC(block, plaintext)
 }
 
 func decryptAES(key []byte, ciphertext string) (string, error) {
-	data, err := base64.StdEncoding.DecodeString(ciphertext)
-	if err != nil {
-		return "", err
-	}
-
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return "", err
 	}
-
-	iv := data[:aes.BlockSize]
-	plaintext := data[aes.BlockSize:]
-
-	stream := cipher.NewCFBDecrypter(block, iv)
-	stream.XORKeyStream(plaintext, plaintext)
-
-	return string(plaintext), nil
+	return decryptCBC(block, ciphertext)
 }
 
 // DES Encryption and Decryption
 func encryptDES(key []byte, plaintext string) (string, error) {
-	block, err := des.NewCipher(key)
+	block, err := des.NewCipher(key[:8]) // DES uses 8-byte key
 	if err != nil {
 		return "", err
 	}
-
-	ciphertext := make([]byte, des.BlockSize+len(plaintext))
-	iv := ciphertext[:des.BlockSize]
-
-	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
-		return "", err
-	}
-
-	stream := cipher.NewCFBEncrypter(block, iv)
-	stream.XORKeyStream(ciphertext[des.BlockSize:], []byte(plaintext))
-
-	return base64.StdEncoding.EncodeToString(ciphertext), nil
+	return encryptCBC(block, plaintext)
 }
 
 func decryptDES(key []byte, ciphertext string) (string, error) {
-	data, err := base64.StdEncoding.DecodeString(ciphertext)
+	block, err := des.NewCipher(key[:8])
 	if err != nil {
 		return "", err
 	}
-
-	block, err := des.NewCipher(key)
-	if err != nil {
-		return "", err
-	}
-
-	iv := data[:des.BlockSize]
-	plaintext := data[des.BlockSize:]
-
-	stream := cipher.NewCFBDecrypter(block, iv)
-	stream.XORKeyStream(plaintext, plaintext)
-
-	return string(plaintext), nil
+	return decryptCBC(block, ciphertext)
 }
 
 // TripleDES Encryption and Decryption
 func encryptTripleDES(key []byte, plaintext string) (string, error) {
-	block, err := des.NewTripleDESCipher(key)
+	block, err := des.NewTripleDESCipher(key[:24]) // 3DES uses 24-byte key
 	if err != nil {
 		return "", err
 	}
-
-	ciphertext := make([]byte, des.BlockSize+len(plaintext))
-	iv := ciphertext[:des.BlockSize]
-
-	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
-		return "", err
-	}
-
-	stream := cipher.NewCFBEncrypter(block, iv)
-	stream.XORKeyStream(ciphertext[des.BlockSize:], []byte(plaintext))
-
-	return base64.StdEncoding.EncodeToString(ciphertext), nil
+	return encryptCBC(block, plaintext)
 }
 
 func decryptTripleDES(key []byte, ciphertext string) (string, error) {
-	data, err := base64.StdEncoding.DecodeString(ciphertext)
+	block, err := des.NewTripleDESCipher(key[:24])
 	if err != nil {
 		return "", err
 	}
-
-	block, err := des.NewTripleDESCipher(key)
-	if err != nil {
-		return "", err
-	}
-
-	iv := data[:des.BlockSize]
-	plaintext := data[des.BlockSize:]
-
-	stream := cipher.NewCFBDecrypter(block, iv)
-	stream.XORKeyStream(plaintext, plaintext)
-
-	return string(plaintext), nil
+	return decryptCBC(block, ciphertext)
 }
 
 // RC4 Encryption and Decryption
@@ -235,7 +233,7 @@ func applyMethod(text string, layer EnigmaSchema, isEncrypt bool) (string, error
 			}
 		}
 	}
-	return "", errors.New(fmt.Sprintf("Key function missing for method: %s", layer.Method))
+	return "", fmt.Errorf("Key function missing for method: %s", layer.Method)
 }
 
 // Encode applies encryption layers to the input text
