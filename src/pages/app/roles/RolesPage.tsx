@@ -693,7 +693,7 @@ export default function RolesPage({ ruleKey }: Props) {
                                   "minmax(140px, 1fr) repeat(5, 80px)",
                               }}
                             >
-                              <div className="text-xs font-semibold text-dark-300 uppercase tracking-wider px-2">
+                              <div className="text-[10px] font-semibold text-dark-300 uppercase tracking-wider px-2">
                                 {language({ id: "Menu", en: "Menu" })}
                               </div>
                               {ACTIONS.map((act) => {
@@ -705,7 +705,7 @@ export default function RolesPage({ ruleKey }: Props) {
                                     key={act.key}
                                     className="flex flex-col items-center gap-1"
                                   >
-                                    <span className="text-xs font-semibold text-dark-300 uppercase tracking-wider">
+                                    <span className="text-[10px] font-semibold text-dark-300 uppercase tracking-wider">
                                       {act.label}
                                     </span>
                                     <input
@@ -740,7 +740,7 @@ export default function RolesPage({ ruleKey }: Props) {
                                         className="flex items-center gap-2 px-2"
                                         style={{ paddingLeft: `${menu.level * 24 + 8}px` }}
                                       >
-                                        <span className="text-sm text-dark-300 font-bold uppercase tracking-wider">
+                                        <span className="text-[10px] font-bold text-dark-400 uppercase tracking-wider">
                                           {menu.label}
                                         </span>
                                       </div>
