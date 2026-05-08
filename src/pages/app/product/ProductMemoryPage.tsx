@@ -22,7 +22,7 @@ export default function ProductMemoryPage({ ruleKey }: Props) {
   const fields = useMemo<PaginationField[]>(
     () => [
       {
-        key: "name",
+        key: "ram",
         label: language({ id: "RAM", en: "RAM" }),
         type: "number",
         col: 6,

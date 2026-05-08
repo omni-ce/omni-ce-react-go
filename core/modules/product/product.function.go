@@ -13,21 +13,23 @@ func HelloWorld(c *fiber.Ctx) error {
 	return dto.OK(c, "Hello World!", nil)
 }
 
-// Helper to generate key from multi-language name
-func generateKeyFromName(nameJSON string) string {
-	var names map[string]string
-	if err := json.Unmarshal([]byte(nameJSON), &names); err != nil {
-		// Fallback if not JSON
-		return sanitizeKey(nameJSON)
+func generateKeyFromName(inputs ...string) string {
+	var parts []string
+	for _, input := range inputs {
+		var names map[string]string
+		if err := json.Unmarshal([]byte(input), &names); err == nil {
+			// Use "en" name if available, otherwise "id"
+			source := names["en"]
+			if source == "" {
+				source = names["id"]
+			}
+			parts = append(parts, sanitizeKey(source))
+		} else {
+			parts = append(parts, sanitizeKey(input))
+		}
 	}
 
-	// Use "en" name if available, otherwise "id"
-	source := names["en"]
-	if source == "" {
-		source = names["id"]
-	}
-
-	return sanitizeKey(source)
+	return strings.Join(parts, "_")
 }
 
 func sanitizeKey(s string) string {

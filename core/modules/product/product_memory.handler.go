@@ -24,7 +24,7 @@ func MemoryCreate(c *fiber.Ctx) error {
 		return dto.BadRequest(c, err.Error(), nil)
 	}
 
-	key := generateKeyFromName(body.Name)
+	key := generateKeyFromName(body.Ram, body.InternalStorage)
 
 	// Check duplicate key
 	var existing model.ProductMemory
@@ -36,10 +36,11 @@ func MemoryCreate(c *fiber.Ctx) error {
 	}
 
 	memory := model.ProductMemory{
-		Key:       key,
-		Name:      body.Name,
-		CreatedBy: currentUser.ID,
-		UpdatedBy: currentUser.ID,
+		Key:             key,
+		Ram:             body.Ram,
+		InternalStorage: body.InternalStorage,
+		CreatedBy:       currentUser.ID,
+		UpdatedBy:       currentUser.ID,
 	}
 
 	if err := variable.Db.
@@ -79,7 +80,8 @@ func MemoryEdit(c *fiber.Ctx) error {
 	}
 
 	var body struct {
-		Name string `json:"name" validate:"required"`
+		Ram             string `json:"ram" validate:"required"`
+		InternalStorage string `json:"internal_storage" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
@@ -92,7 +94,7 @@ func MemoryEdit(c *fiber.Ctx) error {
 		return dto.NotFound(c, "Memory not found", nil)
 	}
 
-	key := generateKeyFromName(body.Name)
+	key := generateKeyFromName(body.Ram, body.InternalStorage)
 
 	// Check duplicate key if changed
 	if key != existing.Key {
@@ -106,7 +108,8 @@ func MemoryEdit(c *fiber.Ctx) error {
 	}
 
 	existing.Key = key
-	existing.Name = body.Name
+	existing.Ram = body.Ram
+	existing.InternalStorage = body.InternalStorage
 	existing.UpdatedBy = currentUser.ID
 
 	if err := variable.Db.
