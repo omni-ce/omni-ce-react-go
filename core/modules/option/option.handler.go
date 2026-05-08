@@ -137,3 +137,102 @@ func ProductBrands(c *fiber.Ctx) error {
 
 	return dto.OK(c, "Get product brands success", rows)
 }
+
+func ProductVariants(c *fiber.Ctx) error {
+	variants := make([]product.ProductVariant, 0)
+	if err := variable.Db.
+		Model(&product.ProductVariant{}).
+		Where("is_active = ?", true).
+		Find(&variants).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to find product variants", nil)
+	}
+	brandIDs := make([]uint, 0)
+	for _, v := range variants {
+		brandIDs = append(brandIDs, v.BrandID)
+	}
+
+	brands := make([]product.ProductBrand, 0)
+	if err := variable.Db.Model(&product.ProductBrand{}).
+		Where("id IN (?)", brandIDs).
+		Find(&brands).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to find product brand", nil)
+	}
+	brandMap := make(map[uint]string)
+	for _, b := range brands {
+		brandMap[b.ID] = b.Name
+	}
+
+	rows := make([]types.Option, 0)
+	for _, row := range variants {
+		label := fmt.Sprintf("%s - %s", brandMap[row.BrandID], row.Name)
+		rows = append(rows, types.Option{
+			Label: label,
+			Value: row.ID,
+		})
+	}
+
+	return dto.OK(c, "Get product variants success", rows)
+}
+
+func ProductVariant(c *fiber.Ctx) error {
+	idParam := c.Params("brand_id")
+	brandID, err := strconv.Atoi(idParam)
+	if err != nil {
+		return dto.BadRequest(c, "Invalid brand id", nil)
+	}
+
+	variants := make([]product.ProductVariant, 0)
+	if err := variable.Db.
+		Model(&product.ProductVariant{}).
+		Where("brand_id = ? AND is_active = ?", brandID, true).
+		Find(&variants).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to find product variants", nil)
+	}
+
+	rows := make([]types.Option, 0)
+	for _, row := range variants {
+		rows = append(rows, types.Option{
+			Label: row.Name,
+			Value: row.ID,
+		})
+	}
+
+	return dto.OK(c, "Get product variants success", rows)
+}
+
+func ProductMemories(c *fiber.Ctx) error {
+	memories := make([]product.ProductMemory, 0)
+	if err := variable.Db.
+		Model(&product.ProductMemory{}).
+		Find(&memories).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to find product memories", nil)
+	}
+
+	rows := make([]types.Option, 0)
+	for _, row := range memories {
+		rows = append(rows, row.Option())
+	}
+
+	return dto.OK(c, "Get product memories success", rows)
+}
+
+func ProductColors(c *fiber.Ctx) error {
+	colors := make([]product.ProductColor, 0)
+	if err := variable.Db.
+		Model(&product.ProductColor{}).
+		Find(&colors).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to find product colors", nil)
+	}
+
+	rows := make([]types.Option, 0)
+	for _, row := range colors {
+		rows = append(rows, row.Option())
+	}
+
+	return dto.OK(c, "Get product colors success", rows)
+}

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Label } from "@/components/ui/Label";
 import { Input } from "@/components/ui/Input";
 import { SearchableSelect } from "@/components/ui/SearchableSelect";
@@ -144,7 +144,7 @@ function DynamicSelect({
   const [opts, setOpts] = useState<DynamicFormFieldOption[]>([]);
   const [disabled, setDisabled] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { language } = useLanguageStore();
+  const { languageCode, language } = useLanguageStore();
 
   const onChangeRef = useRef(onChange);
   useEffect(() => {
@@ -233,13 +233,28 @@ function DynamicSelect({
       : undefined,
   ]);
 
+  const translatedOpts = useMemo(() => {
+    return opts.map((opt) => {
+      let label = opt.label;
+      if (typeof label === "string" && label.startsWith("{")) {
+        try {
+          label = language(JSON.parse(label));
+        } catch (e) {
+          // fallback
+        }
+      }
+      return { ...opt, label };
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [opts, languageCode, language]);
+
   return (
     <SearchableSelect
       id={`field-${field.key}`}
       className="mt-1.5"
       value={formData[(field as DynamicFormFieldNormal).key] ?? ""}
       onChange={(val) => onChange(val)}
-      options={opts}
+      options={translatedOpts}
       placeholder={language({ id: "Pilih...", en: "Choose..." })}
       disabled={disabled}
       loading={loading}
@@ -1338,7 +1353,9 @@ function DynamicFieldRenderer({
           <Input
             id={`field-${field.key}`}
             type={field.type}
-            className={(field as DynamicFormFieldNormal).numberSuffix ? "pr-12" : ""}
+            className={
+              (field as DynamicFormFieldNormal).numberSuffix ? "pr-12" : ""
+            }
             value={String(formData[field.key] ?? "")}
             onChange={(e) => onChange(field.key!, e.target.value)}
             minLength={(field as DynamicFormFieldNormal).minLength}

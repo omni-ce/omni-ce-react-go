@@ -42,14 +42,20 @@ export default function ProductItemPage({ ruleKey }: Props) {
         type: "select",
         required: true,
         ref: "brand_id",
-        selectOptions: "product/variant/{brand_id}",
+        selectOptions: "product-variants/{brand_id}",
+      },
+      {
+        key: "memory_id",
+        label: language({ id: "Memori (Opsional)", en: "Memory (Optional)" }),
+        type: "select",
+        selectOptions: "product-memories",
       },
       {
         key: "color_id",
         label: language({ id: "Warna", en: "Color" }),
         type: "select",
         required: true,
-        selectOptions: "product/color",
+        selectOptions: "product-colors",
       },
       {
         label: language({ id: "SKU", en: "SKU" }),
