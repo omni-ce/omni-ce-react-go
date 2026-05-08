@@ -94,7 +94,7 @@ export interface DynamicFormField {
     | "country"
     | "icon"
     | "phone";
-  options?: DynamicFormFieldOption[] | string;
+  selectOptions?: DynamicFormFieldOption[] | string;
   required?: boolean;
   minLength?: number;
   maxLength?: number;
@@ -137,8 +137,8 @@ function DynamicSelect({
 
   useEffect(() => {
     let endpoint = "";
-    if (typeof field.options === "string") {
-      endpoint = field.options;
+    if (typeof field.selectOptions === "string") {
+      endpoint = field.selectOptions;
       if (field.ref) {
         const refVal = formData[field.ref];
         if (!refVal) {
@@ -162,8 +162,8 @@ function DynamicSelect({
         }
         prevRefVal.current = refVal;
       }
-    } else if (Array.isArray(field.options)) {
-      setOpts(field.options);
+    } else if (Array.isArray(field.selectOptions)) {
+      setOpts(field.selectOptions);
       setDisabled(false);
       return;
     } else {
@@ -195,7 +195,12 @@ function DynamicSelect({
       isMounted = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [field.options, field.ref, field.ref ? formData[field.ref] : undefined]);
+  }, [
+    field.selectOptions,
+    field.ref,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    field.ref ? formData[field.ref] : undefined,
+  ]);
 
   return (
     <SearchableSelect
@@ -594,10 +599,10 @@ function ArrayField({
       field.children.forEach((child) => {
         if (
           child.type === "select" &&
-          Array.isArray(child.options) &&
-          child.options.length > 0
+          Array.isArray(child.selectOptions) &&
+          child.selectOptions.length > 0
         ) {
-          newItem[child.key] = child.options[0].value;
+          newItem[child.key] = child.selectOptions[0].value;
         } else {
           newItem[child.key] = "";
         }

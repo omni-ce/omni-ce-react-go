@@ -83,7 +83,7 @@ export default function UsersPage({ ruleKey }: Props) {
             type: "select",
             required: true,
             col: 6,
-            options: "divisions",
+            selectOptions: "divisions",
           },
           {
             key: "role_id",
@@ -92,7 +92,7 @@ export default function UsersPage({ ruleKey }: Props) {
             required: true,
             col: 6,
             ref: "division_id",
-            options: "roles/{division_id}",
+            selectOptions: "roles/{division_id}",
           },
         ],
       },
@@ -195,7 +195,9 @@ export default function UsersPage({ ruleKey }: Props) {
         extraActions={[
           {
             icon: "Hi/HiOutlineKey",
-            component: (row, onClose) => <ChangePassword row={row as User} onClose={onClose} />,
+            component: (row, onClose) => (
+              <ChangePassword row={row as User} onClose={onClose} />
+            ),
           },
         ]}
       />

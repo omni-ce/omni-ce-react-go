@@ -23,16 +23,40 @@ export default function ProductItemPage({ ruleKey }: Props) {
   const fields = useMemo<PaginationField[]>(
     () => [
       {
-        key: "name",
-        label: language({ id: "Nama", en: "Name" }),
+        key: "sku",
+        label: language({ id: "SKU", en: "SKU" }),
         type: "text",
+        debounce: "product-sku",
         required: true,
       },
       {
-        key: "description",
-        label: language({ id: "Deskripsi", en: "Description" }),
-        type: "text",
+        key: "category_id",
+        label: language({ id: "Kategori", en: "Category" }),
+        type: "select",
         required: true,
+        selectOptions: "product/category",
+      },
+      {
+        key: "brand_id",
+        label: language({ id: "Merek", en: "Brand" }),
+        type: "select",
+        required: true,
+        selectOptions: "product/brand",
+      },
+      {
+        key: "varian_id",
+        label: language({ id: "Varian", en: "Variant" }),
+        type: "select",
+        required: true,
+        ref: "brand_id",
+        selectOptions: "product/varian/{brand_id}",
+      },
+      {
+        key: "color_id",
+        label: language({ id: "Warna", en: "Color" }),
+        type: "select",
+        required: true,
+        selectOptions: "product/color",
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -42,22 +66,45 @@ export default function ProductItemPage({ ruleKey }: Props) {
   const columns = useMemo<PaginationColumn<ProductItem>[]>(
     () => [
       {
-        key: "name",
-        header: language({ id: "Nama", en: "Name" }),
+        key: "sku",
+        header: language({ id: "SKU", en: "SKU" }),
         sort: true,
         search: true,
-        render: (item) => (
-          <span className="font-mono text-sm">{item.name}</span>
-        ),
+        render: (item) => <span className="font-mono text-sm">{item.sku}</span>,
       },
       {
-        key: "description",
-        header: language({ id: "Deskripsi", en: "Description" }),
+        key: "category_name",
+        header: language({ id: "Kategori", en: "Category" }),
         search: true,
         render: (item) => (
           <span className="text-dark-300 max-w-xs truncate block">
-            {item.description}
+            {item.category_name}
           </span>
+        ),
+      },
+      {
+        key: "brand_varian_name",
+        header: language({ id: "Merek Varian", en: "Brand Variant" }),
+        search: true,
+        render: (item) => (
+          <span className="text-dark-300 max-w-xs truncate block">
+            {item.brand_varian_name}
+          </span>
+        ),
+      },
+      {
+        key: "color_name",
+        header: language({ id: "Warna", en: "Color" }),
+        render: (item) => (
+          <div className="flex items-center gap-2">
+            <div
+              className="h-6 w-6 rounded-full border border-dark-600"
+              style={{ backgroundColor: item.color_hex_code }}
+            />
+            <span className="text-dark-300 max-w-xs truncate block">
+              {item.color_name}
+            </span>
+          </div>
         ),
       },
       {

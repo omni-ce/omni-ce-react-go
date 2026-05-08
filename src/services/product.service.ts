@@ -13,6 +13,7 @@ export interface ProductBrand {
   is_active: boolean;
 }
 export interface ProductVarian {
+  brand_id: number;
   name: string;
   description: string;
   is_active: boolean;
@@ -22,8 +23,14 @@ export interface ProductColor {
   hex_code: string;
 }
 export interface ProductItem {
-  name: string;
-  description: string;
+  sku: string;
+  category_id: number;
+  category_name: string;
+  varian_id: number;
+  brand_varian_name: string;
+  color_id?: number;
+  color_name?: string;
+  color_hex_code?: string;
   is_active: boolean;
 }
 
