@@ -8,7 +8,10 @@ import MasterDataPage from "@/pages/app/master_data/MasterDataPage";
 
 // Products
 import ProductCategoryPage from "@/pages/app/product/ProductCategoryPage";
+import ProductBrandPage from "@/pages/app/product/ProductBrandPage";
+import ProductVarianPage from "@/pages/app/product/ProductVarianPage";
 import ProductColorPage from "@/pages/app/product/ProductColorPage";
+import ProductItemPage from "@/pages/app/product/ProductItemPage";
 
 const sidebarLinks: ISidebarLink[] = [
   {
@@ -26,8 +29,8 @@ const sidebarLinks: ISidebarLink[] = [
     strict: true,
     extraRuleKeys: [
       {
-        label: { id: "Merek", en: "Brand" },
-        ruleKey: "brand",
+        label: { id: "Satuan", en: "Unit" },
+        ruleKey: "unit",
       },
     ],
     icon: "Hi/HiOutlineDatabase",
@@ -46,11 +49,32 @@ const sidebarLinks: ISidebarLink[] = [
         icon: "Hi/HiOutlineTag",
       },
       {
+        label: { id: "Merek", en: "Brand" },
+        path: "brands",
+        element: <ProductBrandPage ruleKey="products/brands" />,
+        strict: true,
+        icon: "Hi/HiOutlineStar",
+      },
+      {
+        label: { id: "Varian", en: "Variant" },
+        path: "varian",
+        element: <ProductVarianPage ruleKey="products/varian" />,
+        strict: true,
+        icon: "Hi/HiOutlineCog",
+      },
+      {
         label: { id: "Warna", en: "Color" },
         path: "colors",
         element: <ProductColorPage ruleKey="products/colors" />,
         strict: true,
         icon: "Hi/HiColorSwatch",
+      },
+      {
+        label: { id: "Item (Grup)", en: "Item (Group)" },
+        path: "items",
+        element: <ProductItemPage ruleKey="products/items" />,
+        strict: true,
+        icon: "Hi/HiTemplate",
       },
     ],
   },

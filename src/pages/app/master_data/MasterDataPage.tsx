@@ -2,7 +2,7 @@ import { useLanguageStore } from "@/stores/languageStore";
 import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import Tabs, { type Tab } from "@/components/Tab";
-import TabBrandPage from "@/pages/app/master_data/TabBrandPage";
+import TabUnitPage from "@/pages/app/master_data/TabUnitPage";
 import { useMemo } from "react";
 
 interface Props {
@@ -16,9 +16,9 @@ export default function MasterDataPage({ ruleKey }: Props) {
   const tabs = useMemo<Tab[]>(
     () => [
       {
-        key: "brand",
-        label: language({ id: "Merek", en: "Brand" }),
-        render: () => <TabBrandPage ruleKey="brand" />,
+        key: "unit",
+        label: language({ id: "Satuan", en: "Unit" }),
+        render: () => <TabUnitPage ruleKey="unit" />,
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps

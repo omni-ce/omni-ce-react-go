@@ -9,6 +9,13 @@ export interface MasterDataItem {
   created_at: string;
 }
 
+export interface Unit {
+  id: number;
+  name: string;
+  short_name: string;
+  is_active: boolean;
+}
+
 export const masterDataService = {
   getPaginate: async (params: {
     page: number;

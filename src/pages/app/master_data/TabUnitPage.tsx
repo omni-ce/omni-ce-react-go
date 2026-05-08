@@ -6,15 +6,15 @@ import Pagination, {
   type PaginationField,
   type PaginationHandle,
 } from "@/components/Pagination";
+import type { Unit } from "@/services/master_data.service";
 import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
-import type { ProductColor } from "@/services/product.service";
 import { Badge } from "@/components/ui/Badge";
 
 interface Props {
   ruleKey?: string;
 }
-export default function ProductColorPage({ ruleKey }: Props) {
+export default function TabUnitPage({ ruleKey }: Props) {
   const perm = usePermission(ruleKey);
 
   const paginationRef = useRef<PaginationHandle>(null);
@@ -29,9 +29,9 @@ export default function ProductColorPage({ ruleKey }: Props) {
         required: true,
       },
       {
-        key: "hex_code",
-        label: language({ id: "Hex Code", en: "Hex Code" }),
-        type: "color",
+        key: "description",
+        label: language({ id: "Deskripsi", en: "Description" }),
+        type: "text",
         required: true,
       },
     ],
@@ -39,28 +39,35 @@ export default function ProductColorPage({ ruleKey }: Props) {
     [languageCode, language],
   );
 
-  const columns = useMemo<PaginationColumn<ProductColor>[]>(
+  const columns = useMemo<PaginationColumn<Unit>[]>(
     () => [
       {
         key: "name",
         header: language({ id: "Nama", en: "Name" }),
         sort: true,
         search: true,
-        render: (item) => <span className="font-medium">{item.name}</span>,
+        render: (item) => (
+          <span className="font-medium text-accent-400">{item.name}</span>
+        ),
       },
       {
-        key: "hex_code",
-        header: language({ id: "Hex Code", en: "Hex Code" }),
+        key: "short_name",
+        header: language({ id: "Singkatan", en: "Short Name" }),
+        sort: true,
+        search: true,
         render: (item) => (
-          <div className="flex items-center gap-2">
-            <div
-              className="h-6 w-6 rounded-full border border-dark-600"
-              style={{ backgroundColor: item.hex_code }}
-            />
-            <span className="text-dark-300 max-w-xs truncate block">
-              {item.hex_code}
-            </span>
-          </div>
+          <span className="font-mono text-sm">{item.short_name}</span>
+        ),
+      },
+      {
+        key: "is_active",
+        header: language({ id: "Status", en: "Status" }),
+        render: (item) => (
+          <Badge variant={item.is_active ? "default" : "destructive"}>
+            {item.is_active
+              ? language({ id: "Aktif", en: "Active" })
+              : language({ id: "Nonaktif", en: "Inactive" })}
+          </Badge>
         ),
       },
     ],
@@ -71,27 +78,9 @@ export default function ProductColorPage({ ruleKey }: Props) {
   if (!perm.canRead) return <RulePermissionPage />;
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="font-heading text-2xl font-bold text-foreground">
-            {language({ id: "Warna Produk", en: "Product Colors" })}
-          </h1>
-          <p className="mt-1 text-sm text-dark-400">
-            {language({
-              id: "Kelola semua warna produk pada sistem",
-              en: "Manage all product colors in the system",
-            })}
-          </p>
-        </div>
-      </div>
-
       <Pagination
         ref={paginationRef}
-        title={language({
-          id: "Daftar Warna Produk",
-          en: "Product Color List",
-        })}
+        title={language({ id: "Daftar Satuan", en: "Unit List" })}
         columns={columns}
         module="master-data"
         fields={fields}
