@@ -105,7 +105,29 @@ export default function EntityPage({ ruleKey }: Props) {
         key: "npwp_code",
         header: language({ id: "NPWP", en: "NPWP" }),
         sort: true,
-        render: (item) => <span className="font-medium">{item.npwp_code}</span>,
+        search: true,
+        render: (item) => (
+          <div className="flex flex-col gap-0.5">
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-sm tracking-wider text-foreground">
+                {item.npwp_code || "-"}
+              </span>
+              {item.is_taxpayer && (
+                <Badge
+                  variant="outline"
+                  className="text-[10px] px-1 py-0 h-4 border-accent-500/50 text-accent-400 bg-accent-500/5"
+                >
+                  {language({ id: "Wajib Pajak", en: "Taxpayer" })}
+                </Badge>
+              )}
+            </div>
+            {item.npwp_alias && (
+              <span className="text-[11px] text-dark-400 font-medium italic">
+                {item.npwp_alias}
+              </span>
+            )}
+          </div>
+        ),
       },
       {
         key: "is_active",
