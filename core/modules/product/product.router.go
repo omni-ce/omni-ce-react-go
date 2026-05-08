@@ -44,4 +44,11 @@ func ProtectedRoute(api fiber.Router) {
 	api.Put("/color/edit/:id", ColorEdit)
 	api.Delete("/color/remove/:id", ColorRemove)
 	api.Post("/color/bulk-remove", ColorBulkRemove)
+
+	// Item
+	api.Post("/item/create", ItemCreate)
+	api.Get("/item/paginate", ItemPaginate)
+	api.Put("/item/edit/:id", ItemEdit)
+	api.Delete("/item/remove/:id", ItemRemove)
+	api.Post("/item/bulk-remove", ItemBulkRemove)
 }
