@@ -394,7 +394,11 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
       >
         {/* Sidebar Header */}
         <div className="h-16 flex items-center px-4 border-b border-dark-600/50 shrink-0">
-          <div className="flex items-center w-full min-w-0">
+          <div
+            className={`flex items-center w-full min-w-0 ${
+              effectiveCollapsed && !isMobileOpen ? "justify-center" : ""
+            }`}
+          >
             {/* Logo - hidden when collapsed */}
             {(!effectiveCollapsed || isMobileOpen) && (
               <Link to={"/"}>
@@ -417,7 +421,9 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
             {/* Desktop collapse hamburger (RIGHT side) */}
             <button
               onClick={toggleCollapse}
-              className="hidden lg:flex text-dark-300 hover:text-foreground transition-colors shrink-0 ml-auto"
+              className={`hidden lg:flex text-dark-300 hover:text-foreground transition-colors shrink-0 ${
+                effectiveCollapsed && !isMobileOpen ? "" : "ml-auto"
+              }`}
               title={effectiveCollapsed ? "Expand sidebar" : "Collapse sidebar"}
             >
               <IconComponent iconName="Ri/RiMenuLine" className="w-5 h-5" />
