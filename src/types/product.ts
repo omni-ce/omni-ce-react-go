@@ -43,6 +43,8 @@ export interface ProductItem {
   varian_id: number;
   brand_name: string;
   varian_name: string;
+  memory_id?: number;
+  memory_name?: string;
   color_id?: number;
   color_name?: string;
   color_hex?: string;

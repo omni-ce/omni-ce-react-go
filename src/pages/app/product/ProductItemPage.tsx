@@ -128,6 +128,16 @@ export default function ProductItemPage({ ruleKey }: Props) {
         ),
       },
       {
+        key: "memory_name",
+        header: language({ id: "Memori", en: "Memory" }),
+        search: true,
+        render: (item) => (
+          <span className="max-w-xs truncate block">
+            {item.memory_name ?? "- "}
+          </span>
+        ),
+      },
+      {
         key: "color_name",
         header: language({ id: "Warna", en: "Color" }),
         render: (item) => (
@@ -141,6 +151,11 @@ export default function ProductItemPage({ ruleKey }: Props) {
             </span>
           </div>
         ),
+      },
+      {
+        key: "qty",
+        header: language({ id: "Stok", en: "Stock" }),
+        render: (item) => <span className="max-w-xs truncate block">0</span>,
       },
       {
         key: "is_active",
