@@ -1344,6 +1344,7 @@ function DynamicFieldRenderer({
             minLength={(field as DynamicFormFieldNormal).minLength}
             maxLength={(field as DynamicFormFieldNormal).maxLength}
             disabled={disabled}
+            onWheel={(e) => field.type === "number" && e.currentTarget.blur()}
           />
           {(field as DynamicFormFieldNormal).numberSuffix && (
             <div className="absolute right-3 flex items-center pointer-events-none">
