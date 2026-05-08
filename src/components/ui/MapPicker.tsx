@@ -138,7 +138,7 @@ export default function MapPicker({
   if (!isOpen) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 sm:p-6 md:p-8">
+    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 sm:p-6 md:p-8">
       <div className="bg-dark-900 border border-dark-600/50 rounded-2xl w-full max-w-4xl h-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden relative">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-dark-600/50 bg-dark-800/50 shrink-0">
@@ -156,7 +156,7 @@ export default function MapPicker({
         {/* Content */}
         <div className="flex-1 flex flex-col relative min-h-0">
           {/* Search Bar */}
-          <div className="absolute top-4 left-4 right-4 z-[400] max-w-md mx-auto">
+          <div className="absolute top-4 left-4 right-4 z-400 max-w-md mx-auto">
             <div className="relative flex items-center bg-dark-800 border border-dark-600/50 rounded-xl shadow-lg">
               <input
                 type="text"
@@ -210,11 +210,11 @@ export default function MapPicker({
           </div>
 
           {/* Map */}
-          <div className="flex-1 w-full bg-dark-800 relative z-[10]">
+          <div className="flex-1 w-full bg-dark-800 relative z-10">
             <MapContainer
               center={mapCenter}
               zoom={13}
-              maxZoom={30}
+              maxZoom={50}
               style={{ height: "100%", width: "100%" }}
             >
               {basemap === "street" ? (
@@ -222,14 +222,14 @@ export default function MapPicker({
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                   maxZoom={50}
-                  maxNativeZoom={25}
+                  maxNativeZoom={18}
                 />
               ) : (
                 <TileLayer
                   attribution="Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
                   url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
                   maxZoom={50}
-                  maxNativeZoom={25}
+                  maxNativeZoom={18}
                 />
               )}
               <LocationMarker position={position} setPosition={setPosition} />
@@ -237,7 +237,7 @@ export default function MapPicker({
             </MapContainer>
 
             {/* Basemap Switcher */}
-            <div className="absolute bottom-6 right-6 z-[400]">
+            <div className="absolute bottom-6 right-6 z-400">
               <div className="flex bg-dark-900/80 backdrop-blur-md border border-dark-600/50 rounded-xl p-1 shadow-2xl">
                 <button
                   onClick={() => setBasemap("street")}

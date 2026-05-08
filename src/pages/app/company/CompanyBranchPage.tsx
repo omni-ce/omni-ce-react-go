@@ -82,7 +82,7 @@ export default function CompanyBranchPage({ ruleKey }: Props) {
       {
         key: "map",
         label: language({ id: "Peta Lokasi", en: "Location Map" }),
-        type: "map",
+        type: "geolocation",
         required: true,
       },
     ],
@@ -188,7 +188,10 @@ export default function CompanyBranchPage({ ruleKey }: Props) {
         render: (item) => (
           <div className="flex flex-col gap-1.5">
             <div className="flex items-center gap-2 text-dark-400">
-              <IconComponent iconName="Hi/HiOutlineGlobeAlt" className="w-3.5 h-3.5" />
+              <IconComponent
+                iconName="Hi/HiOutlineGlobeAlt"
+                className="w-3.5 h-3.5"
+              />
               <span className="font-mono text-[11px]">
                 {item.latitude.toFixed(6)}, {item.longitude.toFixed(6)}
               </span>
@@ -199,7 +202,10 @@ export default function CompanyBranchPage({ ruleKey }: Props) {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 text-[11px] font-medium text-accent-500 hover:text-accent-400 transition-colors"
             >
-              <IconComponent iconName="Ri/RiExternalLinkLine" className="w-3 h-3" />
+              <IconComponent
+                iconName="Ri/RiExternalLinkLine"
+                className="w-3 h-3"
+              />
               {language({ id: "Lihat di Peta", en: "View on Map" })}
             </a>
           </div>
