@@ -3,7 +3,7 @@ package company
 import (
 	"react-go/core/dto"
 	"react-go/core/function"
-	"react-go/core/modules/address"
+	"react-go/core/function/location"
 	"react-go/core/modules/company/model"
 	"react-go/core/variable"
 
@@ -64,7 +64,7 @@ func EntityPaginate(c *fiber.Ctx) error {
 
 	addresses := make(map[string]string)
 	for _, address_code := range address_codes {
-		fullAddress, err, isBadRequest := address.GetFull(address_code)
+		fullAddress, err, isBadRequest := location.GetFull(address_code)
 		if err != nil {
 			if isBadRequest {
 				return dto.BadRequest(c, err.Error(), nil)
