@@ -108,44 +108,6 @@ export const ChangePassword = ({ row, onClose }: ChangePasswordProps) => {
             required: true,
             minLength: 8,
           },
-          // {
-          //   key: "phone",
-          //   label: language({ id: "Phone", en: "Phone" }),
-          //   type: "phone",
-          //   required: true,
-          // },
-          // {
-          //   key: "country",
-          //   label: language({ id: "Negara", en: "Country" }),
-          //   type: "country",
-          //   required: true,
-          // },
-          // {
-          //   key: "color",
-          //   label: language({ id: "Warna", en: "Color" }),
-          //   type: "color",
-          //   required: true,
-          // },
-          // {
-          //   key: "camera",
-          //   label: language({ id: "Kamera", en: "Camera" }),
-          //   type: "camera",
-          //   required: true,
-          // },
-          // {
-          //   key: "captcha",
-          //   label: language({ id: "Kode Verifikasi", en: "Verification Code" }),
-          //   type: "captcha",
-          //   required: true,
-          //   captchaLength: 6,
-          //   captchaSecurity: "strong",
-          // },
-          {
-            key: "icon",
-            label: language({ id: "Ikon", en: "Icon" }),
-            type: "icon",
-            required: true,
-          },
         ]}
         formData={formData}
         onChange={(key, value) =>
