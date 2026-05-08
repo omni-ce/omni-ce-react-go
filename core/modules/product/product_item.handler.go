@@ -105,8 +105,11 @@ func ItemPaginate(c *fiber.Ctx) error {
 
 	// Filter SKU & IMEI (Manual karena butuh OR)
 	if col_sku != "" {
+		// Hapus col_sku dari query agar tidak diproses otomatis oleh Pagination (menghindari double filter AND)
+		c.Request().URI().QueryArgs().Del("col_sku")
+
 		search := "%" + strings.ToLower(col_sku) + "%"
-		query = query.Where("LOWER(product_items.sku) LIKE ? OR LOWER(product_items.sku_imei) LIKE ?", search, search)
+		query = query.Where("(LOWER(product_items.sku) LIKE ? OR LOWER(product_items.sku_imei) LIKE ?)", search, search)
 	}
 
 	// Filter Kolom Join (Harus pakai Joins agar tabel tersedia untuk Where)
