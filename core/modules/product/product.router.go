@@ -22,4 +22,12 @@ func ProtectedRoute(api fiber.Router) {
 	api.Delete("/brand/remove/:id", BrandRemove)
 	api.Post("/brand/bulk-remove", BrandBulkRemove)
 	api.Patch("/brand/set-active/:id", BrandSetActive)
+
+	// Variant
+	api.Post("/variant/create", VariantCreate)
+	api.Get("/variant/paginate", VariantPaginate)
+	api.Put("/variant/edit/:id", VariantEdit)
+	api.Delete("/variant/remove/:id", VariantRemove)
+	api.Post("/variant/bulk-remove", VariantBulkRemove)
+	api.Patch("/variant/set-active/:id", VariantSetActive)
 }

@@ -2,6 +2,7 @@ package model
 
 import (
 	"log"
+	"react-go/core/types"
 	"time"
 
 	"github.com/google/uuid"
@@ -36,6 +37,13 @@ func (s *ProductBrand) Map() map[string]any {
 	}
 }
 
+func (s *ProductBrand) Option() types.Option {
+	return types.Option{
+		Label: s.Name,
+		Value: s.ID,
+	}
+}
+
 func (ProductBrand) Seed(db *gorm.DB) {
 	var count int64
 	db.Model(&ProductBrand{}).Count(&count)
@@ -43,14 +51,16 @@ func (ProductBrand) Seed(db *gorm.DB) {
 	if count == 0 {
 		stats := []ProductBrand{
 			{
-				Key:  "samsung",
-				Logo: "/favicon.svg",
-				Name: "Samsung",
-			},
-			{
+				ID:   1,
 				Key:  "apple",
 				Logo: "/favicon.svg",
 				Name: "Apple",
+			},
+			{
+				ID:   2,
+				Key:  "samsung",
+				Logo: "/favicon.svg",
+				Name: "Samsung",
 			},
 		}
 

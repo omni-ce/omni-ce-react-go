@@ -41,6 +41,7 @@ func Models() []interface{} {
 		&master_data.MasterData{},
 		&product.ProductCategory{},
 		&product.ProductBrand{},
+		&product.ProductVariant{},
 	}
 }
 
@@ -54,4 +55,5 @@ func SeedAll(db *gorm.DB) {
 	// Custom
 	product.ProductCategory{}.Seed(db)
 	product.ProductBrand{}.Seed(db)
+	product.ProductVariant{}.Seed(db)
 }

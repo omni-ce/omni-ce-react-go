@@ -2,6 +2,7 @@ package model
 
 import (
 	"log"
+	"react-go/core/types"
 	"time"
 
 	"github.com/google/uuid"
@@ -31,6 +32,13 @@ func (s *ProductCategory) Map() map[string]any {
 		"created_by": s.CreatedBy,
 		"updated_at": s.UpdatedAt,
 		"updated_by": s.UpdatedBy,
+	}
+}
+
+func (s *ProductCategory) Option() types.Option {
+	return types.Option{
+		Label: s.Name,
+		Value: s.ID,
 	}
 }
 

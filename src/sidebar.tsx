@@ -9,7 +9,7 @@ import MasterDataPage from "@/pages/app/master_data/MasterDataPage";
 // Products
 import ProductCategoryPage from "@/pages/app/product/ProductCategoryPage";
 import ProductBrandPage from "@/pages/app/product/ProductBrandPage";
-import ProductVarianPage from "@/pages/app/product/ProductVarianPage";
+import ProductVariantPage from "@/pages/app/product/ProductVariantPage";
 import ProductColorPage from "@/pages/app/product/ProductColorPage";
 import ProductItemPage from "@/pages/app/product/ProductItemPage";
 
@@ -57,8 +57,8 @@ const sidebarLinks: ISidebarLink[] = [
       },
       {
         label: { id: "Varian", en: "Variant" },
-        path: "varian",
-        element: <ProductVarianPage ruleKey="products/varian" />,
+        path: "variants",
+        element: <ProductVariantPage ruleKey="products/variants" />,
         strict: true,
         icon: "Hi/HiOutlineCog",
       },

@@ -23,6 +23,13 @@ export default function ProductVarianPage({ ruleKey }: Props) {
   const fields = useMemo<PaginationField[]>(
     () => [
       {
+        key: "brand_id",
+        label: language({ id: "Merek", en: "Brand" }),
+        type: "select",
+        required: true,
+        selectOptions: "brands",
+      },
+      {
         key: "name",
         label: language({ id: "Nama", en: "Name" }),
         type: "text",
@@ -63,6 +70,7 @@ export default function ProductVarianPage({ ruleKey }: Props) {
       {
         key: "is_active",
         header: language({ id: "Status", en: "Status" }),
+        rule: "set",
         render: (item) => (
           <Badge variant={item.is_active ? "default" : "destructive"}>
             {item.is_active
@@ -96,9 +104,9 @@ export default function ProductVarianPage({ ruleKey }: Props) {
 
       <Pagination
         ref={paginationRef}
-        title={language({ id: "Daftar Merek", en: "Brand List" })}
+        title={language({ id: "Daftar Varian", en: "Variants List" })}
         columns={columns}
-        module="product/varian"
+        module="product/variant"
         fields={fields}
         ruleKey={ruleKey}
         useIsActive

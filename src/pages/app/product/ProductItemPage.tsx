@@ -60,7 +60,7 @@ export default function ProductItemPage({ ruleKey }: Props) {
         type: "select",
         required: true,
         ref: "brand_id",
-        selectOptions: "product/varian/{brand_id}",
+        selectOptions: "product/variant/{brand_id}",
       },
       {
         key: "color_id",

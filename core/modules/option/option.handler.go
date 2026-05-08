@@ -7,6 +7,7 @@ import (
 	"react-go/core/variable"
 	"strconv"
 
+	product "react-go/core/modules/product/model"
 	role "react-go/core/modules/role/model"
 
 	"github.com/gofiber/fiber/v2"
@@ -97,4 +98,23 @@ func Roles(c *fiber.Ctx) error {
 	}
 
 	return dto.OK(c, "Get roles success", rows)
+}
+
+func Brands(c *fiber.Ctx) error {
+	brands := make([]product.ProductBrand, 0)
+	if err := variable.Db.
+		Model(&product.ProductBrand{}).
+		Find(&brands).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to find brands", nil)
+	}
+
+	rows := make([]types.Option, 0)
+	for _, row := range brands {
+		if row.IsActive {
+			rows = append(rows, row.Option())
+		}
+	}
+
+	return dto.OK(c, "Get brands success", rows)
 }
