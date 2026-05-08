@@ -1,6 +1,8 @@
 import type { Rule } from "@/types/rule";
 import { create } from "zustand";
 
+export type RuleType = "create" | "read" | "update" | "delete" | "set";
+
 export interface RoleSelected {
   division_id: string;
   role_id: string;

@@ -94,7 +94,7 @@ export type DynamicFormFieldType =
   | "icon"
   | "phone";
 
-type DynamicFormFieldNormal = {
+export type DynamicFormFieldNormal = {
   key: string;
   type: DynamicFormFieldType;
   selectOptions?: DynamicFormFieldOption[] | string;
@@ -1268,8 +1268,12 @@ function DynamicFieldRenderer({
         <PhoneNumber
           value={String(formData[field.key] ?? "")}
           onChange={(val) => onChange(field.key!, val)}
-          phoneDefaultCountry={(field as DynamicFormFieldNormal).phoneDefaultCountry}
-          phoneFirstAntiZero={(field as DynamicFormFieldNormal).phoneFirstAntiZero}
+          phoneDefaultCountry={
+            (field as DynamicFormFieldNormal).phoneDefaultCountry
+          }
+          phoneFirstAntiZero={
+            (field as DynamicFormFieldNormal).phoneFirstAntiZero
+          }
           error={(errors[field.key] as string) || undefined}
           disabled={disabled}
         />

@@ -41,8 +41,11 @@ import type {
   DynamicFormFieldOption as PaginationFieldOption,
   DynamicFormField as PaginationField,
 } from "@/components/DynamicForm";
-import DynamicForm from "@/components/DynamicForm";
+import DynamicForm, {
+  type DynamicFormFieldNormal,
+} from "@/components/DynamicForm";
 import { IconComponent } from "@/components/ui/IconSelector";
+import type { RuleType } from "@/stores/ruleStore";
 
 interface PaginationFetchParams {
   page: number;
@@ -68,6 +71,7 @@ export interface PaginationColumn<T> {
   search?: boolean;
   headerClassName?: string;
   cellClassName?: string;
+  rule?: RuleType;
   render: (row: T, index: number, helpers: PaginationHelpers<T>) => ReactNode;
 }
 
@@ -318,7 +322,18 @@ const Pagination = forwardRef(function PaginationInner<T>(
       result.push(checkboxColumn);
     }
 
-    return [...result, ...columns];
+    // Filter user columns based on rules
+    const filteredColumns = columns.filter((col) => {
+      if (!col.rule) return true;
+      if (col.rule === "create") return perm.canCreate;
+      if (col.rule === "read") return perm.canRead;
+      if (col.rule === "update") return perm.canUpdate;
+      if (col.rule === "delete") return perm.canDelete;
+      if (col.rule === "set") return perm.canSet;
+      return true;
+    });
+
+    return [...result, ...filteredColumns];
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     columns,
@@ -471,11 +486,11 @@ const Pagination = forwardRef(function PaginationInner<T>(
       const data: Record<string, unknown> = {};
       for (const field of fields) {
         if (row && typeof row === "object" && row !== null) {
-          const val = (row as Record<string, unknown>)[field.key];
+          const val = (row as Record<string, unknown>)[field.key as string];
           if (field.type === "array") {
             data[field.key] = Array.isArray(val) ? val : [];
           } else {
-            data[field.key] = val != null ? String(val) : "";
+            data[field.key as string] = val != null ? String(val) : "";
           }
         } else {
           if (field.type === "array") {
@@ -487,7 +502,7 @@ const Pagination = forwardRef(function PaginationInner<T>(
           ) {
             data[field.key] = field.options[0].value;
           } else {
-            data[field.key] = "";
+            data[field.key as string] = "";
           }
         }
       }
@@ -542,7 +557,7 @@ const Pagination = forwardRef(function PaginationInner<T>(
           const stringified = arr.map((item) => {
             const relevantData: Record<string, unknown> = {};
             for (const key of childKeys) {
-              relevantData[key] = item[key];
+              relevantData[key as string] = item[key as string];
             }
             return JSON.stringify(relevantData);
           });
@@ -552,20 +567,33 @@ const Pagination = forwardRef(function PaginationInner<T>(
         if (field.children) {
           for (const item of arr) {
             for (const child of field.children) {
-              const val = item[child.key] ?? "";
-              if (child.required && !String(val).trim()) return false;
+              const val = item[child.key as string] ?? "";
+              if (
+                (child as DynamicFormFieldNormal).required &&
+                !String(val).trim()
+              )
+                return false;
             }
           }
         }
       } else {
-        const val = formData[field.key] ?? "";
-        if (field.required && !String(val).trim()) return false;
+        const val = formData[(field as DynamicFormFieldNormal).key] ?? "";
+        if ((field as DynamicFormFieldNormal).required && !String(val).trim())
+          return false;
         if (typeof val === "string") {
-          if (field.minLength && val.length < field.minLength) return false;
-          if (field.maxLength && val.length > field.maxLength) return false;
+          if (
+            (field as DynamicFormFieldNormal).minLength &&
+            val.length < ((field as DynamicFormFieldNormal).minLength as number)
+          )
+            return false;
+          if (
+            (field as DynamicFormFieldNormal).maxLength &&
+            val.length > ((field as DynamicFormFieldNormal).maxLength as number)
+          )
+            return false;
         }
       }
-      if (fieldErrors[field.key]) return false;
+      if (fieldErrors[field.key as string]) return false;
     }
     return true;
   }, [fields, formData, fieldErrors, editingRow]);
@@ -584,10 +612,13 @@ const Pagination = forwardRef(function PaginationInner<T>(
           if (field.type === "array") {
             payload[field.key] = formData[field.key] || [];
           } else {
-            payload[field.key] =
-              typeof formData[field.key] === "string"
-                ? (formData[field.key] as string).trim()
-                : formData[field.key];
+            payload[(field as DynamicFormFieldNormal).key] =
+              typeof formData[(field as DynamicFormFieldNormal).key] ===
+              "string"
+                ? (
+                    formData[(field as DynamicFormFieldNormal).key] as string
+                  ).trim()
+                : formData[(field as DynamicFormFieldNormal).key];
           }
         }
       }
