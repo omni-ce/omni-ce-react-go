@@ -51,10 +51,18 @@ export default function ProductBrandPage({ ruleKey }: Props) {
         sort: true,
         search: true,
         render: (item) => (
-          <span className="font-medium">
-            <img src={item.logo} alt={item.name} className="h-6 w-6" />
-            <span className="font-mono text-sm">{item.name}</span>
-          </span>
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 overflow-hidden rounded-lg border border-dark-600 bg-dark-800/50 p-1.5 flex items-center justify-center group-hover:border-accent-500/30 transition-colors">
+              <img
+                src={item.logo}
+                alt={item.name}
+                className="max-h-full max-w-full object-contain"
+              />
+            </div>
+            <div className="flex flex-col">
+              <span className="font-semibold text-dark-100">{item.name}</span>
+            </div>
+          </div>
         ),
       },
       {
