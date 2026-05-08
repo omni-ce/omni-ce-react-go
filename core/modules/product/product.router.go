@@ -30,4 +30,12 @@ func ProtectedRoute(api fiber.Router) {
 	api.Delete("/variant/remove/:id", VariantRemove)
 	api.Post("/variant/bulk-remove", VariantBulkRemove)
 	api.Patch("/variant/set-active/:id", VariantSetActive)
+
+	// Color
+	api.Post("/color/create", ColorCreate)
+	api.Get("/color/paginate", ColorPaginate)
+	api.Put("/color/edit/:id", ColorEdit)
+	api.Delete("/color/remove/:id", ColorRemove)
+	api.Post("/color/bulk-remove", ColorBulkRemove)
+	api.Patch("/color/set-active/:id", ColorSetActive)
 }

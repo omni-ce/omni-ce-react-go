@@ -7,10 +7,11 @@ import (
 	"github.com/google/uuid"
 )
 
-type ProductCategory struct {
+type ProductColor struct {
 	ID       uint   `json:"id" gorm:"autoIncrement;primaryKey"`
-	Key      string `json:"key" gorm:"type:varchar(255);uniqueIndex;not null"`
-	Name     string `json:"name" gorm:"type:varchar(255);not null"`
+	Key      string `json:"key" gorm:"type:varchar(100);uniqueIndex;not null"`
+	Name     string `json:"name" gorm:"type:varchar(100);not null"`
+	HexCode  string `json:"hex_code" gorm:"type:varchar(10);not null"`
 	IsActive bool   `json:"is_active" gorm:"default:true"`
 
 	// SLA: create & update by user
@@ -20,11 +21,12 @@ type ProductCategory struct {
 	UpdatedBy uuid.UUID `json:"updated_by" gorm:"not null"`
 }
 
-func (s *ProductCategory) Map() map[string]any {
+func (s *ProductColor) Map() map[string]any {
 	return map[string]any{
 		"id":         s.ID,
 		"key":        s.Key,
 		"name":       s.Name,
+		"hex_code":   s.HexCode,
 		"is_active":  s.IsActive,
 		"created_at": s.CreatedAt,
 		"created_by": s.CreatedBy,
@@ -33,7 +35,7 @@ func (s *ProductCategory) Map() map[string]any {
 	}
 }
 
-func (s *ProductCategory) Option() types.Option {
+func (s *ProductColor) Option() types.Option {
 	return types.Option{
 		Label: s.Name,
 		Value: s.ID,

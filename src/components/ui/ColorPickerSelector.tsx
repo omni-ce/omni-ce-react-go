@@ -13,7 +13,7 @@ interface Props {
 export default function ColorPickerSelector({
   value,
   onChange,
-  placeholder = "#22c35b",
+  placeholder,
   label,
   required = false,
   disabled = false,
