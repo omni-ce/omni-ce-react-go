@@ -6,6 +6,7 @@ import (
 	"react-go/core/modules/apikey"
 	"react-go/core/modules/auth"
 	"react-go/core/modules/captcha"
+	"react-go/core/modules/company"
 	"react-go/core/modules/dashboard"
 	"react-go/core/modules/debounce"
 	"react-go/core/modules/event"
@@ -93,6 +94,9 @@ func SetupRoutes(app *fiber.App, api fiber.Router) {
 
 	// Master Data
 	master_data.ProtectedRoute(api.Group("/master-data", middlewares.UseToken))
+
+	// Company
+	company.ProtectedRoute(api.Group("/company", middlewares.UseToken))
 
 	// Product
 	product.PublicRoute(api.Group("/product"))

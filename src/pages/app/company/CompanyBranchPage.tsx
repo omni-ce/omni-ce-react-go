@@ -160,13 +160,13 @@ export default function CompanyBranchPage({ ruleKey }: Props) {
                 {item.address || "-"}
               </span>
             </div>
-            {item.address_code && (
+            {item.full_address && (
               <div className="flex items-center gap-2 ml-6">
                 <Badge
                   variant="secondary"
                   className="text-[10px] px-1.5 py-0 h-4 bg-dark-700/50 text-dark-300"
                 >
-                  {item.address_code}
+                  {item.full_address}
                 </Badge>
               </div>
             )}

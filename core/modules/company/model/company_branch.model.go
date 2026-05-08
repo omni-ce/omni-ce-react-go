@@ -3,6 +3,8 @@ package model
 import (
 	"react-go/core/types"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type CompanyBranch struct {
@@ -24,9 +26,9 @@ type CompanyBranch struct {
 
 	// SLA: create & update by user
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
-	CreatedBy uint      `json:"created_by" gorm:"not null"`
+	CreatedBy uuid.UUID `json:"created_by" gorm:"type:char(36);not null"`
 	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime"`
-	UpdatedBy uint      `json:"updated_by" gorm:"not null"`
+	UpdatedBy uuid.UUID `json:"updated_by" gorm:"type:char(36);not null"`
 }
 
 func (s *CompanyBranch) Map() map[string]any {

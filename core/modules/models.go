@@ -16,6 +16,7 @@ import (
 	user "react-go/core/modules/user/model"
 
 	// Custom
+	company "react-go/core/modules/company/model"
 	master_data "react-go/core/modules/master_data/model"
 	product "react-go/core/modules/product/model"
 
@@ -39,6 +40,8 @@ func Models() []interface{} {
 		&dashboard.DashboardWidget{},
 		// Custom
 		&master_data.MasterData{},
+		&company.CompanyEntity{},
+		&company.CompanyBranch{},
 		&product.ProductCategory{},
 		&product.ProductBrand{},
 		&product.ProductVariant{},

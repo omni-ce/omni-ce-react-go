@@ -8,6 +8,7 @@ export interface CompanyEntity {
   npwp_alias: string;
   address: string;
   address_code: string;
+  full_address: string;
   is_active: boolean;
   created_at: string;
   created_by: number;
@@ -26,6 +27,7 @@ export interface CompanyBranch {
   alias_code: string;
   address: string;
   address_code: string;
+  full_address: string;
   phone: string;
   longitude: number;
   latitude: number;

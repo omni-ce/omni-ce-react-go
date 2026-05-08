@@ -3,6 +3,8 @@ package model
 import (
 	"react-go/core/types"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type CompanyEntity struct {
@@ -16,9 +18,9 @@ type CompanyEntity struct {
 	AddressCode string    `json:"address_code" gorm:"type:varchar(255);not null"`
 	IsActive    bool      `json:"is_active" gorm:"type:boolean;not null"`
 	CreatedAt   time.Time `json:"created_at" gorm:"autoCreateTime"`
-	CreatedBy   uint      `json:"created_by" gorm:"not null"`
+	CreatedBy   uuid.UUID `json:"created_by" gorm:"type:char(36);not null"`
 	UpdatedAt   time.Time `json:"updated_at" gorm:"autoUpdateTime"`
-	UpdatedBy   uint      `json:"updated_by" gorm:"not null"`
+	UpdatedBy   uuid.UUID `json:"updated_by" gorm:"type:char(36);not null"`
 }
 
 func (s *CompanyEntity) Map() map[string]any {

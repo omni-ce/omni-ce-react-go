@@ -7,4 +7,5 @@ func PublicRoute(api fiber.Router) {
 	api.Get("/regencies/:id", Regencies)
 	api.Get("/districts/:id", Districts)
 	api.Get("/villages/:id", Villages)
+	api.Get("/get/:id", Get)
 }
