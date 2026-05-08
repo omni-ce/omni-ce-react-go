@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 interface AvatarProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   size?: "sm" | "md" | "lg";
   fallback?: string;
+  shape?: "circle" | "square";
 }
 
 const sizeClasses: Record<string, string> = {
@@ -13,14 +14,15 @@ const sizeClasses: Record<string, string> = {
 };
 
 const Avatar = React.forwardRef<HTMLImageElement, AvatarProps>(
-  ({ className, size = "md", src, alt, fallback, ...props }, ref) => {
+  ({ className, size = "md", shape = "circle", src, alt, fallback, ...props }, ref) => {
     const [error, setError] = React.useState(false);
 
     if (error || !src) {
       return (
         <div
           className={cn(
-            "rounded-full bg-accent-500/15 border border-accent-500/20 flex items-center justify-center text-accent-400 font-bold shrink-0",
+            shape === "square" ? "rounded-none" : "rounded-full",
+            "bg-accent-500/15 border border-accent-500/20 flex items-center justify-center text-accent-400 font-bold shrink-0",
             sizeClasses[size],
             className,
           )}
@@ -39,7 +41,8 @@ const Avatar = React.forwardRef<HTMLImageElement, AvatarProps>(
         alt={alt}
         onError={() => setError(true)}
         className={cn(
-          "rounded-full object-cover border border-dark-600/40 shrink-0",
+          shape === "square" ? "rounded-none" : "rounded-full",
+          "object-cover border border-dark-600/40 shrink-0",
           sizeClasses[size],
           className,
         )}

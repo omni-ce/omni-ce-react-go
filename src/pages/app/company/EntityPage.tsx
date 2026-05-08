@@ -93,6 +93,7 @@ export default function EntityPage({ ruleKey }: Props) {
           <div className="flex items-center gap-3">
             <Avatar
               size="sm"
+              shape="square"
               src={user.logo ? HOST_API + user.logo : BlankCompany}
               alt={user.name}
               fallback={user.name?.charAt(0)?.toUpperCase()}
@@ -126,6 +127,16 @@ export default function EntityPage({ ruleKey }: Props) {
                 {item.npwp_alias}
               </span>
             )}
+          </div>
+        ),
+      },
+      {
+        key: "address",
+        header: language({ id: "Alamat", en: "Address" }),
+        sort: true,
+        render: (item) => (
+          <div className="flex items-center gap-3">
+            <span className="font-medium">{item.address}</span>
           </div>
         ),
       },

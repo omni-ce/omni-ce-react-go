@@ -630,7 +630,7 @@ function DynamicFile({
       <div className="mt-1.5 flex flex-row items-center gap-6 p-4 rounded-xl border border-dark-600/50 bg-dark-900/30">
         <div
           className={`shrink-0 w-24 h-24 ${
-            template === "company" ? "rounded-xl" : "rounded-full"
+            template === "company" ? "rounded-none" : "rounded-full"
           } overflow-hidden border-2 border-dark-500 bg-dark-800`}
         >
           <img
