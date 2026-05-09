@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -20,10 +21,9 @@ func BranchCreate(c *fiber.Ctx) error {
 
 	var body struct {
 		EntityID    string `json:"entity_id" validate:"required"`
+		PicID       string `json:"pic_id" validate:"required"`
 		Code        string `json:"code" validate:"required"`
 		Name        string `json:"name" validate:"required"`
-		Alias       string `json:"alias"`
-		AliasCode   string `json:"alias_code"`
 		Address     string `json:"address" validate:"required"`
 		AddressCode string `json:"address_code" validate:"required"`
 		Phone       string `json:"phone" validate:"required"`
@@ -41,12 +41,16 @@ func BranchCreate(c *fiber.Ctx) error {
 		return dto.BadRequest(c, "Invalid entity ID", nil)
 	}
 
+	picID, err := uuid.Parse(body.PicID)
+	if err != nil {
+		return dto.BadRequest(c, "Invalid PIC ID", nil)
+	}
+
 	branch := model.CompanyBranch{
 		EntityID:    uint(entityID),
+		PicID:       picID,
 		Code:        body.Code,
 		Name:        body.Name,
-		Alias:       body.Alias,
-		AliasCode:   body.AliasCode,
 		Address:     body.Address,
 		AddressCode: body.AddressCode,
 		Phone:       body.Phone,
@@ -121,10 +125,9 @@ func BranchEdit(c *fiber.Ctx) error {
 
 	var body struct {
 		EntityID    string `json:"entity_id"`
+		PicID       string `json:"pic_id"`
 		Code        string `json:"code"`
 		Name        string `json:"name"`
-		Alias       string `json:"alias"`
-		AliasCode   string `json:"alias_code"`
 		Address     string `json:"address"`
 		AddressCode string `json:"address_code"`
 		Phone       string `json:"phone"`
@@ -153,17 +156,18 @@ func BranchEdit(c *fiber.Ctx) error {
 		}
 		updates["entity_id"] = uint(entityID)
 	}
+	if body.PicID != "" {
+		picID, err := uuid.Parse(body.PicID)
+		if err != nil {
+			return dto.BadRequest(c, "Invalid PIC ID", nil)
+		}
+		updates["pic_id"] = picID
+	}
 	if body.Code != "" {
 		updates["code"] = body.Code
 	}
 	if body.Name != "" {
 		updates["name"] = body.Name
-	}
-	if body.Alias != "" {
-		updates["alias"] = body.Alias
-	}
-	if body.AliasCode != "" {
-		updates["alias_code"] = body.AliasCode
 	}
 	if body.Address != "" {
 		updates["address"] = body.Address

@@ -28,6 +28,7 @@ import MapPicker, { type MapCoordinates } from "@/components/ui/MapPicker";
 export interface DynamicFormFieldOption {
   value: string;
   label: string;
+  array?: string[];
 }
 
 export enum FileType {
@@ -220,6 +221,7 @@ function DynamicSelect({
         const mapped = data.map((d) => ({
           value: String(d.value),
           label: d.label,
+          array: (d as unknown as { array?: string[] }).array,
         }));
         setOpts(mapped);
       })

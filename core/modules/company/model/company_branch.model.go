@@ -1,6 +1,7 @@
 package model
 
 import (
+	user "react-go/core/modules/user/model"
 	"react-go/core/types"
 	"time"
 
@@ -8,21 +9,22 @@ import (
 )
 
 type CompanyBranch struct {
-	ID          uint    `json:"id" gorm:"autoIncrement;primaryKey"`
-	EntityID    uint    `json:"entity_id" gorm:"not null"`
-	Code        string  `json:"code" gorm:"type:varchar(255);not null"`
-	Name        string  `json:"name" gorm:"type:varchar(255);not null"`
-	Alias       string  `json:"alias" gorm:"type:varchar(255);not null"`
-	AliasCode   string  `json:"alias_code" gorm:"type:varchar(255);not null"`
-	Address     string  `json:"address" gorm:"type:text;not null"`
-	AddressCode string  `json:"address_code" gorm:"type:varchar(255);not null"`
-	Phone       string  `json:"phone" gorm:"type:varchar(255);not null"`
-	Longitude   float64 `json:"longitude" gorm:"type:float;not null"`
-	Latitude    float64 `json:"latitude" gorm:"type:float;not null"`
-	IsActive    bool    `json:"is_active" gorm:"type:boolean;not null"`
+	ID          uint      `json:"id" gorm:"autoIncrement;primaryKey"`
+	EntityID    uint      `json:"entity_id" gorm:"not null"`
+	PicID       uuid.UUID `json:"pic_id" gorm:"not null"`
+	Code        string    `json:"code" gorm:"type:varchar(255);not null"`
+	Name        string    `json:"name" gorm:"type:varchar(255);not null"`
+	AliasCode   string    `json:"alias_code" gorm:"type:varchar(255);not null"`
+	Address     string    `json:"address" gorm:"type:text;not null"`
+	AddressCode string    `json:"address_code" gorm:"type:varchar(255);not null"`
+	Phone       string    `json:"phone" gorm:"type:varchar(255);not null"`
+	Longitude   float64   `json:"longitude" gorm:"type:float;not null"`
+	Latitude    float64   `json:"latitude" gorm:"type:float;not null"`
+	IsActive    bool      `json:"is_active" gorm:"type:boolean;not null"`
 
 	// relations
 	Entity CompanyEntity `json:"entity" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Pic    user.User     `json:"pic" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 
 	// SLA: create & update by user
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
@@ -35,9 +37,9 @@ func (s *CompanyBranch) Map() map[string]any {
 	return map[string]any{
 		"id":           s.ID,
 		"entity_id":    s.EntityID,
+		"pic_id":       s.PicID,
 		"code":         s.Code,
 		"name":         s.Name,
-		"alias":        s.Alias,
 		"alias_code":   s.AliasCode,
 		"address":      s.Address,
 		"address_code": s.AddressCode,
