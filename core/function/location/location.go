@@ -5,11 +5,16 @@ import (
 	"react-go/core/function/fetch"
 	"regexp"
 	"strings"
+	"sync"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-var addressIDRegex = regexp.MustCompile(`^\d{2}\.\d{2}\.\d{2}\.\d{4}$`)
+var (
+	addressIDRegex = regexp.MustCompile(`^\d{2}\.\d{2}\.\d{2}\.\d{4}$`)
+	addressCache   = make(map[string]string)
+	cacheMutex     sync.RWMutex
+)
 
 type WilayahResponse struct {
 	Data []struct {
@@ -63,6 +68,14 @@ func findName(data []fiber.Map, value string) string {
 }
 
 func GetFull(id string) (string, error, bool) {
+	// Check cache first
+	cacheMutex.RLock()
+	if val, ok := addressCache[id]; ok {
+		cacheMutex.RUnlock()
+		return val, nil, false
+	}
+	cacheMutex.RUnlock()
+
 	if !addressIDRegex.MatchString(id) {
 		return "", fmt.Errorf("Invalid address ID format. Expected XX.XX.XX.XXXX"), true
 	}
@@ -102,5 +115,11 @@ func GetFull(id string) (string, error, bool) {
 	villageName := findName(villageData, villageCode)
 
 	fullAddress := strings.Join([]string{villageName, distName, regName, provName}, ", ")
+
+	// Save to cache
+	cacheMutex.Lock()
+	addressCache[id] = fullAddress
+	cacheMutex.Unlock()
+
 	return fullAddress, nil, false
 }
