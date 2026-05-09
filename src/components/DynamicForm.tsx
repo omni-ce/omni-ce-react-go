@@ -241,6 +241,17 @@ function DynamicSelect({
       return;
     }
 
+    // Auto fetch if has value (Edit Mode)
+    const val = formData[(field as DynamicFormFieldNormal).key];
+    if (
+      val &&
+      typeof (field as DynamicFormFieldNormal).selectOptions === "string" &&
+      opts.length === 0 &&
+      !loading
+    ) {
+      fetchOptions();
+    }
+
     if ((field as DynamicFormFieldNormal).ref) {
       const refVal = formData[(field as DynamicFormFieldNormal).ref!];
       if (!refVal) {
@@ -262,6 +273,7 @@ function DynamicSelect({
     (field as DynamicFormFieldNormal).ref
       ? formData[(field as DynamicFormFieldNormal).ref!]
       : undefined,
+    formData[(field as DynamicFormFieldNormal).key], // Re-run if value changes externally
   ]);
 
   const translatedOpts = useMemo(() => {
