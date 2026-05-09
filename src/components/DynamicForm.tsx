@@ -224,6 +224,7 @@ function DynamicSelect({
         const mapped = data.map((d) => ({
           value: String(d.value),
           label: d.label,
+          icon: (d as unknown as { icon?: string }).icon,
           array: (d as unknown as { array?: string[] }).array,
         }));
         setOpts(mapped);

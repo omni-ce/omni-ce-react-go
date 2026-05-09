@@ -67,12 +67,12 @@ export default function CustomerPage({ ruleKey }: Props) {
           {
             label: language({ id: "Laki-laki", en: "Male" }),
             value: "L",
-            icon: "Fa/FaMale",
+            icon: "Pi/PiGenderMaleBold",
           },
           {
             label: language({ id: "Perempuan", en: "Female" }),
             value: "P",
-            icon: "Fa/FaFemale",
+            icon: "Pi/PiGenderFemaleBold",
           },
         ],
       },

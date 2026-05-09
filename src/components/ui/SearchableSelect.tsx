@@ -7,6 +7,7 @@ import { Badge } from "./Badge";
 interface Option {
   value: string;
   label: string;
+  icon?: string;
   array?: unknown[];
 }
 
@@ -191,7 +192,15 @@ export function SearchableSelect({
                       setIsOpen(false);
                     }}
                   >
-                    <span className="font-medium">{opt.label}</span>
+                    <div className="flex items-center gap-2.5">
+                      {opt.icon && (
+                        <IconComponent
+                          iconName={opt.icon}
+                          className="w-4 h-4 text-dark-400 shrink-0"
+                        />
+                      )}
+                      <span className="font-medium">{opt.label}</span>
+                    </div>
                     {opt.array && opt.array.length > 0 && (
                       <div className="flex flex-wrap gap-1">
                         {opt.array.map((item, idx) => (
