@@ -1097,6 +1097,9 @@ const Pagination = forwardRef(function PaginationInner<T>(
                           {column.options && (
                             <SearchableSelect
                               size="sm"
+                              disabled={
+                                column.ref ? !columnSearches[column.ref] : false
+                              }
                               onOpen={() => handleFetchOptions(column)}
                               value={(() => {
                                 const currentSearch =
