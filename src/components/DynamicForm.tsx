@@ -1230,6 +1230,7 @@ function DynamicMapField({
   const [isOpen, setIsOpen] = useState(false);
   const { language } = useLanguageStore();
 
+  console.log({ value });
   return (
     <>
       <div className="mt-1.5">
@@ -1257,16 +1258,16 @@ function DynamicMapField({
           </div>
           <div className="flex flex-col min-w-0 flex-1">
             <span
-              className={`text-sm font-medium truncate ${value ? "text-accent-400" : "text-foreground"}`}
+              className={`text-sm font-medium truncate ${value && typeof value.latitude === "number" ? "text-accent-400" : "text-foreground"}`}
             >
-              {value
+              {value && typeof value.latitude === "number"
                 ? `${value.latitude.toFixed(6)}, ${value.longitude.toFixed(6)}`
                 : language({
                     id: "Pilih Lokasi di Peta",
                     en: "Pick Location on Map",
                   })}
             </span>
-            {value && (
+            {value && typeof value.latitude === "number" && (
               <span className="text-xs text-dark-400 mt-0.5">
                 {language({
                   id: "Lokasi telah dipilih",
@@ -1362,7 +1363,9 @@ function DynamicGeolocationField({
         <div className="flex flex-col min-w-0 flex-1">
           <span
             className={`text-sm font-medium truncate ${
-              value ? "text-accent-400" : "text-foreground"
+              value && typeof value.latitude === "number"
+                ? "text-accent-400"
+                : "text-foreground"
             }`}
           >
             {loading
@@ -1370,14 +1373,14 @@ function DynamicGeolocationField({
                   id: "Mengambil Lokasi...",
                   en: "Getting Location...",
                 })
-              : value
+              : value && typeof value.latitude === "number"
                 ? `${value.latitude.toFixed(6)}, ${value.longitude.toFixed(6)}`
                 : language({
                     id: "Ambil Lokasi Saat Ini",
                     en: "Get Current Location",
                   })}
           </span>
-          {value && !loading && (
+          {value && typeof value.latitude === "number" && !loading && (
             <span className="text-xs text-dark-400 mt-0.5">
               {language({
                 id: "Lokasi berhasil diambil",
@@ -1587,18 +1590,21 @@ function DynamicFieldRenderer({
       ) : field.type === "map" ? (
         <DynamicMapField
           field={field as DynamicFormFieldNormal}
-          value={
-            (formData[field.key!] as MapCoordinates | undefined) ||
-            (formData["longitude"] !== undefined &&
-            formData["latitude"] !== undefined &&
-            formData["longitude"] !== null &&
-            formData["latitude"] !== null
-              ? {
-                  longitude: Number(formData["longitude"]),
-                  latitude: Number(formData["latitude"]),
-                }
-              : undefined)
-          }
+          value={(() => {
+            console.log("formData:", formData);
+            return (
+              (formData[field.key!] as MapCoordinates | undefined) ||
+              (formData["longitude"] !== undefined &&
+              formData["latitude"] !== undefined &&
+              formData["longitude"] !== null &&
+              formData["latitude"] !== null
+                ? {
+                    longitude: Number(formData["longitude"]),
+                    latitude: Number(formData["latitude"]),
+                  }
+                : undefined)
+            );
+          })()}
           onChange={(val) => onChange(field.key!, val)}
           disabled={disabled}
         />

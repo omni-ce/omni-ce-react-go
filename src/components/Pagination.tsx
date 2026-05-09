@@ -540,7 +540,9 @@ const Pagination = forwardRef(function PaginationInner<T>(
             (field.type === "switch" || field.type === "checkbox") &&
             (field as DynamicFormFieldNormal).booleanDefault !== undefined
           ) {
-            data[field.key as string] = (field as DynamicFormFieldNormal).booleanDefault;
+            data[field.key as string] = (
+              field as DynamicFormFieldNormal
+            ).booleanDefault;
           } else {
             data[field.key as string] = "";
           }
