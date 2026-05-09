@@ -15,6 +15,7 @@ func ProtectedRoute(api fiber.Router) {
 
 	// Company
 	api.Get("/company-entities", CompanyEntities)
+	api.Get("/company-branches", CompanyBranches)
 
 	// Product
 	api.Get("/product-categories", ProductCategories)

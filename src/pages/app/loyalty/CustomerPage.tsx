@@ -46,7 +46,7 @@ export default function CustomerPage({ ruleKey }: Props) {
         label: language({ id: "Cabang", en: "Branch" }),
         type: "select",
         required: true,
-        selectOptions: "branches",
+        selectOptions: "company-branches",
       },
       {
         key: "type",
@@ -117,7 +117,7 @@ export default function CustomerPage({ ruleKey }: Props) {
         key: "branch_name",
         header: language({ id: "Cabang", en: "Branch" }),
         sort: true,
-        options: "branches",
+        options: "company-branches",
         render: (item) => (
           <span className="font-medium">{item.branch_name}</span>
         ),

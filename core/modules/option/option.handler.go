@@ -121,6 +121,40 @@ func CompanyEntities(c *fiber.Ctx) error {
 	return dto.OK(c, "Get company entities success", rows)
 }
 
+func CompanyBranches(c *fiber.Ctx) error {
+	branches := make([]company.CompanyBranch, 0)
+	if err := variable.Db.
+		Model(&company.CompanyBranch{}).
+		Find(&branches).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to find company branches", nil)
+	}
+
+	entities := make([]company.CompanyEntity, 0)
+	if err := variable.Db.
+		Model(&company.CompanyEntity{}).
+		Find(&entities).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to find company entities", nil)
+	}
+
+	rows := make([]types.Option, 0)
+	for _, row := range branches {
+		if row.IsActive {
+			branch := row.Option()
+			for _, entity := range entities {
+				if entity.ID == row.EntityID {
+					branch.Label = fmt.Sprintf("%s - %s", entity.Name, row.Name)
+					break
+				}
+			}
+			rows = append(rows, branch)
+		}
+	}
+
+	return dto.OK(c, "Get company branches success", rows)
+}
+
 func Users(c *fiber.Ctx) error {
 	users := make([]user.User, 0)
 	if err := variable.Db.
