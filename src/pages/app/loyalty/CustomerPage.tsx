@@ -51,12 +51,34 @@ export default function CustomerPage({ ruleKey }: Props) {
         phoneDefaultCountry: "id" as CountryKey,
         phoneFirstAntiZero: true,
         minLength: 9,
-        maxLength: 15,
+        maxLength: 12,
       },
       {
         key: "name",
         label: language({ id: "Nama", en: "Name" }),
         type: "text",
+        required: true,
+      },
+      {
+        key: "gender",
+        label: language({ id: "Jenis Kelamin", en: "Gender" }),
+        type: "select",
+        required: true,
+        selectOptions: [
+          {
+            label: language({ id: "Laki-laki", en: "Male" }),
+            value: "L",
+          },
+          {
+            label: language({ id: "Perempuan", en: "Female" }),
+            value: "P",
+          },
+        ],
+      },
+      {
+        key: "dob",
+        label: language({ id: "Tanggal Lahir", en: "Date of Birth" }),
+        type: "date",
         required: true,
       },
     ],

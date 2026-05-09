@@ -1443,14 +1443,6 @@ function DynamicFieldRenderer({
           en: `Minimum ${f.minLength} characters`,
         }),
       );
-    } else if (f.maxLength && checkVal.length > f.maxLength) {
-      onError(
-        field.key,
-        language({
-          id: `Maksimal ${f.maxLength} karakter`,
-          en: `Maximum ${f.maxLength} characters`,
-        }),
-      );
     } else {
       onError(field.key, "");
     }
@@ -1616,6 +1608,7 @@ function DynamicFieldRenderer({
           phoneFirstAntiZero={
             (field as DynamicFormFieldNormal).phoneFirstAntiZero
           }
+          maxLength={(field as DynamicFormFieldNormal).maxLength}
           error={(errors[field.key] as string) || undefined}
           disabled={disabled}
           onBlur={() => handleBlur(String(formData[field.key!] || ""))}

@@ -14,6 +14,7 @@ interface Props {
   disabled?: boolean;
   phoneDefaultCountry?: string;
   phoneFirstAntiZero?: boolean;
+  maxLength?: number;
 }
 
 export default function PhoneNumber({
@@ -24,6 +25,7 @@ export default function PhoneNumber({
   disabled = false,
   phoneDefaultCountry,
   phoneFirstAntiZero = false,
+  maxLength,
 }: Props) {
   const { languageCode } = useLanguageStore();
   const [isOpen, setIsOpen] = useState(false);
@@ -264,14 +266,21 @@ export default function PhoneNumber({
           value={numberPart}
           disabled={disabled}
           onChange={(e) => {
-            let numericValue = e.target.value.replace(/\D/g, "");
+            let numericValue = e.target.value.replace(/[^0-9]/g, "");
+
+            // Apply maxLength limiter
+            if (maxLength && numericValue.length > maxLength) {
+              numericValue = numericValue.slice(0, maxLength);
+            }
+
             if (phoneFirstAntiZero && numericValue.startsWith("0")) {
-              numericValue = numericValue.replace(/^0+/, "");
+              numericValue = numericValue.substring(1);
             }
             const phoneCode = currentCountry?.phoneCode || "62";
             onChange(`+${phoneCode} ${numericValue}`);
           }}
           onBlur={onBlur}
+          maxLength={maxLength}
           placeholder={languageCode === "id" ? "Nomor telepon" : "Phone number"}
           className={cn(
             "flex-1 px-4 py-3 bg-dark-900/60 border border-dark-500/50 rounded-xl text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30 transition-all font-mono text-sm disabled:opacity-50",
