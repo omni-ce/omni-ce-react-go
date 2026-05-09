@@ -29,8 +29,10 @@ export interface CompanyBranch {
   address_code: string;
   full_address: string;
   phone: string;
-  longitude: number;
-  latitude: number;
+  map: {
+    longitude: number;
+    latitude: number;
+  };
   is_active: boolean;
   created_at: string;
   created_by: number;

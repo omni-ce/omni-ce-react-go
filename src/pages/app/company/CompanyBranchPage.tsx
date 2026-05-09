@@ -188,11 +188,11 @@ export default function CompanyBranchPage({ ruleKey }: Props) {
                 className="w-3.5 h-3.5"
               />
               <span className="font-mono text-[11px]">
-                {item.latitude.toFixed(6)}, {item.longitude.toFixed(6)}
+                {item.map.latitude.toFixed(6)}, {item.map.longitude.toFixed(6)}
               </span>
             </div>
             <a
-              href={`https://www.openstreetmap.org/?mlat=${item.latitude}&mlon=${item.longitude}#map=17/${item.latitude}/${item.longitude}`}
+              href={`https://www.openstreetmap.org/?mlat=${item.map.latitude}&mlon=${item.map.longitude}#map=17/${item.map.latitude}/${item.map.longitude}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 text-[11px] font-medium text-accent-500 hover:text-accent-400 transition-colors"

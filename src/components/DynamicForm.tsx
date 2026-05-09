@@ -1587,21 +1587,18 @@ function DynamicFieldRenderer({
       ) : field.type === "map" ? (
         <DynamicMapField
           field={field as DynamicFormFieldNormal}
-          value={(() => {
-            console.log("formData:", formData);
-            return (
-              (formData[field.key!] as MapCoordinates | undefined) ||
-              (formData["longitude"] !== undefined &&
-              formData["latitude"] !== undefined &&
-              formData["longitude"] !== null &&
-              formData["latitude"] !== null
-                ? {
-                    longitude: Number(formData["longitude"]),
-                    latitude: Number(formData["latitude"]),
-                  }
-                : undefined)
-            );
-          })()}
+          value={
+            (formData[field.key!] as MapCoordinates | undefined) ||
+            (formData["longitude"] !== undefined &&
+            formData["latitude"] !== undefined &&
+            formData["longitude"] !== null &&
+            formData["latitude"] !== null
+              ? {
+                  longitude: Number(formData["longitude"]),
+                  latitude: Number(formData["latitude"]),
+                }
+              : undefined)
+          }
           onChange={(val) => onChange(field.key!, val)}
           disabled={disabled}
         />

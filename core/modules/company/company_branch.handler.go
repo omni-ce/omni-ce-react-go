@@ -78,6 +78,12 @@ func BranchPaginate(c *fiber.Ctx) error {
 	for _, row := range branches {
 		branch := row.Map()
 		branch["entity_name"] = row.Entity.Name
+		branch["map"] = fiber.Map{
+			"longitude": row.Longitude,
+			"latitude":  row.Latitude,
+		}
+		delete(branch, "longitude")
+		delete(branch, "latitude")
 		rows = append(rows, branch)
 	}
 
