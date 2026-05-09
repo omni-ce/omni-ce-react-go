@@ -3,8 +3,8 @@ import { useLanguageStore } from "@/stores/languageStore";
 import { useNotificationStore } from "@/stores/notificationStore";
 import type { INotification } from "@/types/notification";
 import { formatTimestamp } from "@/utils/datetime";
-import { typeConfig } from "@/pages/app/notification/config";
-import { filters, type FilterType } from "@/pages/app/notification/message";
+import { typeConfig } from "@/pages/system/notification/config";
+import { filters, type FilterType } from "@/pages/system/notification/message";
 import { IconComponent } from "@/components/ui/IconSelector";
 
 interface Props {}

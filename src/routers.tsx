@@ -15,10 +15,10 @@ import LoginPage from "@/pages/auth/LoginPage";
 import SelectRolePage from "@/pages/auth/SelectRolePage";
 
 // App: Pages
-import DashboardPage from "@/pages/app/DashboardPage";
-import RolePage from "@/pages/app/role/RolePage";
+import DashboardPage from "@/pages/system/DashboardPage";
+import RolePage from "@/pages/system/role/RolePage";
 import SettingPage from "@/pages/app/setting/SettingPage";
-import NotificationPage from "@/pages/app/notification/NotificationPage";
+import NotificationPage from "@/pages/system/notification/NotificationPage";
 
 // Documentation
 import DocPage from "@/pages/doc";

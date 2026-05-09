@@ -13,7 +13,7 @@ import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import { FileType } from "@/components/DynamicForm";
 import { HOST_API } from "@/environment";
-import { ChangePassword } from "@/pages/app/user/action";
+import { ChangePassword } from "@/pages/system/user/action";
 
 interface Props {
   ruleKey?: string;
