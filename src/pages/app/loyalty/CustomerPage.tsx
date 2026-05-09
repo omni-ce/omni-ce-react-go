@@ -10,6 +10,7 @@ import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import type { ProductCategory } from "@/types/product";
 import { Badge } from "@/components/ui/Badge";
+import type { CountryKey } from "@/types/language";
 
 interface Props {
   ruleKey?: string;
@@ -41,6 +42,16 @@ export default function CustomerPage({ ruleKey }: Props) {
             value: "retail",
           },
         ],
+      },
+      {
+        key: "phone",
+        label: language({ id: "No. Telepon", en: "Phone" }),
+        type: "phone",
+        required: true,
+        phoneDefaultCountry: "id" as CountryKey,
+        phoneFirstAntiZero: true,
+        minLength: 9,
+        maxLength: 15,
       },
       {
         key: "name",

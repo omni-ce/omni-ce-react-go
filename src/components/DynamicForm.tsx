@@ -28,6 +28,7 @@ import MapPicker, { type MapCoordinates } from "@/components/ui/MapPicker";
 export interface DynamicFormFieldOption {
   value: string;
   label: string;
+  default?: boolean;
   array?: string[];
 }
 

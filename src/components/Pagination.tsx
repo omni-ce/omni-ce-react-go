@@ -534,10 +534,12 @@ const Pagination = forwardRef(function PaginationInner<T>(
                 .selectOptions as PaginationFieldOption[]
             ).length > 0
           ) {
-            data[field.key as string] = (
-              (field as DynamicFormFieldNormal)
-                .selectOptions as PaginationFieldOption[]
-            )[0].value;
+            const options = (field as DynamicFormFieldNormal)
+              .selectOptions as PaginationFieldOption[];
+            const defaultOption = options.find((opt) => opt.default === true);
+            data[field.key as string] = defaultOption
+              ? defaultOption.value
+              : "";
           } else if (
             (field.type === "switch" || field.type === "checkbox") &&
             (field as DynamicFormFieldNormal).booleanDefault !== undefined
