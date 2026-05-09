@@ -135,6 +135,27 @@ export default function CompanyBranchPage({ ruleKey }: Props) {
         ),
       },
       {
+        key: "phone",
+        header: language({ id: "Telepon", en: "Phone" }),
+        sort: true,
+        search: true,
+        render: (item) => (
+          <div className="flex items-center">
+            {item.phone ? (
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-dark-800 border border-dark-600/30 text-[12px] text-foreground shadow-sm font-medium">
+                <IconComponent
+                  iconName="Hi/HiOutlinePhone"
+                  className="w-3.5 h-3.5 text-accent-500"
+                />
+                <span className="font-mono">{item.phone.replace(" ", "")}</span>
+              </div>
+            ) : (
+              <span className="text-dark-500">-</span>
+            )}
+          </div>
+        ),
+      },
+      {
         key: "address",
         header: language({ id: "Alamat", en: "Address" }),
         sort: true,
@@ -159,17 +180,6 @@ export default function CompanyBranchPage({ ruleKey }: Props) {
                 )}
               </div>
             </div>
-            {item.phone && (
-              <div className="flex items-center gap-2 ml-6 mt-1">
-                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-dark-800 border border-dark-600/30 text-[10px] text-dark-300">
-                  <IconComponent
-                    iconName="Hi/HiOutlinePhone"
-                    className="w-3 h-3"
-                  />
-                  <span>{item.phone}</span>
-                </div>
-              </div>
-            )}
           </div>
         ),
       },
