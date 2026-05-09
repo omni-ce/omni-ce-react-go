@@ -35,9 +35,17 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
         required: true,
         selectOptions: "product-items",
         selectFormat: (row) => {
+          let prefix = "";
+          try {
+            const category = JSON.parse(row.category_name);
+            const type = JSON.parse(row.type_name);
+            prefix = `[${language(category)} ${language(type)}]`;
+          } catch (error) {
+            //
+          }
           return {
-            value: row.id,
-            label: row.name,
+            value: row.value,
+            label: prefix ? `${prefix} ${row.label}` : row.label,
           };
         },
       },

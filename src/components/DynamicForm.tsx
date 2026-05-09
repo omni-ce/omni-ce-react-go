@@ -130,6 +130,7 @@ export type DynamicFormFieldNormal = {
   numberSuffix?: string;
   textareaRows?: number;
   booleanDefault?: boolean;
+  selectFormat?: (row: any) => DynamicFormFieldOption;
 };
 
 type DynamicFormFieldChildren = {
@@ -221,12 +222,22 @@ function DynamicSelect({
       .get<Response<Option[]>>(`/api/option/${endpoint}`)
       .then((res) => {
         const data = res.data.data || [];
-        const mapped = data.map((d) => ({
-          value: String(d.value),
-          label: d.label,
-          icon: (d as unknown as { icon?: string }).icon,
-          array: (d as unknown as { array?: string[] }).array,
-        }));
+        const format = (field as DynamicFormFieldNormal).selectFormat;
+        const mapped = data.map((d) => {
+          if (format) {
+            const formatted = format(d);
+            return {
+              ...formatted,
+              value: String(formatted.value),
+            };
+          }
+          return {
+            value: String(d.value),
+            label: d.label,
+            icon: (d as unknown as { icon?: string }).icon,
+            array: (d as unknown as { array?: string[] }).array,
+          };
+        });
         setOpts(mapped);
       })
       .catch(() => {
@@ -239,10 +250,23 @@ function DynamicSelect({
 
   useEffect(() => {
     if (Array.isArray((field as DynamicFormFieldNormal).selectOptions)) {
-      setOpts(
-        (field as DynamicFormFieldNormal)
-          .selectOptions as DynamicFormFieldOption[],
-      );
+      const format = (field as DynamicFormFieldNormal).selectFormat;
+      const opts = (field as DynamicFormFieldNormal)
+        .selectOptions as DynamicFormFieldOption[];
+
+      if (format) {
+        setOpts(
+          opts.map((o) => {
+            const formatted = format(o);
+            return {
+              ...formatted,
+              value: String(formatted.value),
+            };
+          }),
+        );
+      } else {
+        setOpts(opts);
+      }
       setDisabled(false);
       return;
     }

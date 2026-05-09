@@ -517,6 +517,8 @@ func ProductItems(c *fiber.Ctx) error {
 		rows = append(rows, map[string]interface{}{
 			"value":         row.ID,
 			"label":         label,
+			"id":            row.ID,
+			"name":          label,
 			"sku":           row.SKU,
 			"sku_imei":      row.SkuIMEI,
 			"category_id":   row.CategoryID,
