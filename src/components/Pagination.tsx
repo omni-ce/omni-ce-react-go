@@ -518,6 +518,8 @@ const Pagination = forwardRef(function PaginationInner<T>(
           const val = (row as Record<string, unknown>)[field.key as string];
           if (field.type === "array") {
             data[field.key] = Array.isArray(val) ? val : [];
+          } else if (typeof val === "object" && val !== null) {
+            data[field.key as string] = val;
           } else {
             data[field.key as string] = val != null ? String(val) : "";
           }
