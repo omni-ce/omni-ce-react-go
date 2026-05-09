@@ -1420,6 +1420,42 @@ function DynamicFieldRenderer({
   errors: Record<string, string>;
   disabled: boolean;
 }) {
+  const { language } = useLanguageStore();
+
+  const handleBlur = (val: string) => {
+    if (!field.key || !onError) return;
+    const f = field as DynamicFormFieldNormal;
+    const trimmedVal = val.trim();
+    if (!trimmedVal) {
+      onError(field.key, "");
+      return;
+    }
+    let checkVal = trimmedVal;
+    if (f.type === "phone") {
+      const parts = trimmedVal.split(" ");
+      checkVal = parts.length > 1 ? parts[1] : trimmedVal;
+    }
+    if (f.minLength && checkVal.length < f.minLength) {
+      onError(
+        field.key,
+        language({
+          id: `Minimal ${f.minLength} karakter`,
+          en: `Minimum ${f.minLength} characters`,
+        }),
+      );
+    } else if (f.maxLength && checkVal.length > f.maxLength) {
+      onError(
+        field.key,
+        language({
+          id: `Maksimal ${f.maxLength} karakter`,
+          en: `Maximum ${f.maxLength} characters`,
+        }),
+      );
+    } else {
+      onError(field.key, "");
+    }
+  };
+
   if (!field.key && field.children) {
     return (
       <div
@@ -1498,6 +1534,7 @@ function DynamicFieldRenderer({
           className="mt-1.5 w-full px-4 py-2.5 bg-dark-900/60 border border-dark-500/50 rounded-xl text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30 transition-all font-mono text-sm disabled:opacity-50 min-h-20 resize-y"
           value={String(formData[field.key] ?? "")}
           onChange={(e) => onChange(field.key!, e.target.value)}
+          onBlur={(e) => handleBlur(e.target.value)}
           minLength={field.minLength}
           maxLength={field.maxLength}
           rows={(field as DynamicFormFieldNormal).textareaRows}
@@ -1581,6 +1618,7 @@ function DynamicFieldRenderer({
           }
           error={(errors[field.key] as string) || undefined}
           disabled={disabled}
+          onBlur={() => handleBlur(String(formData[field.key!] || ""))}
         />
       ) : field.type === "switch" ? (
         <div className="mt-2">
@@ -1686,6 +1724,7 @@ function DynamicFieldRenderer({
             minLength={(field as DynamicFormFieldNormal).minLength}
             maxLength={(field as DynamicFormFieldNormal).maxLength}
             disabled={disabled}
+            onBlur={(e) => handleBlur(e.target.value)}
             onWheel={(e) => field.type === "number" && e.currentTarget.blur()}
           />
           {(field as DynamicFormFieldNormal).numberSuffix && (
@@ -1696,6 +1735,11 @@ function DynamicFieldRenderer({
             </div>
           )}
         </div>
+      )}
+      {errors[field.key] && field.type !== "phone" && (
+        <p className="mt-1 text-[11px] text-neon-red font-medium pl-1">
+          {errors[field.key]}
+        </p>
       )}
     </div>
   );

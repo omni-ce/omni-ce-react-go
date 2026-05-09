@@ -9,6 +9,7 @@ import { IconComponent } from "./IconSelector";
 interface Props {
   value?: string;
   onChange: (value: string) => void;
+  onBlur?: () => void;
   error?: string;
   disabled?: boolean;
   phoneDefaultCountry?: string;
@@ -18,6 +19,7 @@ interface Props {
 export default function PhoneNumber({
   value = "",
   onChange,
+  onBlur,
   error,
   disabled = false,
   phoneDefaultCountry,
@@ -269,6 +271,7 @@ export default function PhoneNumber({
             const phoneCode = currentCountry?.phoneCode || "62";
             onChange(`+${phoneCode} ${numericValue}`);
           }}
+          onBlur={onBlur}
           placeholder={languageCode === "id" ? "Nomor telepon" : "Phone number"}
           className={cn(
             "flex-1 px-4 py-3 bg-dark-900/60 border border-dark-500/50 rounded-xl text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30 transition-all font-mono text-sm disabled:opacity-50",
