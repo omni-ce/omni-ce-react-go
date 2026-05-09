@@ -19,6 +19,10 @@ import ProductMemoryPage from "@/pages/app/product/ProductMemoryPage";
 import ProductColorPage from "@/pages/app/product/ProductColorPage";
 import ProductItemPage from "@/pages/app/product/ProductItemPage";
 
+// Warehouse
+import WarehouseLocationPage from "@/pages/app/warehouse/WarehouseLocationPage";
+import WarehouseProductPage from "@/pages/app/warehouse/WarehouseProductPage";
+
 // Loyalty
 import CustomerPage from "@/pages/app/loyalty/CustomerPage";
 
@@ -120,6 +124,28 @@ const sidebarLinks: ISidebarLink[] = [
         element: <ProductItemPage ruleKey="product/item" />,
         strict: true,
         icon: "Hi/HiTemplate",
+      },
+    ],
+  },
+
+  {
+    label: { id: "Gudang", en: "Warehouse" },
+    path: "warehouse",
+    icon: "Fa6/FaWarehouse",
+    children: [
+      {
+        label: { id: "Lokasi", en: "Location" },
+        path: "location",
+        element: <WarehouseLocationPage ruleKey="warehouse/location" />,
+        strict: true,
+        icon: "Hi/HiLocationMarker",
+      },
+      {
+        label: { id: "Produk", en: "Product" },
+        path: "product",
+        element: <WarehouseProductPage ruleKey="warehouse/product" />,
+        strict: true,
+        icon: "Hi/HiCube",
       },
     ],
   },

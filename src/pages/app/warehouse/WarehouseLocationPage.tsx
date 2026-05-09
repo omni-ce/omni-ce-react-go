@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/Badge";
 interface Props {
   ruleKey?: string;
 }
-export default function ProductCategoryPage({ ruleKey }: Props) {
+export default function WarehouseLocationPage({ ruleKey }: Props) {
   const perm = usePermission(ruleKey);
 
   const paginationRef = useRef<PaginationHandle>(null);
@@ -22,11 +22,30 @@ export default function ProductCategoryPage({ ruleKey }: Props) {
   const fields = useMemo<PaginationField[]>(
     () => [
       {
+        key: "branch_id",
+        label: language({ id: "Cabang", en: "Branch" }),
+        type: "select",
+        required: true,
+        selectOptions: "company-branches",
+      },
+      {
+        key: "pic_id",
+        label: language({ id: "PIC", en: "PIC" }),
+        type: "select",
+        required: true,
+        selectOptions: "users",
+      },
+      {
         key: "name",
         label: language({ id: "Nama", en: "Name" }),
         type: "text",
         required: true,
-        textMultiLanguage: true,
+      },
+      {
+        key: "map",
+        label: language({ id: "Peta Lokasi", en: "Location Map" }),
+        type: "map",
+        required: true,
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -77,12 +96,12 @@ export default function ProductCategoryPage({ ruleKey }: Props) {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="font-heading text-2xl font-bold text-foreground">
-            {language({ id: "Kategori Produk", en: "Product Categories" })}
+            {language({ id: "Lokasi Gudang", en: "Warehouse Location" })}
           </h1>
           <p className="mt-1 text-sm text-dark-400">
             {language({
-              id: "Kelola semua kategori produk pada sistem",
-              en: "Manage all product categories in the system",
+              id: "Kelola semua lokasi gudang pada sistem",
+              en: "Manage all warehouse location in the system",
             })}
           </p>
         </div>
@@ -91,11 +110,11 @@ export default function ProductCategoryPage({ ruleKey }: Props) {
       <Pagination
         ref={paginationRef}
         title={language({
-          id: "Daftar Kategori Produk",
-          en: "Product Category List",
+          id: "Daftar Lokasi Gudang",
+          en: "Warehouse Location List",
         })}
         columns={columns}
-        module="product/category"
+        module="warehouse/location"
         fields={fields}
         ruleKey={ruleKey}
         useIsActive

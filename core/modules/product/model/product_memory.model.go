@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"react-go/core/types"
 	"time"
 
@@ -10,8 +11,8 @@ import (
 type ProductMemory struct {
 	ID              uint   `json:"id" gorm:"autoIncrement;primaryKey"`
 	Key             string `json:"key" gorm:"type:varchar(255);uniqueIndex;not null"`
-	Ram             string `json:"ram" gorm:"type:varchar(255);not null"`
-	InternalStorage string `json:"internal_storage" gorm:"type:varchar(255);not null"`
+	Ram             int    `json:"ram" gorm:"type:integer;not null"`
+	InternalStorage int    `json:"internal_storage" gorm:"type:integer;not null"`
 
 	// SLA: create & update by user
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
@@ -35,7 +36,7 @@ func (s *ProductMemory) Map() map[string]any {
 
 func (s *ProductMemory) Option() types.Option {
 	return types.Option{
-		Label: s.Ram + " GB / " + s.InternalStorage + " GB",
+		Label: fmt.Sprintf("%d GB / %d GB", s.Ram, s.InternalStorage),
 		Value: s.ID,
 	}
 }

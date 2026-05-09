@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/Badge";
 interface Props {
   ruleKey?: string;
 }
-export default function ProductCategoryPage({ ruleKey }: Props) {
+export default function WarehouseProductPage({ ruleKey }: Props) {
   const perm = usePermission(ruleKey);
 
   const paginationRef = useRef<PaginationHandle>(null);
@@ -22,11 +22,18 @@ export default function ProductCategoryPage({ ruleKey }: Props) {
   const fields = useMemo<PaginationField[]>(
     () => [
       {
-        key: "name",
-        label: language({ id: "Nama", en: "Name" }),
-        type: "text",
+        key: "warehouse_location_id",
+        label: language({ id: "Lokasi Gudang", en: "Warehouse Location" }),
+        type: "select",
         required: true,
-        textMultiLanguage: true,
+        selectOptions: "warehouse/location",
+      },
+      {
+        key: "product_id",
+        label: language({ id: "Produk", en: "Product" }),
+        type: "select",
+        required: true,
+        selectOptions: "product-items",
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -77,12 +84,12 @@ export default function ProductCategoryPage({ ruleKey }: Props) {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="font-heading text-2xl font-bold text-foreground">
-            {language({ id: "Kategori Produk", en: "Product Categories" })}
+            {language({ id: "Produk Gudang", en: "Warehouse Product" })}
           </h1>
           <p className="mt-1 text-sm text-dark-400">
             {language({
-              id: "Kelola semua kategori produk pada sistem",
-              en: "Manage all product categories in the system",
+              id: "Kelola semua produk yang ada di gudang",
+              en: "Manage all product in warehouse",
             })}
           </p>
         </div>
@@ -91,11 +98,11 @@ export default function ProductCategoryPage({ ruleKey }: Props) {
       <Pagination
         ref={paginationRef}
         title={language({
-          id: "Daftar Kategori Produk",
-          en: "Product Category List",
+          id: "Daftar Produk Gudang",
+          en: "Warehouse Product List",
         })}
         columns={columns}
-        module="product/category"
+        module="warehouse/product"
         fields={fields}
         ruleKey={ruleKey}
         useIsActive

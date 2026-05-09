@@ -6,6 +6,7 @@ import (
 	"react-go/core/function"
 	"react-go/core/modules/product/model"
 	"react-go/core/variable"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -24,6 +25,15 @@ func MemoryCreate(c *fiber.Ctx) error {
 		return dto.BadRequest(c, err.Error(), nil)
 	}
 
+	ramInt, err := strconv.Atoi(body.Ram)
+	if err != nil {
+		return dto.BadRequest(c, "RAM must be an integer", nil)
+	}
+	internalStorageInt, err := strconv.Atoi(body.InternalStorage)
+	if err != nil {
+		return dto.BadRequest(c, "Internal Storage must be an integer", nil)
+	}
+
 	key := generateKeyFromName(body.Ram, body.InternalStorage)
 
 	// Check duplicate key
@@ -37,8 +47,8 @@ func MemoryCreate(c *fiber.Ctx) error {
 
 	memory := model.ProductMemory{
 		Key:             key,
-		Ram:             body.Ram,
-		InternalStorage: body.InternalStorage,
+		Ram:             ramInt,
+		InternalStorage: internalStorageInt,
 		CreatedBy:       currentUser.ID,
 		UpdatedBy:       currentUser.ID,
 	}
@@ -87,6 +97,15 @@ func MemoryEdit(c *fiber.Ctx) error {
 		return dto.BadRequest(c, err.Error(), nil)
 	}
 
+	ramInt, err := strconv.Atoi(body.Ram)
+	if err != nil {
+		return dto.BadRequest(c, "RAM must be an integer", nil)
+	}
+	internalStorageInt, err := strconv.Atoi(body.InternalStorage)
+	if err != nil {
+		return dto.BadRequest(c, "Internal Storage must be an integer", nil)
+	}
+
 	var existing model.ProductMemory
 	if err := variable.Db.
 		First(&existing, "id = ?", id).
@@ -108,8 +127,8 @@ func MemoryEdit(c *fiber.Ctx) error {
 	}
 
 	existing.Key = key
-	existing.Ram = body.Ram
-	existing.InternalStorage = body.InternalStorage
+	existing.Ram = ramInt
+	existing.InternalStorage = internalStorageInt
 	existing.UpdatedBy = currentUser.ID
 
 	if err := variable.Db.
