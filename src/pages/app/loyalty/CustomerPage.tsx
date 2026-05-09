@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/Badge";
 import type { CountryKey } from "@/types/language";
 import { IconComponent } from "@/components/ui/IconSelector";
 import { cn } from "@/lib/utils";
+import type { Gender } from "@/types/option";
 
 interface Props {
   ruleKey?: string;
@@ -106,6 +107,69 @@ export default function CustomerPage({ ruleKey }: Props) {
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [languageCode, language],
+  );
+
+  const dummyData = useMemo<Customer[]>(
+    () => [
+      {
+        id: 1,
+        branch_id: 1,
+        branch_name: "Cabang 1",
+        type: CustomerType.Reseller,
+        phone: "08123456789",
+        name: "Customer 1",
+        gender: "L" as Gender,
+        dob: "2000-01-01",
+        email: "[EMAIL_ADDRESS]",
+        is_pkp: true,
+        is_active: true,
+        plafond: 0,
+        total_piutang: 0,
+        created_at: "",
+        created_by: 0,
+        updated_at: "",
+        updated_by: 0,
+      },
+      {
+        id: 2,
+        branch_id: 1,
+        branch_name: "Cabang 1",
+        type: CustomerType.B2B,
+        phone: "08123456789",
+        name: "Customer 2",
+        gender: "P" as Gender,
+        dob: "2000-01-01",
+        email: "[EMAIL_ADDRESS]",
+        is_pkp: false,
+        is_active: true,
+        plafond: 0,
+        total_piutang: 0,
+        created_at: "",
+        created_by: 0,
+        updated_at: "",
+        updated_by: 0,
+      },
+      {
+        id: 3,
+        branch_id: 1,
+        branch_name: "Cabang 1",
+        type: CustomerType.Retail,
+        phone: "08123456789",
+        name: "Customer 3",
+        gender: "L" as Gender,
+        dob: "2000-01-01",
+        email: "[EMAIL_ADDRESS]",
+        is_pkp: true,
+        is_active: false,
+        plafond: 0,
+        total_piutang: 0,
+        created_at: "",
+        created_by: 0,
+        updated_at: "",
+        updated_by: 0,
+      },
+    ],
+    [],
   );
 
   const columns = useMemo<PaginationColumn<Customer>[]>(
@@ -255,44 +319,7 @@ export default function CustomerPage({ ruleKey }: Props) {
         fields={fields}
         ruleKey={ruleKey}
         useIsActive
-        dummyData={[
-          {
-            branch_id: 1,
-            branch_name: "Cabang 1",
-            type: CustomerType.Reseller,
-            phone: "08123456789",
-            name: "Customer 1",
-            gender: "L",
-            dob: "2000-01-01",
-            email: "[EMAIL_ADDRESS]",
-            is_pkp: true,
-            is_active: true,
-          },
-          {
-            branch_id: 1,
-            branch_name: "Cabang 1",
-            type: CustomerType.B2B,
-            phone: "08123456789",
-            name: "Customer 2",
-            gender: "P",
-            dob: "2000-01-01",
-            email: "[EMAIL_ADDRESS]",
-            is_pkp: false,
-            is_active: true,
-          },
-          {
-            branch_id: 1,
-            branch_name: "Cabang 1",
-            type: CustomerType.Retail,
-            phone: "08123456789",
-            name: "Customer 3",
-            gender: "L",
-            dob: "2000-01-01",
-            email: "[EMAIL_ADDRESS]",
-            is_pkp: true,
-            is_active: false,
-          },
-        ]}
+        dummyData={dummyData}
       />
     </div>
   );

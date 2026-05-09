@@ -427,16 +427,57 @@ const Pagination = forwardRef(function PaginationInner<T>(
       so: "ASC" | "DESC" | undefined,
       colSearches: Record<string, string>,
     ) => {
-      if (isFetchingRef.current) return;
-      isFetchingRef.current = true;
       if (dummyData && dummyData.length > 0) {
-        setRows(dummyData as T[]);
-        setTotal(dummyData.length);
-        setTotalPages(1);
+        let filtered = [...dummyData];
+
+        // Global search
+        if (q) {
+          const lowerQ = q.toLowerCase();
+          filtered = filtered.filter((item) => {
+            return searchableFields.some((field) => {
+              const val = (item as unknown as Record<string, unknown>)[field];
+              return val && String(val).toLowerCase().includes(lowerQ);
+            });
+          });
+        }
+
+        // Column search
+        for (const [key, val] of Object.entries(cs)) {
+          if (val.trim()) {
+            const lowerVal = val.trim().toLowerCase();
+            filtered = filtered.filter((item) => {
+              const itemVal = (item as any)[key];
+              return (
+                itemVal && String(itemVal).toLowerCase().includes(lowerVal)
+              );
+            });
+          }
+        }
+
+        // Sorting
+        if (sb) {
+          filtered.sort((a, b) => {
+            const valA = (a as unknown as Record<string, unknown>)[sb] || "";
+            const valB = (b as unknown as Record<string, unknown>)[sb] || "";
+            if (valA < valB) return so === "ASC" ? -1 : 1;
+            if (valA > valB) return so === "ASC" ? 1 : -1;
+            return 0;
+          });
+        }
+
+        // Pagination
+        const start = (p - 1) * l;
+        const paged = filtered.slice(start, start + l);
+
+        setRows(paged as T[]);
+        setTotal(filtered.length);
+        setTotalPages(Math.max(1, Math.ceil(filtered.length / l)));
         setIsLoading(false);
-        isFetchingRef.current = false;
         return;
       }
+
+      if (isFetchingRef.current) return;
+      isFetchingRef.current = true;
       setIsLoading(true);
       try {
         const params: PaginationFetchParams = {
