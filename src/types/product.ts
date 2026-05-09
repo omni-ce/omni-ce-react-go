@@ -50,5 +50,7 @@ export interface ProductItem {
   color_id?: number;
   color_name?: string;
   color_hex?: string;
+  qty: number;
+  price: number;
   is_active: boolean;
 }

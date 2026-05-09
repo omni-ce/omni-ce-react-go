@@ -48,14 +48,20 @@ export default function ProductVarianPage({ ruleKey }: Props) {
   const columns = useMemo<PaginationColumn<ProductVarian>[]>(
     () => [
       {
+        key: "brand_id",
+        header: language({ id: "Merek", en: "Brand" }),
+        options: "product-brands",
+        render: (item) => (
+          <span className="font-mono text-sm">{item.brand_name}</span>
+        ),
+      },
+      {
         key: "name",
         header: language({ id: "Nama", en: "Name" }),
         sort: true,
         search: true,
         render: (item) => (
-          <span className="font-mono text-sm">
-            {item.brand_name} {item.name}
-          </span>
+          <span className="font-mono text-sm">{item.name}</span>
         ),
       },
       {

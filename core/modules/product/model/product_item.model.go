@@ -29,6 +29,10 @@ type ProductItem struct {
 	Memory   ProductMemory   `json:"memory" gorm:"foreignKey:MemoryID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	Color    ProductColor    `json:"color" gorm:"foreignKey:ColorID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 
+	// Value
+	Qty   float64 `json:"qty" gorm:"default:0;not null"`
+	Price float64 `json:"price" gorm:"default:0;not null"`
+
 	// SLA: create & update by user
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
 	CreatedBy uuid.UUID `json:"created_by" gorm:"not null"`
