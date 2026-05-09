@@ -413,15 +413,25 @@ const Pagination = forwardRef(function PaginationInner<T>(
           const data = res.data.data || [];
           setDynamicOptions((prev) => ({
             ...prev,
-            [col.key]: data.map((d) => ({
-              value: String(d.value),
-              label: d.label,
-            })),
+            [col.key]: data.map((d) => {
+              let label = d.label;
+              try {
+                if (label.startsWith("{")) {
+                  label = language(JSON.parse(label));
+                }
+              } catch (e) {
+                // fallback to raw label
+              }
+              return {
+                value: String(d.value),
+                label,
+              };
+            }),
           }));
         })
         .catch(() => {});
     }
-  }, []);
+  }, [language]);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
@@ -1072,10 +1082,20 @@ const Pagination = forwardRef(function PaginationInner<T>(
                                   value: "all",
                                   label: language({ id: "Semua", en: "All" }),
                                 },
-                                ...(colOptions || []).map((opt) => ({
-                                  value: String(opt.value),
-                                  label: opt.label,
-                                })),
+                                ...(colOptions || []).map((opt) => {
+                                  let label = opt.label;
+                                  try {
+                                    if (label.startsWith("{")) {
+                                      label = language(JSON.parse(label));
+                                    }
+                                  } catch (e) {
+                                    // fallback to raw label
+                                  }
+                                  return {
+                                    value: String(opt.value),
+                                    label,
+                                  };
+                                }),
                               ]}
                               className={cn(column.search ? "mt-1" : "")}
                             />
