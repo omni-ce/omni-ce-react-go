@@ -70,7 +70,7 @@ export interface PaginationColumn<T> {
   align?: "left" | "center" | "right";
   sort?: boolean;
   search?: boolean;
-  options?: { label: string; value: string | number }[];
+  options?: { label: string; value: string | number }[] | string;
   headerClassName?: string;
   cellClassName?: string;
   rule?: RuleType;
@@ -173,6 +173,9 @@ const Pagination = forwardRef(function PaginationInner<T>(
   );
   const [debouncedColumnSearches, setDebouncedColumnSearches] = useState<
     Record<string, string>
+  >({});
+  const [dynamicOptions, setDynamicOptions] = useState<
+    Record<string, { label: string; value: string | number }[]>
   >({});
 
   // Bulk select state
@@ -395,10 +398,31 @@ const Pagination = forwardRef(function PaginationInner<T>(
 
   // Has any column with search: true or options defined
   const hasColumnSearch = useMemo(() => {
-    return mergedColumns.some(
-      (col) => col.search || (col.options && col.options.length > 0),
-    );
+    return mergedColumns.some((col) => col.search || col.options);
   }, [mergedColumns]);
+
+  // Fetch dynamic options
+  useEffect(() => {
+    mergedColumns.forEach((col) => {
+      if (typeof col.options === "string" && !dynamicOptions[col.key]) {
+        satellite
+          .get<Response<{ value: unknown; label: string }[]>>(
+            `/api/option/${col.options}`,
+          )
+          .then((res) => {
+            const data = res.data.data || [];
+            setDynamicOptions((prev) => ({
+              ...prev,
+              [col.key]: data.map((d) => ({
+                value: String(d.value),
+                label: d.label,
+              })),
+            }));
+          })
+          .catch(() => {});
+      }
+    });
+  }, [mergedColumns, dynamicOptions]);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
@@ -1008,54 +1032,61 @@ const Pagination = forwardRef(function PaginationInner<T>(
               {/* Per-column search row */}
               {hasColumnSearch && (
                 <TableRow>
-                  {mergedColumns.map((column) => (
-                    <TableHead key={`search-${column.key}`} className="py-1">
-                      <div className="flex flex-col gap-1 w-full">
-                        {column.search && (
-                          <Input
-                            placeholder={`${language({ id: "Cari", en: "Search" })}...`}
-                            value={columnSearches[column.key] ?? ""}
-                            onChange={(e) => {
-                              setColumnSearches((prev) => ({
-                                ...prev,
-                                [column.key]: e.target.value,
-                              }));
-                              setCurrentPage(1);
-                            }}
-                            className="h-7 text-xs px-2 w-full"
-                          />
-                        )}
-                        {column.options && column.options.length > 0 && (
-                          <Select
-                            value={columnSearches[column.key] ?? ""}
-                            onChange={(e) => {
-                              setColumnSearches((prev) => ({
-                                ...prev,
-                                [column.key]:
-                                  e.target.value === "all"
-                                    ? ""
-                                    : e.target.value,
-                              }));
-                              setCurrentPage(1);
-                            }}
-                            className={cn(
-                              "h-7 text-xs px-2 py-0 cursor-pointer",
-                              column.search ? "mt-1" : "",
-                            )}
-                          >
-                            <option value="all">
-                              {language({ id: "Semua", en: "All" })}
-                            </option>
-                            {column.options.map((opt, i) => (
-                              <option key={i} value={String(opt.value)}>
-                                {opt.label}
+                  {mergedColumns.map((column) => {
+                    const colOptions =
+                      typeof column.options === "string"
+                        ? dynamicOptions[column.key]
+                        : column.options;
+
+                    return (
+                      <TableHead key={`search-${column.key}`} className="py-1">
+                        <div className="flex flex-col gap-1 w-full">
+                          {column.search && (
+                            <Input
+                              placeholder={`${language({ id: "Cari", en: "Search" })}...`}
+                              value={columnSearches[column.key] ?? ""}
+                              onChange={(e) => {
+                                setColumnSearches((prev) => ({
+                                  ...prev,
+                                  [column.key]: e.target.value,
+                                }));
+                                setCurrentPage(1);
+                              }}
+                              className="h-7 text-xs px-2 w-full"
+                            />
+                          )}
+                          {colOptions && colOptions.length > 0 && (
+                            <Select
+                              value={columnSearches[column.key] ?? ""}
+                              onChange={(e) => {
+                                setColumnSearches((prev) => ({
+                                  ...prev,
+                                  [column.key]:
+                                    e.target.value === "all"
+                                      ? ""
+                                      : e.target.value,
+                                }));
+                                setCurrentPage(1);
+                              }}
+                              className={cn(
+                                "h-7 text-xs px-2 py-0 cursor-pointer",
+                                column.search ? "mt-1" : "",
+                              )}
+                            >
+                              <option value="all">
+                                {language({ id: "Semua", en: "All" })}
                               </option>
-                            ))}
-                          </Select>
-                        )}
-                      </div>
-                    </TableHead>
-                  ))}
+                              {colOptions.map((opt, i) => (
+                                <option key={i} value={String(opt.value)}>
+                                  {opt.label}
+                                </option>
+                              ))}
+                            </Select>
+                          )}
+                        </div>
+                      </TableHead>
+                    );
+                  })}
                 </TableRow>
               )}
             </TableHeader>
