@@ -18,6 +18,9 @@ import ProductMemoryPage from "@/pages/app/product/ProductMemoryPage";
 import ProductColorPage from "@/pages/app/product/ProductColorPage";
 import ProductItemPage from "@/pages/app/product/ProductItemPage";
 
+// Loyalty
+import CustomerPage from "@/pages/app/loyalty/CustomerPage";
+
 const sidebarLinks: ISidebarLink[] = [
   {
     label: { id: "Pengguna", en: "User" },
@@ -109,6 +112,21 @@ const sidebarLinks: ISidebarLink[] = [
         element: <ProductItemPage ruleKey="product/item" />,
         strict: true,
         icon: "Hi/HiTemplate",
+      },
+    ],
+  },
+
+  {
+    label: { id: "Loyalty", en: "Loyalty" },
+    path: "loyalty",
+    icon: "Md/MdLoyalty",
+    children: [
+      {
+        label: { id: "Pelanggan", en: "Customer" },
+        path: "customer",
+        element: <CustomerPage ruleKey="loyalty/customer" />,
+        strict: true,
+        icon: "Hi/HiUserGroup",
       },
     ],
   },
