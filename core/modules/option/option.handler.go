@@ -192,11 +192,17 @@ func Users(c *fiber.Ctx) error {
 
 	rows := make([]types.Option, 0)
 	for _, row := range users {
-		roleUsers := roleUserMap[row.ID.String()]
+		roleIds := roleUserMap[row.ID.String()]
+		formattedRoles := make([]any, 0)
+		for _, rid := range roleIds {
+			if name, ok := roleDivisions[rid]; ok {
+				formattedRoles = append(formattedRoles, name)
+			}
+		}
 		rows = append(rows, types.Option{
 			Label: row.Name,
 			Value: row.ID,
-			Array: roleUsers,
+			Array: &formattedRoles,
 		})
 	}
 
