@@ -2,10 +2,12 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 import { IconComponent } from "./IconSelector";
+import { Badge } from "./Badge";
 
 interface Option {
   value: string;
   label: string;
+  array?: unknown[];
 }
 
 interface SearchableSelectProps {
@@ -179,7 +181,7 @@ export function SearchableSelect({
                     key={opt.value}
                     type="button"
                     className={cn(
-                      "w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-dark-600 transition-colors",
+                      "w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-dark-600 transition-colors flex flex-col gap-1",
                       value === opt.value
                         ? "bg-accent-500/20 text-accent-400"
                         : "text-foreground",
@@ -189,7 +191,20 @@ export function SearchableSelect({
                       setIsOpen(false);
                     }}
                   >
-                    {opt.label}
+                    <span className="font-medium">{opt.label}</span>
+                    {opt.array && opt.array.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {opt.array.map((item, idx) => (
+                          <Badge
+                            key={idx}
+                            variant="outline"
+                            className="text-[10px] py-0 px-1.5 bg-dark-900/40 border-dark-500/50 text-dark-300"
+                          >
+                            {String(item)}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
                   </button>
                 ))
               )}
