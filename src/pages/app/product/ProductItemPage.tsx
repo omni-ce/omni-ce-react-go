@@ -111,7 +111,7 @@ export default function ProductItemPage({ ruleKey }: Props) {
       {
         key: "category_name",
         header: language({ id: "Kategori", en: "Category" }),
-        search: true,
+        options: "product-categories",
         render: (item) => {
           let name = item.category_name;
           try {
