@@ -28,6 +28,7 @@ import MapPicker, { type MapCoordinates } from "@/components/ui/MapPicker";
 export interface DynamicFormFieldOption {
   value: string;
   label: string;
+  icon?: string;
   default?: boolean;
   array?: string[];
 }
@@ -100,6 +101,7 @@ export type DynamicFormFieldType =
   | "country"
   | "icon"
   | "phone"
+  | "date"
   | "checkbox"
   | "switch"
   | "map"
@@ -1618,6 +1620,23 @@ function DynamicFieldRenderer({
           <Switch
             checked={Boolean(formData[field.key])}
             onCheckedChange={(val) => onChange(field.key!, val)}
+            disabled={disabled}
+          />
+        </div>
+      ) : field.type === "date" ? (
+        <div className="relative mt-1.5 flex items-center">
+          <div className="absolute left-4 pointer-events-none text-dark-400">
+            <IconComponent
+              iconName="Hi/HiOutlineCalendar"
+              className="w-5 h-5"
+            />
+          </div>
+          <input
+            id={`field-${field.key}`}
+            type="date"
+            className="w-full pl-12 pr-4 py-2.5 bg-dark-900/60 border border-dark-500/50 rounded-xl text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30 transition-all text-sm disabled:opacity-50 [color-scheme:dark]"
+            value={String(formData[field.key] ?? "")}
+            onChange={(e) => onChange(field.key!, e.target.value)}
             disabled={disabled}
           />
         </div>

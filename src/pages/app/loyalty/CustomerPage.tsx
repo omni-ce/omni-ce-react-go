@@ -63,15 +63,16 @@ export default function CustomerPage({ ruleKey }: Props) {
         key: "gender",
         label: language({ id: "Jenis Kelamin", en: "Gender" }),
         type: "select",
-        required: true,
         selectOptions: [
           {
             label: language({ id: "Laki-laki", en: "Male" }),
             value: "L",
+            icon: "Fa/FaMale",
           },
           {
             label: language({ id: "Perempuan", en: "Female" }),
             value: "P",
+            icon: "Fa/FaFemale",
           },
         ],
       },
@@ -79,7 +80,11 @@ export default function CustomerPage({ ruleKey }: Props) {
         key: "dob",
         label: language({ id: "Tanggal Lahir", en: "Date of Birth" }),
         type: "date",
-        required: true,
+      },
+      {
+        key: "email",
+        label: language({ id: "Email", en: "Email" }),
+        type: "email",
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
