@@ -1,4 +1,4 @@
-import countries from "@/countries";
+import { countries } from "@/world";
 import React, { Fragment, useState } from "react";
 import { MdClose, MdSearch } from "react-icons/md";
 
@@ -21,8 +21,7 @@ export default function FlagSelector({
   const filteredCountries = countries.filter(
     (country) =>
       country.name.toLowerCase().includes(search.toLowerCase()) ||
-      country.code.toLowerCase().includes(search.toLowerCase()) ||
-      country.key.toLowerCase().includes(search.toLowerCase()),
+      country.code.toLowerCase().includes(search.toLowerCase()),
   );
 
   const handleSelect = (code: string) => {
@@ -126,7 +125,7 @@ export default function FlagSelector({
                           {country.name}
                         </div>
                         <div className="text-xs text-gray-500">
-                          {country.code} • {country.key}
+                          {country.code}
                         </div>
                       </div>
                     </button>

@@ -1,4 +1,4 @@
-import countries from "@/countries";
+import { countries } from "@/world";
 import { useLanguageStore } from "@/stores/languageStore";
 import * as flags from "country-flag-icons/react/3x2";
 import { useState, useRef, useEffect, useMemo } from "react";
@@ -40,11 +40,12 @@ export default function PhoneNumber({
       return (
         countries.find(
           (c) =>
-            c.key === phoneDefaultCountry || c.code === phoneDefaultCountry,
+            c.language_key === phoneDefaultCountry ||
+            c.code === phoneDefaultCountry,
         )?.code || "ID"
       );
     }
-    return countries.find((c) => c.key === languageCode)?.code || "ID";
+    return countries.find((c) => c.language_key === languageCode)?.code || "ID";
   }, [phoneDefaultCountry, languageCode]);
 
   const [selectedCountry, setSelectedCountry] = useState(defaultCountry);

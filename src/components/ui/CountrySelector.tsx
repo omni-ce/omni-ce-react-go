@@ -1,4 +1,4 @@
-import countries from "@/countries";
+import { countries } from "@/world";
 import * as flags from "country-flag-icons/react/3x2";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";

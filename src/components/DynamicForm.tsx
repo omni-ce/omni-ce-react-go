@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { useLanguageStore, SUPPORTED_LANGUAGES } from "@/stores/languageStore";
 import { Switch } from "@/components/ui/Switch";
 import * as flags from "country-flag-icons/react/3x2";
-import countries from "@/countries";
+import { countries } from "@/world";
 import satellite from "@/lib/satellite";
 import type { Response } from "@/types/response";
 import { HOST_API } from "@/environment";
@@ -1713,7 +1713,7 @@ function DynamicFieldRenderer({
         (field as DynamicFormFieldNormal).textMultiLanguage ? (
         <div className="space-y-2 mt-1.5">
           {SUPPORTED_LANGUAGES.map((langCode) => {
-            const country = countries.find((c) => c.key === langCode);
+            const country = countries.find((c) => c.code === langCode);
             const Flag = country ? flags[country.flag] : null;
 
             let valObj: Record<string, string> = {};

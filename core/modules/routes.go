@@ -67,11 +67,11 @@ func SetupRoutes(app *fiber.App, api fiber.Router) {
 	auth.PublicRoute(api.Group("/auth"))
 	auth.ProtectedRoute(api.Group("/auth", middlewares.UseToken))
 
-	// User
-	user.ProtectedRoute(api.Group("/user", middlewares.UseToken))
-
 	// Setting
 	setting.ProtectedRoute(api.Group("/setting", middlewares.UseToken))
+
+	// User
+	user.ProtectedRoute(api.Group("/user", middlewares.UseToken))
 
 	// Role
 	role.ProtectedRoute(api.Group("/role", middlewares.UseToken))

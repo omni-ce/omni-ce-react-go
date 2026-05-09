@@ -3,7 +3,8 @@ import { useState } from "react";
 import { useThemeStore } from "@/stores/themeStore";
 import { SUPPORTED_LANGUAGES, useLanguageStore } from "@/stores/languageStore";
 import { IconComponent } from "@/components/ui/IconSelector";
-import countries from "@/countries";
+import { arrayLanguages } from "@/world";
+import { LanguageKey } from "@/types/world";
 
 interface Props {
   className?: string;
@@ -17,9 +18,10 @@ export default function LanguageSelector({ className = "" }: Props) {
   const [showDropdown, setShowDropdown] = useState(false);
 
   const getCountryForLanguage = (langKey: string) => {
-    // Default mapped countries for specific languages if multiple exist
-    if (langKey === "en") return countries.find((c) => c.code === "US");
-    return countries.find((c) => c.key === langKey);
+    // Default mapped languages for specific languages if multiple exist
+    if (langKey === "en")
+      return arrayLanguages.find((c) => c.key === LanguageKey.ID);
+    return arrayLanguages.find((c) => c.key === langKey);
   };
 
   const currentCountry = getCountryForLanguage(languageCode);
