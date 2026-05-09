@@ -11,6 +11,8 @@ import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import { CustomerType, type Customer } from "@/types/loyalty";
 import { Badge } from "@/components/ui/Badge";
 import type { CountryKey } from "@/types/language";
+import { IconComponent } from "@/components/ui/IconSelector";
+import { cn } from "@/lib/utils";
 
 interface Props {
   ruleKey?: string;
@@ -137,12 +139,63 @@ export default function CustomerPage({ ruleKey }: Props) {
         header: language({ id: "Nama", en: "Name" }),
         sort: true,
         search: true,
-        render: (item) => <span className="font-medium">{item.name}</span>,
+        render: (item) => (
+          <div className="flex flex-col gap-0.5">
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-foreground text-sm">
+                {item.name}
+              </span>
+              {item.gender && (
+                <IconComponent
+                  iconName={
+                    item.gender === "L"
+                      ? "Pi/PiGenderMaleBold"
+                      : "Pi/PiGenderFemaleBold"
+                  }
+                  className={cn(
+                    "w-4 h-4",
+                    item.gender === "L" ? "text-blue-400" : "text-pink-400",
+                  )}
+                />
+              )}
+            </div>
+            {item.dob && (
+              <div className="flex items-center gap-1 text-[11px] text-dark-400 font-medium">
+                <IconComponent
+                  iconName="Hi/HiOutlineCalendar"
+                  className="w-3 h-3"
+                />
+                <span>{formatDateTime(item.dob)}</span>
+              </div>
+            )}
+          </div>
+        ),
       },
       {
         key: "contact",
         header: language({ id: "Kontak", en: "Contact" }),
-        render: (item) => <span className="font-medium">{item.email}</span>,
+        render: (item) => (
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-2 text-xs text-dark-300">
+              <div className="w-5 flex justify-center">
+                <IconComponent
+                  iconName="Hi/HiOutlinePhone"
+                  className="w-3.5 h-3.5 text-accent-500"
+                />
+              </div>
+              <span className="font-mono tracking-tight">{item.phone}</span>
+            </div>
+            <div className="flex items-center gap-2 text-xs text-dark-300">
+              <div className="w-5 flex justify-center">
+                <IconComponent
+                  iconName="Hi/HiOutlineMail"
+                  className="w-3.5 h-3.5 text-accent-500"
+                />
+              </div>
+              <span className="truncate max-w-[150px]">{item.email}</span>
+            </div>
+          </div>
+        ),
       },
       {
         key: "is_pkp",
@@ -202,6 +255,44 @@ export default function CustomerPage({ ruleKey }: Props) {
         fields={fields}
         ruleKey={ruleKey}
         useIsActive
+        dummyData={[
+          {
+            branch_id: 1,
+            branch_name: "Cabang 1",
+            type: CustomerType.Reseller,
+            phone: "08123456789",
+            name: "Customer 1",
+            gender: "L",
+            dob: "2000-01-01",
+            email: "[EMAIL_ADDRESS]",
+            is_pkp: true,
+            is_active: true,
+          },
+          {
+            branch_id: 1,
+            branch_name: "Cabang 1",
+            type: CustomerType.B2B,
+            phone: "08123456789",
+            name: "Customer 2",
+            gender: "P",
+            dob: "2000-01-01",
+            email: "[EMAIL_ADDRESS]",
+            is_pkp: false,
+            is_active: true,
+          },
+          {
+            branch_id: 1,
+            branch_name: "Cabang 1",
+            type: CustomerType.Retail,
+            phone: "08123456789",
+            name: "Customer 3",
+            gender: "L",
+            dob: "2000-01-01",
+            email: "[EMAIL_ADDRESS]",
+            is_pkp: true,
+            is_active: false,
+          },
+        ]}
       />
     </div>
   );
