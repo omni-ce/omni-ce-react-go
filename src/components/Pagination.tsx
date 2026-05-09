@@ -442,11 +442,11 @@ const Pagination = forwardRef(function PaginationInner<T>(
         }
 
         // Column search
-        for (const [key, val] of Object.entries(cs)) {
+        for (const [key, val] of Object.entries(colSearches)) {
           if (val.trim()) {
             const lowerVal = val.trim().toLowerCase();
             filtered = filtered.filter((item) => {
-              const itemVal = (item as any)[key];
+              const itemVal = (item as unknown as Record<string, unknown>)[key];
               return (
                 itemVal && String(itemVal).toLowerCase().includes(lowerVal)
               );
@@ -466,7 +466,7 @@ const Pagination = forwardRef(function PaginationInner<T>(
         }
 
         // Pagination
-        const start = (p - 1) * l;
+        const start = (page - 1) * l;
         const paged = filtered.slice(start, start + l);
 
         setRows(paged as T[]);
