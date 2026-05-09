@@ -201,10 +201,9 @@ export default function RolePage({ ruleKey }: Props) {
       setOriginalRules(fetchedRules);
 
       if (initialLoad.current) {
+        // Keep divisions open but hide role permissions by default to avoid clutter
         setOpenDivisions(new Set(divs.map((d) => d.id)));
-        const rIds = new Set<number>();
-        divs.forEach((d) => d.roles.forEach((r) => rIds.add(r.id)));
-        setOpenRoles(rIds);
+        setOpenRoles(new Set());
         initialLoad.current = false;
       }
     } catch {

@@ -25,4 +25,17 @@ export const settingService = {
     >("/api/setting/toggle-maintenance");
     return response.data;
   },
+  updateProfile: async (data: {
+    name: string;
+    username: string;
+    avatar?: string;
+    phone_number?: string;
+    address?: string;
+  }) => {
+    const response = await satellite.put<Response<unknown>>(
+      "/api/user/profile",
+      data,
+    );
+    return response.data;
+  },
 };

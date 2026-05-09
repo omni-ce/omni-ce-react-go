@@ -54,6 +54,17 @@ export default function UserPage({ ruleKey }: Props) {
         maxLength: 255,
       },
       {
+        key: "email",
+        label: language({ id: "Email", en: "Email" }),
+        type: "email",
+        required: true,
+      },
+      {
+        key: "phone_number",
+        label: language({ id: "Nomor Telepon", en: "Phone Number" }),
+        type: "text",
+      },
+      {
         key: "password",
         label: language({ id: "Password", en: "Password" }),
         type: "password",

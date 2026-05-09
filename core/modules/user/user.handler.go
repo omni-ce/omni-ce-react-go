@@ -571,3 +571,74 @@ func RoleSwitch(c *fiber.Ctx) error {
 		"user": existing.Map(),
 	})
 }
+
+func UpdateProfile(c *fiber.Ctx) error {
+	existing, err := function.JwtGetUser(c)
+	if err != nil {
+		return dto.Unauthorized(c, "Unauthorized", nil)
+	}
+
+	var body struct {
+		Name        string `json:"name"`
+		Email       string `json:"email"`
+		Avatar      string `json:"avatar"`
+		PhoneNumber string `json:"phone_number"`
+		Address     string `json:"address"`
+	}
+	if err := function.RequestBody(c, &body); err != nil {
+		return dto.BadRequest(c, err.Error(), nil)
+	}
+
+	updates := map[string]any{}
+
+	name := strings.TrimSpace(body.Name)
+	if name != "" {
+		updates["name"] = name
+	}
+
+	email := strings.TrimSpace(body.Email)
+	if email != "" {
+		updates["email"] = email
+	}
+
+	phoneNumber := strings.TrimSpace(body.PhoneNumber)
+	if phoneNumber != "" {
+		updates["phone_number"] = phoneNumber
+	}
+
+	address := strings.TrimSpace(body.Address)
+	if address != "" {
+		updates["address"] = address
+	}
+
+	// Handle avatar upload
+	newAvatar := body.Avatar
+	if newAvatar != "" && newAvatar != "delete" && newAvatar != existing.Avatar {
+		// Check if file exists in uploads directory
+		cleanPath := strings.TrimPrefix(newAvatar, "/upload")
+		fsPath := filepath.Join(variable.UploadsPath, cleanPath)
+		if _, err := os.Stat(fsPath); os.IsNotExist(err) {
+			return dto.BadRequest(c, "Avatar file not found on server", nil)
+		}
+		updates["avatar"] = newAvatar
+	} else if newAvatar == "delete" {
+		updates["avatar"] = ""
+	}
+
+	if len(updates) == 0 {
+		return dto.OK(c, "No changes", fiber.Map{
+			"user": existing.Map(),
+		})
+	}
+
+	if err := variable.Db.
+		Model(&existing).
+		Updates(updates).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to update user profile", nil)
+	}
+
+	return dto.OK(c, "Success update profile", fiber.Map{
+		"user": existing.Map(),
+	})
+}

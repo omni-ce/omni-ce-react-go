@@ -8,6 +8,8 @@ import { useAuthStore } from "@/stores/authStore";
 import { useLanguageStore } from "@/stores/languageStore";
 import AppIconSvg from "@/assets/react_go.svg";
 import { IconComponent } from "@/components/ui/IconSelector";
+import satellite from "@/lib/satellite";
+import type { Response } from "@/types/response";
 
 interface Props {}
 export default function SettingPage({}: Props) {
@@ -25,6 +27,109 @@ export default function SettingPage({}: Props) {
   const [saveMsg, setSaveMsg] = useState("");
   const [saveType, setSaveType] = useState<"success" | "error">("success");
   const [isSaving, setIsSaving] = useState(false);
+
+  // Profile states
+  const [name, setName] = useState(user?.name || "");
+  const [username, setUsername] = useState(user?.username || "");
+  const [phoneNumber, setPhoneNumber] = useState(user?.phone_number || "");
+  const [address, setAddress] = useState(user?.address || "");
+  const [avatar, setAvatar] = useState(user?.avatar || "");
+  const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setName(user.name || "");
+      setUsername(user.username || "");
+      setPhoneNumber(user.phone_number || "");
+      setAddress(user.address || "");
+      setAvatar(user.avatar || "");
+    }
+  }, [user]);
+
+  const handleUpdateProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (isUpdatingProfile) return;
+
+    setIsUpdatingProfile(true);
+    try {
+      await settingService.updateProfile({
+        name,
+        username,
+        phone_number: phoneNumber,
+        address,
+        avatar,
+      });
+      setSaveType("success");
+      setSaveMsg(
+        language({
+          id: "Profil berhasil diperbarui.",
+          en: "Profile updated successfully.",
+        }),
+      );
+      // Retrigger token validation to update authStore user
+      useAuthStore.getState().validateToken(true);
+    } catch (err: unknown) {
+      const msg =
+        (err as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message ??
+        language({
+          id: "Gagal memperbarui profil.",
+          en: "Failed to update profile.",
+        });
+      setSaveType("error");
+      setSaveMsg(msg);
+    } finally {
+      setIsUpdatingProfile(false);
+      setTimeout(() => setSaveMsg(""), 3000);
+    }
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Max 2MB
+    if (file.size > 2 * 1024 * 1024) {
+      setSaveType("error");
+      setSaveMsg(
+        language({
+          id: "Ukuran file maksimal 2MB.",
+          en: "Maximum file size is 2MB.",
+        }),
+      );
+      setTimeout(() => setSaveMsg(""), 3000);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    setUploadingAvatar(true);
+    try {
+      const res = await satellite.post<Response<string>>(
+        "/api/upload/profile",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        },
+      );
+      if (res.data.data) {
+        setAvatar(res.data.data);
+      }
+    } catch {
+      setSaveType("error");
+      setSaveMsg(
+        language({
+          id: "Gagal mengunggah foto.",
+          en: "Failed to upload photo.",
+        }),
+      );
+      setTimeout(() => setSaveMsg(""), 3000);
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
 
   // Maintenance state
   const [maintenanceMode, setMaintenanceMode] = useState(false);
@@ -123,7 +228,7 @@ export default function SettingPage({}: Props) {
       {/* Toast */}
       {saveMsg && (
         <div
-          className={`px-4 py-3 rounded-xl text-sm font-mono ${
+          className={`px-4 py-3 rounded-xl text-sm font-mono sticky top-4 z-50 shadow-lg ${
             saveType === "success"
               ? "bg-neon-green/10 border border-neon-green/20 text-neon-green"
               : "bg-neon-red/10 border border-neon-red/20 text-neon-red"
@@ -132,6 +237,129 @@ export default function SettingPage({}: Props) {
           {saveMsg}
         </div>
       )}
+
+      {/* Profile Information */}
+      <form
+        onSubmit={handleUpdateProfile}
+        className="bg-dark-800/60 border border-dark-600/40 rounded-2xl p-6 space-y-6"
+      >
+        <SectionTitle>
+          {language({ id: "Informasi Profil", en: "Profile Information" })}
+        </SectionTitle>
+
+        <div className="flex flex-col sm:flex-row gap-6">
+          {/* Avatar Upload */}
+          <div className="flex flex-col items-center gap-3">
+            <div className="relative group">
+              {avatar ? (
+                <img
+                  src={avatar}
+                  alt="Avatar"
+                  className="w-24 h-24 rounded-2xl object-cover border-2 border-dark-600 group-hover:border-accent-500/50 transition-all"
+                />
+              ) : (
+                <div className="w-24 h-24 rounded-2xl bg-dark-900 border-2 border-dashed border-dark-600 flex items-center justify-center text-dark-400 group-hover:border-accent-500/50 transition-all">
+                  <IconComponent iconName="Ri/RiUserLine" size={32} />
+                </div>
+              )}
+              {uploadingAvatar && (
+                <div className="absolute inset-0 bg-black/60 rounded-2xl flex items-center justify-center">
+                  <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                </div>
+              )}
+              <label className="absolute -bottom-2 -right-2 p-2 bg-accent-500 hover:bg-accent-600 text-white rounded-xl cursor-pointer shadow-lg transition-all active:scale-90">
+                <IconComponent iconName="Ri/RiCameraLine" size={16} />
+                <input
+                  type="file"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleAvatarUpload}
+                  disabled={uploadingAvatar}
+                />
+              </label>
+            </div>
+            <p className="text-[10px] text-dark-400 font-mono uppercase tracking-wider">
+              {language({ id: "Foto Profil", en: "Profile Photo" })}
+            </p>
+          </div>
+
+          {/* Fields */}
+          <div className="flex-1 space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label required>
+                  {language({ id: "Nama Lengkap", en: "Full Name" })}
+                </Label>
+                <Input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder={language({
+                    id: "Masukkan nama lengkap",
+                    en: "Enter full name",
+                  })}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label required>
+                  {language({ id: "Username", en: "Username" })}
+                </Label>
+                <Input
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder={language({
+                    id: "Masukkan username",
+                    en: "Enter username",
+                  })}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>
+                  {language({ id: "Nomor Telepon", en: "Phone Number" })}
+                </Label>
+                <Input
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  placeholder={language({
+                    id: "Contoh: 08123456789",
+                    en: "Ex: 08123456789",
+                  })}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>{language({ id: "Alamat", en: "Address" })}</Label>
+              <textarea
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                rows={2}
+                className="w-full px-4 py-2.5 bg-dark-900/60 border border-dark-500/50 rounded-xl text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30 transition-all font-mono text-sm resize-none"
+                placeholder={language({
+                  id: "Masukkan alamat lengkap",
+                  en: "Enter full address",
+                })}
+              />
+            </div>
+
+            <div className="flex justify-end pt-2">
+              <button
+                type="submit"
+                disabled={isUpdatingProfile || uploadingAvatar}
+                className="flex items-center gap-2 px-5 py-2.5 bg-accent-500 hover:bg-accent-600 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-xl transition-all hover:shadow-lg hover:shadow-accent-500/25"
+              >
+                {isUpdatingProfile ? (
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <IconComponent iconName="Ri/RiSaveLine" className="w-4 h-4" />
+                )}
+                {language({ id: "Simpan Perubahan", en: "Save Changes" })}
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
 
       {/* Maintenance Mode — su only */}
       {isSu && (

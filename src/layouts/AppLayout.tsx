@@ -28,6 +28,7 @@ import {
   DialogTitle,
 } from "@/components/ui/Dialog";
 import { IconComponent } from "@/components/ui/IconSelector";
+import { HOST_API } from "@/environment";
 
 export interface ISidebarLink extends Omit<Partial<RouteObject>, "children"> {
   show_hr?: boolean;
@@ -206,6 +207,17 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
     }
     return user.role;
   }, [user, role_selected]);
+  const displayDivision = useMemo(() => {
+    if (!user) return "";
+    if (user.role === "su") return "All Divisions";
+    if (role_selected) {
+      const found = user.roles?.find(
+        (r) => r.division_id === role_selected.division_id,
+      );
+      if (found) return found.division_name;
+    }
+    return "";
+  }, [user, role_selected]);
   const {
     isCollapsed,
     isMobileOpen,
@@ -237,25 +249,12 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [validateToken, navigate]);
 
-  // Redirect non-su users without role selected or force update if selected role is missing
+  // Redirect non-su users without role selected to select-role page
   useEffect(() => {
-    if (!isLoading && user && user.role !== "su") {
-      const roles = user.roles || [];
-      if (roles.length === 0) {
-        if (role_selected) setRoleSelected(null);
-      } else {
-        const found = role_selected
-          ? roles.find((r) => r.role_id === role_selected.role_id)
-          : undefined;
-        if (!found) {
-          setRoleSelected({
-            division_id: roles[0].division_id,
-            role_id: roles[0].role_id,
-          });
-        }
-      }
+    if (!isLoading && user && user.role !== "su" && !role_selected) {
+      navigate("/select-role", { replace: true });
     }
-  }, [isLoading, user, role_selected, setRoleSelected]);
+  }, [isLoading, user, role_selected, navigate]);
 
   // Listen for real-time rule updates via WebSocket
   useEffect(() => {
@@ -459,24 +458,51 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
         {/* Sidebar Footer */}
         <div className="border-t border-dark-600/50 p-3 space-y-1 shrink-0">
           {/* User Info */}
-          {(!effectiveCollapsed || isMobileOpen) && user && (
+          {user && (
             <button
               onClick={() => {
                 if (canSwitchRole && user.role !== "su")
                   setRoleDialogOpen(true);
               }}
-              className={`w-full text-left px-3 py-2 mb-2 bg-dark-800/40 rounded-xl border border-dark-600/30 transition-colors ${
+              className={`w-full text-left px-3 py-3 mb-2 bg-dark-800/40 rounded-xl border border-dark-600/30 transition-all flex items-center gap-3 ${
                 canSwitchRole && user.role !== "su"
                   ? "hover:bg-dark-700/50 cursor-pointer hover:border-accent-500/30"
                   : "cursor-default"
-              }`}
+              } ${effectiveCollapsed && !isMobileOpen ? "justify-center px-0" : ""}`}
             >
-              <p className="text-sm font-medium text-foreground truncate">
-                {user.name}
-              </p>
-              <p className="text-xs text-dark-400 truncate mt-0.5">
-                {displayRole}
-              </p>
+              {/* Avatar */}
+              <div className="relative shrink-0">
+                {user.avatar ? (
+                  <img
+                    src={HOST_API + user.avatar}
+                    alt={user.name}
+                    className="w-9 h-9 rounded-lg object-cover border border-dark-600/50"
+                  />
+                ) : (
+                  <div className="w-9 h-9 rounded-lg bg-linear-to-br from-accent-500/20 to-accent-600/10 border border-accent-500/20 flex items-center justify-center text-accent-400 font-bold text-sm">
+                    {user.name.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                {user.role === "su" && (
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-neon-green rounded-full border-2 border-dark-800" />
+                )}
+              </div>
+
+              {(!effectiveCollapsed || isMobileOpen) && (
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-semibold text-foreground truncate leading-tight">
+                    {user.name}
+                  </p>
+                  <p className="text-[10px] font-medium text-accent-400 truncate mt-0.5 uppercase tracking-wider">
+                    {displayRole}
+                  </p>
+                  {displayDivision && (
+                    <p className="text-[10px] text-dark-400 truncate leading-tight">
+                      {displayDivision}
+                    </p>
+                  )}
+                </div>
+              )}
             </button>
           )}
 

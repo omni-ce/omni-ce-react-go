@@ -20,11 +20,13 @@ type User struct {
 	Username  string    `json:"username" gorm:"uniqueIndex"`
 	Password  string    `json:"password" gorm:"not null"`
 	Role      string    `json:"role" gorm:"not null"`
-	Name      string    `json:"name" gorm:"not null"`
-	Avatar    string    `json:"avatar"`
-	Address   string    `json:"address"`
-	IsActive  bool      `json:"is_active" gorm:"not null;default:true"`
-	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
+	Name        string    `json:"name" gorm:"not null"`
+	Avatar      string    `json:"avatar"`
+	Address     string    `json:"address"`
+	PhoneNumber string    `json:"phone_number"`
+	Email       string    `json:"email"`
+	IsActive    bool      `json:"is_active" gorm:"not null;default:true"`
+	CreatedAt   time.Time `json:"created_at" gorm:"autoCreateTime"`
 }
 
 func (s *User) BeforeCreate(tx *gorm.DB) error {
@@ -37,14 +39,16 @@ func (s *User) BeforeCreate(tx *gorm.DB) error {
 
 func (s *User) Map() map[string]any {
 	return map[string]any{
-		"id":         s.ID,
-		"username":   s.Username,
-		"role":       s.Role,
-		"name":       s.Name,
-		"avatar":     s.Avatar,
-		"address":    s.Address,
-		"is_active":  s.IsActive,
-		"created_at": s.CreatedAt,
+		"id":           s.ID,
+		"username":     s.Username,
+		"role":         s.Role,
+		"name":         s.Name,
+		"email":        s.Email,
+		"avatar":       s.Avatar,
+		"address":      s.Address,
+		"phone_number": s.PhoneNumber,
+		"is_active":    s.IsActive,
+		"created_at":   s.CreatedAt,
 	}
 }
 
