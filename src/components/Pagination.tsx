@@ -1115,10 +1115,24 @@ const Pagination = forwardRef(function PaginationInner<T>(
                                   );
                                   searchVal = selected ? selected.label : val;
                                 }
-                                setColumnSearches((prev) => ({
-                                  ...prev,
-                                  [column.key]: searchVal,
-                                }));
+
+                                setColumnSearches((prev) => {
+                                  const newState = {
+                                    ...prev,
+                                    [column.key]: searchVal,
+                                  };
+
+                                  // Cascading clear: if this column is cleared, clear all columns that depend on it
+                                  if (!searchVal || searchVal === "") {
+                                    mergedColumns.forEach((c) => {
+                                      if (c.ref === column.key) {
+                                        newState[c.key] = "";
+                                      }
+                                    });
+                                  }
+
+                                  return newState;
+                                });
                                 setCurrentPage(1);
                               }}
                               placeholder={language({ id: "Semua", en: "All" })}
