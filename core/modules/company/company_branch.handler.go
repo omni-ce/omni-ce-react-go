@@ -3,6 +3,7 @@ package company
 import (
 	"react-go/core/dto"
 	"react-go/core/function"
+	"react-go/core/function/location"
 	"react-go/core/modules/company/model"
 	"react-go/core/variable"
 	"strconv"
@@ -74,10 +75,28 @@ func BranchPaginate(c *fiber.Ctx) error {
 		return dto.InternalServerError(c, "Failed to prepare pagination", nil)
 	}
 
+	address_codes := make([]string, 0)
+	for _, branch := range branches {
+		address_codes = append(address_codes, branch.AddressCode)
+	}
+
+	addresses := make(map[string]string)
+	for _, address_code := range address_codes {
+		fullAddress, err, isBadRequest := location.GetFull(address_code)
+		if err != nil {
+			if isBadRequest {
+				return dto.BadRequest(c, err.Error(), nil)
+			}
+			return dto.InternalServerError(c, err.Error(), nil)
+		}
+		addresses[address_code] = fullAddress
+	}
+
 	rows := make([]any, 0)
 	for _, row := range branches {
 		branch := row.Map()
 		branch["entity_name"] = row.Entity.Name
+		branch["full_address"] = addresses[row.AddressCode]
 		branch["map"] = fiber.Map{
 			"longitude": row.Longitude,
 			"latitude":  row.Latitude,

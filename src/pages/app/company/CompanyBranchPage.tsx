@@ -9,10 +9,6 @@ import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import type { CompanyBranch } from "@/types/company";
 import { Badge } from "@/components/ui/Badge";
-import { FileType } from "@/components/DynamicForm";
-import { HOST_API } from "@/environment";
-import { Avatar } from "@/components/ui/Avatar";
-import BlankCompany from "@/assets/blank-company.svg";
 import { IconComponent } from "@/components/ui/IconSelector";
 
 interface Props {
