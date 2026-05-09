@@ -118,41 +118,24 @@ export default function CompanyBranchPage({ ruleKey }: Props) {
         ),
       },
       {
-        key: "alias",
-        header: language({ id: "Alias", en: "Alias" }),
+        key: "pic_name",
+        header: language({ id: "PIC", en: "PIC" }),
         sort: true,
         search: true,
         render: (item) => (
           <div className="flex flex-col gap-0.5">
             <div className="flex items-center gap-2">
               <span className="font-mono text-sm tracking-wider text-foreground">
-                {item.alias || "-"}
+                {item.pic_name}
               </span>
             </div>
-            <span className="text-[11px] text-dark-400 font-medium italic">
-              {item.alias_code}
-            </span>
-          </div>
-        ),
-      },
-      {
-        key: "phone",
-        header: language({ id: "Telepon", en: "Phone" }),
-        sort: true,
-        search: true,
-        render: (item) => (
-          <div className="flex items-center">
-            {item.phone ? (
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-dark-800 border border-dark-600/30 text-[12px] text-foreground shadow-sm font-medium">
-                <IconComponent
-                  iconName="Hi/HiOutlinePhone"
-                  className="w-3.5 h-3.5 text-accent-500"
-                />
-                <span className="font-mono">{item.phone.replace(" ", "")}</span>
-              </div>
-            ) : (
-              <span className="text-dark-500">-</span>
-            )}
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-dark-800 border border-dark-600/30 text-[12px] text-foreground shadow-sm font-medium">
+              <IconComponent
+                iconName="Hi/HiOutlinePhone"
+                className="w-3.5 h-3.5 text-accent-500"
+              />
+              <span className="font-mono">{item.phone.replace(" ", "")}</span>
+            </div>
           </div>
         ),
       },

@@ -21,10 +21,10 @@ export interface CompanyBranch {
   id: number;
   entity_id: number;
   entity_name: string;
+  pic_id: number;
+  pic_name: string;
   code: string;
   name: string;
-  alias: string;
-  alias_code: string;
   address: string;
   address_code: string;
   full_address: string;
