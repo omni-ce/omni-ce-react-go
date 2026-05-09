@@ -60,8 +60,15 @@ export default function PhoneNumber({
       if (country) {
         setSelectedCountry(country.code);
       }
+    } else if (value && !value.includes(" ")) {
+      // If value exists but has no space (no country code),
+      // we should probably add the current country's code
+      const country = countries.find((c) => c.code === selectedCountry);
+      if (country) {
+        onChange(`+${country.phoneCode} ${value}`);
+      }
     }
-  }, [codePart]);
+  }, [codePart, value, selectedCountry, onChange]);
 
   const currentCountry = countries.find((c) => c.code === selectedCountry);
   const FlagComponent = currentCountry
