@@ -8,7 +8,6 @@
 
 # Objectives
 
-- CRUD menu Product with all nested
 - Bug di login jika punya multi divisi atau multi role tidak ke halaman selector dulu
 - halaman Role, hide dulu accordion role agar tidak bloated melihat banyak checkbox di awal buka halaman
 - Middleware untuk handle rules
@@ -16,6 +15,4 @@
 - di sidebar cuman ada nama dan role padahal ada foto dan divisi yang belum muncul
 - Switch maintenance system (bisa diaktifkan / dimatikan)
 - dynamic field: country, nama negara bukan nama bahasa
-- dynamic field: email, masih belum work
-- dynamic field: key col, harusnya ke banyak versi
 - jika ending, full halaman dokumentasi di update
