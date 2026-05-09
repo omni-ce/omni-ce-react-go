@@ -124,7 +124,7 @@ const Pagination = forwardRef(function PaginationInner<T>(
     ruleKey,
     dataDeleteName,
     onSelectRow,
-    dummyData = [],
+    dummyData,
   }: PaginationProps<T>,
   ref: Ref<PaginationHandle>,
 ) {
