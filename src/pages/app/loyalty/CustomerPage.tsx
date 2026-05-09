@@ -8,7 +8,7 @@ import Pagination, {
 } from "@/components/Pagination";
 import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
-import type { ProductCategory } from "@/types/product";
+import { CustomerType, type Customer } from "@/types/loyalty";
 import { Badge } from "@/components/ui/Badge";
 import type { CountryKey } from "@/types/language";
 
@@ -23,6 +23,13 @@ export default function CustomerPage({ ruleKey }: Props) {
 
   const fields = useMemo<PaginationField[]>(
     () => [
+      {
+        key: "branch_id",
+        label: language({ id: "Cabang", en: "Branch" }),
+        type: "select",
+        required: true,
+        selectOptions: "branches",
+      },
       {
         key: "type",
         label: language({ id: "Tipe", en: "Type" }),
@@ -58,6 +65,7 @@ export default function CustomerPage({ ruleKey }: Props) {
         label: language({ id: "Nama", en: "Name" }),
         type: "text",
         required: true,
+        minLength: 3,
       },
       {
         key: "gender",
@@ -85,31 +93,68 @@ export default function CustomerPage({ ruleKey }: Props) {
         key: "email",
         label: language({ id: "Email", en: "Email" }),
         type: "email",
+        col: 9,
+      },
+      {
+        key: "is_pkp",
+        label: language({ id: "Wajib Pajak", en: "Taxable" }),
+        type: "switch",
+        col: 3,
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [languageCode, language],
   );
 
-  const columns = useMemo<PaginationColumn<ProductCategory>[]>(
+  const columns = useMemo<PaginationColumn<Customer>[]>(
     () => [
+      {
+        key: "branch_name",
+        header: language({ id: "Cabang", en: "Branch" }),
+        sort: true,
+        search: true,
+        render: (item) => (
+          <span className="font-medium">{item.branch_name}</span>
+        ),
+      },
+      {
+        key: "type",
+        header: language({ id: "Tipe", en: "Type" }),
+        sort: true,
+        search: true,
+        render: (item) => (
+          <Badge
+            variant={
+              item.type === CustomerType.Retail ? "default" : "secondary"
+            }
+          >
+            {item.type}
+          </Badge>
+        ),
+      },
       {
         key: "name",
         header: language({ id: "Nama", en: "Name" }),
         sort: true,
         search: true,
-        render: (item) => {
-          let name = item.name;
-          try {
-            if (name.startsWith("{")) {
-              const obj = JSON.parse(name);
-              name = language(obj);
-            }
-          } catch (e) {
-            // fallback to raw name
-          }
-          return <span className="font-medium">{name}</span>;
-        },
+        render: (item) => <span className="font-medium">{item.name}</span>,
+      },
+      {
+        key: "contact",
+        header: language({ id: "Kontak", en: "Contact" }),
+        render: (item) => <span className="font-medium">{item.email}</span>,
+      },
+      {
+        key: "is_pkp",
+        header: language({ id: "Wajib Pajak", en: "Taxable" }),
+        rule: "set",
+        render: (item) => (
+          <Badge variant={item.is_pkp ? "secondary" : "outline"}>
+            {item.is_pkp
+              ? language({ id: "Ya", en: "Yes" })
+              : language({ id: "Tidak", en: "No" })}
+          </Badge>
+        ),
       },
       {
         key: "is_active",

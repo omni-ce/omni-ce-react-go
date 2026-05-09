@@ -1429,10 +1429,39 @@ function DynamicFieldRenderer({
     if (!field.key || !onError) return;
     const f = field as DynamicFormFieldNormal;
     const trimmedVal = val.trim();
+
+    // Required validation
+    if (f.required && !trimmedVal) {
+      onError(
+        field.key,
+        language({
+          id: "Field ini wajib diisi",
+          en: "This field is required",
+        }),
+      );
+      return;
+    }
+
     if (!trimmedVal) {
       onError(field.key, "");
       return;
     }
+
+    // Email validation
+    if (f.type === "email") {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(trimmedVal)) {
+        onError(
+          field.key,
+          language({
+            id: "Format email tidak valid",
+            en: "Invalid email format",
+          }),
+        );
+        return;
+      }
+    }
+
     let checkVal = trimmedVal;
     if (f.type === "phone") {
       const parts = trimmedVal.split(" ");
