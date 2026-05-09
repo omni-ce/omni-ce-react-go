@@ -128,7 +128,8 @@ export default function ProductItemPage({ ruleKey }: Props) {
       {
         key: "type_name",
         header: language({ id: "Tipe", en: "Type" }),
-        search: true,
+        ref: "category_id",
+        selectOptions: "product-types/{category_id}",
         render: (item) => {
           let name = item.type_name;
           try {

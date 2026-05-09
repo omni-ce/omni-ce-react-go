@@ -1068,11 +1068,26 @@ const Pagination = forwardRef(function PaginationInner<T>(
                             <SearchableSelect
                               size="sm"
                               onOpen={() => handleFetchOptions(column)}
-                              value={columnSearches[column.key] ?? ""}
+                              value={(() => {
+                                const currentSearch =
+                                  columnSearches[column.key] ?? "";
+                                if (!currentSearch) return "all";
+                                const found = colOptions?.find(
+                                  (o) => o.label === currentSearch,
+                                );
+                                return found ? String(found.value) : "all";
+                              })()}
                               onChange={(val) => {
+                                let searchVal = "";
+                                if (val !== "all") {
+                                  const selected = colOptions?.find(
+                                    (o) => String(o.value) === val,
+                                  );
+                                  searchVal = selected ? selected.label : val;
+                                }
                                 setColumnSearches((prev) => ({
                                   ...prev,
-                                  [column.key]: val === "all" ? "" : val,
+                                  [column.key]: searchVal,
                                 }));
                                 setCurrentPage(1);
                               }}
