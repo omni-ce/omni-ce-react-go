@@ -21,6 +21,7 @@ interface SearchableSelectProps {
   loading?: boolean;
   onOpen?: () => void;
   className?: string;
+  size?: "sm" | "md";
 }
 
 export function SearchableSelect({
@@ -33,6 +34,7 @@ export function SearchableSelect({
   loading = false,
   onOpen,
   className,
+  size = "md",
 }: SearchableSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -107,7 +109,10 @@ export function SearchableSelect({
         id={id}
         disabled={disabled || loading}
         className={cn(
-          "w-full px-4 py-2.5 bg-dark-900/60 border border-dark-500/50 rounded-xl text-foreground focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30 transition-all text-sm disabled:opacity-50 flex items-center justify-between text-left",
+          "w-full bg-dark-900/60 border border-dark-500/50 text-foreground focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30 transition-all disabled:opacity-50 flex items-center justify-between text-left",
+          size === "sm"
+            ? "h-7 px-2 py-0 text-xs rounded-lg"
+            : "px-4 py-2.5 text-sm rounded-xl",
           !selectedOption && "text-dark-300",
         )}
         onClick={() => {

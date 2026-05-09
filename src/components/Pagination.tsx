@@ -14,6 +14,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
+import { SearchableSelect } from "@/components/ui/SearchableSelect";
 import { Button } from "@/components/ui/Button";
 import { Label } from "@/components/ui/Label";
 import { Switch } from "@/components/ui/Switch";
@@ -401,28 +402,26 @@ const Pagination = forwardRef(function PaginationInner<T>(
     return mergedColumns.some((col) => col.search || col.options);
   }, [mergedColumns]);
 
-  // Fetch dynamic options
-  useEffect(() => {
-    mergedColumns.forEach((col) => {
-      if (typeof col.options === "string" && !dynamicOptions[col.key]) {
-        satellite
-          .get<Response<{ value: unknown; label: string }[]>>(
-            `/api/option/${col.options}`,
-          )
-          .then((res) => {
-            const data = res.data.data || [];
-            setDynamicOptions((prev) => ({
-              ...prev,
-              [col.key]: data.map((d) => ({
-                value: String(d.value),
-                label: d.label,
-              })),
-            }));
-          })
-          .catch(() => {});
-      }
-    });
-  }, [mergedColumns, dynamicOptions]);
+  // Fetch dynamic options on demand
+  const handleFetchOptions = useCallback((col: PaginationColumn<T>) => {
+    if (typeof col.options === "string") {
+      satellite
+        .get<Response<{ value: unknown; label: string }[]>>(
+          `/api/option/${col.options}`,
+        )
+        .then((res) => {
+          const data = res.data.data || [];
+          setDynamicOptions((prev) => ({
+            ...prev,
+            [col.key]: data.map((d) => ({
+              value: String(d.value),
+              label: d.label,
+            })),
+          }));
+        })
+        .catch(() => {});
+    }
+  }, []);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
@@ -1055,33 +1054,31 @@ const Pagination = forwardRef(function PaginationInner<T>(
                               className="h-7 text-xs px-2 w-full"
                             />
                           )}
-                          {colOptions && colOptions.length > 0 && (
-                            <Select
+                          {column.options && (
+                            <SearchableSelect
+                              size="sm"
+                              onOpen={() => handleFetchOptions(column)}
                               value={columnSearches[column.key] ?? ""}
-                              onChange={(e) => {
+                              onChange={(val) => {
                                 setColumnSearches((prev) => ({
                                   ...prev,
-                                  [column.key]:
-                                    e.target.value === "all"
-                                      ? ""
-                                      : e.target.value,
+                                  [column.key]: val === "all" ? "" : val,
                                 }));
                                 setCurrentPage(1);
                               }}
-                              className={cn(
-                                "h-7 text-xs px-2 py-0 cursor-pointer",
-                                column.search ? "mt-1" : "",
-                              )}
-                            >
-                              <option value="all">
-                                {language({ id: "Semua", en: "All" })}
-                              </option>
-                              {colOptions.map((opt, i) => (
-                                <option key={i} value={String(opt.value)}>
-                                  {opt.label}
-                                </option>
-                              ))}
-                            </Select>
+                              placeholder={language({ id: "Semua", en: "All" })}
+                              options={[
+                                {
+                                  value: "all",
+                                  label: language({ id: "Semua", en: "All" }),
+                                },
+                                ...(colOptions || []).map((opt) => ({
+                                  value: String(opt.value),
+                                  label: opt.label,
+                                })),
+                              ]}
+                              className={cn(column.search ? "mt-1" : "")}
+                            />
                           )}
                         </div>
                       </TableHead>
