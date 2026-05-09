@@ -34,6 +34,12 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
         type: "select",
         required: true,
         selectOptions: "product-items",
+        selectFormat: (row) => {
+          return {
+            value: row.id,
+            label: row.name,
+          };
+        },
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
