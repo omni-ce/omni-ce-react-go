@@ -72,6 +72,7 @@ export interface PaginationColumn<T> {
   sort?: boolean;
   search?: boolean;
   options?: { label: string; value: string | number }[] | string;
+  ref?: string;
   headerClassName?: string;
   cellClassName?: string;
   rule?: RuleType;
@@ -403,35 +404,64 @@ const Pagination = forwardRef(function PaginationInner<T>(
   }, [mergedColumns]);
 
   // Fetch dynamic options on demand
-  const handleFetchOptions = useCallback((col: PaginationColumn<T>) => {
-    if (typeof col.options === "string") {
-      satellite
-        .get<Response<{ value: unknown; label: string }[]>>(
-          `/api/option/${col.options}`,
-        )
-        .then((res) => {
-          const data = res.data.data || [];
-          setDynamicOptions((prev) => ({
-            ...prev,
-            [col.key]: data.map((d) => {
-              let label = d.label;
-              try {
-                if (label.startsWith("{")) {
-                  label = language(JSON.parse(label));
+  const handleFetchOptions = useCallback(
+    (col: PaginationColumn<T>) => {
+      if (typeof col.options === "string") {
+        let endpoint = col.options;
+
+        if (col.ref) {
+          const refValue = columnSearches[col.ref];
+          if (!refValue) {
+            setDynamicOptions((prev) => ({ ...prev, [col.key]: [] }));
+            return;
+          }
+
+          // Find the ID/Value for this label in the ref column's options
+          const refCol = mergedColumns.find((c) => c.key === col.ref);
+          if (refCol) {
+            const refOptions =
+              typeof refCol.options === "string"
+                ? dynamicOptions[refCol.key]
+                : refCol.options;
+            const found = refOptions?.find((o) => o.label === refValue);
+            if (found) {
+              endpoint = endpoint.replace(`{${col.ref}}`, String(found.value));
+            } else {
+              // If not found, it might be a direct value or we can't resolve
+              endpoint = endpoint.replace(`{${col.ref}}`, refValue);
+            }
+          }
+        }
+
+        satellite
+          .get<Response<{ value: unknown; label: string }[]>>(
+            `/api/option/${endpoint}`,
+          )
+          .then((res) => {
+            const data = res.data.data || [];
+            setDynamicOptions((prev) => ({
+              ...prev,
+              [col.key]: data.map((d) => {
+                let label = d.label;
+                try {
+                  if (label.startsWith("{")) {
+                    label = language(JSON.parse(label));
+                  }
+                } catch (e) {
+                  // fallback to raw label
                 }
-              } catch (e) {
-                // fallback to raw label
-              }
-              return {
-                value: String(d.value),
-                label,
-              };
-            }),
-          }));
-        })
-        .catch(() => {});
-    }
-  }, [language]);
+                return {
+                  value: String(d.value),
+                  label,
+                };
+              }),
+            }));
+          })
+          .catch(() => {});
+      }
+    },
+    [columnSearches, dynamicOptions, language, mergedColumns],
+  );
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {

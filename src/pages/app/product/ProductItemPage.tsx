@@ -128,8 +128,8 @@ export default function ProductItemPage({ ruleKey }: Props) {
       {
         key: "type_name",
         header: language({ id: "Tipe", en: "Type" }),
-        ref: "category_id",
-        selectOptions: "product-types/{category_id}",
+        ref: "category_name",
+        options: "product-types/{category_name}",
         render: (item) => {
           let name = item.type_name;
           try {
@@ -146,7 +146,7 @@ export default function ProductItemPage({ ruleKey }: Props) {
       {
         key: "brand_name",
         header: language({ id: "Merek Varian", en: "Brand Variant" }),
-        search: true,
+        options: "product-brands",
         render: (item) => (
           <span className="max-w-xs truncate block">{item.brand_name}</span>
         ),
@@ -154,7 +154,8 @@ export default function ProductItemPage({ ruleKey }: Props) {
       {
         key: "varian_name",
         header: language({ id: "Merek Varian", en: "Brand Variant" }),
-        search: true,
+        ref: "brand_name",
+        options: "product-variants/{brand_name}",
         render: (item) => (
           <span className="max-w-xs truncate block">{item.varian_name}</span>
         ),
