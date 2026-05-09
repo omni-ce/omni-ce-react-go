@@ -89,6 +89,8 @@ export interface PaginationProps<T> {
   extraActions?: PaginationExtraAction<T>[];
   ruleKey?: string;
   dataDeleteName?: (row: T) => string;
+  onSelectRow?: (row: T) => void;
+  dummyData?: unknown[];
 }
 
 export interface PaginationHandle {
@@ -119,6 +121,8 @@ const Pagination = forwardRef(function PaginationInner<T>(
     extraActions,
     ruleKey,
     dataDeleteName,
+    onSelectRow,
+    dummyData = [],
   }: PaginationProps<T>,
   ref: Ref<PaginationHandle>,
 ) {
@@ -425,6 +429,14 @@ const Pagination = forwardRef(function PaginationInner<T>(
     ) => {
       if (isFetchingRef.current) return;
       isFetchingRef.current = true;
+      if (dummyData && dummyData.length > 0) {
+        setRows(dummyData as T[]);
+        setTotal(dummyData.length);
+        setTotalPages(1);
+        setIsLoading(false);
+        isFetchingRef.current = false;
+        return;
+      }
       setIsLoading(true);
       try {
         const params: PaginationFetchParams = {
@@ -490,6 +502,7 @@ const Pagination = forwardRef(function PaginationInner<T>(
     sortBy,
     sortOrder,
     debouncedColumnSearches,
+    dummyData,
     fetchRows,
   ]);
 
