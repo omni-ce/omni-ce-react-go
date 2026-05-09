@@ -117,7 +117,7 @@ export default function CustomerPage({ ruleKey }: Props) {
         key: "branch_name",
         header: language({ id: "Cabang", en: "Branch" }),
         sort: true,
-        search: true,
+        options: "branches",
         render: (item) => (
           <span className="font-medium">{item.branch_name}</span>
         ),
@@ -195,7 +195,7 @@ export default function CustomerPage({ ruleKey }: Props) {
                   className="w-3.5 h-3.5 text-accent-500"
                 />
               </div>
-              <span className="truncate max-w-[150px]">{item.email}</span>
+              <span className="truncate max-w-37.5">{item.email}</span>
             </div>
           </div>
         ),
