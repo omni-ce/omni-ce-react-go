@@ -125,7 +125,7 @@ func Users(c *fiber.Ctx) error {
 	users := make([]user.User, 0)
 	if err := variable.Db.
 		Model(&user.User{}).
-		Where("is_active = ?", true).
+		Where("role = ? AND is_active = ?", user.UserRoleClient, true).
 		Find(&users).
 		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to find users", nil)
