@@ -45,10 +45,23 @@ export default function PhoneNumber({
 
   const [selectedCountry, setSelectedCountry] = useState(defaultCountry);
 
-  // Update selected country if defaultCountry changes and user hasn't manually selected one yet
+  // Split value into code and number
+  const { codePart, numberPart } = useMemo(() => {
+    if (!value) return { codePart: "", numberPart: "" };
+    const parts = value.split(" ");
+    if (parts.length < 2) return { codePart: "", numberPart: value };
+    return { codePart: parts[0].replace("+", ""), numberPart: parts[1] };
+  }, [value]);
+
+  // Update selected country based on the value string (for initial load/edit)
   useEffect(() => {
-    setSelectedCountry(defaultCountry);
-  }, [defaultCountry]);
+    if (codePart) {
+      const country = countries.find((c) => String(c.phoneCode) === codePart);
+      if (country) {
+        setSelectedCountry(country.code);
+      }
+    }
+  }, [codePart]);
 
   const currentCountry = countries.find((c) => c.code === selectedCountry);
   const FlagComponent = currentCountry
@@ -60,10 +73,16 @@ export default function PhoneNumber({
       )[currentCountry.flag]
     : null;
 
-  const handleCountrySelect = (code: string) => {
-    setSelectedCountry(code);
+  const handleCountrySelect = (countryCode: string) => {
+    setSelectedCountry(countryCode);
     setIsOpen(false);
     setSearch("");
+
+    // Update full value with new country code
+    const country = countries.find((c) => c.code === countryCode);
+    if (country) {
+      onChange(`+${country.phoneCode} ${numberPart}`);
+    }
   };
 
   const filteredCountries = useMemo(() => {
@@ -233,14 +252,15 @@ export default function PhoneNumber({
         {/* Phone Number Input */}
         <input
           type="tel"
-          value={value}
+          value={numberPart}
           disabled={disabled}
           onChange={(e) => {
             let numericValue = e.target.value.replace(/\D/g, "");
             if (phoneFirstAntiZero && numericValue.startsWith("0")) {
               numericValue = numericValue.replace(/^0+/, "");
             }
-            onChange(numericValue);
+            const phoneCode = currentCountry?.phoneCode || "62";
+            onChange(`+${phoneCode} ${numericValue}`);
           }}
           placeholder={languageCode === "id" ? "Nomor telepon" : "Phone number"}
           className={cn(
