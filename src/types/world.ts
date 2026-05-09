@@ -1,6 +1,6 @@
 import * as flags from "country-flag-icons/react/3x2";
 
-export enum CountryKey {
+export enum LanguageKey {
   ID = "id",
   EN = "en",
   MS = "ms",
@@ -42,10 +42,15 @@ export enum CountryKey {
   SW = "sw",
 }
 
+export interface Language {
+  name: string;
+  flag: keyof typeof flags;
+}
+
 export interface Country {
   code: string;
   name: string;
-  key: CountryKey;
+  language_key: LanguageKey;
   phoneCode: number;
   flag: keyof typeof flags;
 }

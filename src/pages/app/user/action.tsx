@@ -6,7 +6,7 @@ import satellite from "@/lib/satellite";
 import { toast } from "react-toastify";
 import type { User } from "@/types/user";
 import type { AxiosError } from "axios";
-import { CountryKey } from "@/types/language";
+import { LanguageKey } from "@/types/world";
 
 interface ChangePasswordProps {
   row: User;

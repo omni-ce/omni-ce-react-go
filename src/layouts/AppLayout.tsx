@@ -508,26 +508,26 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
 
           {/* Settings */}
           <Link
-            to="/app/settings"
+            to="/app/setting"
             onClick={() => {
               if (window.innerWidth < 1024) setMobileOpen(false);
             }}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200
               ${
-                location.pathname === "/app/settings"
+                location.pathname === "/app/setting"
                   ? "bg-accent-500/15 text-accent-400 border border-accent-500/20"
                   : "text-dark-300 hover:text-foreground hover:bg-dark-700/50 border border-transparent"
               }
               ${effectiveCollapsed && !isMobileOpen ? "justify-center" : ""}
             `}
-            title={language({ id: "Pengaturan", en: "Settings" })}
+            title={language({ id: "Pengaturan", en: "Setting" })}
           >
             <IconComponent
               iconName="Ri/RiSettings4Line"
               className="w-4.5 h-4.5 shrink-0"
             />
             {(!effectiveCollapsed || isMobileOpen) && (
-              <span>{language({ id: "Pengaturan", en: "Settings" })}</span>
+              <span>{language({ id: "Pengaturan", en: "Setting" })}</span>
             )}
           </Link>
 

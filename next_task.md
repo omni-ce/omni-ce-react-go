@@ -8,11 +8,7 @@
 
 # Objectives
 
-- Bug di login jika punya multi divisi atau multi role tidak ke halaman selector dulu
-- halaman Role, hide dulu accordion role agar tidak bloated melihat banyak checkbox di awal buka halaman
 - Middleware untuk handle rules
-- Profile Setting
-- di sidebar cuman ada nama dan role padahal ada foto dan divisi yang belum muncul
 - Switch maintenance system (bisa diaktifkan / dimatikan)
 - dynamic field: country, nama negara bukan nama bahasa
 - jika ending, full halaman dokumentasi di update

@@ -1,11 +1,11 @@
-import { CountryKey } from "@/types/language";
+import { LanguageKey } from "@/types/world";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 export const SUPPORTED_LANGUAGES = [
-  CountryKey.ID,
-  CountryKey.EN,
-  // CountryKey.AR,
+  LanguageKey.ID,
+  LanguageKey.EN,
+  // LanguageKey.AR,
 ] as const;
 export type LanguageCode = (typeof SUPPORTED_LANGUAGES)[number];
 

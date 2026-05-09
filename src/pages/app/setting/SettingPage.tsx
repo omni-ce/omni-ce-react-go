@@ -361,55 +361,6 @@ export default function SettingPage({}: Props) {
         </div>
       </form>
 
-      {/* Maintenance Mode — su only */}
-      {isSu && (
-        <div className="bg-dark-800/60 border border-dark-600/40 rounded-2xl p-6 space-y-4">
-          <SectionTitle>
-            {language({
-              id: "Mode Pemeliharaan",
-              en: "Maintenance Mode",
-            })}
-          </SectionTitle>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-neon-yellow/10 border border-neon-yellow/20 flex items-center justify-center">
-                <IconComponent
-                  iconName="Ri/RiSettings3Line"
-                  className="w-5 h-5 text-neon-yellow"
-                />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-foreground">
-                  {language({
-                    id: "Aktifkan Mode Pemeliharaan",
-                    en: "Enable Maintenance Mode",
-                  })}
-                </p>
-                <p className="text-xs text-dark-400 font-mono mt-0.5">
-                  {language({
-                    id: "Saat aktif, hanya SU yang dapat mengakses sistem",
-                    en: "When active, only SU users can access the system",
-                  })}
-                </p>
-              </div>
-            </div>
-            <Switch
-              checked={maintenanceMode}
-              onCheckedChange={handleToggleMaintenance}
-              disabled={isTogglingMaintenance}
-            />
-          </div>
-          {maintenanceMode && (
-            <div className="px-4 py-3 rounded-xl text-sm font-mono bg-neon-yellow/10 border border-neon-yellow/20 text-neon-yellow">
-              {language({
-                id: "⚠️ Sistem sedang dalam mode pemeliharaan. Pengguna biasa tidak dapat mengakses.",
-                en: "⚠️ System is in maintenance mode. Regular users cannot access.",
-              })}
-            </div>
-          )}
-        </div>
-      )}
-
       {/* Change password */}
       <form
         onSubmit={handleChangePassword}
@@ -523,6 +474,55 @@ export default function SettingPage({}: Props) {
           </button>
         </div>
       </form>
+
+      {/* Maintenance Mode — su only */}
+      {isSu && (
+        <div className="bg-dark-800/60 border border-dark-600/40 rounded-2xl p-6 space-y-4">
+          <SectionTitle>
+            {language({
+              id: "Mode Pemeliharaan",
+              en: "Maintenance Mode",
+            })}
+          </SectionTitle>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-neon-yellow/10 border border-neon-yellow/20 flex items-center justify-center">
+                <IconComponent
+                  iconName="Ri/RiSettings3Line"
+                  className="w-5 h-5 text-neon-yellow"
+                />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-foreground">
+                  {language({
+                    id: "Aktifkan Mode Pemeliharaan",
+                    en: "Enable Maintenance Mode",
+                  })}
+                </p>
+                <p className="text-xs text-dark-400 font-mono mt-0.5">
+                  {language({
+                    id: "Saat aktif, hanya SU yang dapat mengakses sistem",
+                    en: "When active, only SU users can access the system",
+                  })}
+                </p>
+              </div>
+            </div>
+            <Switch
+              checked={maintenanceMode}
+              onCheckedChange={handleToggleMaintenance}
+              disabled={isTogglingMaintenance}
+            />
+          </div>
+          {maintenanceMode && (
+            <div className="px-4 py-3 rounded-xl text-sm font-mono bg-neon-yellow/10 border border-neon-yellow/20 text-neon-yellow">
+              {language({
+                id: "⚠️ Sistem sedang dalam mode pemeliharaan. Pengguna biasa tidak dapat mengakses.",
+                en: "⚠️ System is in maintenance mode. Regular users cannot access.",
+              })}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Developer Credit */}
       <div className="bg-dark-800/60 border border-dark-600/40 rounded-2xl p-6 space-y-3">

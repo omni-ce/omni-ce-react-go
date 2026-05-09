@@ -20,7 +20,7 @@ import ColorPickerSelector from "@/components/ui/ColorPickerSelector";
 import CountrySelector from "@/components/ui/CountrySelector";
 import IconSelector from "@/components/ui/IconSelector";
 import PhoneNumber from "@/components/ui/PhoneNumber";
-import type { CountryKey } from "@/types/language";
+import type { LanguageKey } from "@/types/world";
 import { spanMap, mdMap, lgMap, xlMap } from "@/responsive";
 import { formatFileSize } from "@/utils/format";
 import MapPicker, { type MapCoordinates } from "@/components/ui/MapPicker";
@@ -122,7 +122,7 @@ export type DynamicFormFieldNormal = {
   fileTemplate?: "profile" | "company" | "default";
   captchaSecurity?: CaptchaSecurity;
   captchaLength?: number;
-  phoneDefaultCountry?: CountryKey;
+  phoneDefaultCountry?: LanguageKey;
   phoneFirstAntiZero?: boolean;
   children?: DynamicFormField[];
   textMultiLanguage?: boolean;

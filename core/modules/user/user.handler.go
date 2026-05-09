@@ -580,7 +580,7 @@ func UpdateProfile(c *fiber.Ctx) error {
 
 	var body struct {
 		Name        string `json:"name"`
-		Email       string `json:"email"`
+		Username    string `json:"username"`
 		Avatar      string `json:"avatar"`
 		PhoneNumber string `json:"phone_number"`
 		Address     string `json:"address"`
@@ -596,9 +596,18 @@ func UpdateProfile(c *fiber.Ctx) error {
 		updates["name"] = name
 	}
 
-	email := strings.TrimSpace(body.Email)
-	if email != "" {
-		updates["email"] = email
+	username := strings.TrimSpace(body.Username)
+	if username != "" {
+		if username != existing.Username {
+			var check_user model.User
+			if err := variable.Db.
+				Where("username = ?", username).
+				First(&check_user).
+				Error; err == nil {
+				return dto.BadRequest(c, "Username already exists", nil)
+			}
+			updates["username"] = username
+		}
 	}
 
 	phoneNumber := strings.TrimSpace(body.PhoneNumber)

@@ -10,7 +10,7 @@ import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import { CustomerType, type Customer } from "@/types/loyalty";
 import { Badge } from "@/components/ui/Badge";
-import type { CountryKey } from "@/types/language";
+import type { LanguageKey } from "@/types/world";
 import { IconComponent } from "@/components/ui/IconSelector";
 import { cn } from "@/lib/utils";
 import type { Gender } from "@/types/option";
@@ -60,7 +60,7 @@ export default function CustomerPage({ ruleKey }: Props) {
         label: language({ id: "No. Telepon", en: "Phone" }),
         type: "phone",
         required: true,
-        phoneDefaultCountry: "id" as CountryKey,
+        phoneDefaultCountry: "id" as LanguageKey,
         phoneFirstAntiZero: true,
         minLength: 9,
         maxLength: 12,
