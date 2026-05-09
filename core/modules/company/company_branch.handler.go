@@ -73,7 +73,7 @@ func BranchCreate(c *fiber.Ctx) error {
 func BranchPaginate(c *fiber.Ctx) error {
 	branches := make([]model.CompanyBranch, 0)
 	pagination, err := function.Pagination(c, &model.CompanyBranch{}, func(db *gorm.DB) *gorm.DB {
-		return db.Preload("Entity")
+		return db.Preload("Entity").Preload("Pic")
 	}, []string{"name", "code", "address"}, &branches)
 	if err != nil {
 		return dto.InternalServerError(c, "Failed to prepare pagination", nil)
@@ -100,6 +100,7 @@ func BranchPaginate(c *fiber.Ctx) error {
 	for _, row := range branches {
 		branch := row.Map()
 		branch["entity_name"] = row.Entity.Name
+		branch["pic_name"] = row.Pic.Name
 		branch["full_address"] = addresses[row.AddressCode]
 		branch["map"] = fiber.Map{
 			"longitude": row.Longitude,

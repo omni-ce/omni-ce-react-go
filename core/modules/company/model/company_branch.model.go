@@ -40,7 +40,6 @@ func (s *CompanyBranch) Map() map[string]any {
 		"pic_id":       s.PicID,
 		"code":         s.Code,
 		"name":         s.Name,
-		"alias_code":   s.AliasCode,
 		"address":      s.Address,
 		"address_code": s.AddressCode,
 		"phone":        s.Phone,
