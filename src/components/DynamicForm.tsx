@@ -1247,26 +1247,38 @@ function DynamicMapField({
         >
           <div
             className={`shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
-              value
-                ? "bg-accent-500 text-white"
-                : "bg-dark-800 text-dark-400"
+              value ? "bg-accent-500 text-white" : "bg-dark-800 text-dark-400"
             }`}
           >
-            <IconComponent iconName="Hi/HiOutlineLocationMarker" className="w-5 h-5" />
+            <IconComponent
+              iconName="Hi/HiOutlineLocationMarker"
+              className="w-5 h-5"
+            />
           </div>
           <div className="flex flex-col min-w-0 flex-1">
-            <span className={`text-sm font-medium truncate ${value ? "text-accent-400" : "text-foreground"}`}>
+            <span
+              className={`text-sm font-medium truncate ${value ? "text-accent-400" : "text-foreground"}`}
+            >
               {value
                 ? `${value.latitude.toFixed(6)}, ${value.longitude.toFixed(6)}`
-                : language({ id: "Pilih Lokasi di Peta", en: "Pick Location on Map" })}
+                : language({
+                    id: "Pilih Lokasi di Peta",
+                    en: "Pick Location on Map",
+                  })}
             </span>
             {value && (
               <span className="text-xs text-dark-400 mt-0.5">
-                {language({ id: "Lokasi telah dipilih", en: "Location selected" })}
+                {language({
+                  id: "Lokasi telah dipilih",
+                  en: "Location selected",
+                })}
               </span>
             )}
           </div>
-          <IconComponent iconName="Hi/HiChevronRight" className="w-4 h-4 text-dark-400 shrink-0" />
+          <IconComponent
+            iconName="Hi/HiChevronRight"
+            className="w-4 h-4 text-dark-400 shrink-0"
+          />
         </div>
       </div>
       <MapPicker
@@ -1354,7 +1366,10 @@ function DynamicGeolocationField({
             }`}
           >
             {loading
-              ? language({ id: "Mengambil Lokasi...", en: "Getting Location..." })
+              ? language({
+                  id: "Mengambil Lokasi...",
+                  en: "Getting Location...",
+                })
               : value
                 ? `${value.latitude.toFixed(6)}, ${value.longitude.toFixed(6)}`
                 : language({
@@ -1572,14 +1587,39 @@ function DynamicFieldRenderer({
       ) : field.type === "map" ? (
         <DynamicMapField
           field={field as DynamicFormFieldNormal}
-          value={formData[field.key] as MapCoordinates | undefined}
+          value={(() => {
+            console.log("formData:", formData);
+            return (
+              (formData[field.key!] as MapCoordinates | undefined) ||
+              (formData["longitude"] !== undefined &&
+              formData["latitude"] !== undefined &&
+              formData["longitude"] !== null &&
+              formData["latitude"] !== null
+                ? {
+                    longitude: Number(formData["longitude"]),
+                    latitude: Number(formData["latitude"]),
+                  }
+                : undefined)
+            );
+          })()}
           onChange={(val) => onChange(field.key!, val)}
           disabled={disabled}
         />
       ) : field.type === "geolocation" ? (
         <DynamicGeolocationField
           field={field as DynamicFormFieldNormal}
-          value={formData[field.key] as MapCoordinates | undefined}
+          value={
+            (formData[field.key!] as MapCoordinates | undefined) ||
+            (formData["longitude"] !== undefined &&
+            formData["latitude"] !== undefined &&
+            formData["longitude"] !== null &&
+            formData["latitude"] !== null
+              ? {
+                  longitude: Number(formData["longitude"]),
+                  latitude: Number(formData["latitude"]),
+                }
+              : undefined)
+          }
           onChange={(val) => onChange(field.key!, val)}
           disabled={disabled}
         />
