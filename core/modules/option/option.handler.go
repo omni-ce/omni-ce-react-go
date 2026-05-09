@@ -10,6 +10,7 @@ import (
 	company "react-go/core/modules/company/model"
 	product "react-go/core/modules/product/model"
 	role "react-go/core/modules/role/model"
+	user "react-go/core/modules/user/model"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -118,6 +119,88 @@ func CompanyEntities(c *fiber.Ctx) error {
 	}
 
 	return dto.OK(c, "Get company entities success", rows)
+}
+
+func Users(c *fiber.Ctx) error {
+	users := make([]user.User, 0)
+	if err := variable.Db.
+		Model(&user.User{}).
+		Where("is_active = ?", true).
+		Find(&users).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to find users", nil)
+	}
+	userIds := make([]string, 0)
+	for _, u := range users {
+		userIds = append(userIds, u.ID.String())
+	}
+
+	roleUsers := make([]role.RoleUser, 0)
+	if err := variable.Db.
+		Model(&role.RoleUser{}).
+		Where("user_id IN (?)", userIds).
+		Find(&roleUsers).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to find role users", nil)
+	}
+	roleIds := make([]uint, 0)
+	for _, r := range roleUsers {
+		roleIds = append(roleIds, r.RoleID)
+	}
+	roleUserMap := make(map[string][]uint)
+	for _, r := range roleUsers {
+		user_id := r.UserID.String()
+		if _, ok := roleUserMap[user_id]; !ok {
+			roleUserMap[user_id] = make([]uint, 0)
+		}
+		roleUserMap[user_id] = append(roleUserMap[user_id], r.RoleID)
+	}
+
+	roles := make([]role.Role, 0)
+	if err := variable.Db.
+		Model(&role.Role{}).
+		Where("is_active = ? AND id IN (?)", true, roleIds).
+		Find(&roles).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to find roles", nil)
+	}
+	divisionIds := make([]uint, 0)
+	for _, r := range roles {
+		divisionIds = append(divisionIds, r.RoleDivisionID)
+	}
+
+	divisions := make([]role.RoleDivision, 0)
+	if err := variable.Db.
+		Model(&role.RoleDivision{}).
+		Where("is_active = ? AND id IN (?)", true, divisionIds).
+		Find(&divisions).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to find divisions", nil)
+	}
+
+	roleDivisions := make(map[uint]string)
+	for _, role := range roles {
+		var division string
+		for _, d := range divisions {
+			if d.ID == role.RoleDivisionID {
+				division = d.Name
+				break
+			}
+		}
+		roleDivisions[role.ID] = fmt.Sprintf("%s - %s", division, role.Name)
+	}
+
+	rows := make([]types.Option, 0)
+	for _, row := range users {
+		roleUsers := roleUserMap[row.ID.String()]
+		rows = append(rows, types.Option{
+			Label: row.Name,
+			Value: row.ID,
+			Array: roleUsers,
+		})
+	}
+
+	return dto.OK(c, "Get users success", rows)
 }
 
 func ProductCategories(c *fiber.Ctx) error {

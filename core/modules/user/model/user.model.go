@@ -3,6 +3,7 @@ package model
 import (
 	"log"
 	"react-go/core/function/hash"
+	"react-go/core/types"
 	"time"
 
 	"github.com/google/uuid"
@@ -44,6 +45,13 @@ func (s *User) Map() map[string]any {
 		"address":    s.Address,
 		"is_active":  s.IsActive,
 		"created_at": s.CreatedAt,
+	}
+}
+
+func (s *User) Option() types.Option {
+	return types.Option{
+		Label: s.Name,
+		Value: s.ID,
 	}
 }
 

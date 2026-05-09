@@ -30,6 +30,14 @@ export default function CompanyBranchPage({ ruleKey }: Props) {
         selectOptions: "company-entities",
       },
       {
+        key: "pic_id",
+        label: language({ id: "PIC", en: "PIC" }),
+        type: "select",
+        required: true,
+        selectOptions: "users",
+      },
+
+      {
         key: "code",
         label: language({ id: "Kode", en: "Code" }),
         type: "text",
@@ -38,13 +46,6 @@ export default function CompanyBranchPage({ ruleKey }: Props) {
       {
         key: "name",
         label: language({ id: "Nama", en: "Name" }),
-        type: "text",
-        required: true,
-      },
-
-      {
-        key: "alias",
-        label: language({ id: "Alias", en: "Alias" }),
         type: "text",
         required: true,
       },

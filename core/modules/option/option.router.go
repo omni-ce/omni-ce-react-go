@@ -10,6 +10,9 @@ func ProtectedRoute(api fiber.Router) {
 	api.Get("/roles", Roles)
 	api.Get("/roles/:id", RolesOnDivision)
 
+	// User
+	api.Get("/users", Users)
+
 	// Company
 	api.Get("/company-entities", CompanyEntities)
 
