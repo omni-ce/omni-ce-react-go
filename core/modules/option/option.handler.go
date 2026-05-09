@@ -262,6 +262,30 @@ func ProductCategories(c *fiber.Ctx) error {
 	return dto.OK(c, "Get product categories success", rows)
 }
 
+func ProductTypesByCategory(c *fiber.Ctx) error {
+	categoryID := c.Params("category_id")
+	if categoryID == "" {
+		return dto.BadRequest(c, "Category ID is required", nil)
+	}
+	_types := make([]product.ProductType, 0)
+	if err := variable.Db.
+		Model(&product.ProductType{}).
+		Where("category_id = ?", categoryID).
+		Find(&_types).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to find product types", nil)
+	}
+
+	rows := make([]types.Option, 0)
+	for _, row := range _types {
+		if row.IsActive {
+			rows = append(rows, row.Option())
+		}
+	}
+
+	return dto.OK(c, "Get product types success", rows)
+}
+
 func ProductBrands(c *fiber.Ctx) error {
 	brands := make([]product.ProductBrand, 0)
 	if err := variable.Db.

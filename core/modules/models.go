@@ -41,6 +41,7 @@ func Models() []interface{} {
 		// Custom
 		&master_data.MasterData{},
 		&company.CompanyEntity{},
+		&product.ProductType{},
 		&company.CompanyBranch{},
 		&product.ProductCategory{},
 		&product.ProductBrand{},

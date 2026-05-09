@@ -12,6 +12,7 @@ import CompanyBranchPage from "@/pages/app/company/CompanyBranchPage";
 
 // Products
 import ProductCategoryPage from "@/pages/app/product/ProductCategoryPage";
+import ProductTypePage from "@/pages/app/product/ProductTypePage";
 import ProductBrandPage from "@/pages/app/product/ProductBrandPage";
 import ProductVariantPage from "@/pages/app/product/ProductVariantPage";
 import ProductMemoryPage from "@/pages/app/product/ProductMemoryPage";
@@ -77,6 +78,13 @@ const sidebarLinks: ISidebarLink[] = [
         element: <ProductCategoryPage ruleKey="product/category" />,
         strict: true,
         icon: "Hi/HiOutlineTag",
+      },
+      {
+        label: { id: "Tipe", en: "Type" },
+        path: "type",
+        element: <ProductTypePage ruleKey="product/type" />,
+        strict: true,
+        icon: "Tb/TbCategoryPlus",
       },
       {
         label: { id: "Merek", en: "Brand" },

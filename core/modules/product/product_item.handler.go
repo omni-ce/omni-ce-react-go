@@ -22,6 +22,7 @@ func ItemCreate(c *fiber.Ctx) error {
 
 	var body struct {
 		CategoryID string `json:"category_id" validate:"required"`
+		TypeID     string `json:"type_id" validate:"required"`
 		BrandID    string `json:"brand_id" validate:"required"`
 		VariantID  string `json:"varian_id" validate:"required"`
 		MemoryID   string `json:"memory_id"`
@@ -35,10 +36,26 @@ func ItemCreate(c *fiber.Ctx) error {
 	}
 
 	// Convert IDs
-	categoryID, _ := strconv.Atoi(body.CategoryID)
-	brandID, _ := strconv.Atoi(body.BrandID)
-	variantID, _ := strconv.Atoi(body.VariantID)
-	colorID, _ := strconv.Atoi(body.ColorID)
+	categoryID, err := strconv.Atoi(body.CategoryID)
+	if err != nil {
+		return dto.BadRequest(c, "Invalid category ID", nil)
+	}
+	typeID, err := strconv.Atoi(body.TypeID)
+	if err != nil {
+		return dto.BadRequest(c, "Invalid type ID", nil)
+	}
+	brandID, err := strconv.Atoi(body.BrandID)
+	if err != nil {
+		return dto.BadRequest(c, "Invalid brand ID", nil)
+	}
+	variantID, err := strconv.Atoi(body.VariantID)
+	if err != nil {
+		return dto.BadRequest(c, "Invalid variant ID", nil)
+	}
+	colorID, err := strconv.Atoi(body.ColorID)
+	if err != nil {
+		return dto.BadRequest(c, "Invalid color ID", nil)
+	}
 
 	var memoryID *uint
 	if body.MemoryID != "" {
@@ -60,6 +77,7 @@ func ItemCreate(c *fiber.Ctx) error {
 
 	item := model.ProductItem{
 		CategoryID: uint(categoryID),
+		TypeID:     uint(typeID),
 		BrandID:    uint(brandID),
 		VariantID:  uint(variantID),
 		MemoryID:   memoryID,
@@ -85,11 +103,12 @@ func ItemPaginate(c *fiber.Ctx) error {
 	/*
 		http://localhost:3000/api/product/item/paginate
 		?page=1&limit=10
-		&search_fields=sku,category_name,brand_name,varian_name
-		&col_sku=a&col_category_name=b&col_brand_name=c&col_varian_name=d
+		&search_fields=sku,category_name,type_name,brand_name,varian_name
+		&col_sku=a&col_category_name=b&col_type_name=c&col_brand_name=d&col_varian_name=e
 	*/
 	col_sku := c.Query("col_sku")
 	col_category_name := c.Query("col_category_name")
+	col_type_name := c.Query("col_type_name")
 	col_brand_name := c.Query("col_brand_name")
 	col_varian_name := c.Query("col_varian_name")
 
@@ -98,6 +117,7 @@ func ItemPaginate(c *fiber.Ctx) error {
 	// Buat query dasar dengan Preload untuk data dan Joins untuk filter
 	query := variable.Db.Model(&model.ProductItem{}).
 		Preload("Category").
+		Preload("Type").
 		Preload("Brand").
 		Preload("Variant").
 		Preload("Memory").
@@ -115,6 +135,9 @@ func ItemPaginate(c *fiber.Ctx) error {
 	// Filter Kolom Join (Harus pakai Joins agar tabel tersedia untuk Where)
 	if col_category_name != "" {
 		query = query.Joins("Category").Where("LOWER(Category.name) LIKE ?", "%"+strings.ToLower(col_category_name)+"%")
+	}
+	if col_type_name != "" {
+		query = query.Joins("Type").Where("LOWER(Type.name) LIKE ?", "%"+strings.ToLower(col_type_name)+"%")
 	}
 	if col_brand_name != "" {
 		query = query.Joins("Brand").Where("LOWER(Brand.name) LIKE ?", "%"+strings.ToLower(col_brand_name)+"%")
@@ -135,6 +158,7 @@ func ItemPaginate(c *fiber.Ctx) error {
 		item := row.Map()
 		// Inject relationship names for FE display
 		item["category_name"] = row.Category.Name
+		item["type_name"] = row.Type.Name
 		item["brand_name"] = row.Brand.Name
 		item["varian_name"] = row.Variant.Name
 		if row.MemoryID != nil {
@@ -161,6 +185,7 @@ func ItemEdit(c *fiber.Ctx) error {
 
 	var body struct {
 		CategoryID string `json:"category_id" validate:"required"`
+		TypeID     string `json:"type_id" validate:"required"`
 		BrandID    string `json:"brand_id" validate:"required"`
 		VariantID  string `json:"varian_id" validate:"required"`
 		MemoryID   string `json:"memory_id"`
@@ -192,13 +217,30 @@ func ItemEdit(c *fiber.Ctx) error {
 	}
 
 	// Update fields
-	catID, _ := strconv.Atoi(body.CategoryID)
+	catID, err := strconv.Atoi(body.CategoryID)
+	if err != nil {
+		return dto.BadRequest(c, "Invalid category ID", nil)
+	}
 	existing.CategoryID = uint(catID)
-	brID, _ := strconv.Atoi(body.BrandID)
+	typeID, err := strconv.Atoi(body.TypeID)
+	if err != nil {
+		return dto.BadRequest(c, "Invalid type ID", nil)
+	}
+	existing.TypeID = uint(typeID)
+	brID, err := strconv.Atoi(body.BrandID)
+	if err != nil {
+		return dto.BadRequest(c, "Invalid brand ID", nil)
+	}
 	existing.BrandID = uint(brID)
-	varID, _ := strconv.Atoi(body.VariantID)
+	varID, err := strconv.Atoi(body.VariantID)
+	if err != nil {
+		return dto.BadRequest(c, "Invalid variant ID", nil)
+	}
 	existing.VariantID = uint(varID)
-	colID, _ := strconv.Atoi(body.ColorID)
+	colID, err := strconv.Atoi(body.ColorID)
+	if err != nil {
+		return dto.BadRequest(c, "Invalid color ID", nil)
+	}
 	existing.ColorID = uint(colID)
 
 	if body.MemoryID != "" {

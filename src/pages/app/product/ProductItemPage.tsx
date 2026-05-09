@@ -30,6 +30,14 @@ export default function ProductItemPage({ ruleKey }: Props) {
         selectOptions: "product-categories",
       },
       {
+        key: "type_id",
+        label: language({ id: "Tipe", en: "Type" }),
+        type: "select",
+        required: true,
+        ref: "category_id",
+        selectOptions: "product-types/{category_id}",
+      },
+      {
         key: "brand_id",
         label: language({ id: "Merek", en: "Brand" }),
         type: "select",
@@ -118,6 +126,23 @@ export default function ProductItemPage({ ruleKey }: Props) {
         },
       },
       {
+        key: "type_name",
+        header: language({ id: "Tipe", en: "Type" }),
+        search: true,
+        render: (item) => {
+          let name = item.type_name;
+          try {
+            if (name.startsWith("{")) {
+              const obj = JSON.parse(name);
+              name = language(obj);
+            }
+          } catch (e) {
+            // fallback to raw name
+          }
+          return <span className="font-medium">{name}</span>;
+        },
+      },
+      {
         key: "brand_name",
         header: language({ id: "Merek Varian", en: "Brand Variant" }),
         search: true,
@@ -185,12 +210,12 @@ export default function ProductItemPage({ ruleKey }: Props) {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="font-heading text-2xl font-bold text-foreground">
-            {language({ id: "Varian Produk", en: "Product Variants" })}
+            {language({ id: "Item Produk", en: "Product Item" })}
           </h1>
           <p className="mt-1 text-sm text-dark-400">
             {language({
-              id: "Kelola semua varian produk pada sistem",
-              en: "Manage all product variants in the system",
+              id: "Kelola semua item produk pada sistem",
+              en: "Manage all product items in the system",
             })}
           </p>
         </div>
@@ -198,7 +223,7 @@ export default function ProductItemPage({ ruleKey }: Props) {
 
       <Pagination
         ref={paginationRef}
-        title={language({ id: "Daftar Merek", en: "Brand List" })}
+        title={language({ id: "Daftar Item Produk", en: "Product Item List" })}
         columns={columns}
         module="product/item"
         fields={fields}

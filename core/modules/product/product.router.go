@@ -15,6 +15,14 @@ func ProtectedRoute(api fiber.Router) {
 	api.Post("/category/bulk-remove", CategoryBulkRemove)
 	api.Patch("/category/set-active/:id", CategorySetActive)
 
+	// Type
+	api.Post("/type/create", TypeCreate)
+	api.Get("/type/paginate", TypePaginate)
+	api.Put("/type/edit/:id", TypeEdit)
+	api.Delete("/type/remove/:id", TypeRemove)
+	api.Post("/type/bulk-remove", TypeBulkRemove)
+	api.Patch("/type/set-active/:id", TypeSetActive)
+
 	// Brand
 	api.Post("/brand/create", BrandCreate)
 	api.Get("/brand/paginate", BrandPaginate)

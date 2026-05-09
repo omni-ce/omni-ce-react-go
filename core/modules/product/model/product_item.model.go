@@ -10,6 +10,7 @@ import (
 type ProductItem struct {
 	ID         uint  `json:"id" gorm:"autoIncrement;primaryKey"`
 	CategoryID uint  `json:"category_id" gorm:"not null"`
+	TypeID     uint  `json:"type_id" gorm:"not null"`
 	BrandID    uint  `json:"brand_id" gorm:"not null"`
 	VariantID  uint  `json:"varian_id" gorm:"not null"`
 	MemoryID   *uint `json:"memory_id" gorm:"default:null"`
@@ -22,6 +23,7 @@ type ProductItem struct {
 
 	// relations
 	Category ProductCategory `json:"category" gorm:"foreignKey:CategoryID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Type     ProductType     `json:"type" gorm:"foreignKey:TypeID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Brand    ProductBrand    `json:"brand" gorm:"foreignKey:BrandID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Variant  ProductVariant  `json:"varian" gorm:"foreignKey:VariantID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Memory   ProductMemory   `json:"memory" gorm:"foreignKey:MemoryID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
