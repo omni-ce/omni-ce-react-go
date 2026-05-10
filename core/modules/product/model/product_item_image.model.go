@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type ProductItemImage struct {
@@ -20,6 +21,14 @@ type ProductItemImage struct {
 	// SLA: create & update by user
 	UploadedAt time.Time `json:"uploaded_at" gorm:"autoCreateTime"`
 	UploadedBy uuid.UUID `json:"uploaded_by" gorm:"not null"`
+}
+
+func (s *ProductItemImage) BeforeCreate(tx *gorm.DB) error {
+	if s.ID == uuid.Nil {
+		uuidV7, _ := uuid.NewV7()
+		s.ID = uuidV7
+	}
+	return nil
 }
 
 func (s *ProductItemImage) Map() map[string]any {

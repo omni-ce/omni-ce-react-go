@@ -48,7 +48,6 @@ export const ProductImage = ({
     try {
       const res = await satellite.post(`/api/product/item/image/set/${row.id}`, {
         url: formData.image as string,
-        is_primary: images.length === 0,
       });
       if (res.data.status === "OK") {
         await fetchImages();
