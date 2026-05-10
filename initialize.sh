@@ -40,11 +40,11 @@ while true; do
 done
 
 # Server
-read -p "Server Name? [ReactGO]              : " serverName
+read -p "Server Name? [ReactGO]            : " serverName
 
 # HTML
-read -p "HTML Title? [title | mini-detail]   : " htmlTitle
-read -p "HTML Description?                   : " htmlDescription
+read -p "HTML Title? [title | mini-detail] : " htmlTitle
+read -p "HTML Description?                 : " htmlDescription
 
 echo "Start Process ..."
 
