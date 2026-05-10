@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, type RefObject } from "react";
 import { useLanguageStore } from "@/stores/languageStore";
 import { IconComponent } from "@/components/ui/IconSelector";
 import {
@@ -46,6 +46,11 @@ const statusConfig: Record<
     color: "text-dark-400",
     bg: "bg-dark-800 border-dark-600/30",
   },
+  cancel: {
+    label: { id: "Dibatalkan", en: "Cancelled" },
+    color: "text-red-400",
+    bg: "bg-red-900/10 border-red-500/30",
+  },
 };
 
 const orderTypeConfig: {
@@ -61,6 +66,7 @@ const orderTypeConfig: {
     count: 12,
   },
   { key: "finish", label: { id: "Selesai", en: "Finish" }, count: 59 },
+  { key: "cancel", label: { id: "Batal", en: "Cancel" }, count: 59 },
 ];
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -109,6 +115,7 @@ export default function PosPage({ ruleKey }: Props) {
       ).length,
       payment: dummyOrders.filter((o) => o.status === "ready").length,
       finish: dummyOrders.filter((o) => o.status === "served").length,
+      cancel: dummyOrders.filter((o) => o.status === "cancel").length,
     }),
     [],
   );
@@ -173,7 +180,7 @@ export default function PosPage({ ruleKey }: Props) {
                       : "bg-dark-600 text-dark-300"
                   }`}
                 >
-                  {counts[type.key]}
+                  {counts[type.key as keyof typeof counts]}
                 </span>
               </button>
             ))}
@@ -235,13 +242,17 @@ export default function PosPage({ ruleKey }: Props) {
             </h2>
             <div className="flex gap-1">
               <button
-                onClick={() => scroll(orderScrollRef, "left")}
+                onClick={() =>
+                  scroll(orderScrollRef as RefObject<HTMLDivElement>, "left")
+                }
                 className="w-8 h-8 rounded-full bg-dark-800 border border-dark-600 flex items-center justify-center text-dark-400 hover:text-foreground hover:border-dark-500 transition-all"
               >
                 <IconComponent iconName="Hi/HiOutlineChevronLeft" size={14} />
               </button>
               <button
-                onClick={() => scroll(orderScrollRef, "right")}
+                onClick={() =>
+                  scroll(orderScrollRef as RefObject<HTMLDivElement>, "right")
+                }
                 className="w-8 h-8 rounded-full bg-dark-800 border border-dark-600/40 flex items-center justify-center text-dark-400 hover:text-dark-200 hover:border-dark-500 transition-all"
               >
                 <IconComponent iconName="Hi/HiOutlineChevronRight" size={14} />

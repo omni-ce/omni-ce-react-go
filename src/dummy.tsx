@@ -18,13 +18,6 @@ export const DAYS_30 = Array.from({ length: 30 }, (_, i) => String(i + 1));
 
 export const dummyOrders: OrderCard[] = [
   {
-    id: "F0027",
-    table: "03",
-    items: 8,
-    time: "2 mins ago",
-    status: "in_kitchen",
-  },
-  {
     id: "F0028",
     table: "07",
     items: 3,
@@ -36,7 +29,7 @@ export const dummyOrders: OrderCard[] = [
     table: "09",
     items: 2,
     time: "25 mins ago",
-    status: "ready",
+    status: "wait_list",
   },
   {
     id: "F0031",
@@ -44,13 +37,6 @@ export const dummyOrders: OrderCard[] = [
     items: 5,
     time: "10 mins ago",
     status: "served",
-  },
-  {
-    id: "F0032",
-    table: "01",
-    items: 4,
-    time: "15 mins ago",
-    status: "in_kitchen",
   },
   {
     id: "F0033",
@@ -74,13 +60,6 @@ export const dummyOrders: OrderCard[] = [
     status: "served",
   },
   {
-    id: "F0036",
-    table: "05",
-    items: 7,
-    time: "8 mins ago",
-    status: "in_kitchen",
-  },
-  {
     id: "F0037",
     table: "08",
     items: 1,
@@ -100,13 +79,6 @@ export const dummyOrders: OrderCard[] = [
     items: 5,
     time: "2 hours ago",
     status: "served",
-  },
-  {
-    id: "F0040",
-    table: "04",
-    items: 2,
-    time: "12 mins ago",
-    status: "in_kitchen",
   },
   {
     id: "F0041",
@@ -130,13 +102,6 @@ export const dummyOrders: OrderCard[] = [
     status: "served",
   },
   {
-    id: "F0044",
-    table: "10",
-    items: 4,
-    time: "6 mins ago",
-    status: "in_kitchen",
-  },
-  {
     id: "F0045",
     table: "22",
     items: 2,
@@ -156,13 +121,6 @@ export const dummyOrders: OrderCard[] = [
     items: 3,
     time: "1.5 hours ago",
     status: "served",
-  },
-  {
-    id: "F0048",
-    table: "17",
-    items: 5,
-    time: "14 mins ago",
-    status: "in_kitchen",
   },
   {
     id: "F0049",
@@ -186,13 +144,6 @@ export const dummyOrders: OrderCard[] = [
     status: "served",
   },
   {
-    id: "F0052",
-    table: "19",
-    items: 3,
-    time: "18 mins ago",
-    status: "in_kitchen",
-  },
-  {
     id: "F0053",
     table: "23",
     items: 4,
@@ -212,13 +163,6 @@ export const dummyOrders: OrderCard[] = [
     items: 5,
     time: "2.5 hours ago",
     status: "served",
-  },
-  {
-    id: "F0056",
-    table: "03",
-    items: 6,
-    time: "22 mins ago",
-    status: "in_kitchen",
   },
   {
     id: "F0057",
@@ -242,13 +186,6 @@ export const dummyOrders: OrderCard[] = [
     status: "served",
   },
   {
-    id: "F0060",
-    table: "11",
-    items: 7,
-    time: "28 mins ago",
-    status: "in_kitchen",
-  },
-  {
     id: "F0061",
     table: "14",
     items: 1,
@@ -268,13 +205,6 @@ export const dummyOrders: OrderCard[] = [
     items: 2,
     time: "5 hours ago",
     status: "served",
-  },
-  {
-    id: "F0064",
-    table: "16",
-    items: 3,
-    time: "32 mins ago",
-    status: "in_kitchen",
   },
   {
     id: "F0065",

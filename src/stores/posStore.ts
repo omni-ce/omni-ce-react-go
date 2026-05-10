@@ -1,7 +1,6 @@
 import { create } from "zustand";
 
-export type OrderStatus = "in_kitchen" | "wait_list" | "ready" | "served";
-export type OrderType = "all" | "wait_list" | "payment" | "finish";
+export type OrderStatus = "all" | "wait_list" | "payment" | "finish" | "cancel";
 export type PaymentMethod = "cash" | "card" | "scan";
 
 export interface OrderCard {
@@ -29,12 +28,12 @@ interface PosState {
   cart: CartItem[];
   paymentMethod: PaymentMethod;
   isPanelOpen: boolean;
-  activeOrderType: OrderType;
+  activeOrderType: OrderStatus;
   activeCategory: string;
 
   setPanelOpen: (open: boolean) => void;
   setPaymentMethod: (method: PaymentMethod) => void;
-  setActiveOrderType: (type: OrderType) => void;
+  setActiveOrderType: (type: OrderStatus) => void;
   setActiveCategory: (category: string) => void;
   addToCart: (item: MenuItem) => void;
   removeFromCart: (itemId: number) => void;
