@@ -9,169 +9,7 @@ import {
   type MenuItem,
 } from "@/stores/posStore";
 import { cn } from "@/lib/utils";
-
-// ─── Types ───────────────────────────────────────────────────────────────────
-
-interface OrderCard {
-  id: string;
-  table: string;
-  items: number;
-  time: string;
-  status: OrderStatus;
-}
-
-// ─── Dummy Data ──────────────────────────────────────────────────────────────
-
-const dummyOrders: OrderCard[] = [
-  {
-    id: "F0027",
-    table: "03",
-    items: 8,
-    time: "2 mins ago",
-    status: "in_kitchen",
-  },
-  {
-    id: "F0028",
-    table: "07",
-    items: 3,
-    time: "Just Now",
-    status: "wait_list",
-  },
-  {
-    id: "F0019",
-    table: "09",
-    items: 2,
-    time: "25 mins ago",
-    status: "ready",
-  },
-  {
-    id: "F0031",
-    table: "12",
-    items: 5,
-    time: "10 mins ago",
-    status: "served",
-  },
-];
-
-const categories = [
-  {
-    key: "all",
-    label: { id: "Semua Menu", en: "All Menu" },
-    emoji: "🍽️",
-    count: 154,
-  },
-  {
-    key: "special",
-    label: { id: "Spesial", en: "Special" },
-    emoji: "⭐",
-    count: 19,
-  },
-  {
-    key: "soups",
-    label: { id: "Sup", en: "Soups" },
-    emoji: "🍜",
-    count: 3,
-  },
-  {
-    key: "desserts",
-    label: { id: "Dessert", en: "Desserts" },
-    emoji: "🍰",
-    count: 19,
-  },
-  {
-    key: "chickens",
-    label: { id: "Ayam", en: "Chickens" },
-    emoji: "🍗",
-    count: 10,
-  },
-  {
-    key: "rice",
-    label: { id: "Nasi", en: "Rice" },
-    emoji: "🍚",
-    count: 12,
-  },
-  {
-    key: "pasta",
-    label: { id: "Pasta", en: "Pasta" },
-    emoji: "🍝",
-    count: 8,
-  },
-];
-
-const dummyMenuItems: MenuItem[] = [
-  {
-    id: 1,
-    name: "Grilled Salmon Steak",
-    category: "special",
-    price: 150000.0,
-    emoji: "🐟",
-  },
-  {
-    id: 2,
-    name: "Tofu Poke Bowl",
-    category: "special",
-    price: 75000.0,
-    emoji: "🥗",
-  },
-  {
-    id: 3,
-    name: "Pasta with Roast Beef",
-    category: "pasta",
-    price: 105000.0,
-    emoji: "🍝",
-  },
-  {
-    id: 4,
-    name: "Beef Steak",
-    category: "special",
-    price: 250000.0,
-    emoji: "🥩",
-  },
-  {
-    id: 5,
-    name: "Shrimp Rice Bowl",
-    category: "rice",
-    price: 65000.0,
-    emoji: "🍤",
-  },
-  {
-    id: 6,
-    name: "Apple Stuffed Pancake",
-    category: "desserts",
-    price: 45000.0,
-    emoji: "🥞",
-  },
-  {
-    id: 7,
-    name: "Chicken Quinoa & Herbs",
-    category: "chickens",
-    price: 85000.0,
-    emoji: "🍗",
-  },
-  {
-    id: 8,
-    name: "Vegetable Shrimp",
-    category: "special",
-    price: 95000.0,
-    emoji: "🦐",
-  },
-  { id: 9, name: "Tom Yum Soup", category: "soups", price: 60000.0, emoji: "🍜" },
-  { id: 10, name: "Miso Ramen", category: "soups", price: 75000.0, emoji: "🍜" },
-  {
-    id: 11,
-    name: "Chocolate Lava Cake",
-    category: "desserts",
-    price: 55000.0,
-    emoji: "🍫",
-  },
-  {
-    id: 12,
-    name: "Fried Chicken Wings",
-    category: "chickens",
-    price: 45000.0,
-    emoji: "🍗",
-  },
-];
+import { categories, dummyMenuItems, dummyOrders } from "@/dummy";
 
 // ─── Helper ──────────────────────────────────────────────────────────────────
 
@@ -216,10 +54,13 @@ const orderTypeConfig: {
   count: number;
 }[] = [
   { key: "all", label: { id: "Semua", en: "All" }, count: 78 },
-  { key: "dine_in", label: { id: "Dine In", en: "Dine In" }, count: 4 },
   { key: "wait_list", label: { id: "Menunggu", en: "Wait List" }, count: 3 },
-  { key: "take_away", label: { id: "Bawa Pulang", en: "Take Away" }, count: 12 },
-  { key: "served", label: { id: "Disajikan", en: "Served" }, count: 59 },
+  {
+    key: "payment",
+    label: { id: "Pembayaran", en: "Payment" },
+    count: 12,
+  },
+  { key: "finish", label: { id: "Selesai", en: "Finish" }, count: 59 },
 ];
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -258,8 +99,6 @@ export default function PosPage({ ruleKey }: Props) {
   const tax = subtotal * 0.11; // 11% PPN
   const donation = 1000.0;
   const totalPayable = subtotal + tax + donation;
-
-
 
   return (
     <div className="flex gap-6 h-[calc(100vh-80px)] overflow-hidden -m-6">
@@ -316,10 +155,15 @@ export default function PosPage({ ruleKey }: Props) {
                   </span>
                 </div>
                 <div className="text-xs text-dark-300">
-                  {language({ id: "Item", en: "Item" })}: <span className="font-bold text-foreground">{order.items}X</span>
+                  {language({ id: "Item", en: "Item" })}:{" "}
+                  <span className="font-bold text-foreground">
+                    {order.items}X
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-dark-400">{order.time}</span>
+                  <span className="text-[10px] text-dark-400">
+                    {order.time}
+                  </span>
                   <span
                     className={`text-[10px] font-bold px-2.5 py-1 rounded-full ${status.color} ${status.bg}`}
                   >
@@ -522,9 +366,7 @@ export default function PosPage({ ruleKey }: Props) {
             <div className="space-y-2">
               <div className="flex justify-between text-xs">
                 <span className="text-dark-300">Subtotal</span>
-                <span className="text-dark-200">
-                  {formatRupiah(subtotal)}
-                </span>
+                <span className="text-dark-200">{formatRupiah(subtotal)}</span>
               </div>
               <div className="flex justify-between text-xs">
                 <span className="text-dark-300">
@@ -536,9 +378,7 @@ export default function PosPage({ ruleKey }: Props) {
                 <span className="text-dark-300">
                   {language({ id: "Donasi", en: "Donation" })}
                 </span>
-                <span className="text-dark-200">
-                  {formatRupiah(donation)}
-                </span>
+                <span className="text-dark-200">{formatRupiah(donation)}</span>
               </div>
             </div>
           </div>

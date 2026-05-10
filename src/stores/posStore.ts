@@ -1,8 +1,16 @@
 import { create } from "zustand";
 
 export type OrderStatus = "in_kitchen" | "wait_list" | "ready" | "served";
-export type OrderType = "all" | "dine_in" | "wait_list" | "take_away" | "served";
+export type OrderType = "all" | "wait_list" | "payment" | "finish";
 export type PaymentMethod = "cash" | "card" | "scan";
+
+export interface OrderCard {
+  id: string;
+  table: string;
+  items: number;
+  time: string;
+  status: OrderStatus;
+}
 
 export interface MenuItem {
   id: number;
