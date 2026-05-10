@@ -103,77 +103,86 @@ const dummyMenuItems: MenuItem[] = [
     id: 1,
     name: "Grilled Salmon Steak",
     category: "special",
-    price: 15.0,
+    price: 150000.0,
     emoji: "🐟",
   },
   {
     id: 2,
     name: "Tofu Poke Bowl",
     category: "special",
-    price: 7.0,
+    price: 75000.0,
     emoji: "🥗",
   },
   {
     id: 3,
     name: "Pasta with Roast Beef",
     category: "pasta",
-    price: 10.0,
+    price: 105000.0,
     emoji: "🍝",
   },
   {
     id: 4,
     name: "Beef Steak",
     category: "special",
-    price: 30.0,
+    price: 250000.0,
     emoji: "🥩",
   },
   {
     id: 5,
     name: "Shrimp Rice Bowl",
     category: "rice",
-    price: 6.0,
+    price: 65000.0,
     emoji: "🍤",
   },
   {
     id: 6,
     name: "Apple Stuffed Pancake",
     category: "desserts",
-    price: 35.0,
+    price: 45000.0,
     emoji: "🥞",
   },
   {
     id: 7,
     name: "Chicken Quinoa & Herbs",
     category: "chickens",
-    price: 12.0,
+    price: 85000.0,
     emoji: "🍗",
   },
   {
     id: 8,
     name: "Vegetable Shrimp",
     category: "special",
-    price: 10.0,
+    price: 95000.0,
     emoji: "🦐",
   },
-  { id: 9, name: "Tom Yum Soup", category: "soups", price: 8.0, emoji: "🍜" },
-  { id: 10, name: "Miso Ramen", category: "soups", price: 9.5, emoji: "🍜" },
+  { id: 9, name: "Tom Yum Soup", category: "soups", price: 60000.0, emoji: "🍜" },
+  { id: 10, name: "Miso Ramen", category: "soups", price: 75000.0, emoji: "🍜" },
   {
     id: 11,
     name: "Chocolate Lava Cake",
     category: "desserts",
-    price: 14.0,
+    price: 55000.0,
     emoji: "🍫",
   },
   {
     id: 12,
     name: "Fried Chicken Wings",
     category: "chickens",
-    price: 11.0,
+    price: 45000.0,
     emoji: "🍗",
   },
 ];
 
 // ─── Helper ──────────────────────────────────────────────────────────────────
+
+const formatRupiah = (amount: number) => {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount);
+};
 
 const statusConfig: Record<
   OrderStatus,
@@ -246,9 +255,10 @@ export default function PosPage({ ruleKey }: Props) {
   };
 
   const subtotal = cart.reduce((sum, c) => sum + c.menuItem.price * c.qty, 0);
-  const tax = subtotal * 0.06;
-  const donation = 1.0;
+  const tax = subtotal * 0.11; // 11% PPN
+  const donation = 1000.0;
   const totalPayable = subtotal + tax + donation;
+
 
 
   return (
@@ -400,19 +410,19 @@ export default function PosPage({ ruleKey }: Props) {
                 {/* Price + Controls */}
                 <div className="flex items-center justify-between mt-3">
                   <span className="text-sm font-bold text-accent-400">
-                    ${item.price.toFixed(2)}
+                    {formatRupiah(item.price)}
                   </span>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         removeFromCart(item.id);
                       }}
-                      className="w-6 h-6 rounded-full bg-dark-600/60 text-dark-300 flex items-center justify-center hover:bg-dark-500 hover:text-foreground transition-all text-xs font-bold"
+                      className="w-9 h-9 rounded-full bg-dark-600/60 text-dark-300 flex items-center justify-center hover:bg-dark-500 hover:text-foreground transition-all text-sm font-bold"
                     >
                       −
                     </button>
-                    <span className="text-xs font-bold text-foreground w-4 text-center">
+                    <span className="text-sm font-bold text-foreground w-4 text-center">
                       {qty}
                     </span>
                     <button
@@ -420,7 +430,7 @@ export default function PosPage({ ruleKey }: Props) {
                         e.stopPropagation();
                         addToCart(item);
                       }}
-                      className="w-6 h-6 rounded-full bg-accent-500 text-white flex items-center justify-center hover:bg-accent-600 transition-all text-xs font-bold shadow-md shadow-accent-500/30"
+                      className="w-9 h-9 rounded-full bg-accent-500 text-white flex items-center justify-center hover:bg-accent-600 transition-all text-sm font-bold shadow-md shadow-accent-500/30"
                     >
                       +
                     </button>
@@ -498,7 +508,7 @@ export default function PosPage({ ruleKey }: Props) {
                   </span>
                 </div>
                 <span className="text-sm font-bold text-foreground">
-                  ${(cartItem.menuItem.price * cartItem.qty).toFixed(2)}
+                  {formatRupiah(cartItem.menuItem.price * cartItem.qty)}
                 </span>
               </div>
             ))}
@@ -512,19 +522,23 @@ export default function PosPage({ ruleKey }: Props) {
             <div className="space-y-2">
               <div className="flex justify-between text-xs">
                 <span className="text-dark-300">Subtotal</span>
-                <span className="text-dark-200">${subtotal.toFixed(2)}</span>
+                <span className="text-dark-200">
+                  {formatRupiah(subtotal)}
+                </span>
               </div>
               <div className="flex justify-between text-xs">
                 <span className="text-dark-300">
                   {language({ id: "Pajak", en: "Tax" })}
                 </span>
-                <span className="text-dark-200">${tax.toFixed(2)}</span>
+                <span className="text-dark-200">{formatRupiah(tax)}</span>
               </div>
               <div className="flex justify-between text-xs">
                 <span className="text-dark-300">
                   {language({ id: "Donasi", en: "Donation" })}
                 </span>
-                <span className="text-dark-200">${donation.toFixed(2)}</span>
+                <span className="text-dark-200">
+                  {formatRupiah(donation)}
+                </span>
               </div>
             </div>
           </div>
@@ -536,7 +550,7 @@ export default function PosPage({ ruleKey }: Props) {
                 {language({ id: "Total Bayar", en: "Total Payable" })}
               </span>
               <span className="text-lg font-bold text-accent-400">
-                ${totalPayable.toFixed(2)}
+                {formatRupiah(totalPayable)}
               </span>
             </div>
           </div>
