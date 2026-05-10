@@ -23,6 +23,9 @@ import ProductItemPage from "@/pages/app/product/ProductItemPage";
 import WarehouseLocationPage from "@/pages/app/warehouse/WarehouseLocationPage";
 import WarehouseProductPage from "@/pages/app/warehouse/WarehouseProductPage";
 
+// Pos
+import PosPage from "@/pages/app/pos/PosPage";
+
 // Marketing
 import MarketingCustomerPage from "@/pages/app/marketing/MarketingCustomerPage";
 
@@ -148,6 +151,14 @@ const sidebarLinks: ISidebarLink[] = [
         icon: "Hi/HiCube",
       },
     ],
+  },
+
+  {
+    label: { id: "POS", en: "POS" },
+    path: "pos",
+    element: <PosPage ruleKey="pos" />,
+    strict: true,
+    icon: "Md/MdPointOfSale",
   },
 
   {
