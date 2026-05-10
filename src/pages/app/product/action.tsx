@@ -53,23 +53,24 @@ export const ProductImage = ({
           </span>
         </div>
 
-        <div className="grid grid-cols-3 gap-4 overflow-y-auto pr-2 custom-scrollbar max-h-100">
+        <div className="grid grid-cols-2 gap-4 overflow-y-auto pr-2 custom-scrollbar max-h-120">
           {images.map((img) => (
             <div
               key={img.id}
-              className="group relative aspect-square rounded-2xl border border-dark-600/40 bg-dark-900 overflow-hidden shadow-sm hover:border-accent-500/50 transition-all duration-300"
+              className="group relative h-44 rounded-2xl border border-dark-600 bg-dark-900 overflow-hidden hover:border-accent-500/50 transition-all duration-300 shrink-0"
             >
               <img
                 src={img.url}
                 alt="Product"
-                className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
+                className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
+              {/* Delete Button - Corner Positioned */}
+              <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-200">
                 <button
-                  className="w-9 h-9 rounded-full bg-neon-red text-white flex items-center justify-center hover:bg-neon-red/80 transition-all shadow-lg transform translate-y-4 group-hover:translate-y-0 duration-300"
+                  className="w-8 h-8 rounded-xl bg-dark-900/90 backdrop-blur-md text-white flex items-center justify-center hover:bg-neon-red hover:scale-110 transition-all shadow-xl border border-white/10"
                   title="Delete image"
                 >
-                  <IconComponent iconName="Hi/HiOutlineTrash" size={18} />
+                  <IconComponent iconName="Hi/HiOutlineTrash" size={16} />
                 </button>
               </div>
             </div>
