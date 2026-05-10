@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "react-router";
 
 import { IconComponent } from "@/components/ui/IconSelector";
@@ -24,12 +24,13 @@ const sections: DocSection[] = [
     id: "introduction",
     label: "Introduction",
     content: <Introduction />,
+    icon: "Ri/RiInformationLine",
   },
   {
     id: "getting-started",
     label: "Getting Started",
     icon: "Ri/RiRocketLine",
-    items: [
+    section: [
       {
         id: "quick-start",
         label: "Quick Start",
@@ -41,7 +42,7 @@ const sections: DocSection[] = [
     id: "structure",
     label: "Project Structure",
     icon: "Ri/RiStackLine",
-    items: [
+    section: [
       {
         id: "folder-structure",
         label: "Folder Structure",
@@ -58,7 +59,7 @@ const sections: DocSection[] = [
     id: "customization",
     label: "Customization",
     icon: "Ri/RiSettings3Line",
-    items: [
+    section: [
       {
         id: "theming",
         label: "Theming",
@@ -76,17 +77,98 @@ const sections: DocSection[] = [
 // ─── Main page ───────────────────────────────────────────────────────────────
 
 export default function DocPage() {
-  const [activeSection, setActiveSection] = useState("getting-started");
-  const [activeItem, setActiveItem] = useState("introduction");
+  const [activeId, setActiveId] = useState("introduction");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [expandedSections, setExpandedSections] = useState<string[]>([
+    "getting-started",
+    "structure",
+    "customization",
+  ]);
 
-  const currentSection = sections.find((s) => s.id === activeSection);
-  const currentItem = currentSection?.items.find((i) => i.id === activeItem);
+  // Flatten sections to find current, prev, and next items
+  const flatItems = useMemo(() => {
+    const flattened: DocSection[] = [];
+    const traverse = (items: DocSection[]) => {
+      items.forEach((item) => {
+        if (item.content) {
+          flattened.push(item);
+        }
+        if (item.section) {
+          traverse(item.section);
+        }
+      });
+    };
+    traverse(sections);
+    return flattened;
+  }, []);
 
-  const handleNav = (sectionId: string, itemId: string) => {
-    setActiveSection(sectionId);
-    setActiveItem(itemId);
+  const currentIndex = flatItems.findIndex((item) => item.id === activeId);
+  const currentItem = flatItems[currentIndex];
+  const prevItem = currentIndex > 0 ? flatItems[currentIndex - 1] : null;
+  const nextItem =
+    currentIndex < flatItems.length - 1 ? flatItems[currentIndex + 1] : null;
+
+  const toggleSection = (id: string) => {
+    setExpandedSections((prev) =>
+      prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id],
+    );
+  };
+
+  const handleNav = (id: string) => {
+    setActiveId(id);
     setSidebarOpen(false);
+  };
+
+  const renderNavItems = (items: DocSection[], level = 0) => {
+    return items.map((item) => {
+      const isExpanded = expandedSections.includes(item.id);
+      const isActive = activeId === item.id;
+      const hasChildren = item.section && item.section.length > 0;
+
+      return (
+        <div key={item.id} className="space-y-0.5">
+          <button
+            onClick={() => {
+              if (hasChildren) {
+                toggleSection(item.id);
+              }
+              if (item.content) {
+                handleNav(item.id);
+              }
+            }}
+            className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-all ${
+              isActive
+                ? "text-accent-400 bg-accent-500/10 font-semibold"
+                : "text-dark-300 hover:text-foreground hover:bg-dark-700/50"
+            }`}
+            style={{ paddingLeft: `${level * 12 + 12}px` }}
+          >
+            {item.icon && (
+              <IconComponent iconName={item.icon} className="w-4 h-4 shrink-0" />
+            )}
+            {!item.icon && level > 0 && (
+              <div className="w-4 h-4 shrink-0 flex items-center justify-center">
+                <div
+                  className={`w-1 h-1 rounded-full ${isActive ? "bg-accent-400" : "bg-dark-500"}`}
+                />
+              </div>
+            )}
+            <span className="flex-1 text-left truncate">{item.label}</span>
+            {hasChildren && (
+              <IconComponent
+                iconName="Ri/RiArrowRightSLine"
+                className={`w-3.5 h-3.5 transition-transform ${isExpanded ? "rotate-90" : ""}`}
+              />
+            )}
+          </button>
+          {hasChildren && isExpanded && (
+            <div className="space-y-0.5">
+              {renderNavItems(item.section!, level + 1)}
+            </div>
+          )}
+        </div>
+      );
+    });
   };
 
   return (
@@ -109,7 +191,7 @@ export default function DocPage() {
         className={`
           fixed top-0 left-0 h-screen z-50 w-72 bg-dark-800 border-r border-dark-600/50 flex flex-col overflow-y-auto
           transition-transform duration-300
-          lg:relative lg:translate-x-0 lg:flex
+          lg:sticky lg:top-0 lg:translate-x-0 lg:flex
           ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
         `}
       >
@@ -135,48 +217,7 @@ export default function DocPage() {
 
         {/* Nav */}
         <nav className="flex-1 py-4 px-3 space-y-1">
-          {sections.map((section) => {
-            const isExpanded = activeSection === section.id;
-            return (
-              <div key={section.id}>
-                <button
-                  onClick={() => handleNav(section.id, section.items[0].id)}
-                  className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                    isExpanded
-                      ? "text-accent-400 bg-accent-500/10"
-                      : "text-dark-300 hover:text-foreground hover:bg-dark-700/50"
-                  }`}
-                >
-                  <IconComponent
-                    iconName={section.icon}
-                    className="w-4 h-4 shrink-0"
-                  />
-                  <span className="flex-1 text-left">{section.label}</span>
-                  <IconComponent
-                    iconName="Ri/RiArrowRightSLine"
-                    className={`w-3.5 h-3.5 transition-transform ${isExpanded ? "rotate-90" : ""}`}
-                  />
-                </button>
-                {isExpanded && section.items.length > 1 && (
-                  <div className="ml-6 mt-1 space-y-0.5">
-                    {section.items.map((item) => (
-                      <button
-                        key={item.id}
-                        onClick={() => handleNav(section.id, item.id)}
-                        className={`w-full text-left px-3 py-1.5 rounded-lg text-xs transition-all ${
-                          activeItem === item.id
-                            ? "text-accent-400 bg-accent-500/10 font-semibold"
-                            : "text-dark-400 hover:text-foreground"
-                        }`}
-                      >
-                        {item.title}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            );
-          })}
+          {renderNavItems(sections)}
         </nav>
 
         {/* Footer */}
@@ -203,16 +244,10 @@ export default function DocPage() {
           {/* Breadcrumb */}
           <div className="flex items-center gap-1.5 text-sm font-mono text-dark-400">
             <span className="text-accent-400">Docs</span>
-            {currentSection && (
+            {currentItem && (
               <>
                 <span>/</span>
-                <span className="text-dark-300">{currentSection.label}</span>
-              </>
-            )}
-            {currentItem && currentItem.title !== currentSection?.label && (
-              <>
-                <span>/</span>
-                <span className="text-foreground">{currentItem.title}</span>
+                <span className="text-foreground">{currentItem.label}</span>
               </>
             )}
           </div>
@@ -223,10 +258,49 @@ export default function DocPage() {
           {currentItem ? (
             <>
               <h1 className="text-2xl font-bold text-foreground mb-2">
-                {currentItem.title}
+                {currentItem.label}
               </h1>
               <div className="w-12 h-1 bg-accent-500 rounded-full mb-8" />
-              <div className="doc-content">{currentItem.content}</div>
+              <div className="doc-content mb-12">{currentItem.content}</div>
+
+              {/* Next / Back Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 pt-8 border-t border-dark-600/50 mt-12">
+                {prevItem && (
+                  <button
+                    onClick={() => handleNav(prevItem.id)}
+                    className="flex-1 group flex flex-col items-start gap-2 p-4 rounded-xl border border-dark-600/50 bg-dark-800/40 hover:bg-dark-700/50 hover:border-accent-500/30 transition-all text-left"
+                  >
+                    <span className="text-[10px] uppercase tracking-widest text-dark-400 group-hover:text-accent-400 transition-colors">
+                      Previous
+                    </span>
+                    <span className="text-sm font-bold text-foreground group-hover:text-accent-400 transition-colors flex items-center gap-2">
+                      <IconComponent
+                        iconName="Ri/RiArrowLeftSLine"
+                        className="w-4 h-4"
+                      />
+                      {prevItem.label}
+                    </span>
+                  </button>
+                )}
+                {!prevItem && <div className="flex-1" />}
+                {nextItem && (
+                  <button
+                    onClick={() => handleNav(nextItem.id)}
+                    className="flex-1 group flex flex-col items-end gap-2 p-4 rounded-xl border border-dark-600/50 bg-dark-800/40 hover:bg-dark-700/50 hover:border-accent-500/30 transition-all text-right"
+                  >
+                    <span className="text-[10px] uppercase tracking-widest text-dark-400 group-hover:text-accent-400 transition-colors">
+                      Next
+                    </span>
+                    <span className="text-sm font-bold text-foreground group-hover:text-accent-400 transition-colors flex items-center gap-2">
+                      {nextItem.label}
+                      <IconComponent
+                        iconName="Ri/RiArrowRightSLine"
+                        className="w-4 h-4"
+                      />
+                    </span>
+                  </button>
+                )}
+              </div>
             </>
           ) : (
             <p className="text-dark-400">Select a topic from the sidebar.</p>
