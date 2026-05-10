@@ -127,7 +127,7 @@ export function SearchableSelect({
               ? selectedOption.label
               : placeholder}
         </span>
-        {value && !disabled && !loading ? (
+        {value && value !== "all" && !disabled && !loading ? (
           <div className="flex items-center gap-1">
             <IconComponent
               iconName="Hi/HiX"
