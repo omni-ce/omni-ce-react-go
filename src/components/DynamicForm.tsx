@@ -706,7 +706,12 @@ function DynamicFile({
         <div
           role="button"
           tabIndex={0}
-          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (!loading && !disabled) fileInputRef.current?.click(); } }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              if (!loading && !disabled) fileInputRef.current?.click();
+            }
+          }}
           onClick={() => !loading && !disabled && fileInputRef.current?.click()}
           className={`
             group flex items-center gap-3 px-4 py-2.5 rounded-xl border border-dashed transition-all cursor-pointer
@@ -1280,7 +1285,12 @@ function DynamicMapField({
         <div
           role="button"
           tabIndex={0}
-          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (!disabled) setIsOpen(true); } }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              if (!disabled) setIsOpen(true);
+            }
+          }}
           onClick={() => !disabled && setIsOpen(true)}
           className={`
             flex items-center gap-3 px-4 py-3 rounded-xl border transition-all cursor-pointer
@@ -1380,7 +1390,12 @@ function DynamicGeolocationField({
       <div
         role="button"
         tabIndex={0}
-        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (!disabled && !loading) handleGetLocation(); } }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            if (!disabled && !loading) handleGetLocation();
+          }
+        }}
         onClick={() => !disabled && !loading && handleGetLocation()}
         className={`
           flex items-center gap-3 px-4 py-3 rounded-xl border transition-all cursor-pointer

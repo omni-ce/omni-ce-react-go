@@ -55,10 +55,20 @@ export default function UserPage({ ruleKey }: Props) {
         maxLength: 255,
       },
       {
+        key: "password",
+        label: language({ id: "Password", en: "Password" }),
+        type: "password",
+        only: "create",
+        required: true,
+        minLength: 8,
+      },
+
+      // Optional
+      {
         key: "email",
         label: language({ id: "Email", en: "Email" }),
         type: "email",
-        required: true,
+        // required: true,
       },
       {
         key: "phone",
@@ -66,14 +76,6 @@ export default function UserPage({ ruleKey }: Props) {
         type: "phone",
         phoneDefaultCountry: LanguageKey.ID,
         phoneFirstAntiZero: true,
-      },
-      {
-        key: "password",
-        label: language({ id: "Password", en: "Password" }),
-        type: "password",
-        only: "create",
-        required: true,
-        minLength: 8,
       },
 
       {
