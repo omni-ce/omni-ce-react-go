@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { useLanguageStore } from "@/stores/languageStore";
 import { IconComponent } from "@/components/ui/IconSelector";
 import {
@@ -85,6 +85,47 @@ export default function PosPage({ ruleKey }: Props) {
     removeFromCart,
   } = usePosStore();
 
+  const orderScrollRef = useRef<HTMLDivElement>(null);
+  const categoryScrollRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (
+    ref: React.RefObject<HTMLDivElement>,
+    direction: "left" | "right",
+  ) => {
+    if (ref.current) {
+      const scrollAmount = 400;
+      ref.current.scrollBy({
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  const counts = useMemo(
+    () => ({
+      all: dummyOrders.length,
+      wait_list: dummyOrders.filter(
+        (o) => o.status === "wait_list" || o.status === "in_kitchen",
+      ).length,
+      payment: dummyOrders.filter((o) => o.status === "ready").length,
+      finish: dummyOrders.filter((o) => o.status === "served").length,
+    }),
+    [],
+  );
+
+  const filteredOrders = useMemo(() => {
+    if (activeOrderType === "all") return dummyOrders;
+    if (activeOrderType === "wait_list")
+      return dummyOrders.filter(
+        (o) => o.status === "wait_list" || o.status === "in_kitchen",
+      );
+    if (activeOrderType === "payment")
+      return dummyOrders.filter((o) => o.status === "ready");
+    if (activeOrderType === "finish")
+      return dummyOrders.filter((o) => o.status === "served");
+    return dummyOrders;
+  }, [activeOrderType]);
+
   const filteredMenu = useMemo(() => {
     if (activeCategory === "all") return dummyMenuItems;
     return dummyMenuItems.filter((item) => item.category === activeCategory);
@@ -106,9 +147,11 @@ export default function PosPage({ ruleKey }: Props) {
       <div className="flex-1 overflow-y-auto p-6 space-y-6">
         {/* Order Line Header */}
         <div>
-          <h1 className="text-xl font-bold text-foreground tracking-tight">
-            {language({ id: "Antrian Pesanan", en: "Order Line" })}
-          </h1>
+          <div className="flex items-center justify-between mb-4">
+            <h1 className="text-xl font-bold text-foreground tracking-tight">
+              {language({ id: "Antrian Pesanan", en: "Order Line" })}
+            </h1>
+          </div>
 
           {/* Order Type Tabs */}
           <div className="flex items-center gap-2 mt-4 flex-wrap">
@@ -130,7 +173,7 @@ export default function PosPage({ ruleKey }: Props) {
                       : "bg-dark-600 text-dark-300"
                   }`}
                 >
-                  {type.count}
+                  {counts[type.key]}
                 </span>
               </button>
             ))}
@@ -138,8 +181,11 @@ export default function PosPage({ ruleKey }: Props) {
         </div>
 
         {/* Order Cards */}
-        <div className="flex gap-3 overflow-x-auto pb-2">
-          {dummyOrders.map((order) => {
+        <div
+          ref={orderScrollRef}
+          className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide"
+        >
+          {filteredOrders.map((order) => {
             const status = statusConfig[order.status];
             return (
               <div
@@ -188,17 +234,26 @@ export default function PosPage({ ruleKey }: Props) {
               {language({ id: "Menu Makanan", en: "Foodies Menu" })}
             </h2>
             <div className="flex gap-1">
-              <button className="w-8 h-8 rounded-full bg-dark-800 border border-dark-600 flex items-center justify-center text-dark-400 hover:text-foreground hover:border-dark-500 transition-all">
+              <button
+                onClick={() => scroll(orderScrollRef, "left")}
+                className="w-8 h-8 rounded-full bg-dark-800 border border-dark-600 flex items-center justify-center text-dark-400 hover:text-foreground hover:border-dark-500 transition-all"
+              >
                 <IconComponent iconName="Hi/HiOutlineChevronLeft" size={14} />
               </button>
-              <button className="w-8 h-8 rounded-full bg-dark-800 border border-dark-600/40 flex items-center justify-center text-dark-400 hover:text-dark-200 hover:border-dark-500 transition-all">
+              <button
+                onClick={() => scroll(orderScrollRef, "right")}
+                className="w-8 h-8 rounded-full bg-dark-800 border border-dark-600/40 flex items-center justify-center text-dark-400 hover:text-dark-200 hover:border-dark-500 transition-all"
+              >
                 <IconComponent iconName="Hi/HiOutlineChevronRight" size={14} />
               </button>
             </div>
           </div>
 
           {/* Category Tabs */}
-          <div className="flex gap-2 overflow-x-auto pb-3">
+          <div
+            ref={categoryScrollRef}
+            className="flex gap-2 overflow-x-auto pb-3 scrollbar-hide"
+          >
             {categories.map((cat) => (
               <button
                 key={cat.key}
