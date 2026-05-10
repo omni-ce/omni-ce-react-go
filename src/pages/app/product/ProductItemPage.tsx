@@ -10,6 +10,7 @@ import { type ProductItem } from "@/types/product";
 import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import { Badge } from "@/components/ui/Badge";
+import { ProductImage } from "@/pages/app/product/action";
 
 interface Props {
   ruleKey?: string;
@@ -250,6 +251,15 @@ export default function ProductItemPage({ ruleKey }: Props) {
           }
           return `${category_name} ${item.brand_name} ${item.varian_name} (${item.memory_name ?? "-"}) ${item.color_name}`;
         }}
+        extraActions={[
+          {
+            icon: "Hi/HiOutlineKey",
+            width: 90, // width of popup modal
+            component: (row, onClose) => (
+              <ProductImage row={row} onClose={onClose} />
+            ),
+          },
+        ]}
       />
     </div>
   );
