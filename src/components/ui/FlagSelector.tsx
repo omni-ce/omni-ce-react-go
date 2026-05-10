@@ -75,6 +75,9 @@ export default function FlagSelector({
       {isOpen && (
         <Fragment>
           <div
+            role="button"
+            tabIndex={-1}
+            onKeyDown={(e) => { if (e.key === 'Escape') { setIsOpen(false); setSearch(''); } }}
             className="fixed inset-0 z-10"
             onClick={() => {
               setIsOpen(false);
@@ -95,6 +98,7 @@ export default function FlagSelector({
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search country..."
                   className="w-full rounded-lg border border-gray-300 py-2 pr-3 pl-10 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  // eslint-disable-next-line jsx-a11y/no-autofocus
                   autoFocus
                 />
               </div>

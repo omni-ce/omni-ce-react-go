@@ -159,6 +159,7 @@ export default function CountrySelector({
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search country..."
                 className="w-full bg-transparent border-none text-sm text-foreground focus:outline-none placeholder:text-dark-400 py-1"
+                // eslint-disable-next-line jsx-a11y/no-autofocus
                 autoFocus
               />
             </div>

@@ -197,7 +197,9 @@ export default function CameraSelector({
       {showCamera && (
         <div className="space-y-3">
           <div className="relative overflow-hidden rounded-lg border-2 border-gray-300">
-            <video ref={videoRef} autoPlay playsInline className="w-full" />
+            <video ref={videoRef} autoPlay playsInline className="w-full">
+              <track kind="captions" />
+            </video>
           </div>
 
           {/* Camera Selection Dropdown */}

@@ -1180,10 +1180,11 @@ export default function DashboardPage({}: DashboardPageProps) {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-dark-300 mb-1.5">
+              <label htmlFor="widget-type-select" className="block text-xs font-medium text-dark-300 mb-1.5">
                 Type
               </label>
               <select
+                id="widget-type-select"
                 value={formType}
                 onChange={(e) => setFormType(e.target.value)}
                 className="w-full px-3 py-2 rounded-lg bg-dark-700/50 border border-dark-600/40 text-foreground text-sm focus:outline-none focus:border-accent-500"

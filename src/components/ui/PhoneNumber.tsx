@@ -210,6 +210,7 @@ export default function PhoneNumber({
                     }
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
+                    // eslint-disable-next-line jsx-a11y/no-autofocus
                     autoFocus
                   />
                 </div>

@@ -29,6 +29,9 @@ function Dialog({ open, onClose, width, children }: DialogProps) {
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Overlay */}
       <div
+        role="button"
+        tabIndex={-1}
+        onKeyDown={(e) => { if (e.key === 'Escape') onClose(); }}
         className="fixed inset-0 bg-black/70 backdrop-blur-sm animate-fade-in"
         onClick={onClose}
       />
@@ -113,13 +116,16 @@ function DialogFooter({
 
 function DialogTitle({
   className,
+  children,
   ...props
 }: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
     <h2
       className={cn("text-lg font-bold text-foreground", className)}
       {...props}
-    />
+    >
+      {children}
+    </h2>
   );
 }
 

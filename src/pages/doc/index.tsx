@@ -99,6 +99,9 @@ export default function DocPage() {
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div
+          role="button"
+          tabIndex={-1}
+          onKeyDown={(e) => { if (e.key === 'Escape') setSidebarOpen(false); }}
           className="fixed inset-0 bg-black/60 z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />

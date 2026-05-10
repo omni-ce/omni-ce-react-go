@@ -660,7 +660,9 @@ function DynamicFile({
     if (isAudio) {
       return (
         <div className="mt-2">
-          <audio src={value} controls className="w-full h-12" />
+          <audio src={value} controls className="w-full h-12">
+            <track kind="captions" />
+          </audio>
         </div>
       );
     }
@@ -671,7 +673,9 @@ function DynamicFile({
             src={value}
             controls
             className="w-full max-w-sm rounded-lg border border-dark-600 bg-dark-900/50"
-          />
+          >
+            <track kind="captions" />
+          </video>
         </div>
       );
     }
@@ -700,6 +704,9 @@ function DynamicFile({
           }
         />
         <div
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (!loading && !disabled) fileInputRef.current?.click(); } }}
           onClick={() => !loading && !disabled && fileInputRef.current?.click()}
           className={`
             group flex items-center gap-3 px-4 py-2.5 rounded-xl border border-dashed transition-all cursor-pointer
@@ -1271,6 +1278,9 @@ function DynamicMapField({
     <>
       <div className="mt-1.5">
         <div
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (!disabled) setIsOpen(true); } }}
           onClick={() => !disabled && setIsOpen(true)}
           className={`
             flex items-center gap-3 px-4 py-3 rounded-xl border transition-all cursor-pointer
@@ -1368,6 +1378,9 @@ function DynamicGeolocationField({
   return (
     <div className="mt-1.5">
       <div
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (!disabled && !loading) handleGetLocation(); } }}
         onClick={() => !disabled && !loading && handleGetLocation()}
         className={`
           flex items-center gap-3 px-4 py-3 rounded-xl border transition-all cursor-pointer

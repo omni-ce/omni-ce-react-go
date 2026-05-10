@@ -353,6 +353,9 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
       {/* Mobile overlay */}
       {isMobileOpen && (
         <div
+          role="button"
+          tabIndex={-1}
+          onKeyDown={(e) => { if (e.key === 'Escape') setMobileOpen(false); }}
           className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
           onClick={() => setMobileOpen(false)}
         />
