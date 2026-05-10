@@ -15,7 +15,12 @@ export default function Introduction() {
           id: "Proyek ini adalah template dasar untuk membangun aplikasi web full-stack dengan ",
           en: "This project is a starter template for building full-stack web applications with ",
         })}
-        <strong>React</strong> (frontend) dan <strong>Go</strong> (backend).
+        <strong>React</strong> (frontend){" "}
+        {language({
+          id: "dan",
+          en: "and",
+        })}{" "}
+        <strong>Go</strong> (backend).
       </p>
       <h3>{language({ id: "Fitur", en: "Features" })}</h3>
       <ul className="list-disc pl-5 space-y-2">

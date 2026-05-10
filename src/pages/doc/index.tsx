@@ -24,12 +24,14 @@ interface DocSection {
 // ─── Main page ───────────────────────────────────────────────────────────────
 
 export default function DocPage() {
-  const { language } = useLanguageStore();
+  const { language, languageCode } = useLanguageStore();
   const [activeId, setActiveId] = useState("introduction");
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const sections: DocSection[] = useMemo(
-    () => [
+  const sections: DocSection[] = useMemo(() => {
+    // Force re-evaluation on language change
+    const _ = languageCode;
+    return [
       {
         id: "introduction",
         label: language({ id: "Pendahuluan", en: "Introduction" }),
@@ -82,9 +84,8 @@ export default function DocPage() {
           },
         ],
       },
-    ],
-    [language],
-  );
+    ];
+  }, [language, languageCode]);
 
   const [expandedSections, setExpandedSections] = useState<string[]>([
     "getting-started",
@@ -332,65 +333,71 @@ export default function DocPage() {
       {/* Inline styles for doc content */}
       <style>{`
         .doc-content h3 {
-          font-size: 1rem;
+          font-size: 1.125rem;
           font-weight: 700;
-          color: var(--color-foreground, #f1f5f9);
-          margin-top: 1.5rem;
-          margin-bottom: 0.5rem;
+          color: var(--color-foreground);
+          margin-top: 2rem;
+          margin-bottom: 0.75rem;
         }
         .doc-content p {
-          color: rgb(148 163 184);
+          color: var(--color-dark-300);
           line-height: 1.75;
-          margin-bottom: 0.75rem;
+          margin-bottom: 1rem;
         }
         .doc-content ul {
           list-style: disc;
           padding-left: 1.5rem;
-          color: rgb(148 163 184);
-          space-y: 0.25rem;
-          margin-bottom: 0.75rem;
+          color: var(--color-dark-300);
+          margin-bottom: 1rem;
         }
         .doc-content li {
-          margin-bottom: 0.35rem;
+          margin-bottom: 0.5rem;
           line-height: 1.65;
         }
         .doc-content strong {
-          color: rgb(226 232 240);
+          color: var(--color-foreground);
+          font-weight: 600;
         }
         .doc-content code {
-          background: rgba(99,102,241,0.12);
-          color: rgb(129,140,248);
-          padding: 0.1rem 0.4rem;
-          border-radius: 0.3rem;
-          font-size: 0.8rem;
-          font-family: monospace;
+          background: color-mix(in srgb, var(--color-accent-500) 12%, transparent);
+          color: var(--color-accent-400);
+          padding: 0.125rem 0.375rem;
+          border-radius: 0.375rem;
+          font-size: 0.875rem;
+          font-family: ui-monospace, monospace;
         }
         .doc-content table {
           width: 100%;
           border-collapse: collapse;
-          margin-bottom: 1rem;
-          font-size: 0.85rem;
+          margin-bottom: 1.5rem;
+          font-size: 0.875rem;
+          border-radius: 0.75rem;
+          overflow: hidden;
+          border: 1px solid var(--color-dark-600);
         }
         .doc-content th {
           text-align: left;
-          padding: 0.5rem 0.75rem;
-          background: rgba(51,65,85,0.5);
-          color: rgb(148 163 184);
+          padding: 0.75rem 1rem;
+          background: color-mix(in srgb, var(--color-dark-800) 80%, transparent);
+          color: var(--color-foreground);
           font-weight: 600;
-          border: 1px solid rgba(71,85,105,0.4);
+          border-bottom: 1px solid var(--color-dark-600);
         }
         .doc-content td {
-          padding: 0.45rem 0.75rem;
-          border: 1px solid rgba(71,85,105,0.3);
-          color: rgb(148 163 184);
+          padding: 0.75rem 1rem;
+          border-bottom: 1px solid var(--color-dark-700);
+          color: var(--color-dark-300);
           vertical-align: top;
         }
+        .doc-content tr:last-child td {
+          border-bottom: none;
+        }
         .doc-content td code {
-          background: rgba(99,102,241,0.1);
-          color: rgb(129,140,248);
+          background: color-mix(in srgb, var(--color-accent-500) 10%, transparent);
+          color: var(--color-accent-400);
         }
         .doc-content em {
-          color: rgb(167,139,250);
+          color: var(--color-accent-400);
           font-style: italic;
         }
       `}</style>
