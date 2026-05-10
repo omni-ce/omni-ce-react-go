@@ -47,6 +47,8 @@ export default function CompanyEntityPage({ ruleKey }: Props) {
         type: "number",
         required: true,
         col: 9,
+        minLength: 16,
+        maxLength: 16,
       },
       {
         key: "is_taxpayer",

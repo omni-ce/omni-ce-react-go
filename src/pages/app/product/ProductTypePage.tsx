@@ -5,7 +5,7 @@ import Pagination, {
   type PaginationField,
   type PaginationHandle,
 } from "@/components/Pagination";
-import { type ProductVarian } from "@/types/product";
+import type { ProductType } from "@/types/product";
 import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import { Badge } from "@/components/ui/Badge";
@@ -40,8 +40,26 @@ export default function ProductTypePage({ ruleKey }: Props) {
     [languageCode, language],
   );
 
-  const columns = useMemo<PaginationColumn<ProductVarian>[]>(
+  const columns = useMemo<PaginationColumn<ProductType>[]>(
     () => [
+      {
+        key: "category_name",
+        header: language({ id: "Kategori", en: "Category" }),
+        sort: true,
+        search: true,
+        render: (item) => {
+          let category_name = item.category_name;
+          try {
+            if (category_name.startsWith("{")) {
+              const obj = JSON.parse(category_name);
+              category_name = language(obj);
+            }
+          } catch (e) {
+            // fallback to raw name
+          }
+          return <span className="font-medium">{category_name}</span>;
+        },
+      },
       {
         key: "name",
         header: language({ id: "Nama", en: "Name" }),

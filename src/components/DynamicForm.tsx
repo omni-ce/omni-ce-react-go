@@ -1827,7 +1827,14 @@ function DynamicFieldRenderer({
               (field as DynamicFormFieldNormal).numberSuffix ? "pr-12" : ""
             }
             value={String(formData[field.key] ?? "")}
-            onChange={(e) => onChange(field.key!, e.target.value)}
+            onChange={(e) => {
+              let val = e.target.value;
+              const maxLength = (field as DynamicFormFieldNormal).maxLength;
+              if (maxLength && val.length > maxLength) {
+                val = val.slice(0, maxLength);
+              }
+              onChange(field.key!, val);
+            }}
             minLength={(field as DynamicFormFieldNormal).minLength}
             maxLength={(field as DynamicFormFieldNormal).maxLength}
             disabled={disabled}

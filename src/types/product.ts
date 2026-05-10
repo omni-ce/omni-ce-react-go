@@ -5,6 +5,15 @@ export interface ProductCategory {
   name: string;
   is_active: boolean;
 }
+export interface ProductType {
+  id: number;
+  key: string;
+  category_id: number;
+  category_name: string;
+  name: string;
+  description: string;
+  is_active: boolean;
+}
 export interface ProductBrand {
   id: number;
   key: string;
