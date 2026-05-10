@@ -304,12 +304,15 @@ export default function MarketingCustomerPage({ ruleKey }: Props) {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="font-heading text-2xl font-bold text-foreground">
-            {language({ id: "Pelanggan", en: "Customer" })}
+            {language({
+              id: "Pelanggan Pemasaran",
+              en: "Marketing Customer",
+            })}
           </h1>
           <p className="mt-1 text-sm text-dark-400">
             {language({
-              id: "Kelola semua pelanggan pada sistem",
-              en: "Manage all customers in the system",
+              id: "Kelola semua pelanggan pemasaran pada sistem",
+              en: "Manage all marketing customers in the system",
             })}
           </p>
         </div>
@@ -318,8 +321,8 @@ export default function MarketingCustomerPage({ ruleKey }: Props) {
       <Pagination
         ref={paginationRef}
         title={language({
-          id: "Daftar Pelanggan",
-          en: "Customer List",
+          id: "Daftar Pelanggan Pemasaran",
+          en: "Marketing Customer List",
         })}
         columns={columns}
         module="marketing/customer"

@@ -152,7 +152,10 @@ export default function DocPage() {
             style={{ paddingLeft: `${level * 12 + 12}px` }}
           >
             {item.icon && (
-              <IconComponent iconName={item.icon} className="w-4 h-4 shrink-0" />
+              <IconComponent
+                iconName={item.icon}
+                className="w-4 h-4 shrink-0"
+              />
             )}
             {!item.icon && level > 0 && (
               <div className="w-4 h-4 shrink-0 flex items-center justify-center">
