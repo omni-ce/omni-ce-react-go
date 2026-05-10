@@ -5,7 +5,7 @@ import { IconComponent } from "./ui/IconSelector";
 import LanguageSelector from "./ui/LanguageSelector";
 
 export default function ControlButton() {
-  const { languageCode, toggleLanguage, language } = useLanguageStore();
+  const { language } = useLanguageStore();
   const { isDarkMode, toggleTheme } = useThemeStore();
 
   return (

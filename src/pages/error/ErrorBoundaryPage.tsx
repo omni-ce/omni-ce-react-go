@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import { isRouteErrorResponse, useRouteError, Link } from "react-router";
 import { IconComponent } from "@/components/ui/IconSelector";
+import ControlButton from "@/components/ControlButton";
+import { useLanguageStore } from "@/stores/languageStore";
 
 function getErrorParts(err: unknown) {
   if (isRouteErrorResponse(err)) {
@@ -34,6 +36,7 @@ function getErrorParts(err: unknown) {
 }
 
 export default function ErrorBoundaryPage() {
+  const { language } = useLanguageStore();
   const routeError = useRouteError();
   const { title, message, stack } = useMemo(
     () => getErrorParts(routeError),
@@ -56,7 +59,10 @@ export default function ErrorBoundaryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-4 py-10">
+    <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-4 py-10 relative">
+      <div className="absolute top-5 right-5 z-50 flex items-center gap-3">
+        <ControlButton />
+      </div>
       <div className="w-full max-w-3xl">
         <div className="bg-dark-900 border border-dark-600/40 rounded-3xl overflow-hidden shadow-[0_2px_48px_rgba(205,208,223,0.4)]">
           <div className="px-6 py-5 border-b border-dark-600/40 flex items-start justify-between gap-4">
@@ -87,7 +93,7 @@ export default function ErrorBoundaryPage() {
                 className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-dark-400 hover:text-foreground border border-dark-600 hover:border-dark-500 rounded-xl transition-all"
               >
                 <IconComponent iconName="Ri/RiBugLine" className="w-4 h-4" />
-                Login
+                {language({ id: "Masuk", en: "Login" })}
               </Link>
             </div>
           </div>
@@ -103,7 +109,10 @@ export default function ErrorBoundaryPage() {
                   iconName="Ri/RiBugLine"
                   className="w-4 h-4 text-accent-500"
                 />
-                Stack trace
+                {language({
+                  id: "Jejak kesalahan",
+                  en: "Stack trace",
+                })}
                 {showStack ? (
                   <IconComponent
                     iconName="Ri/RiArrowUpSLine"
