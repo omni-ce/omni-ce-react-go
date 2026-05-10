@@ -3,6 +3,7 @@ import { Link } from "react-router";
 
 import { IconComponent } from "@/components/ui/IconSelector";
 import ControlButton from "@/components/ControlButton";
+import { useLanguageStore } from "@/stores/languageStore";
 
 // Content
 import Introduction from "@/pages/doc/Introduction";
@@ -20,66 +21,71 @@ interface DocSection {
   section?: DocSection[];
 }
 
-const sections: DocSection[] = [
-  {
-    id: "introduction",
-    label: "Introduction",
-    content: <Introduction />,
-    icon: "Ri/RiInformationLine",
-  },
-  {
-    id: "getting-started",
-    label: "Getting Started",
-    icon: "Ri/RiRocketLine",
-    section: [
-      {
-        id: "quick-start",
-        label: "Quick Start",
-        content: <QuickStart />,
-      },
-    ],
-  },
-  {
-    id: "structure",
-    label: "Project Structure",
-    icon: "Ri/RiStackLine",
-    section: [
-      {
-        id: "folder-structure",
-        label: "Folder Structure",
-        content: <ProjectStructure />,
-      },
-      {
-        id: "tech-stack",
-        label: "Tech Stack",
-        content: <TechStack />,
-      },
-    ],
-  },
-  {
-    id: "customization",
-    label: "Customization",
-    icon: "Ri/RiSettings3Line",
-    section: [
-      {
-        id: "theming",
-        label: "Theming",
-        content: <Theming />,
-      },
-      {
-        id: "adding-pages",
-        label: "Adding Pages",
-        content: <AddingPages />,
-      },
-    ],
-  },
-];
-
 // ─── Main page ───────────────────────────────────────────────────────────────
 
 export default function DocPage() {
+  const { language } = useLanguageStore();
   const [activeId, setActiveId] = useState("introduction");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const sections: DocSection[] = useMemo(
+    () => [
+      {
+        id: "introduction",
+        label: language({ id: "Pendahuluan", en: "Introduction" }),
+        content: <Introduction />,
+        icon: "Ri/RiInformationLine",
+      },
+      {
+        id: "getting-started",
+        label: language({ id: "Memulai", en: "Getting Started" }),
+        icon: "Ri/RiRocketLine",
+        section: [
+          {
+            id: "quick-start",
+            label: language({ id: "Mulai Cepat", en: "Quick Start" }),
+            content: <QuickStart />,
+          },
+        ],
+      },
+      {
+        id: "structure",
+        label: language({ id: "Struktur Proyek", en: "Project Structure" }),
+        icon: "Ri/RiStackLine",
+        section: [
+          {
+            id: "Struktur Folder",
+            label: language({ id: "Struktur Folder", en: "Folder Structure" }),
+            content: <ProjectStructure />,
+          },
+          {
+            id: "tech-stack",
+            label: language({ id: "Teknologi", en: "Tech Stack" }),
+            content: <TechStack />,
+          },
+        ],
+      },
+      {
+        id: "customization",
+        label: language({ id: "Kustomisasi", en: "Customization" }),
+        icon: "Ri/RiSettings3Line",
+        section: [
+          {
+            id: "theming",
+            label: language({ id: "Tema", en: "Theming" }),
+            content: <Theming />,
+          },
+          {
+            id: "adding-pages",
+            label: language({ id: "Menambah Halaman", en: "Adding Pages" }),
+            content: <AddingPages />,
+          },
+        ],
+      },
+    ],
+    [language],
+  );
+
   const [expandedSections, setExpandedSections] = useState<string[]>([
     "getting-started",
     "structure",
@@ -101,7 +107,7 @@ export default function DocPage() {
     };
     traverse(sections);
     return flattened;
-  }, []);
+  }, [sections]);
 
   const currentIndex = flatItems.findIndex((item) => item.id === activeId);
   const currentItem = flatItems[currentIndex];
@@ -205,8 +211,12 @@ export default function DocPage() {
             />
           </div>
           <div>
-            <p className="text-sm font-bold text-foreground">Docs</p>
-            <p className="text-[10px] text-dark-400 font-mono">Base Project</p>
+            <p className="text-sm font-bold text-foreground">
+              {language({ id: "Dokumentasi", en: "Docs" })}
+            </p>
+            <p className="text-[10px] text-dark-400 font-mono">
+              {language({ id: "Proyek Dasar", en: "Base Project" })}
+            </p>
           </div>
           <button
             onClick={() => setSidebarOpen(false)}
@@ -227,7 +237,7 @@ export default function DocPage() {
             to="/"
             className="flex items-center gap-2 text-xs text-dark-400 hover:text-foreground transition-colors font-mono"
           >
-            ← Back to Home
+            {language({ id: "← Kembali ke Beranda", en: "← Back to Home" })}
           </Link>
         </div>
       </aside>
@@ -244,7 +254,9 @@ export default function DocPage() {
           </button>
           {/* Breadcrumb */}
           <div className="flex items-center gap-1.5 text-sm font-mono text-dark-400">
-            <span className="text-accent-400">Docs</span>
+            <span className="text-accent-400">
+              {language({ id: "Dokumentasi", en: "Docs" })}
+            </span>
             {currentItem && (
               <>
                 <span>/</span>
@@ -275,7 +287,7 @@ export default function DocPage() {
                     className="flex-1 group flex flex-col items-start gap-2 p-4 rounded-xl border border-dark-600/50 bg-dark-800/40 hover:bg-dark-700/50 hover:border-accent-500/30 transition-all text-left"
                   >
                     <span className="text-[10px] uppercase tracking-widest text-dark-400 group-hover:text-accent-400 transition-colors">
-                      Previous
+                      {language({ id: "Sebelumnya", en: "Previous" })}
                     </span>
                     <span className="text-sm font-bold text-foreground group-hover:text-accent-400 transition-colors flex items-center gap-2">
                       <IconComponent
@@ -293,7 +305,7 @@ export default function DocPage() {
                     className="flex-1 group flex flex-col items-end gap-2 p-4 rounded-xl border border-dark-600/50 bg-dark-800/40 hover:bg-dark-700/50 hover:border-accent-500/30 transition-all text-right"
                   >
                     <span className="text-[10px] uppercase tracking-widest text-dark-400 group-hover:text-accent-400 transition-colors">
-                      Next
+                      {language({ id: "Selanjutnya", en: "Next" })}
                     </span>
                     <span className="text-sm font-bold text-foreground group-hover:text-accent-400 transition-colors flex items-center gap-2">
                       {nextItem.label}
@@ -307,7 +319,12 @@ export default function DocPage() {
               </div>
             </>
           ) : (
-            <p className="text-dark-400">Select a topic from the sidebar.</p>
+            <p className="text-dark-400">
+              {language({
+                id: "Pilih topik dari sidebar.",
+                en: "Select a topic from the sidebar.",
+              })}
+            </p>
           )}
         </main>
       </div>

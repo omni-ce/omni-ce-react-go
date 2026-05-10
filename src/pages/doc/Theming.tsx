@@ -1,13 +1,23 @@
 import CodeBlock from "@/components/ui/CodeBlock";
+import { useLanguageStore } from "@/stores/languageStore";
 
 export default function Theming() {
+  const { language } = useLanguageStore();
+
   return (
     <div className="space-y-4">
       <p>
-        Themes are defined in <code>src/index.css</code> using CSS custom
-        properties. The project supports both dark and light modes.
+        {language({
+          id: "Tema didefinisikan di ",
+          en: "Themes are defined in ",
+        })}
+        <code>src/index.css</code>{" "}
+        {language({
+          id: "menggunakan CSS custom properties. Proyek ini mendukung mode gelap dan terang.",
+          en: "using CSS custom properties. The project supports both dark and light modes.",
+        })}
       </p>
-      <h3>Color Variables</h3>
+      <h3>{language({ id: "Variabel Warna", en: "Color Variables" })}</h3>
       <CodeBlock>{`/* Dark mode (default) */
  :root {
    --t-dark-900: #0a0a0f;
@@ -22,8 +32,16 @@ export default function Theming() {
    --t-foreground: #111827;
  }`}</CodeBlock>
       <p>
-        The theme toggle is managed by <code>src/stores/themeStore.ts</code> and
-        persisted via Zustand's <code>persist</code> middleware.
+        {language({
+          id: "Toggle tema dikelola oleh ",
+          en: "The theme toggle is managed by ",
+        })}
+        <code>src/stores/themeStore.ts</code>{" "}
+        {language({
+          id: "dan dipersistenkan melalui middleware ",
+          en: "and persisted via Zustand's ",
+        })}
+        <code>persist</code> middleware.
       </p>
     </div>
   );

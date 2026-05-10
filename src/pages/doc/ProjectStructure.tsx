@@ -1,9 +1,17 @@
 import CodeBlock from "@/components/ui/CodeBlock";
+import { useLanguageStore } from "@/stores/languageStore";
 
 export default function ProjectStructure() {
+  const { language } = useLanguageStore();
+
   return (
     <div className="space-y-4">
-      <p>The project follows a standard React + Go layout:</p>
+      <p>
+        {language({
+          id: "Proyek ini mengikuti alur standar React + Go:",
+          en: "The project follows a standard React + Go layout:",
+        })}
+      </p>
       <CodeBlock>{`react-go/
 ├── src/                    # React frontend source
 │   ├── components/         # Reusable UI components

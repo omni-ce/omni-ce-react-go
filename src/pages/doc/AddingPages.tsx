@@ -1,10 +1,24 @@
 import CodeBlock from "@/components/ui/CodeBlock";
+import { useLanguageStore } from "@/stores/languageStore";
 
 export default function AddingPages() {
+  const { language } = useLanguageStore();
+
   return (
     <div className="space-y-4">
-      <p>To add a new authenticated page:</p>
-      <h3>1. Create the Page Component</h3>
+      <p>
+        {language({
+          id: "Untuk menambah halaman terautentikasi baru:",
+          en: "To add a new authenticated page:",
+        })}
+      </p>
+      <h3>
+        1.{" "}
+        {language({
+          id: "Buat Komponen Halaman",
+          en: "Create the Page Component",
+        })}
+      </h3>
       <CodeBlock>{`// src/pages/app/MyPage.tsx
 export default function MyPage() {
   return (
@@ -21,13 +35,21 @@ export default function MyPage() {
     </div>
   );
 }`}</CodeBlock>
-      <h3>2. Add the Route</h3>
+      <h3>
+        2. {language({ id: "Tambahkan Rute", en: "Add the Route" })}
+      </h3>
       <CodeBlock>{`// src/main.tsx — add inside the "app" children array
 {
   path: "my-page",
   element: <MyPage />,
 }`}</CodeBlock>
-      <h3>3. Add to Sidebar Navigation</h3>
+      <h3>
+        3.{" "}
+        {language({
+          id: "Tambahkan ke Navigasi Sidebar",
+          en: "Add to Sidebar Navigation",
+        })}
+      </h3>
       <CodeBlock>{`// src/layouts/AppLayout.tsx — add to navItems
 {
   label: "My Page",
