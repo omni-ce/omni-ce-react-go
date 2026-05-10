@@ -32,8 +32,8 @@ const statusConfig: Partial<
     color: "text-neon-yellow",
     bg: "bg-neon-yellow/10 border-neon-yellow/30",
   },
-  payment: {
-    label: { id: "Pembayaran", en: "Payment" },
+  process: {
+    label: { id: "Proses", en: "Process" },
     color: "text-neon-cyan",
     bg: "bg-card-ice border-neon-cyan/30",
   },
@@ -55,7 +55,7 @@ const orderTypeConfig: {
 }[] = [
   { key: "all", label: { id: "Semua", en: "All" } },
   { key: "wait_list", label: { id: "Menunggu", en: "Wait List" } },
-  { key: "payment", label: { id: "Pembayaran", en: "Payment" } },
+  { key: "process", label: { id: "Proses", en: "Process" } },
   { key: "finish", label: { id: "Selesai", en: "Finish" } },
   { key: "cancel", label: { id: "Batal", en: "Cancel" } },
 ];
@@ -104,7 +104,7 @@ export default function PosPage({ ruleKey }: Props) {
     () => ({
       all: dummyOrders.length,
       wait_list: dummyOrders.filter((o) => o.status === "wait_list").length,
-      payment: dummyOrders.filter((o) => o.status === "payment").length,
+      process: dummyOrders.filter((o) => o.status === "process").length,
       finish: dummyOrders.filter((o) => o.status === "finish").length,
       cancel: dummyOrders.filter((o) => o.status === "cancel").length,
     }),
@@ -303,7 +303,7 @@ export default function PosPage({ ruleKey }: Props) {
         </div>
 
         {/* Product Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 gap-3">
           {filteredMenu.map((item) => {
             const qty = getCartQty(item.id);
             const isInCart = qty > 0;
@@ -311,15 +311,15 @@ export default function PosPage({ ruleKey }: Props) {
             return (
               <div
                 key={item.id}
-                className={`rounded-2xl border p-4 transition-all duration-200 hover:shadow-lg cursor-pointer group ${
+                className={`rounded-xl border p-3 transition-all duration-200 hover:shadow-lg cursor-pointer group ${
                   isInCart
                     ? "bg-badge-light-blue/50 border-accent-500/30 shadow-md shadow-accent-500/5"
                     : "bg-dark-900 border-dark-600 hover:border-dark-500"
                 }`}
               >
                 {/* Emoji as Product Image */}
-                <div className="w-full aspect-square rounded-xl bg-dark-800 flex items-center justify-center mb-3 group-hover:scale-[1.02] transition-transform">
-                  <span className="text-5xl">{item.emoji}</span>
+                <div className="w-full aspect-square rounded-lg bg-dark-800 flex items-center justify-center mb-2 group-hover:scale-[1.02] transition-transform">
+                  <span className="text-3xl">{item.emoji}</span>
                 </div>
 
                 {/* Category Tag */}
@@ -328,26 +328,26 @@ export default function PosPage({ ruleKey }: Props) {
                 </span>
 
                 {/* Name */}
-                <h3 className="text-sm font-bold text-foreground mt-0.5 leading-tight line-clamp-2">
+                <h3 className="text-[13px] font-bold text-foreground mt-0.5 leading-tight line-clamp-1">
                   {item.name}
                 </h3>
 
                 {/* Price + Controls */}
-                <div className="flex items-center justify-between mt-3">
-                  <span className="text-sm font-bold text-accent-500">
+                <div className="flex flex-col gap-2 mt-2">
+                  <span className="text-xs font-bold text-accent-500">
                     {formatRupiah(item.price)}
                   </span>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-between bg-dark-800 rounded-xl p-1.5">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         removeFromCart(item.id);
                       }}
-                      className="w-9 h-9 rounded-full bg-dark-700 text-dark-400 flex items-center justify-center hover:bg-dark-700 hover:text-foreground transition-all text-sm font-bold"
+                      className="w-11 h-11 rounded-lg bg-dark-700 text-dark-400 flex items-center justify-center hover:bg-dark-600 hover:text-foreground transition-all text-xl font-bold"
                     >
                       −
                     </button>
-                    <span className="text-sm font-bold text-foreground w-4 text-center">
+                    <span className="text-sm font-bold text-foreground min-w-[24px] text-center">
                       {qty}
                     </span>
                     <button
@@ -355,7 +355,7 @@ export default function PosPage({ ruleKey }: Props) {
                         e.stopPropagation();
                         addToCart(item);
                       }}
-                      className="w-9 h-9 rounded-full bg-accent-500 text-white flex items-center justify-center hover:bg-accent-600 transition-all text-sm font-bold shadow-md shadow-accent-500/30"
+                      className="w-11 h-11 rounded-lg bg-accent-500 text-white flex items-center justify-center hover:bg-accent-600 transition-all text-xl font-bold shadow-md shadow-accent-500/30"
                     >
                       +
                     </button>

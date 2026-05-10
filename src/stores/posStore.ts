@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type OrderStatus = "all" | "wait_list" | "payment" | "finish" | "cancel";
+export type OrderStatus = "all" | "wait_list" | "process" | "finish" | "cancel";
 export type PaymentMethod = "cash" | "card" | "scan";
 
 export interface OrderCard {

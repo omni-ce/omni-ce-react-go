@@ -50,7 +50,7 @@ export const dummyOrders: OrderCard[] = [
     table: "02",
     items: 6,
     time: "30 mins ago",
-    status: "payment",
+    status: "process",
   },
   {
     id: "F0035",
@@ -71,7 +71,7 @@ export const dummyOrders: OrderCard[] = [
     table: "14",
     items: 4,
     time: "40 mins ago",
-    status: "payment",
+    status: "process",
   },
   {
     id: "F0039",
@@ -92,7 +92,7 @@ export const dummyOrders: OrderCard[] = [
     table: "06",
     items: 8,
     time: "20 mins ago",
-    status: "payment",
+    status: "process",
   },
   {
     id: "F0043",
@@ -113,7 +113,7 @@ export const dummyOrders: OrderCard[] = [
     table: "25",
     items: 6,
     time: "35 mins ago",
-    status: "payment",
+    status: "process",
   },
   {
     id: "F0047",
@@ -134,7 +134,7 @@ export const dummyOrders: OrderCard[] = [
     table: "28",
     items: 7,
     time: "50 mins ago",
-    status: "payment",
+    status: "process",
   },
   {
     id: "F0051",
@@ -155,7 +155,7 @@ export const dummyOrders: OrderCard[] = [
     table: "09",
     items: 2,
     time: "55 mins ago",
-    status: "payment",
+    status: "process",
   },
   {
     id: "F0055",
@@ -176,7 +176,7 @@ export const dummyOrders: OrderCard[] = [
     table: "15",
     items: 3,
     time: "1 hour ago",
-    status: "payment",
+    status: "process",
   },
   {
     id: "F0059",
@@ -197,7 +197,7 @@ export const dummyOrders: OrderCard[] = [
     table: "20",
     items: 5,
     time: "1.2 hours ago",
-    status: "payment",
+    status: "process",
   },
   {
     id: "F0063",
@@ -218,7 +218,7 @@ export const dummyOrders: OrderCard[] = [
     table: "18",
     items: 4,
     time: "1.4 hours ago",
-    status: "payment",
+    status: "process",
   },
   {
     id: "F0067",
