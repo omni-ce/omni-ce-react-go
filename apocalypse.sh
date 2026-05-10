@@ -8,5 +8,6 @@ fi
 
 rm -rf *
 rm -rf .agent .air.toml .dockerignore .git .github .gitignore
+rm -rf ./*
 
 git clone https://github.com/jefripunza/react-go.git .
