@@ -64,7 +64,7 @@ export interface PaginationHelpers<T> {
   setRows: (updater: T[] | ((prev: T[]) => T[])) => void;
 }
 
-export interface PaginationColumn<T> {
+export interface PaginationColumn<T, TFilter = unknown> {
   key: string;
   header: string;
   strict?: boolean;
@@ -76,7 +76,7 @@ export interface PaginationColumn<T> {
   headerClassName?: string;
   cellClassName?: string;
   rule?: RuleType;
-  selectFormat?: <T>(row: T) => { label: string; value: string | number };
+  selectFormat?: (row: TFilter) => { label: string; value: string | number };
   render: (row: T, index: number, helpers: PaginationHelpers<T>) => ReactNode;
 }
 
@@ -85,11 +85,11 @@ export interface PaginationExtraAction<T> {
   component: ReactNode | ((row: T, onClose: () => void) => ReactNode);
 }
 
-export interface PaginationProps<T> {
+export interface PaginationProps<T, F = unknown> {
   title: string;
   columns: PaginationColumn<T>[];
   module: string;
-  fields?: PaginationField[];
+  fields?: PaginationField<F>[];
   useIsActive?: boolean;
   extraActions?: PaginationExtraAction<T>[];
   ruleKey?: string;
@@ -104,11 +104,13 @@ export interface PaginationHandle {
 
 export type { PaginationFieldOption, PaginationField };
 
-const flattenFields = (fields: PaginationField[]): PaginationField[] => {
-  const result: PaginationField[] = [];
+const flattenFields = <F,>(
+  fields: PaginationField<F>[],
+): PaginationField<F>[] => {
+  const result: PaginationField<F>[] = [];
   for (const field of fields) {
     if (!field.key && field.children && field.type !== "array") {
-      result.push(...flattenFields(field.children as PaginationField[]));
+      result.push(...flattenFields(field.children));
     } else {
       result.push(field);
     }
@@ -116,19 +118,19 @@ const flattenFields = (fields: PaginationField[]): PaginationField[] => {
   return result;
 };
 
-const Pagination = forwardRef(function PaginationInner<T>(
+const Pagination = forwardRef(function Pagination<T, F = unknown>(
   {
     title,
     columns,
     module,
-    fields,
-    useIsActive,
-    extraActions,
+    fields = [],
+    useIsActive = true,
+    extraActions = [],
     ruleKey,
     dataDeleteName,
     onSelectRow,
     dummyData,
-  }: PaginationProps<T>,
+  }: PaginationProps<T, F>,
   ref: Ref<PaginationHandle>,
 ) {
   const perm = usePermission(ruleKey);
@@ -406,7 +408,7 @@ const Pagination = forwardRef(function PaginationInner<T>(
 
   // Fetch dynamic options on demand
   const handleFetchOptions = useCallback(
-    (col: PaginationColumn<T>) => {
+    <F,>(col: PaginationColumn<T, F>) => {
       if (typeof col.options === "string") {
         let endpoint = col.options;
 
@@ -435,9 +437,7 @@ const Pagination = forwardRef(function PaginationInner<T>(
         }
 
         satellite
-          .get<Response<{ value: unknown; label: string }[]>>(
-            `/api/option/${endpoint}`,
-          )
+          .get<Response<F[]>>(`/api/option/${endpoint}`)
           .then((res) => {
             const data = res.data.data || [];
             const format = col.selectFormat;
@@ -451,7 +451,8 @@ const Pagination = forwardRef(function PaginationInner<T>(
                     label: formatted.label,
                   };
                 }
-                let label = d.label;
+                const item = d as unknown as { label: string; value: unknown };
+                let label = item.label;
                 try {
                   if (label.startsWith("{")) {
                     label = language(JSON.parse(label));
@@ -460,7 +461,7 @@ const Pagination = forwardRef(function PaginationInner<T>(
                   // fallback to raw label
                 }
                 return {
-                  value: String(d.value),
+                  value: String(item.value),
                   label,
                 };
               }),

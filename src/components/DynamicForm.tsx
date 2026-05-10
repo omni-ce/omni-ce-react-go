@@ -107,7 +107,7 @@ export type DynamicFormFieldType =
   | "map"
   | "geolocation";
 
-export type DynamicFormFieldNormal = {
+export type DynamicFormFieldNormal<T = unknown> = {
   key: string;
   type: DynamicFormFieldType;
   selectOptions?: DynamicFormFieldOption[] | string;
@@ -124,22 +124,22 @@ export type DynamicFormFieldNormal = {
   captchaLength?: number;
   phoneDefaultCountry?: LanguageKey;
   phoneFirstAntiZero?: boolean;
-  children?: DynamicFormField[];
+  children?: DynamicFormField<T>[];
   textMultiLanguage?: boolean;
   rule?: string;
   numberSuffix?: string;
   textareaRows?: number;
   booleanDefault?: boolean;
-  selectFormat?: <T>(row: T) => DynamicFormFieldOption;
+  selectFormat?: (row: T) => DynamicFormFieldOption;
 };
 
-type DynamicFormFieldChildren = {
+type DynamicFormFieldChildren<T = unknown> = {
   key?: never;
   type?: never;
-  children: DynamicFormField[];
+  children: DynamicFormField<T>[];
 };
 
-export type DynamicFormField = {
+export type DynamicFormField<T = unknown> = {
   label: string;
   col?: number;
   colMobile?: number;
@@ -148,7 +148,7 @@ export type DynamicFormField = {
   colDesktop?: number;
   strict?: boolean;
   only?: "create" | "update";
-} & (DynamicFormFieldNormal | DynamicFormFieldChildren);
+} & (DynamicFormFieldNormal<T> | DynamicFormFieldChildren<T>);
 
 const getColClass = (field: DynamicFormField | DynamicFormFieldNormal) => {
   const m =
@@ -231,11 +231,12 @@ function DynamicSelect({
               value: String(formatted.value),
             };
           }
+          const item = d as unknown as Option;
           return {
-            value: String(d.value),
-            label: d.label,
-            icon: (d as unknown as { icon?: string }).icon,
-            array: (d as unknown as { array?: string[] }).array,
+            value: String(item.value),
+            label: item.label,
+            icon: (item as unknown as { icon?: string }).icon,
+            array: (item as unknown as { array?: string[] }).array,
           };
         });
         setOpts(mapped);

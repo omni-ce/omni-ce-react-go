@@ -13,13 +13,22 @@ import { Badge } from "@/components/ui/Badge";
 interface Props {
   ruleKey?: string;
 }
+interface ProductItemOption {
+  value: number;
+  label: string;
+  id: number;
+  name: string;
+  category_name: string;
+  type_name: string;
+}
+
 export default function WarehouseProductPage({ ruleKey }: Props) {
   const perm = usePermission(ruleKey);
 
   const paginationRef = useRef<PaginationHandle>(null);
   const { languageCode, language } = useLanguageStore();
 
-  const fields = useMemo<PaginationField[]>(
+  const fields = useMemo<PaginationField<ProductItemOption>[]>(
     () => [
       {
         key: "warehouse_location_id",
@@ -34,7 +43,7 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
         type: "select",
         required: true,
         selectOptions: "product-items",
-        selectFormat: <T extends Record<string, string>>(row: T) => {
+        selectFormat: (row: ProductItemOption) => {
           let prefix = "";
           try {
             const category = JSON.parse(row.category_name);
@@ -44,7 +53,7 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
             //
           }
           return {
-            value: row.value,
+            value: String(row.value),
             label: prefix ? `${prefix} ${row.label}` : row.label,
           };
         },
@@ -117,7 +126,7 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
         })}
         columns={columns}
         module="warehouse/product"
-        fields={fields}
+        fields={fields as PaginationField[]}
         ruleKey={ruleKey}
         useIsActive
       />
