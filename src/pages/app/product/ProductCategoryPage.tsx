@@ -22,6 +22,12 @@ export default function ProductCategoryPage({ ruleKey }: Props) {
   const fields = useMemo<PaginationField[]>(
     () => [
       {
+        key: "icon",
+        label: language({ id: "Ikon", en: "Icon" }),
+        type: "icon",
+        required: true,
+      },
+      {
         key: "name",
         label: language({ id: "Nama", en: "Name" }),
         type: "text",

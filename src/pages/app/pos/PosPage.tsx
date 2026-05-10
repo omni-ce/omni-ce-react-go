@@ -1,4 +1,4 @@
-import { useMemo, useRef, type RefObject } from "react";
+import { useMemo, useRef, useState, type RefObject } from "react";
 import { useLanguageStore } from "@/stores/languageStore";
 import { IconComponent } from "@/components/ui/IconSelector";
 import {
@@ -82,6 +82,8 @@ export default function PosPage({ ruleKey }: Props) {
     removeFromCart,
   } = usePosStore();
 
+  const [searchQuery, setSearchQuery] = useState("");
+
   const orderScrollRef = useRef<HTMLDivElement>(null);
   const categoryScrollRef = useRef<HTMLDivElement>(null);
 
@@ -115,9 +117,15 @@ export default function PosPage({ ruleKey }: Props) {
   }, [activeOrderType]);
 
   const filteredMenu = useMemo(() => {
-    if (activeCategory === "all") return dummyMenuItems;
-    return dummyMenuItems.filter((item) => item.category === activeCategory);
-  }, [activeCategory]);
+    return dummyMenuItems.filter((item) => {
+      const matchesCategory =
+        activeCategory === "all" || item.category === activeCategory;
+      const matchesSearch = item.name
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+  }, [activeCategory, searchQuery]);
 
   const getCartQty = (menuItemId: number) => {
     const item = cart.find((c) => c.menuItem.id === menuItemId);
@@ -179,7 +187,7 @@ export default function PosPage({ ruleKey }: Props) {
             return (
               <div
                 key={order.id}
-                className={`min-w-[220px] p-4 rounded-2xl border ${status.bg} flex flex-col gap-3 shrink-0 transition-all hover:scale-[1.02] cursor-pointer`}
+                className={`min-w-[220px] p-4 rounded-2xl border ${status.bg} flex flex-col gap-3 shrink-0 transition-all hover:scale-[1.02] hover:rounded-none cursor-pointer`}
               >
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-bold text-foreground">
@@ -240,6 +248,31 @@ export default function PosPage({ ruleKey }: Props) {
                 <IconComponent iconName="Hi/HiOutlineChevronRight" size={14} />
               </button>
             </div>
+          </div>
+
+          {/* Search Bar */}
+          <div className="mb-4 relative group">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-dark-400 group-focus-within:text-accent-500 transition-colors">
+              <IconComponent iconName="Hi/HiOutlineSearch" size={18} />
+            </div>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={language({
+                id: "Cari produk...",
+                en: "Search products...",
+              })}
+              className="w-full pl-12 pr-4 py-3 bg-dark-900 border border-dark-600 rounded-2xl text-sm focus:outline-none focus:border-accent-500 focus:ring-4 focus:ring-accent-500/10 transition-all placeholder:text-dark-500"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-dark-400 hover:text-foreground transition-colors"
+              >
+                <IconComponent iconName="Hi/HiOutlineXCircle" size={18} />
+              </button>
+            )}
           </div>
 
           {/* Category Tabs */}
