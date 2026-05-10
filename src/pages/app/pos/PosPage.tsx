@@ -220,7 +220,7 @@ export default function PosPage({ ruleKey }: Props) {
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold text-foreground tracking-tight">
-              {language({ id: "Menu Makanan", en: "Foodies Menu" })}
+              {language({ id: "Katalog Produk", en: "Product Catalog" })}
             </h2>
             <div className="flex gap-1">
               <button
