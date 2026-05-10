@@ -59,4 +59,10 @@ func ProtectedRoute(api fiber.Router) {
 	api.Put("/item/edit/:id", ItemEdit)
 	api.Delete("/item/remove/:id", ItemRemove)
 	api.Post("/item/bulk-remove", ItemBulkRemove)
+
+	// Item Image
+	api.Post("/item/image/set/:item_id", ItemImageSet)
+	api.Get("/item/image/list/:item_id", ItemImageList)
+	api.Delete("/item/image/remove/:id", ItemImageRemove)
+	api.Patch("/item/image/set-primary/:id", ItemImageSetPrimary)
 }

@@ -8,6 +8,8 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 func ItemImageSet(c *fiber.Ctx) error {
@@ -19,7 +21,10 @@ func ItemImageSet(c *fiber.Ctx) error {
 	}
 
 	var body struct {
-		Images []string `json:"images" validate:"required,min=1,dive,url"`
+		Images []struct {
+			Url       string `json:"url" validate:"required,url"`
+			IsPrimary bool   `json:"is_primary"`
+		} `json:"images" validate:"required,min=1,dive"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
@@ -30,66 +35,102 @@ func ItemImageSet(c *fiber.Ctx) error {
 		return dto.BadRequest(c, "Invalid item id", nil)
 	}
 
-	_type := model.ProductItemImage{
-		ItemID:    uint(itemIdInt),
-		URL:       body.Images,
-		CreatedBy: currentUser.ID,
-		UpdatedBy: currentUser.ID,
-	}
+	err = variable.Db.Transaction(func(tx *gorm.DB) error {
+		// 1. Delete all existing images for this item
+		if err := tx.Delete(&model.ProductItemImage{}, "item_id = ?", itemIdInt).Error; err != nil {
+			return err
+		}
 
-	if err := variable.Db.
-		Create(&_type).
-		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to create type", nil)
-	}
-
-	return dto.Created(c, "Type created", fiber.Map{
-		"type": _type.Map(),
+		// 2. Insert new ones
+		for _, img := range body.Images {
+			newImg := model.ProductItemImage{
+				ID:         uuid.New(),
+				ItemID:     uint(itemIdInt),
+				Url:        img.Url,
+				IsPrimary:  img.IsPrimary,
+				UploadedBy: currentUser.ID,
+			}
+			if err := tx.Create(&newImg).Error; err != nil {
+				return err
+			}
+		}
+		return nil
 	})
+
+	if err != nil {
+		return dto.InternalServerError(c, "Failed to update images", nil)
+	}
+
+	return dto.OK(c, "Images updated successfully", nil)
 }
 
 func ItemImageList(c *fiber.Ctx) error {
-	id := c.Params("id")
+	itemId := c.Params("item_id")
 
+	var images []model.ProductItemImage
 	if err := variable.Db.
-		Delete(&model.ProductType{}, "id = ?", id).
+		Where("item_id = ?", itemId).
+		Order("is_primary DESC, uploaded_at ASC").
+		Find(&images).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to delete type", nil)
+		return dto.InternalServerError(c, "Failed to get images", nil)
 	}
 
-	return dto.OK(c, "Type deleted", nil)
+	rows := make([]map[string]any, 0, len(images))
+	for _, img := range images {
+		rows = append(rows, img.Map())
+	}
+
+	return dto.OK(c, "Success get images", fiber.Map{
+		"rows": rows,
+	})
 }
 
 func ItemImageRemove(c *fiber.Ctx) error {
 	id := c.Params("id")
 
-	if err := variable.Db.
-		Delete(&model.ProductType{}, "id = ?", id).
-		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to delete type", nil)
+	idUUID, err := uuid.Parse(id)
+	if err != nil {
+		return dto.BadRequest(c, "Invalid image id", nil)
 	}
 
-	return dto.OK(c, "Type deleted", nil)
+	if err := variable.Db.
+		Delete(&model.ProductItemImage{}, "id = ?", idUUID).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to delete image", nil)
+	}
+
+	return dto.OK(c, "Image deleted", nil)
 }
 
 func ItemImageSetPrimary(c *fiber.Ctx) error {
 	id := c.Params("id")
-
-	var existing model.ProductType
-	if err := variable.Db.
-		First(&existing, "id = ?", id).
-		Error; err != nil {
-		return dto.NotFound(c, "Type not found", nil)
+	idUUID, err := uuid.Parse(id)
+	if err != nil {
+		return dto.BadRequest(c, "Invalid image id", nil)
 	}
 
-	existing.IsActive = !existing.IsActive
-	if err := variable.Db.
-		Save(&existing).
-		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to toggle type status", nil)
+	var target model.ProductItemImage
+	if err := variable.Db.First(&target, "id = ?", idUUID).Error; err != nil {
+		return dto.NotFound(c, "Image not found", nil)
 	}
 
-	return dto.OK(c, "Type status updated", fiber.Map{
-		"type": existing.Map(),
+	err = variable.Db.Transaction(func(tx *gorm.DB) error {
+		// 1. Unset all primary for this item
+		if err := tx.Model(&model.ProductItemImage{}).
+			Where("item_id = ?", target.ItemID).
+			Update("is_primary", false).Error; err != nil {
+			return err
+		}
+		// 2. Set this one as primary
+		if err := tx.Model(&target).Where("id = ?", idUUID).Update("is_primary", true).Error; err != nil {
+			return err
+		}
+		return nil
 	})
+	if err != nil {
+		return dto.InternalServerError(c, "Failed to set primary image", nil)
+	}
+
+	return dto.OK(c, "Primary image updated", nil)
 }

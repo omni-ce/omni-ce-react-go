@@ -1,9 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import type { ProductItem } from "@/types/product";
 import DynamicForm, { FileType } from "@/components/DynamicForm";
 import { Button } from "@/components/ui/Button";
 import { useLanguageStore } from "@/stores/languageStore";
 import { IconComponent } from "@/components/ui/IconSelector";
+import satellite from "@/lib/satellite";
+import type { Response } from "@/types/response";
+
+interface ItemImage {
+  id: string;
+  url: string;
+  is_primary: boolean;
+}
 
 export const ProductImage = ({
   row,
@@ -15,24 +23,83 @@ export const ProductImage = ({
   const { language } = useLanguageStore();
   const [formData, setFormData] = useState<Record<string, unknown>>({});
   const [loading, setLoading] = useState(false);
+  const [images, setImages] = useState<ItemImage[]>([]);
 
-  // Mock images data for UI demonstration
-  const [images] = useState([
-    { id: 1, url: "https://picsum.photos/400/400?random=1" },
-    { id: 2, url: "https://picsum.photos/400/400?random=2" },
-    { id: 3, url: "https://picsum.photos/400/400?random=3" },
-    { id: 4, url: "https://picsum.photos/400/400?random=4" },
-    { id: 5, url: "https://picsum.photos/400/400?random=5" },
-  ]);
+  const fetchImages = async () => {
+    try {
+      const res = await satellite.get<Response<{ rows: ItemImage[] }>>(
+        `/api/product/item/image/list/${row.id}`,
+      );
+      if (res.data.status === 200) {
+        setImages(res.data.data.rows);
+      }
+    } catch (e) {
+      console.error("Failed to fetch images:", e);
+    }
+  };
+
+  useEffect(() => {
+    fetchImages();
+  }, [row.id]);
+
+  const syncImages = async (
+    newList: { url: string; is_primary: boolean }[],
+  ) => {
+    setLoading(true);
+    try {
+      const res = await satellite.post(
+        `/api/product/item/image/set/${row.id}`,
+        {
+          images: newList,
+        },
+      );
+      if (res.data.status === "OK") {
+        await fetchImages();
+        setFormData({}); // Reset form after successful sync
+      }
+    } catch (e) {
+      console.error("Failed to sync images:", e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleUpload = () => {
     if (!formData.image) return;
-    setLoading(true);
-    // Simulation
-    setTimeout(() => {
-      setLoading(false);
-      alert("Image uploaded (mock)");
-    }, 1500);
+    // Add new image to current list and sync
+    const newList = images.map((img) => ({
+      url: img.url,
+      is_primary: img.is_primary,
+    }));
+    newList.push({
+      url: formData.image as string,
+      is_primary: images.length === 0, // First image becomes primary
+    });
+    syncImages(newList);
+  };
+
+  const handleDelete = (id: string) => {
+    const newList = images
+      .filter((img) => img.id !== id)
+      .map((img) => ({
+        url: img.url,
+        is_primary: img.is_primary,
+      }));
+
+    // If we deleted the primary, set the first remaining one as primary
+    if (images.find((img) => img.id === id)?.is_primary && newList.length > 0) {
+      newList[0].is_primary = true;
+    }
+
+    syncImages(newList);
+  };
+
+  const handleSetPrimary = (id: string) => {
+    const newList = images.map((img) => ({
+      url: img.url,
+      is_primary: img.id === id,
+    }));
+    syncImages(newList);
   };
 
   return (
@@ -68,9 +135,29 @@ export const ProductImage = ({
                 alt="Product"
                 className="w-full h-full object-cover"
               />
-              {/* Delete Button - Corner Positioned */}
-              <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-200">
+
+              {/* Primary Badge */}
+              {img.is_primary && (
+                <div className="absolute top-3 left-3">
+                  <span className="bg-accent-500 text-white text-[9px] px-2 py-0.5 rounded-md font-black tracking-tighter shadow-lg border border-white/20">
+                    PRIMARY
+                  </span>
+                </div>
+              )}
+
+              {/* Actions */}
+              <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-200 flex gap-2">
+                {!img.is_primary && (
+                  <button
+                    onClick={() => handleSetPrimary(img.id)}
+                    className="w-8 h-8 rounded-xl bg-dark-900/90 backdrop-blur-md text-white flex items-center justify-center hover:bg-accent-500 hover:scale-110 transition-all shadow-xl border border-white/10"
+                    title="Set as primary"
+                  >
+                    <IconComponent iconName="Hi/HiOutlineStar" size={16} />
+                  </button>
+                )}
                 <button
+                  onClick={() => handleDelete(img.id)}
                   className="w-8 h-8 rounded-xl bg-dark-900/90 backdrop-blur-md text-white flex items-center justify-center hover:bg-neon-red hover:scale-110 transition-all shadow-xl border border-white/10"
                   title="Delete image"
                 >
@@ -81,7 +168,7 @@ export const ProductImage = ({
           ))}
 
           {images.length === 0 && (
-            <div className="col-span-3 py-24 flex flex-col items-center justify-center text-dark-400 border-2 border-dashed border-dark-600/30 rounded-3xl bg-dark-900/30">
+            <div className="col-span-2 py-24 flex flex-col items-center justify-center text-dark-400 border-2 border-dashed border-dark-600/30 rounded-3xl bg-dark-900/30">
               <div className="w-16 h-16 rounded-full bg-dark-800 flex items-center justify-center mb-4">
                 <IconComponent
                   iconName="Hi/HiOutlinePhotograph"
