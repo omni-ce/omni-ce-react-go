@@ -27,7 +27,9 @@ export default function ProductItemPage({ ruleKey }: Props) {
   const paginationRef = useRef<PaginationHandle>(null);
   const { languageCode, language } = useLanguageStore();
 
-  const fields = useMemo<PaginationField<ProductCategoryOption>[]>(
+  const fields = useMemo<
+    PaginationField<ProductCategoryOption | ProductBrandOption>[]
+  >(
     () => [
       {
         key: "category_id",
@@ -47,7 +49,8 @@ export default function ProductItemPage({ ruleKey }: Props) {
             // fallback to raw name
           }
           return {
-            value: item.value as unknown,
+            value: item.value,
+            label: category || category_name,
             render: (
               <div className="flex items-center gap-2">
                 <IconComponent iconName={item.meta?.icon} className="text-lg" />
