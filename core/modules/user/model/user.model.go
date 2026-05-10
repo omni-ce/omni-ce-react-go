@@ -16,10 +16,10 @@ const (
 )
 
 type User struct {
-	ID        uuid.UUID `json:"id" gorm:"type:char(36);primaryKey"`
-	Username  string    `json:"username" gorm:"uniqueIndex"`
-	Password  string    `json:"password" gorm:"not null"`
-	Role      string    `json:"role" gorm:"not null"`
+	ID          uuid.UUID `json:"id" gorm:"type:char(36);primaryKey"`
+	Username    string    `json:"username" gorm:"uniqueIndex"`
+	Password    string    `json:"password" gorm:"not null"`
+	Role        string    `json:"role" gorm:"not null"`
 	Name        string    `json:"name" gorm:"not null"`
 	Avatar      string    `json:"avatar"`
 	Address     string    `json:"address"`
@@ -68,7 +68,7 @@ func (User) Seed(db *gorm.DB) {
 			{
 				Name:     "Admin",
 				Username: "admin",
-				Password: hash.Password("admin123"),
+				Password: hash.Password("Admin@123"),
 				Role:     UserRoleAdmin,
 			},
 		}

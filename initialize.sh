@@ -28,7 +28,7 @@ while true; do
   fi
 done
 while true; do
-  read -p "User: Password? [admin123]        : " password
+  read -p "User: Password? [Admin@123]       : " password
   if [ -z "$password" ]; then
     break
   fi
