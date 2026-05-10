@@ -11,6 +11,7 @@ import (
 	product "react-go/core/modules/product/model"
 	role "react-go/core/modules/role/model"
 	user "react-go/core/modules/user/model"
+	warehouse "react-go/core/modules/warehouse/model"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -548,4 +549,25 @@ func ProductItems(c *fiber.Ctx) error {
 	}
 
 	return dto.OK(c, "Get product items success", rows)
+}
+
+// Warehouse
+
+func WarehouseLocations(c *fiber.Ctx) error {
+	locations := make([]warehouse.WarehouseLocation, 0)
+	if err := variable.Db.
+		Model(&warehouse.WarehouseLocation{}).
+		Find(&locations).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to find warehouse locations", nil)
+	}
+
+	rows := make([]types.Option, 0)
+	for _, row := range locations {
+		if row.IsActive {
+			rows = append(rows, row.Option())
+		}
+	}
+
+	return dto.OK(c, "Get warehouse locations success", rows)
 }

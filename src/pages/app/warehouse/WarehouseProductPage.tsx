@@ -35,7 +35,7 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
         label: language({ id: "Lokasi Gudang", en: "Warehouse Location" }),
         type: "select",
         required: true,
-        selectOptions: "warehouse/location",
+        selectOptions: "warehouse-locations",
       },
       {
         key: "product_id",

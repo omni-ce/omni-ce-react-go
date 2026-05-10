@@ -27,6 +27,6 @@ func ProtectedRoute(api fiber.Router) {
 	api.Get("/product-items", ProductItems)
 
 	// Warehouse
-	// api.Get("/warehouse-locations", WarehouseLocations)
+	api.Get("/warehouse-locations", WarehouseLocations)
 	// api.Get("/warehouse-products/:warehouse_location_id", WarehouseProducts)
 }

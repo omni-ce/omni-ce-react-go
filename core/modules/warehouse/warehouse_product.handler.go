@@ -22,17 +22,26 @@ func ProductCreate(c *fiber.Ctx) error {
 	}
 
 	var body struct {
-		WarehouseLocationID uint `json:"warehouse_location_id" validate:"required"`
-		ProductID           uint `json:"product_id" validate:"required"`
-		Qty                 int  `json:"qty"`
+		WarehouseLocationID string `json:"warehouse_location_id" validate:"required"`
+		ProductID           string `json:"product_id" validate:"required"`
+		Qty                 int    `json:"qty"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
 	}
 
+	warehouseLocationId, err := strconv.Atoi(body.WarehouseLocationID)
+	if err != nil {
+		return dto.BadRequest(c, "Invalid warehouse location ID", nil)
+	}
+	productId, err := strconv.Atoi(body.ProductID)
+	if err != nil {
+		return dto.BadRequest(c, "Invalid product ID", nil)
+	}
+
 	product := model.WarehouseProduct{
-		WarehouseLocationID: body.WarehouseLocationID,
-		ProductID:           body.ProductID,
+		WarehouseLocationID: uint(warehouseLocationId),
+		ProductID:           uint(productId),
 		Qty:                 body.Qty,
 		IsActive:            true,
 		CreatedBy:           currentUser.ID,
@@ -175,7 +184,7 @@ func ProductPaginate(c *fiber.Ctx) error {
 		}
 		p["warehouse_location_name"] = warehouse_location.Name
 		p["product_sku"] = product_item.SKU
-		product_name := fmt.Sprintf("[%s %s] %s %s", product_category.Name, product_type.Name, product_brand.Name, product_variant.Name)
+		product_name := fmt.Sprintf("%s %s", product_brand.Name, product_variant.Name)
 		if product_memory.ID != 0 {
 			product_name += fmt.Sprintf(" (%d GB / %d GB)", product_memory.Ram, product_memory.InternalStorage)
 		}
@@ -185,9 +194,6 @@ func ProductPaginate(c *fiber.Ctx) error {
 		p["product_name"] = product_name
 		p["product_category_name"] = product_category.Name
 		p["product_type_name"] = product_type.Name
-		p["product_brand_name"] = product_brand.Name
-		p["product_variant_name"] = product_variant.Name
-		p["product_color_name"] = product_color.Name
 		result = append(result, p)
 	}
 
@@ -207,12 +213,21 @@ func ProductEdit(c *fiber.Ctx) error {
 	}
 
 	var body struct {
-		WarehouseLocationID uint `json:"warehouse_location_id"`
-		ProductID           uint `json:"product_id"`
-		Qty                 int  `json:"qty"`
+		WarehouseLocationID string `json:"warehouse_location_id"`
+		ProductID           string `json:"product_id"`
+		Qty                 int    `json:"qty"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
+	}
+
+	warehouseLocationId, err := strconv.Atoi(body.WarehouseLocationID)
+	if err != nil {
+		return dto.BadRequest(c, "Invalid warehouse location ID", nil)
+	}
+	productId, err := strconv.Atoi(body.ProductID)
+	if err != nil {
+		return dto.BadRequest(c, "Invalid product ID", nil)
 	}
 
 	var existing model.WarehouseProduct
@@ -224,11 +239,11 @@ func ProductEdit(c *fiber.Ctx) error {
 		"updated_by": currentUser.ID,
 	}
 
-	if body.WarehouseLocationID != 0 {
-		updates["warehouse_location_id"] = body.WarehouseLocationID
+	if body.WarehouseLocationID != "" {
+		updates["warehouse_location_id"] = uint(warehouseLocationId)
 	}
-	if body.ProductID != 0 {
-		updates["product_id"] = body.ProductID
+	if body.ProductID != "" {
+		updates["product_id"] = uint(productId)
 	}
 	updates["qty"] = body.Qty
 
