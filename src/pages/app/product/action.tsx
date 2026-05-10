@@ -42,64 +42,53 @@ export const ProductImage = ({
     fetchImages();
   }, [row.id]);
 
-  const syncImages = async (
-    newList: { url: string; is_primary: boolean }[],
-  ) => {
+  const handleUpload = async () => {
+    if (!formData.image) return;
     setLoading(true);
     try {
-      const res = await satellite.post(
-        `/api/product/item/image/set/${row.id}`,
-        {
-          images: newList,
-        },
-      );
+      const res = await satellite.post(`/api/product/item/image/set/${row.id}`, {
+        url: formData.image as string,
+        is_primary: images.length === 0,
+      });
       if (res.data.status === "OK") {
         await fetchImages();
-        setFormData({}); // Reset form after successful sync
+        setFormData({});
       }
     } catch (e) {
-      console.error("Failed to sync images:", e);
+      console.error("Failed to upload image:", e);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleUpload = () => {
-    if (!formData.image) return;
-    // Add new image to current list and sync
-    const newList = images.map((img) => ({
-      url: img.url,
-      is_primary: img.is_primary,
-    }));
-    newList.push({
-      url: formData.image as string,
-      is_primary: images.length === 0, // First image becomes primary
-    });
-    syncImages(newList);
-  };
-
-  const handleDelete = (id: string) => {
-    const newList = images
-      .filter((img) => img.id !== id)
-      .map((img) => ({
-        url: img.url,
-        is_primary: img.is_primary,
-      }));
-
-    // If we deleted the primary, set the first remaining one as primary
-    if (images.find((img) => img.id === id)?.is_primary && newList.length > 0) {
-      newList[0].is_primary = true;
+  const handleDelete = async (id: string) => {
+    setLoading(true);
+    try {
+      const res = await satellite.delete(`/api/product/item/image/remove/${id}`);
+      if (res.data.status === "OK") {
+        await fetchImages();
+      }
+    } catch (e) {
+      console.error("Failed to delete image:", e);
+    } finally {
+      setLoading(false);
     }
-
-    syncImages(newList);
   };
 
-  const handleSetPrimary = (id: string) => {
-    const newList = images.map((img) => ({
-      url: img.url,
-      is_primary: img.id === id,
-    }));
-    syncImages(newList);
+  const handleSetPrimary = async (id: string) => {
+    setLoading(true);
+    try {
+      const res = await satellite.patch(
+        `/api/product/item/image/set-primary/${id}`,
+      );
+      if (res.data.status === "OK") {
+        await fetchImages();
+      }
+    } catch (e) {
+      console.error("Failed to set primary image:", e);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

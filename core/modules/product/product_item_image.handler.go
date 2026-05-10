@@ -21,10 +21,8 @@ func ItemImageSet(c *fiber.Ctx) error {
 	}
 
 	var body struct {
-		Images []struct {
-			Url       string `json:"url" validate:"required,url"`
-			IsPrimary bool   `json:"is_primary"`
-		} `json:"images" validate:"required,min=1,dive"`
+		Url       string `json:"url" validate:"required,url"`
+		IsPrimary bool   `json:"is_primary"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
@@ -36,25 +34,21 @@ func ItemImageSet(c *fiber.Ctx) error {
 	}
 
 	err = variable.Db.Transaction(func(tx *gorm.DB) error {
-		// 1. Delete all existing images for this item
-		if err := tx.Delete(&model.ProductItemImage{}, "item_id = ?", itemIdInt).Error; err != nil {
-			return err
-		}
-
-		// 2. Insert new ones
-		for _, img := range body.Images {
-			newImg := model.ProductItemImage{
-				ID:         uuid.New(),
-				ItemID:     uint(itemIdInt),
-				Url:        img.Url,
-				IsPrimary:  img.IsPrimary,
-				UploadedBy: currentUser.ID,
-			}
-			if err := tx.Create(&newImg).Error; err != nil {
+		if body.IsPrimary {
+			// Unset others
+			if err := tx.Model(&model.ProductItemImage{}).Where("item_id = ?", itemIdInt).Update("is_primary", false).Error; err != nil {
 				return err
 			}
 		}
-		return nil
+
+		newImg := model.ProductItemImage{
+			ID:         uuid.New(),
+			ItemID:     uint(itemIdInt),
+			Url:        body.Url,
+			IsPrimary:  body.IsPrimary,
+			UploadedBy: currentUser.ID,
+		}
+		return tx.Create(&newImg).Error
 	})
 
 	if err != nil {
