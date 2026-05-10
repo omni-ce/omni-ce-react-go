@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, type JSX } from "react";
 import { Label } from "@/components/ui/Label";
 import { Input } from "@/components/ui/Input";
 import { SearchableSelect } from "@/components/ui/SearchableSelect";
@@ -25,11 +25,12 @@ import { formatFileSize } from "@/utils/format";
 import MapPicker, { type MapCoordinates } from "@/components/ui/MapPicker";
 import Image from "@/components/Image";
 
-export interface DynamicFormFieldOption {
+export interface DynamicFormFieldOption<T = unknown> {
   value: string | number;
   label?: string;
   icon?: string;
-  render?: React.ReactNode;
+  logo?: string;
+  render?: JSX.Element;
   default?: boolean;
   array?: string[];
 }
@@ -125,7 +126,7 @@ export type DynamicFormFieldNormal<T = unknown> = {
   captchaLength?: number;
   phoneDefaultCountry?: LanguageKey;
   phoneFirstAntiZero?: boolean;
-  children?: DynamicFormField<T>[];
+  children?: DynamicFormField[];
   textMultiLanguage?: boolean;
   rule?: string;
   numberSuffix?: string;
@@ -134,10 +135,10 @@ export type DynamicFormFieldNormal<T = unknown> = {
   selectFormat?: (row: T) => DynamicFormFieldOption;
 };
 
-type DynamicFormFieldChildren<T = unknown> = {
+type DynamicFormFieldChildren = {
   key?: never;
   type?: never;
-  children: DynamicFormField<T>[];
+  children: DynamicFormField[];
 };
 
 export type DynamicFormField<T = unknown> = {
@@ -149,7 +150,7 @@ export type DynamicFormField<T = unknown> = {
   colDesktop?: number;
   strict?: boolean;
   only?: "create" | "update";
-} & (DynamicFormFieldNormal<T> | DynamicFormFieldChildren<T>);
+} & (DynamicFormFieldNormal<T> | DynamicFormFieldChildren);
 
 const getColClass = (field: DynamicFormField | DynamicFormFieldNormal) => {
   const m =

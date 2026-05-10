@@ -35,9 +35,17 @@ export interface ProductVarian {
   key: string;
   brand_id: number;
   brand_name: string;
+  brand_logo: string;
   name: string;
   description: string;
   is_active: boolean;
+}
+export interface ProductBrandOption {
+  label: string;
+  value: number;
+  meta: {
+    logo: string;
+  };
 }
 export interface ProductMemory {
   id: number;

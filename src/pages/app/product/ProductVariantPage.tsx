@@ -6,10 +6,11 @@ import Pagination, {
   type PaginationField,
   type PaginationHandle,
 } from "@/components/Pagination";
-import { type ProductVarian } from "@/types/product";
+import { type ProductBrandOption, type ProductVarian } from "@/types/product";
 import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import { Badge } from "@/components/ui/Badge";
+import Image from "@/components/Image";
 
 interface Props {
   ruleKey?: string;
@@ -20,7 +21,7 @@ export default function ProductVarianPage({ ruleKey }: Props) {
   const paginationRef = useRef<PaginationHandle>(null);
   const { languageCode, language } = useLanguageStore();
 
-  const fields = useMemo<PaginationField[]>(
+  const fields = useMemo<PaginationField<ProductBrandOption>[]>(
     () => [
       {
         key: "brand_id",
@@ -28,6 +29,15 @@ export default function ProductVarianPage({ ruleKey }: Props) {
         type: "select",
         required: true,
         selectOptions: "product-brands",
+        selectFormat: (item: ProductBrandOption) => ({
+          value: item.value,
+          render: (
+            <div className="flex items-center gap-2">
+              <Image src={item.meta.logo} alt="logo" className="w-6 h-6" />
+              <span>{item.label}</span>
+            </div>
+          ),
+        }),
       },
       {
         key: "name",
@@ -52,7 +62,10 @@ export default function ProductVarianPage({ ruleKey }: Props) {
         header: language({ id: "Merek", en: "Brand" }),
         options: "product-brands",
         render: (item) => (
-          <span className="font-mono text-sm">{item.brand_name}</span>
+          <span className="font-mono text-sm flex items-center gap-2">
+            <Image src={item.brand_logo} alt="logo" className="w-6 h-6" />
+            <span>{item.brand_name}</span>
+          </span>
         ),
       },
       {
@@ -114,7 +127,7 @@ export default function ProductVarianPage({ ruleKey }: Props) {
         title={language({ id: "Daftar Varian", en: "Variants List" })}
         columns={columns}
         module="product/variant"
-        fields={fields}
+        fields={fields as PaginationField[]}
         ruleKey={ruleKey}
         useIsActive
       />

@@ -76,6 +76,7 @@ func VariantPaginate(c *fiber.Ctx) error {
 	for _, row := range variants {
 		variant := row.Map()
 		variant["brand_name"] = row.Brand.Name
+		variant["brand_logo"] = row.Brand.Logo
 		rows = append(rows, variant)
 	}
 

@@ -1,6 +1,9 @@
 export interface Option {
-  label: string;
   value: unknown;
+  label?: string;
+  render?: React.ReactNode;
+  array?: string[];
+  meta?: Record<string, unknown>;
 }
 
 export enum Gender {

@@ -8,6 +8,7 @@ interface Option {
   value: string | number;
   label?: string;
   icon?: string;
+  logo?: string;
   render?: React.ReactNode;
   array?: unknown[];
 }
