@@ -23,8 +23,8 @@ import ProductItemPage from "@/pages/app/product/ProductItemPage";
 import WarehouseLocationPage from "@/pages/app/warehouse/WarehouseLocationPage";
 import WarehouseProductPage from "@/pages/app/warehouse/WarehouseProductPage";
 
-// Loyalty
-import CustomerPage from "@/pages/app/loyalty/CustomerPage";
+// Marketing
+import MarketingCustomerPage from "@/pages/app/marketing/MarketingCustomerPage";
 
 const sidebarLinks: ISidebarLink[] = [
   {
@@ -151,14 +151,14 @@ const sidebarLinks: ISidebarLink[] = [
   },
 
   {
-    label: { id: "Loyalty", en: "Loyalty" },
-    path: "loyalty",
-    icon: "Md/MdLoyalty",
+    label: { id: "Marketing", en: "Marketing" },
+    path: "marketing",
+    icon: "Md/MdOutlineCampaign",
     children: [
       {
         label: { id: "Pelanggan", en: "Customer" },
         path: "customer",
-        element: <CustomerPage ruleKey="loyalty/customer" />,
+        element: <MarketingCustomerPage ruleKey="marketing/customer" />,
         strict: true,
         icon: "Hi/HiUserGroup",
       },

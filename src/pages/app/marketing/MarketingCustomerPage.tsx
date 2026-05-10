@@ -8,7 +8,10 @@ import Pagination, {
 } from "@/components/Pagination";
 import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
-import { CustomerType, type Customer } from "@/types/loyalty";
+import {
+  MarketingCustomerType,
+  type MarketingCustomer,
+} from "@/types/marketing";
 import { Badge } from "@/components/ui/Badge";
 import type { LanguageKey } from "@/types/world";
 import { IconComponent } from "@/components/ui/IconSelector";
@@ -18,7 +21,7 @@ import type { Gender } from "@/types/option";
 interface Props {
   ruleKey?: string;
 }
-export default function CustomerPage({ ruleKey }: Props) {
+export default function MarketingCustomerPage({ ruleKey }: Props) {
   const perm = usePermission(ruleKey);
 
   const paginationRef = useRef<PaginationHandle>(null);
@@ -111,7 +114,7 @@ export default function CustomerPage({ ruleKey }: Props) {
     [languageCode, language],
   );
 
-  const columns = useMemo<PaginationColumn<Customer>[]>(
+  const columns = useMemo<PaginationColumn<MarketingCustomer>[]>(
     () => [
       {
         key: "branch_name",
@@ -130,7 +133,9 @@ export default function CustomerPage({ ruleKey }: Props) {
         render: (item) => (
           <Badge
             variant={
-              item.type === CustomerType.Retail ? "default" : "secondary"
+              item.type === MarketingCustomerType.Retail
+                ? "default"
+                : "secondary"
             }
           >
             {item.type}
@@ -229,13 +234,13 @@ export default function CustomerPage({ ruleKey }: Props) {
     [languageCode, language],
   );
 
-  const dummyData = useMemo<Customer[]>(
+  const dummyData = useMemo<MarketingCustomer[]>(
     () => [
       {
         id: 1,
         branch_id: 1,
         branch_name: "Cabang 1",
-        type: CustomerType.Reseller,
+        type: MarketingCustomerType.Reseller,
         phone: "08123456789",
         name: "Customer 1",
         gender: "L" as Gender,
@@ -254,7 +259,7 @@ export default function CustomerPage({ ruleKey }: Props) {
         id: 2,
         branch_id: 1,
         branch_name: "Cabang 1",
-        type: CustomerType.B2B,
+        type: MarketingCustomerType.B2B,
         phone: "08123456789",
         name: "Customer 2",
         gender: "P" as Gender,
@@ -273,7 +278,7 @@ export default function CustomerPage({ ruleKey }: Props) {
         id: 3,
         branch_id: 1,
         branch_name: "Cabang 1",
-        type: CustomerType.Retail,
+        type: MarketingCustomerType.Retail,
         phone: "08123456789",
         name: "Customer 3",
         gender: "L" as Gender,
@@ -317,7 +322,7 @@ export default function CustomerPage({ ruleKey }: Props) {
           en: "Customer List",
         })}
         columns={columns}
-        module="loyalty/customer"
+        module="marketing/customer"
         fields={fields}
         ruleKey={ruleKey}
         useIsActive

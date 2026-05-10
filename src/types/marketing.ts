@@ -1,16 +1,16 @@
 import type { Gender } from "@/types/option";
 
-export enum CustomerType {
+export enum MarketingCustomerType {
   Reseller = "reseller",
   B2B = "b2b",
   Retail = "retail",
 }
 
-export interface Customer {
+export interface MarketingCustomer {
   id: number;
   branch_id: number;
   branch_name: string;
-  type: CustomerType;
+  type: MarketingCustomerType;
   phone: string;
   name: string;
   gender: Gender;
