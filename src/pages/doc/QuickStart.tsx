@@ -41,13 +41,13 @@ cd react-go
 bun install   # or: npm install
 
 # ${language({
-        id: "",
+        id: "Jalankan dalam mode pengembangan",
         en: "Run in development mode",
       })}
 bun run dev   # or: npm run dev
 
 # ${language({
-        id: "Build for production",
+        id: "Build untuk produksi",
         en: "Build for production",
       })}
 bun run build # or: npm run build`}</CodeBlock>
@@ -58,19 +58,19 @@ bun run build # or: npm run build`}</CodeBlock>
         })}
       </h3>
       <CodeBlock>{`# ${language({
-        id: "Download Go dependencies",
+        id: "Unduh dependensi Go",
         en: "Download Go dependencies",
       })}
 go mod download
 
 # ${language({
-        id: "Run the server",
+        id: "Jalankan server",
         en: "Run the server",
       })}
 go run main.go
 
 # ${language({
-        id: "Build binary",
+        id: "Kompilasi binari",
         en: "Build binary",
       })}
 go build -o react-go main.go
