@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"react-go/core/dto"
 	"react-go/core/function"
+	company "react-go/core/modules/company/model"
 	product "react-go/core/modules/product/model"
 	model "react-go/core/modules/warehouse/model"
 	"react-go/core/variable"
@@ -80,6 +81,33 @@ func ProductPaginate(c *fiber.Ctx) error {
 	products := make([]product.ProductItem, 0)
 	variable.Db.Where("id IN ?", warehouseLocationIds).Find(&warehouseLocations)
 	variable.Db.Where("id IN ?", productIds).Find(&products)
+
+	branchIds := make([]uint, 0)
+	for _, row := range warehouseLocations {
+		branchIds = append(branchIds, row.BranchID)
+	}
+
+	branches := make([]company.CompanyBranch, 0)
+	if err := variable.Db.
+		Model(&company.CompanyBranch{}).
+		Where("id IN (?)", branchIds).
+		Find(&branches).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to find company branches", nil)
+	}
+	entityIds := make([]uint, 0)
+	for _, row := range branches {
+		entityIds = append(entityIds, row.EntityID)
+	}
+
+	entities := make([]company.CompanyEntity, 0)
+	if err := variable.Db.
+		Model(&company.CompanyEntity{}).
+		Where("id IN (?)", entityIds).
+		Find(&entities).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to find company entities", nil)
+	}
 
 	productCategoryIds := make([]uint, 0, len(products))
 	for _, product := range products {
@@ -182,6 +210,24 @@ func ProductPaginate(c *fiber.Ctx) error {
 				break
 			}
 		}
+
+		var branch company.CompanyBranch
+		for _, b := range branches {
+			if b.ID == warehouse_location.BranchID {
+				branch = b
+				break
+			}
+		}
+		var entity company.CompanyEntity
+		for _, e := range entities {
+			if e.ID == branch.EntityID {
+				entity = e
+				break
+			}
+		}
+
+		p["entity_name"] = entity.Name
+		p["branch_name"] = branch.Name
 		p["warehouse_location_name"] = warehouse_location.Name
 		p["product_sku"] = product_item.SKU
 		product_name := fmt.Sprintf("%s %s", product_brand.Name, product_variant.Name)

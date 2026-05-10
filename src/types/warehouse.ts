@@ -15,6 +15,8 @@ export interface WarehouseLocation {
 
 export interface WarehouseProduct {
   id: number;
+  entity_name: string;
+  branch_name: string;
   warehouse_location_id: number;
   warehouse_location_name: string;
   product_id: number;

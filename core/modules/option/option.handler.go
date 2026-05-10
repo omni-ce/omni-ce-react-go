@@ -561,11 +561,54 @@ func WarehouseLocations(c *fiber.Ctx) error {
 		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to find warehouse locations", nil)
 	}
+	branchIds := make([]uint, 0)
+	for _, row := range locations {
+		branchIds = append(branchIds, row.BranchID)
+	}
+
+	branches := make([]company.CompanyBranch, 0)
+	if err := variable.Db.
+		Model(&company.CompanyBranch{}).
+		Where("id IN (?)", branchIds).
+		Find(&branches).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to find company branches", nil)
+	}
+	entityIds := make([]uint, 0)
+	for _, row := range branches {
+		entityIds = append(entityIds, row.EntityID)
+	}
+
+	entities := make([]company.CompanyEntity, 0)
+	if err := variable.Db.
+		Model(&company.CompanyEntity{}).
+		Where("id IN (?)", entityIds).
+		Find(&entities).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to find company entities", nil)
+	}
 
 	rows := make([]types.Option, 0)
 	for _, row := range locations {
 		if row.IsActive {
-			rows = append(rows, row.Option())
+			var branch company.CompanyBranch
+			for _, b := range branches {
+				if b.ID == row.BranchID {
+					branch = b
+					break
+				}
+			}
+			var entity company.CompanyEntity
+			for _, e := range entities {
+				if e.ID == branch.EntityID {
+					entity = e
+					break
+				}
+			}
+			rows = append(rows, types.Option{
+				Label: fmt.Sprintf("%s - %s : %s", entity.Name, branch.Name, row.Name),
+				Value: row.ID,
+			})
 		}
 	}
 

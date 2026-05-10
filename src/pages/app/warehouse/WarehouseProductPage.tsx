@@ -71,7 +71,10 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
         sort: true,
         search: true,
         render: (item) => (
-          <span className="font-medium">{item.warehouse_location_name}</span>
+          <span className="font-medium">
+            {item.entity_name} - {item.branch_name}: {` `}
+            {item.warehouse_location_name}
+          </span>
         ),
       },
       {
