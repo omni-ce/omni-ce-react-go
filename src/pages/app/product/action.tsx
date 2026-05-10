@@ -45,7 +45,11 @@ export const ProductImage = ({
               {language({ id: "Galeri Foto Produk", en: "Product Gallery" })}
             </h3>
             <p className="text-xs text-dark-400 mt-1">
-              {row.brand_name} {row.varian_name}
+              {row.brand_name} {row.varian_name}{" "}
+              <span className="font-semibold">({row.memory_name})</span>{" "}
+              <span className="text-primary-500 font-semibold">
+                ({row.color_name})
+              </span>
             </p>
           </div>
           <span className="text-xs font-semibold px-2.5 py-1 bg-dark-800 border border-dark-600/40 rounded-full text-dark-300">
@@ -85,7 +89,12 @@ export const ProductImage = ({
                   className="opacity-30"
                 />
               </div>
-              <p className="text-sm font-medium">No images uploaded yet</p>
+              <p className="text-sm font-medium">
+                {language({
+                  id: "Belum ada foto",
+                  en: "No images uploaded yet",
+                })}
+              </p>
             </div>
           )}
         </div>
@@ -105,7 +114,10 @@ export const ProductImage = ({
             {language({ id: "Tambah Foto Baru", en: "Add New Photo" })}
           </h3>
           <p className="text-[11px] text-dark-400 leading-relaxed">
-            Select a high-quality photo for your product. Max size 2MB.
+            {language({
+              id: "Pilih foto berkualitas tinggi untuk produk Anda. Ukuran maksimal 2MB.",
+              en: "Select a high-quality photo for your product. Max size 2MB.",
+            })}
           </p>
         </div>
 
