@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import type { ProductItem } from "@/types/product";
 import DynamicForm, { FileType } from "@/components/DynamicForm";
 import { Button } from "@/components/ui/Button";
@@ -6,6 +7,7 @@ import { useLanguageStore } from "@/stores/languageStore";
 import { IconComponent } from "@/components/ui/IconSelector";
 import satellite from "@/lib/satellite";
 import type { Response } from "@/types/response";
+import Image from "@/components/Image";
 
 interface ItemImage {
   id: string;
@@ -24,6 +26,7 @@ export const ProductImage = ({
   const [formData, setFormData] = useState<Record<string, unknown>>({});
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState<ItemImage[]>([]);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const fetchImages = async () => {
     try {
@@ -122,12 +125,21 @@ export const ProductImage = ({
           {images.map((img) => (
             <div
               key={img.id}
-              className="group relative h-44 rounded-2xl border border-dark-600 bg-dark-900 overflow-hidden hover:border-accent-500/50 transition-all duration-300 shrink-0"
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setPreviewImage(img.url);
+                }
+              }}
+              className="group relative h-44 rounded-2xl border border-dark-600 bg-dark-900 overflow-hidden hover:border-accent-500/50 transition-all duration-300 shrink-0 cursor-zoom-in outline-none focus-visible:ring-2 focus-visible:ring-accent-500"
+              onClick={() => setPreviewImage(img.url)}
             >
-              <img
+              <Image
                 src={img.url}
                 alt="Product"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
               />
 
               {/* Primary Badge */}
@@ -143,7 +155,10 @@ export const ProductImage = ({
               <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-200 flex gap-2">
                 {!img.is_primary && (
                   <button
-                    onClick={() => handleSetPrimary(img.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSetPrimary(img.id);
+                    }}
                     className="w-8 h-8 rounded-xl bg-dark-900/90 backdrop-blur-md text-white flex items-center justify-center hover:bg-accent-500 hover:scale-110 transition-all shadow-xl border border-white/10"
                     title="Set as primary"
                   >
@@ -151,7 +166,10 @@ export const ProductImage = ({
                   </button>
                 )}
                 <button
-                  onClick={() => handleDelete(img.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(img.id);
+                  }}
                   className="w-8 h-8 rounded-xl bg-dark-900/90 backdrop-blur-md text-white flex items-center justify-center hover:bg-neon-red hover:scale-110 transition-all shadow-xl border border-white/10"
                   title="Delete image"
                 >
@@ -213,7 +231,7 @@ export const ProductImage = ({
                 fileMaxSize: 1024 * 1024 * 2,
                 fileTarget: "product-item-image",
                 fileTemplate: "product",
-                fileType: [FileType.Jpeg, FileType.Png],
+                fileType: [FileType.Jpeg, FileType.Png, FileType.Webp],
               },
             ]}
             formData={formData}
@@ -253,6 +271,33 @@ export const ProductImage = ({
           </Button>
         </div>
       </div>
+      {previewImage &&
+        createPortal(
+          <div
+            role="button"
+            tabIndex={-1}
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 animate-in fade-in duration-200"
+            onClick={() => setPreviewImage(null)}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") setPreviewImage(null);
+            }}
+          >
+            <div className="relative max-w-5xl w-full max-h-[90vh] flex items-center justify-center animate-in zoom-in-95 duration-300">
+              <Image
+                src={previewImage}
+                alt="Preview"
+                className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+              />
+              <button
+                className="absolute -top-12 right-0 p-2 text-white/70 hover:text-white transition-colors"
+                onClick={() => setPreviewImage(null)}
+              >
+                <IconComponent iconName="Hi/HiX" className="w-8 h-8" />
+              </button>
+            </div>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 };
