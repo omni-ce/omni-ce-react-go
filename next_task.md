@@ -12,5 +12,5 @@
 - POS
 - Middleware untuk handle rules
 - Switch maintenance system (bisa diaktifkan / dimatikan)
-- dynamic field: country, nama negara bukan nama bahasa
+- Bug: dynamic field: language salah bendera negara
 - jika ending, full halaman dokumentasi di update

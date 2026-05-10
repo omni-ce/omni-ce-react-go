@@ -1836,7 +1836,7 @@ function DynamicFieldRenderer({
           )}
         </div>
       )}
-      {errors[field.key] && field.type !== "phone" && (
+      {errors[field.key] && field.type !== "phone" && !field.debounce && (
         <p className="mt-1 text-[11px] text-neon-red font-medium pl-1">
           {errors[field.key]}
         </p>

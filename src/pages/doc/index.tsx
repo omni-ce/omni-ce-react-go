@@ -14,30 +14,25 @@ import AddingPages from "@/pages/doc/AddingPages";
 interface DocSection {
   id: string;
   label: string;
-  icon: string;
-  items: DocItem[];
-}
-
-interface DocItem {
-  id: string;
-  title: string;
-  content: React.ReactNode;
+  content?: React.ReactNode;
+  icon?: string;
+  section?: DocSection[];
 }
 
 const sections: DocSection[] = [
+  {
+    id: "introduction",
+    label: "Introduction",
+    content: <Introduction />,
+  },
   {
     id: "getting-started",
     label: "Getting Started",
     icon: "Ri/RiRocketLine",
     items: [
       {
-        id: "introduction",
-        title: "Introduction",
-        content: <Introduction />,
-      },
-      {
         id: "quick-start",
-        title: "Quick Start",
+        label: "Quick Start",
         content: <QuickStart />,
       },
     ],
@@ -49,12 +44,12 @@ const sections: DocSection[] = [
     items: [
       {
         id: "folder-structure",
-        title: "Folder Structure",
+        label: "Folder Structure",
         content: <ProjectStructure />,
       },
       {
         id: "tech-stack",
-        title: "Tech Stack",
+        label: "Tech Stack",
         content: <TechStack />,
       },
     ],
@@ -66,12 +61,12 @@ const sections: DocSection[] = [
     items: [
       {
         id: "theming",
-        title: "Theming",
+        label: "Theming",
         content: <Theming />,
       },
       {
         id: "adding-pages",
-        title: "Adding Pages",
+        label: "Adding Pages",
         content: <AddingPages />,
       },
     ],
@@ -101,7 +96,9 @@ export default function DocPage() {
         <div
           role="button"
           tabIndex={-1}
-          onKeyDown={(e) => { if (e.key === 'Escape') setSidebarOpen(false); }}
+          onKeyDown={(e) => {
+            if (e.key === "Escape") setSidebarOpen(false);
+          }}
           className="fixed inset-0 bg-black/60 z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
