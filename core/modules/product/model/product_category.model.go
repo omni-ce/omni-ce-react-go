@@ -10,6 +10,7 @@ import (
 type ProductCategory struct {
 	ID       uint   `json:"id" gorm:"autoIncrement;primaryKey"`
 	Key      string `json:"key" gorm:"type:varchar(255);uniqueIndex;not null"`
+	Icon     string `json:"icon" gorm:"type:varchar(255);not null"`
 	Name     string `json:"name" gorm:"type:varchar(255);not null"`
 	IsActive bool   `json:"is_active" gorm:"default:true"`
 
@@ -24,6 +25,7 @@ func (s *ProductCategory) Map() map[string]any {
 	return map[string]any{
 		"id":         s.ID,
 		"key":        s.Key,
+		"icon":       s.Icon,
 		"name":       s.Name,
 		"is_active":  s.IsActive,
 		"created_at": s.CreatedAt,

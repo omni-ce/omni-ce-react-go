@@ -9,6 +9,7 @@ import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import type { ProductCategory } from "@/types/product";
 import { Badge } from "@/components/ui/Badge";
+import { IconComponent } from "@/components/ui/IconSelector";
 
 interface Props {
   ruleKey?: string;
@@ -41,6 +42,13 @@ export default function ProductCategoryPage({ ruleKey }: Props) {
 
   const columns = useMemo<PaginationColumn<ProductCategory>[]>(
     () => [
+      {
+        key: "icon",
+        header: language({ id: "Ikon", en: "Icon" }),
+        render: (item) => {
+          return <IconComponent iconName={item.icon} className="w-5 h-5" />;
+        },
+      },
       {
         key: "name",
         header: language({ id: "Nama", en: "Name" }),

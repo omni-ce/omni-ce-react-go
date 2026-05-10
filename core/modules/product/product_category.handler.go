@@ -17,6 +17,7 @@ func CategoryCreate(c *fiber.Ctx) error {
 	}
 
 	var body struct {
+		Icon string `json:"icon" validate:"required"`
 		Name string `json:"name" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
@@ -36,6 +37,7 @@ func CategoryCreate(c *fiber.Ctx) error {
 
 	category := model.ProductCategory{
 		Key:       key,
+		Icon:      body.Icon,
 		Name:      body.Name,
 		CreatedBy: currentUser.ID,
 		UpdatedBy: currentUser.ID,
@@ -78,6 +80,7 @@ func CategoryEdit(c *fiber.Ctx) error {
 	}
 
 	var body struct {
+		Icon string `json:"icon" validate:"required"`
 		Name string `json:"name" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
@@ -105,6 +108,7 @@ func CategoryEdit(c *fiber.Ctx) error {
 	}
 
 	existing.Key = key
+	existing.Icon = body.Icon
 	existing.Name = body.Name
 	existing.UpdatedBy = currentUser.ID
 

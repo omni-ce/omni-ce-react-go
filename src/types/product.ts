@@ -1,6 +1,7 @@
 export interface ProductCategory {
   id: number;
   key: string;
+  icon: string;
   name: string;
   is_active: boolean;
 }
