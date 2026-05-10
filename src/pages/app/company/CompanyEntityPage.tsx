@@ -10,7 +10,6 @@ import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import type { CompanyEntity } from "@/types/company";
 import { Badge } from "@/components/ui/Badge";
 import { FileType } from "@/components/DynamicForm";
-import { HOST_API } from "@/environment";
 import { Avatar } from "@/components/ui/Avatar";
 import BlankCompany from "@/assets/blank-company.svg";
 import { IconComponent } from "@/components/ui/IconSelector";
@@ -95,7 +94,8 @@ export default function CompanyEntityPage({ ruleKey }: Props) {
             <Avatar
               size="sm"
               shape="square"
-              src={user.logo ? HOST_API + user.logo : BlankCompany}
+              src={user.logo ? user.logo : BlankCompany}
+              fromAsset={user.logo ? false : true}
               alt={user.name}
               fallback={user.name?.charAt(0)?.toUpperCase()}
             />

@@ -12,7 +12,6 @@ import BlankUser from "@/assets/blank-user.svg";
 import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import { FileType } from "@/components/DynamicForm";
-import { HOST_API } from "@/environment";
 import { ChangePassword } from "@/pages/system/user/action";
 import { LanguageKey } from "@/types/world";
 
@@ -128,7 +127,8 @@ export default function UserPage({ ruleKey }: Props) {
           <div className="flex items-center gap-3">
             <Avatar
               size="sm"
-              src={user.avatar ? HOST_API + user.avatar : BlankUser}
+              src={user.avatar ? user.avatar : BlankUser}
+              fromAsset={user.avatar ? false : true}
               alt={user.name}
               fallback={user.name?.charAt(0)?.toUpperCase()}
             />

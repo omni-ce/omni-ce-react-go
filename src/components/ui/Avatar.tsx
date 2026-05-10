@@ -1,10 +1,12 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import Image from "@/components/Image";
 
 interface AvatarProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   size?: "sm" | "md" | "lg";
   fallback?: string;
   shape?: "circle" | "square";
+  fromAsset?: boolean;
 }
 
 const sizeClasses: Record<string, string> = {
@@ -14,7 +16,19 @@ const sizeClasses: Record<string, string> = {
 };
 
 const Avatar = React.forwardRef<HTMLImageElement, AvatarProps>(
-  ({ className, size = "md", shape = "circle", src, alt, fallback, ...props }, ref) => {
+  (
+    {
+      className,
+      size = "md",
+      shape = "circle",
+      fromAsset = false,
+      src,
+      alt,
+      fallback,
+      ...props
+    },
+    ref,
+  ) => {
     const [error, setError] = React.useState(false);
 
     if (error || !src) {
@@ -27,18 +41,40 @@ const Avatar = React.forwardRef<HTMLImageElement, AvatarProps>(
             className,
           )}
         >
-          <span className={size === "sm" ? "text-xs" : size === "lg" ? "text-lg" : "text-sm"}>
+          <span
+            className={
+              size === "sm" ? "text-xs" : size === "lg" ? "text-lg" : "text-sm"
+            }
+          >
             {fallback || alt?.charAt(0)?.toUpperCase() || "?"}
           </span>
         </div>
       );
     }
 
+    if (fromAsset) {
+      return (
+        <img
+          ref={ref}
+          src={src}
+          alt={alt as string}
+          onError={() => setError(true)}
+          className={cn(
+            shape === "square" ? "rounded-none" : "rounded-full",
+            "object-cover border border-dark-600/40 shrink-0",
+            sizeClasses[size],
+            className,
+          )}
+          {...props}
+        />
+      );
+    }
+
     return (
-      <img
+      <Image
         ref={ref}
         src={src}
-        alt={alt}
+        alt={alt as string}
         onError={() => setError(true)}
         className={cn(
           shape === "square" ? "rounded-none" : "rounded-full",

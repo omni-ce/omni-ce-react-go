@@ -8,6 +8,7 @@ import ControlButton from "@/components/ControlButton";
 import Loading from "@/components/Loading";
 import RoleStepper from "@/components/RoleStepper";
 import { IconComponent } from "@/components/ui/IconSelector";
+import Image from "@/components/Image";
 
 export default function SelectRolePage() {
   const navigate = useNavigate();

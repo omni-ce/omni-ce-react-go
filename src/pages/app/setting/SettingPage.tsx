@@ -10,6 +10,7 @@ import AppIconSvg from "@/assets/react_go.svg";
 import { IconComponent } from "@/components/ui/IconSelector";
 import satellite from "@/lib/satellite";
 import type { Response } from "@/types/response";
+import Image from "@/components/Image";
 
 interface Props {}
 export default function SettingPage({}: Props) {
@@ -252,7 +253,7 @@ export default function SettingPage({}: Props) {
           <div className="flex flex-col items-center gap-3">
             <div className="relative group">
               {avatar ? (
-                <img
+                <Image
                   src={avatar}
                   alt="Avatar"
                   className="w-24 h-24 rounded-2xl object-cover border-2 border-dark-600 group-hover:border-accent-500/50 transition-all"

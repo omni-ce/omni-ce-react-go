@@ -9,7 +9,6 @@ import * as flags from "country-flag-icons/react/3x2";
 import { countries } from "@/world";
 import satellite from "@/lib/satellite";
 import type { Response } from "@/types/response";
-import { HOST_API } from "@/environment";
 import BlankUser from "@/assets/blank-user.svg";
 import BlankCompany from "@/assets/blank-company.svg";
 import type { Option } from "@/types/option";
@@ -24,6 +23,7 @@ import type { LanguageKey } from "@/types/world";
 import { spanMap, mdMap, lgMap, xlMap } from "@/responsive";
 import { formatFileSize } from "@/utils/format";
 import MapPicker, { type MapCoordinates } from "@/components/ui/MapPicker";
+import Image from "@/components/Image";
 
 export interface DynamicFormFieldOption {
   value: string;
@@ -649,8 +649,8 @@ function DynamicFile({
     if (isImage) {
       return (
         <div className="mt-2 relative w-24 h-24 rounded-lg overflow-hidden border border-dark-600 bg-dark-900/50">
-          <img
-            src={HOST_API + value}
+          <Image
+            src={value}
             alt="Preview"
             className="w-full h-full object-cover"
           />
@@ -768,12 +768,11 @@ function DynamicFile({
   const template = (field as DynamicFormFieldNormal).fileTemplate;
   if (template === "profile" || template === "company") {
     const imageUrl = value
-      ? value.startsWith("http")
-        ? value
-        : HOST_API + value
+      ? value
       : template === "company"
         ? BlankCompany
         : BlankUser;
+    const isValue = value !== undefined && value !== null && value !== "";
 
     return (
       <div className="mt-1.5 flex flex-row items-center gap-6 p-4 rounded-xl border border-dark-600/50 bg-dark-900/30">
@@ -782,11 +781,19 @@ function DynamicFile({
             template === "company" ? "rounded-none" : "rounded-full"
           } overflow-hidden border-2 border-dark-500 bg-dark-800`}
         >
-          <img
-            src={imageUrl}
-            alt="Preview"
-            className="w-full h-full object-cover"
-          />
+          {isValue ? (
+            <Image
+              src={imageUrl}
+              alt="Preview"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <img
+              src={imageUrl}
+              alt="Preview"
+              className="w-full h-full object-cover"
+            />
+          )}
         </div>
         <div className="flex flex-col gap-2 flex-1 w-full overflow-hidden">
           {renderUploader()}

@@ -6,6 +6,7 @@ import AppIconSvg from "@/assets/react_go.svg";
 import { useRuleStore } from "@/stores/ruleStore";
 import type { Rule } from "@/types/rule";
 import { IconComponent } from "@/components/ui/IconSelector";
+import Image from "@/components/Image";
 
 export default function LoginPage() {
   const navigate = useNavigate();

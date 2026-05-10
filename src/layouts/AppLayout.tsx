@@ -28,7 +28,7 @@ import {
   DialogTitle,
 } from "@/components/ui/Dialog";
 import { IconComponent } from "@/components/ui/IconSelector";
-import { HOST_API } from "@/environment";
+import Image from "@/components/Image";
 
 export interface ISidebarLink extends Omit<Partial<RouteObject>, "children"> {
   show_hr?: boolean;
@@ -355,7 +355,9 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
         <div
           role="button"
           tabIndex={-1}
-          onKeyDown={(e) => { if (e.key === 'Escape') setMobileOpen(false); }}
+          onKeyDown={(e) => {
+            if (e.key === "Escape") setMobileOpen(false);
+          }}
           className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
           onClick={() => setMobileOpen(false)}
         />
@@ -476,8 +478,8 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
               {/* Avatar */}
               <div className="relative shrink-0">
                 {user.avatar ? (
-                  <img
-                    src={HOST_API + user.avatar}
+                  <Image
+                    src={user.avatar}
                     alt={user.name}
                     className="w-9 h-9 rounded-lg object-cover border border-dark-600/50"
                   />

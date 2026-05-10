@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useLanguageStore } from "@/stores/languageStore";
+import Image from "@/components/Image";
 
 interface Props {
   value?: string | Blob | null;
@@ -255,7 +256,7 @@ export default function CameraSelector({
       {capturedImage && !showCamera && (
         <div className="space-y-3">
           <div className="relative overflow-hidden rounded-lg border-2 border-gray-300">
-            <img src={capturedImage} alt="Captured" className="w-full" />
+            <Image src={capturedImage} alt="Captured" className="w-full" />
           </div>
           <button
             type="button"
