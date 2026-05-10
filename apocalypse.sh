@@ -7,7 +7,6 @@ if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
 fi
 
 rm -rf *
-rm -rf .agent .air.toml .dockerignore .git .github .gitignore
-rm -rf ./*
+rm -rf .agent .air.toml .dockerignore .git .github .gitignore .agents .env.example
 
 git clone https://github.com/jefripunza/react-go.git .
