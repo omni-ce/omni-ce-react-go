@@ -1,12 +1,16 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { useLanguageStore } from "@/stores/languageStore";
 import { IconComponent } from "@/components/ui/IconSelector";
+import {
+  usePosStore,
+  type OrderStatus,
+  type OrderType,
+  type PaymentMethod,
+  type MenuItem,
+} from "@/stores/posStore";
+import { cn } from "@/lib/utils";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
-
-type OrderStatus = "in_kitchen" | "wait_list" | "ready" | "served";
-type OrderType = "all" | "dine_in" | "wait_list" | "take_away" | "served";
-type PaymentMethod = "cash" | "card" | "scan";
 
 interface OrderCard {
   id: string;
@@ -14,19 +18,6 @@ interface OrderCard {
   items: number;
   time: string;
   status: OrderStatus;
-}
-
-interface MenuItem {
-  id: number;
-  name: string;
-  category: string;
-  price: number;
-  emoji: string;
-}
-
-interface CartItem {
-  menuItem: MenuItem;
-  qty: number;
 }
 
 // ─── Dummy Data ──────────────────────────────────────────────────────────────
@@ -63,28 +54,123 @@ const dummyOrders: OrderCard[] = [
 ];
 
 const categories = [
-  { key: "all", label: { id: "Semua Menu", en: "All Menu" }, emoji: "🍽️", count: 154 },
-  { key: "special", label: { id: "Spesial", en: "Special" }, emoji: "⭐", count: 19 },
-  { key: "soups", label: { id: "Sup", en: "Soups" }, emoji: "🍜", count: 3 },
-  { key: "desserts", label: { id: "Dessert", en: "Desserts" }, emoji: "🍰", count: 19 },
-  { key: "chickens", label: { id: "Ayam", en: "Chickens" }, emoji: "🍗", count: 10 },
-  { key: "rice", label: { id: "Nasi", en: "Rice" }, emoji: "🍚", count: 12 },
-  { key: "pasta", label: { id: "Pasta", en: "Pasta" }, emoji: "🍝", count: 8 },
+  {
+    key: "all",
+    label: { id: "Semua Menu", en: "All Menu" },
+    emoji: "🍽️",
+    count: 154,
+  },
+  {
+    key: "special",
+    label: { id: "Spesial", en: "Special" },
+    emoji: "⭐",
+    count: 19,
+  },
+  {
+    key: "soups",
+    label: { id: "Sup", en: "Soups" },
+    emoji: "🍜",
+    count: 3,
+  },
+  {
+    key: "desserts",
+    label: { id: "Dessert", en: "Desserts" },
+    emoji: "🍰",
+    count: 19,
+  },
+  {
+    key: "chickens",
+    label: { id: "Ayam", en: "Chickens" },
+    emoji: "🍗",
+    count: 10,
+  },
+  {
+    key: "rice",
+    label: { id: "Nasi", en: "Rice" },
+    emoji: "🍚",
+    count: 12,
+  },
+  {
+    key: "pasta",
+    label: { id: "Pasta", en: "Pasta" },
+    emoji: "🍝",
+    count: 8,
+  },
 ];
 
 const dummyMenuItems: MenuItem[] = [
-  { id: 1, name: "Grilled Salmon Steak", category: "special", price: 15.0, emoji: "🐟" },
-  { id: 2, name: "Tofu Poke Bowl", category: "special", price: 7.0, emoji: "🥗" },
-  { id: 3, name: "Pasta with Roast Beef", category: "pasta", price: 10.0, emoji: "🍝" },
-  { id: 4, name: "Beef Steak", category: "special", price: 30.0, emoji: "🥩" },
-  { id: 5, name: "Shrimp Rice Bowl", category: "rice", price: 6.0, emoji: "🍤" },
-  { id: 6, name: "Apple Stuffed Pancake", category: "desserts", price: 35.0, emoji: "🥞" },
-  { id: 7, name: "Chicken Quinoa & Herbs", category: "chickens", price: 12.0, emoji: "🍗" },
-  { id: 8, name: "Vegetable Shrimp", category: "special", price: 10.0, emoji: "🦐" },
+  {
+    id: 1,
+    name: "Grilled Salmon Steak",
+    category: "special",
+    price: 15.0,
+    emoji: "🐟",
+  },
+  {
+    id: 2,
+    name: "Tofu Poke Bowl",
+    category: "special",
+    price: 7.0,
+    emoji: "🥗",
+  },
+  {
+    id: 3,
+    name: "Pasta with Roast Beef",
+    category: "pasta",
+    price: 10.0,
+    emoji: "🍝",
+  },
+  {
+    id: 4,
+    name: "Beef Steak",
+    category: "special",
+    price: 30.0,
+    emoji: "🥩",
+  },
+  {
+    id: 5,
+    name: "Shrimp Rice Bowl",
+    category: "rice",
+    price: 6.0,
+    emoji: "🍤",
+  },
+  {
+    id: 6,
+    name: "Apple Stuffed Pancake",
+    category: "desserts",
+    price: 35.0,
+    emoji: "🥞",
+  },
+  {
+    id: 7,
+    name: "Chicken Quinoa & Herbs",
+    category: "chickens",
+    price: 12.0,
+    emoji: "🍗",
+  },
+  {
+    id: 8,
+    name: "Vegetable Shrimp",
+    category: "special",
+    price: 10.0,
+    emoji: "🦐",
+  },
   { id: 9, name: "Tom Yum Soup", category: "soups", price: 8.0, emoji: "🍜" },
   { id: 10, name: "Miso Ramen", category: "soups", price: 9.5, emoji: "🍜" },
-  { id: 11, name: "Chocolate Lava Cake", category: "desserts", price: 14.0, emoji: "🍫" },
-  { id: 12, name: "Fried Chicken Wings", category: "chickens", price: 11.0, emoji: "🍗" },
+  {
+    id: 11,
+    name: "Chocolate Lava Cake",
+    category: "desserts",
+    price: 14.0,
+    emoji: "🍫",
+  },
+  {
+    id: 12,
+    name: "Fried Chicken Wings",
+    category: "chickens",
+    price: 11.0,
+    emoji: "🍗",
+  },
 ];
 
 // ─── Helper ──────────────────────────────────────────────────────────────────
@@ -135,15 +221,19 @@ interface Props {
 export default function PosPage({ ruleKey }: Props) {
   const { language } = useLanguageStore();
 
-  const [activeOrderType, setActiveOrderType] = useState<OrderType>("all");
-  const [activeCategory, setActiveCategory] = useState("all");
-  const [cart, setCart] = useState<CartItem[]>([
-    { menuItem: dummyMenuItems[2], qty: 2 },
-    { menuItem: dummyMenuItems[4], qty: 2 },
-    { menuItem: dummyMenuItems[5], qty: 1 },
-    { menuItem: dummyMenuItems[7], qty: 1 },
-  ]);
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
+  const {
+    cart,
+    paymentMethod,
+    isPanelOpen,
+    activeOrderType,
+    activeCategory,
+    setPanelOpen,
+    setPaymentMethod,
+    setActiveOrderType,
+    setActiveCategory,
+    addToCart,
+    removeFromCart,
+  } = usePosStore();
 
   const filteredMenu = useMemo(() => {
     if (activeCategory === "all") return dummyMenuItems;
@@ -155,38 +245,11 @@ export default function PosPage({ ruleKey }: Props) {
     return item ? item.qty : 0;
   };
 
-  const addToCart = (menuItem: MenuItem) => {
-    setCart((prev) => {
-      const existing = prev.find((c) => c.menuItem.id === menuItem.id);
-      if (existing) {
-        return prev.map((c) =>
-          c.menuItem.id === menuItem.id ? { ...c, qty: c.qty + 1 } : c,
-        );
-      }
-      return [...prev, { menuItem, qty: 1 }];
-    });
-  };
-
-  const removeFromCart = (menuItemId: number) => {
-    setCart((prev) => {
-      const existing = prev.find((c) => c.menuItem.id === menuItemId);
-      if (!existing) return prev;
-      if (existing.qty <= 1) {
-        return prev.filter((c) => c.menuItem.id !== menuItemId);
-      }
-      return prev.map((c) =>
-        c.menuItem.id === menuItemId ? { ...c, qty: c.qty - 1 } : c,
-      );
-    });
-  };
-
-  const subtotal = cart.reduce(
-    (sum, c) => sum + c.menuItem.price * c.qty,
-    0,
-  );
+  const subtotal = cart.reduce((sum, c) => sum + c.menuItem.price * c.qty, 0);
   const tax = subtotal * 0.06;
   const donation = 1.0;
   const totalPayable = subtotal + tax + donation;
+
 
   return (
     <div className="flex gap-6 h-[calc(100vh-80px)] overflow-hidden -m-6">
@@ -369,14 +432,27 @@ export default function PosPage({ ruleKey }: Props) {
         </div>
       </div>
 
-      {/* ─── Right: Order Panel ─────────────────────────────────────── */}
-      <div className="w-[340px] shrink-0 bg-dark-800/60 border-l border-dark-600/40 flex flex-col overflow-hidden">
+      {/* ─── Right: Order Panel (Slider) ───────────────────────────────── */}
+      <div
+        className={cn(
+          "shrink-0 bg-dark-800/60 border-l border-dark-600/40 flex flex-col overflow-hidden transition-all duration-300 ease-in-out",
+          isPanelOpen ? "w-[340px] opacity-100" : "w-0 opacity-0 border-l-0",
+        )}
+      >
         {/* Header */}
-        <div className="p-5 border-b border-dark-600/40">
+        <div className="p-5 border-b border-dark-600/40 min-w-[340px]">
           <div className="flex items-center justify-between">
-            <h2 className="text-base font-bold text-foreground">
-              {language({ id: "Meja No", en: "Table No" })} #04
-            </h2>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setPanelOpen(false)}
+                className="p-1.5 rounded-lg hover:bg-dark-700 text-dark-400 hover:text-foreground transition-all"
+              >
+                <IconComponent iconName="Hi/HiOutlineX" size={16} />
+              </button>
+              <h2 className="text-base font-bold text-foreground">
+                {language({ id: "Meja No", en: "Table No" })} #04
+              </h2>
+            </div>
             <div className="flex gap-2">
               <button className="w-8 h-8 rounded-lg bg-dark-700/60 border border-dark-600/40 flex items-center justify-center text-dark-400 hover:text-foreground hover:border-dark-500 transition-all">
                 <IconComponent iconName="Hi/HiOutlinePencil" size={14} />
@@ -386,7 +462,7 @@ export default function PosPage({ ruleKey }: Props) {
               </button>
             </div>
           </div>
-          <div className="flex items-center justify-between mt-2">
+          <div className="flex items-center justify-between mt-2 pl-9">
             <span className="text-xs text-dark-400">
               {language({ id: "Pesanan", en: "Order" })} #F0030
             </span>
@@ -397,7 +473,7 @@ export default function PosPage({ ruleKey }: Props) {
         </div>
 
         {/* Ordered Items */}
-        <div className="flex-1 overflow-y-auto p-5">
+        <div className="flex-1 overflow-y-auto p-5 min-w-[340px]">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-bold text-foreground">
               {language({ id: "Item Dipesan", en: "Ordered Items" })}
@@ -476,19 +552,32 @@ export default function PosPage({ ruleKey }: Props) {
             <div className="flex gap-2">
               {(
                 [
-                  { key: "cash" as PaymentMethod, label: { id: "Tunai", en: "Cash" }, icon: "Hi/HiOutlineCash" },
-                  { key: "card" as PaymentMethod, label: { id: "Kartu", en: "Card" }, icon: "Hi/HiOutlineCreditCard" },
-                  { key: "scan" as PaymentMethod, label: { id: "Scan", en: "Scan" }, icon: "Hi/HiOutlineQrcode" },
+                  {
+                    key: "cash" as PaymentMethod,
+                    label: { id: "Tunai", en: "Cash" },
+                    icon: "Hi/HiOutlineCash",
+                  },
+                  {
+                    key: "card" as PaymentMethod,
+                    label: { id: "Kartu", en: "Card" },
+                    icon: "Hi/HiOutlineCreditCard",
+                  },
+                  {
+                    key: "scan" as PaymentMethod,
+                    label: { id: "Scan", en: "Scan" },
+                    icon: "Hi/HiOutlineQrcode",
+                  },
                 ] as const
               ).map((method) => (
                 <button
                   key={method.key}
                   onClick={() => setPaymentMethod(method.key)}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border text-xs font-semibold transition-all duration-200 ${
+                  className={cn(
+                    "flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border text-xs font-semibold transition-all duration-200",
                     paymentMethod === method.key
                       ? "bg-accent-500/15 border-accent-500/40 text-accent-400"
-                      : "bg-dark-800/40 border-dark-600/30 text-dark-300 hover:border-dark-500"
-                  }`}
+                      : "bg-dark-800/40 border-dark-600/30 text-dark-300 hover:border-dark-500",
+                  )}
                 >
                   <IconComponent iconName={method.icon} size={16} />
                   {language(method.label)}
@@ -499,7 +588,7 @@ export default function PosPage({ ruleKey }: Props) {
         </div>
 
         {/* Footer Actions */}
-        <div className="p-5 border-t border-dark-600/40 flex gap-3">
+        <div className="p-5 border-t border-dark-600/40 flex gap-3 min-w-[340px]">
           <button className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border border-dark-600/40 bg-dark-800/60 text-dark-300 text-sm font-semibold hover:border-dark-500 hover:text-foreground transition-all">
             <IconComponent iconName="Hi/HiOutlinePrinter" size={16} />
             {language({ id: "Cetak", en: "Print" })}
