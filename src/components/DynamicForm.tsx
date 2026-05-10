@@ -130,7 +130,7 @@ export type DynamicFormFieldNormal = {
   numberSuffix?: string;
   textareaRows?: number;
   booleanDefault?: boolean;
-  selectFormat?: (row: any) => DynamicFormFieldOption;
+  selectFormat?: <T>(row: T) => DynamicFormFieldOption;
 };
 
 type DynamicFormFieldChildren = {
@@ -297,12 +297,17 @@ function DynamicSelect({
       }
       prevRefVal.current = refVal;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     (field as DynamicFormFieldNormal).selectOptions,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     (field as DynamicFormFieldNormal).ref,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     (field as DynamicFormFieldNormal).ref
       ? formData[(field as DynamicFormFieldNormal).ref!]
       : undefined,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     formData[(field as DynamicFormFieldNormal).key], // Re-run if value changes externally
   ]);
 
@@ -1688,7 +1693,7 @@ function DynamicFieldRenderer({
           <input
             id={`field-${field.key}`}
             type="date"
-            className="w-full pl-12 pr-4 py-2.5 bg-dark-900/60 border border-dark-500/50 rounded-xl text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30 transition-all text-sm disabled:opacity-50 [color-scheme:dark]"
+            className="w-full pl-12 pr-4 py-2.5 bg-dark-900/60 border border-dark-500/50 rounded-xl text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30 transition-all text-sm disabled:opacity-50 scheme-dark"
             value={String(formData[field.key] ?? "")}
             onChange={(e) => onChange(field.key!, e.target.value)}
             disabled={disabled}

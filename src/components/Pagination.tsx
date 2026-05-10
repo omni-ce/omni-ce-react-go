@@ -76,7 +76,7 @@ export interface PaginationColumn<T> {
   headerClassName?: string;
   cellClassName?: string;
   rule?: RuleType;
-  selectFormat?: (row: any) => { label: string; value: string | number };
+  selectFormat?: <T>(row: T) => { label: string; value: string | number };
   render: (row: T, index: number, helpers: PaginationHelpers<T>) => ReactNode;
 }
 
@@ -438,20 +438,20 @@ const Pagination = forwardRef(function PaginationInner<T>(
           .get<Response<{ value: unknown; label: string }[]>>(
             `/api/option/${endpoint}`,
           )
-            .then((res) => {
-              const data = res.data.data || [];
-              const format = col.selectFormat;
-              setDynamicOptions((prev) => ({
-                ...prev,
-                [col.key]: data.map((d) => {
-                  if (format) {
-                    const formatted = format(d);
-                    return {
-                      value: String(formatted.value),
-                      label: formatted.label,
-                    };
-                  }
-                  let label = d.label;
+          .then((res) => {
+            const data = res.data.data || [];
+            const format = col.selectFormat;
+            setDynamicOptions((prev) => ({
+              ...prev,
+              [col.key]: data.map((d) => {
+                if (format) {
+                  const formatted = format(d);
+                  return {
+                    value: String(formatted.value),
+                    label: formatted.label,
+                  };
+                }
+                let label = d.label;
                 try {
                   if (label.startsWith("{")) {
                     label = language(JSON.parse(label));
@@ -1158,8 +1158,13 @@ const Pagination = forwardRef(function PaginationInner<T>(
                                   const item = format ? format(opt) : opt;
                                   let label = item.label;
                                   try {
-                                    if (label && String(label).startsWith("{")) {
-                                      label = language(JSON.parse(String(label)));
+                                    if (
+                                      label &&
+                                      String(label).startsWith("{")
+                                    ) {
+                                      label = language(
+                                        JSON.parse(String(label)),
+                                      );
                                     }
                                   } catch (e) {
                                     // fallback to raw label

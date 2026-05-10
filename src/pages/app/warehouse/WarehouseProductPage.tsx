@@ -34,7 +34,7 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
         type: "select",
         required: true,
         selectOptions: "product-items",
-        selectFormat: (row) => {
+        selectFormat: <T extends Record<string, string>>(row: T) => {
           let prefix = "";
           try {
             const category = JSON.parse(row.category_name);
