@@ -219,7 +219,7 @@ export default function NotificationPopup({
       <div className="border-t border-dark-600/40">
         <button
           onClick={() => {
-            navigate("/app/notifications");
+            navigate("/app/notification");
             onClose();
           }}
           className="w-full flex items-center justify-center gap-2 px-5 py-3 text-xs font-semibold text-accent-400 hover:text-accent-300 hover:bg-dark-700/30 transition-all"

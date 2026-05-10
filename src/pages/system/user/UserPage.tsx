@@ -14,6 +14,7 @@ import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import { FileType } from "@/components/DynamicForm";
 import { HOST_API } from "@/environment";
 import { ChangePassword } from "@/pages/system/user/action";
+import { LanguageKey } from "@/types/world";
 
 interface Props {
   ruleKey?: string;
@@ -60,9 +61,11 @@ export default function UserPage({ ruleKey }: Props) {
         required: true,
       },
       {
-        key: "phone_number",
+        key: "phone",
         label: language({ id: "Nomor Telepon", en: "Phone Number" }),
-        type: "text",
+        type: "phone",
+        phoneDefaultCountry: LanguageKey.ID,
+        phoneFirstAntiZero: true,
       },
       {
         key: "password",
