@@ -11,86 +11,61 @@ import { FaSearch } from "react-icons/fa";
 import { HiChevronDown } from "react-icons/hi";
 import { cn } from "@/lib/utils";
 
-// Lazy load icon libraries
-const iconLibraries: Record<string, () => Promise<unknown>> = {
-  Ai: () => import("react-icons/ai"),
-  Bi: () => import("react-icons/bi"),
-  Bs: () => import("react-icons/bs"),
-  Cg: () => import("react-icons/cg"),
-  Ci: () => import("react-icons/ci"),
-  Di: () => import("react-icons/di"),
-  Fa: () => import("react-icons/fa"),
-  Fa6: () => import("react-icons/fa6"),
-  Fc: () => import("react-icons/fc"),
-  Fi: () => import("react-icons/fi"),
-  Go: () => import("react-icons/go"),
-  Gr: () => import("react-icons/gr"),
-  Hi: () => import("react-icons/hi"),
-  Hi2: () => import("react-icons/hi2"),
-  Im: () => import("react-icons/im"),
-  Io: () => import("react-icons/io"),
-  Io5: () => import("react-icons/io5"),
-  Lia: () => import("react-icons/lia"),
-  Lu: () => import("react-icons/lu"),
-  Md: () => import("react-icons/md"),
-  Pi: () => import("react-icons/pi"),
-  Ri: () => import("react-icons/ri"),
-  Rx: () => import("react-icons/rx"),
-  Si: () => import("react-icons/si"),
-  Sl: () => import("react-icons/sl"),
-  Tb: () => import("react-icons/tb"),
-  Tfi: () => import("react-icons/tfi"),
-  Ti: () => import("react-icons/ti"),
-  Vsc: () => import("react-icons/vsc"),
-  Wi: () => import("react-icons/wi"),
-};
-
 // Cache for loaded icon libraries
 const loadedLibraries: Record<string, Record<string, IconType>> = {};
 
-export const options = [
-  { name: "Ant Design", key: "Ai" },
-  { name: "Bootstrap", key: "Bs" },
-  { name: "BoxIcons", key: "Bi" },
-  { name: "css.gg", key: "Cg" },
-  { name: "Circum Icons", key: "Ci" },
-  { name: "Devicons", key: "Di" },
-  { name: "Font Awesome", key: "Fa" },
-  { name: "Font Awesome 6", key: "Fa6" },
-  { name: "Flat Color Icons", key: "Fc" },
-  { name: "Feather", key: "Fi" },
-  { name: "Github Octicons", key: "Go" },
-  { name: "Grommet Icons", key: "Gr" },
-  { name: "Heroicons", key: "Hi" },
-  { name: "Heroicons 2", key: "Hi2" },
-  { name: "IcoMoon Free", key: "Im" },
-  { name: "Ionicons 4", key: "Io" },
-  { name: "Ionicons 5", key: "Io5" },
-  { name: "Icons8 Line Awesome", key: "Lia" },
-  { name: "Lucide", key: "Lu" },
-  { name: "Material Design", key: "Md" },
-  { name: "Phosphor", key: "Pi" },
-  { name: "Remix Icon", key: "Ri" },
-  { name: "Radix UI", key: "Rx" },
-  { name: "Simple Icons", key: "Si" },
-  { name: "Simple Line Icons", key: "Sl" },
-  { name: "Tabler Icons", key: "Tb" },
-  { name: "Themify Icons", key: "Tfi" },
-  { name: "Typicons", key: "Ti" },
-  { name: "VS Code Icons", key: "Vsc" },
-  { name: "Weather Icons", key: "Wi" },
+// Lazy load icon libraries
+interface IOption {
+  name: string;
+  key: string;
+  lib: () => Promise<unknown>;
+}
+export const options: IOption[] = [
+  { name: "Ant Design", key: "Ai", lib: () => import("react-icons/ai") },
+  { name: "Bootstrap", key: "Bs", lib: () => import("react-icons/bs") },
+  { name: "BoxIcons", key: "Bi", lib: () => import("react-icons/bi") },
+  { name: "Circum Icons", key: "Ci", lib: () => import("react-icons/ci") },
+  { name: "css.gg", key: "Cg", lib: () => import("react-icons/cg") },
+  { name: "Devicons", key: "Di", lib: () => import("react-icons/di") },
+  { name: "Feather", key: "Fi", lib: () => import("react-icons/fi") },
+  { name: "Flat Color Icons", key: "Fc", lib: () => import("react-icons/fc") },
+  { name: "Font Awesome", key: "Fa", lib: () => import("react-icons/fa") },
+  { name: "Font Awesome 6", key: "Fa6", lib: () => import("react-icons/fa6") },
+  { name: "Game Icons", key: "Gi", lib: () => import("react-icons/gi") },
+  { name: "Github Octicons", key: "Go", lib: () => import("react-icons/go") },
+  { name: "Grommet Icons", key: "Gr", lib: () => import("react-icons/gr") },
+  { name: "Heroicons", key: "Hi", lib: () => import("react-icons/hi") },
+  { name: "Heroicons 2", key: "Hi2", lib: () => import("react-icons/hi2") },
+  { name: "IcoMoon Free", key: "Im", lib: () => import("react-icons/im") },
+  {
+    name: "Icons8 Line Awesome",
+    key: "Lia",
+    lib: () => import("react-icons/lia"),
+  },
+  { name: "Ionicons 4", key: "Io", lib: () => import("react-icons/io") },
+  { name: "Ionicons 5", key: "Io5", lib: () => import("react-icons/io5") },
+  { name: "Lucide", key: "Lu", lib: () => import("react-icons/lu") },
+  { name: "Material Design", key: "Md", lib: () => import("react-icons/md") },
+  { name: "Phosphor", key: "Pi", lib: () => import("react-icons/pi") },
+  { name: "Radix UI", key: "Rx", lib: () => import("react-icons/rx") },
+  { name: "Remix Icon", key: "Ri", lib: () => import("react-icons/ri") },
+  { name: "Simple Icons", key: "Si", lib: () => import("react-icons/si") },
+  { name: "Simple Line Icons", key: "Sl", lib: () => import("react-icons/sl") },
+  { name: "Tabler Icons", key: "Tb", lib: () => import("react-icons/tb") },
+  { name: "Themify Icons", key: "Tfi", lib: () => import("react-icons/tfi") },
+  { name: "Typicons", key: "Ti", lib: () => import("react-icons/ti") },
+  { name: "VS Code Icons", key: "Vsc", lib: () => import("react-icons/vsc") },
+  { name: "Weather Icons", key: "Wi", lib: () => import("react-icons/wi") },
 ];
 
 // Helper function to load icon library
 async function loadIconLibrary(key: string) {
   if (loadedLibraries[key]) return loadedLibraries[key];
-  const loader = iconLibraries[key];
-  if (loader) {
-    const library = (await loader()) as Record<string, IconType>;
-    loadedLibraries[key] = library;
-    return library;
-  }
-  return null;
+  const lib = options.find((l) => l.key === key);
+  if (!lib) return null;
+  const library = (await lib.lib()) as Record<string, IconType>;
+  loadedLibraries[key] = library;
+  return library;
 }
 
 interface IconComponentProps extends React.SVGProps<SVGSVGElement> {

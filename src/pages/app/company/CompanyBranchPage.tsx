@@ -48,14 +48,14 @@ export default function CompanyBranchPage({ ruleKey }: Props) {
       },
 
       {
-        key: "code",
-        label: language({ id: "Kode", en: "Code" }),
+        key: "name",
+        label: language({ id: "Nama", en: "Name" }),
         type: "text",
         required: true,
       },
       {
-        key: "name",
-        label: language({ id: "Nama", en: "Name" }),
+        key: "code",
+        label: language({ id: "Kode", en: "Code" }),
         type: "text",
         required: true,
       },
@@ -107,17 +107,6 @@ export default function CompanyBranchPage({ ruleKey }: Props) {
         ),
       },
       {
-        key: "code",
-        header: language({ id: "Kode", en: "Code" }),
-        sort: true,
-        search: true,
-        render: (item) => (
-          <div className="flex items-center gap-3">
-            <span className="font-medium">{item.code}</span>
-          </div>
-        ),
-      },
-      {
         key: "name",
         header: language({ id: "Nama", en: "Name" }),
         sort: true,
@@ -125,6 +114,17 @@ export default function CompanyBranchPage({ ruleKey }: Props) {
         render: (item) => (
           <div className="flex items-center gap-3">
             <span className="font-medium">{item.name}</span>
+          </div>
+        ),
+      },
+      {
+        key: "code",
+        header: language({ id: "Kode", en: "Code" }),
+        sort: true,
+        search: true,
+        render: (item) => (
+          <div className="flex items-center gap-3">
+            <span className="font-medium">{item.code}</span>
           </div>
         ),
       },
