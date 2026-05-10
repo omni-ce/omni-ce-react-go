@@ -5,10 +5,11 @@ import Pagination, {
   type PaginationField,
   type PaginationHandle,
 } from "@/components/Pagination";
-import type { ProductType } from "@/types/product";
+import type { ProductCategoryOption, ProductType } from "@/types/product";
 import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import { Badge } from "@/components/ui/Badge";
+import { IconComponent } from "@/components/ui/IconSelector";
 
 interface Props {
   ruleKey?: string;
@@ -19,7 +20,7 @@ export default function ProductTypePage({ ruleKey }: Props) {
   const paginationRef = useRef<PaginationHandle>(null);
   const { languageCode, language } = useLanguageStore();
 
-  const fields = useMemo<PaginationField[]>(
+  const fields = useMemo<PaginationField<ProductCategoryOption>[]>(
     () => [
       {
         key: "category_id",
@@ -27,6 +28,27 @@ export default function ProductTypePage({ ruleKey }: Props) {
         type: "select",
         required: true,
         selectOptions: "product-categories",
+        selectFormat: (item: ProductCategoryOption) => {
+          const category_name = item.label;
+          let category: string = "";
+          try {
+            if (category_name.startsWith("{")) {
+              const obj = JSON.parse(category_name);
+              category = language(obj);
+            }
+          } catch (e) {
+            // fallback to raw name
+          }
+          return {
+            value: item.value,
+            render: (
+              <div className="flex items-center gap-2">
+                <IconComponent iconName={item.meta?.icon} className="text-lg" />
+                <span>{category}</span>
+              </div>
+            ),
+          };
+        },
       },
       {
         key: "name",
@@ -57,7 +79,15 @@ export default function ProductTypePage({ ruleKey }: Props) {
           } catch (e) {
             // fallback to raw name
           }
-          return <span className="font-medium">{category_name}</span>;
+          return (
+            <span className="font-medium flex items-center gap-2">
+              <IconComponent
+                iconName={item.category_icon}
+                className="text-lg"
+              />
+              <span>{category_name}</span>
+            </span>
+          );
         },
       },
       {
@@ -118,7 +148,7 @@ export default function ProductTypePage({ ruleKey }: Props) {
         title={language({ id: "Daftar Tipe", en: "Types List" })}
         columns={columns}
         module="product/type"
-        fields={fields}
+        fields={fields as PaginationField[]}
         ruleKey={ruleKey}
         useIsActive
       />

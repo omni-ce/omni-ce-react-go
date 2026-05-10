@@ -10,9 +10,17 @@ export interface ProductType {
   key: string;
   category_id: number;
   category_name: string;
+  category_icon: string;
   name: string;
   description: string;
   is_active: boolean;
+}
+export interface ProductCategoryOption {
+  label: string;
+  value: number;
+  meta: {
+    icon: string;
+  };
 }
 export interface ProductBrand {
   id: number;

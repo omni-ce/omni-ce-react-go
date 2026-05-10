@@ -5,7 +5,7 @@ import { IconComponent } from "./IconSelector";
 import { Badge } from "./Badge";
 
 interface Option {
-  value: string;
+  value: string | number;
   label?: string;
   icon?: string;
   render?: React.ReactNode;
@@ -98,7 +98,7 @@ export function SearchableSelect({
       const value = opt.value || "";
       return (
         label.toLowerCase().includes(lowerSearch) ||
-        value.toLowerCase().includes(lowerSearch)
+        String(value).toLowerCase().includes(lowerSearch)
       );
     });
   }, [options, search]);
@@ -198,7 +198,7 @@ export function SearchableSelect({
                         : "text-foreground",
                     )}
                     onClick={() => {
-                      onChange(opt.value);
+                      onChange(opt.value as string);
                       setIsOpen(false);
                     }}
                   >

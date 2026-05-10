@@ -26,7 +26,7 @@ import MapPicker, { type MapCoordinates } from "@/components/ui/MapPicker";
 import Image from "@/components/Image";
 
 export interface DynamicFormFieldOption {
-  value: string;
+  value: string | number;
   label?: string;
   icon?: string;
   render?: React.ReactNode;

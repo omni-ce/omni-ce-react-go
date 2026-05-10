@@ -264,7 +264,13 @@ func ProductCategories(c *fiber.Ctx) error {
 	rows := make([]types.Option, 0)
 	for _, row := range categories {
 		if row.IsActive {
-			rows = append(rows, row.Option())
+			rows = append(rows, types.Option{
+				Label: row.Name,
+				Value: row.ID,
+				Meta: &map[string]any{
+					"icon": row.Icon,
+				},
+			})
 		}
 	}
 

@@ -73,6 +73,7 @@ func TypePaginate(c *fiber.Ctx) error {
 	rows := make([]map[string]any, 0, len(types))
 	for _, row := range types {
 		_type := row.Map()
+		_type["category_icon"] = row.Category.Icon
 		_type["category_name"] = row.Category.Name
 		rows = append(rows, _type)
 	}
