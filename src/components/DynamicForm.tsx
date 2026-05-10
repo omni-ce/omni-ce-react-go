@@ -119,7 +119,7 @@ export type DynamicFormFieldNormal<T = unknown> = {
   fileTarget?: string;
   fileMaxSize?: number;
   fileType?: (FileType | FileType[])[];
-  fileTemplate?: "profile" | "company" | "default";
+  fileTemplate?: "profile" | "company" | "product" | "default";
   captchaSecurity?: CaptchaSecurity;
   captchaLength?: number;
   phoneDefaultCountry?: LanguageKey;
@@ -796,6 +796,26 @@ function DynamicFile({
           )}
         </div>
         <div className="flex flex-col gap-2 flex-1 w-full overflow-hidden">
+          {renderUploader()}
+        </div>
+      </div>
+    );
+  }
+
+  if (template === "product") {
+    const isValue = value !== undefined && value !== null && value !== "";
+    return (
+      <div className="mt-1.5 flex flex-col gap-4">
+        {isValue && (
+          <div className="w-full aspect-video rounded-2xl border-2 border-dark-600 bg-dark-800 overflow-hidden shadow-inner">
+            <Image
+              src={value}
+              alt="Preview"
+              className="w-full h-full object-cover"
+            />
+          </div>
+        )}
+        <div className="w-full">
           {renderUploader()}
         </div>
       </div>
