@@ -983,6 +983,21 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                   {language({ id: "Tambah Data", en: "Add Data" })}
                 </Button>
               )}
+
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => helpers.reload()}
+                disabled={isLoading}
+                className="w-9 h-9 rounded-full border-dark-600/40 bg-dark-900 text-dark-400 hover:text-foreground transition-all shrink-0"
+              >
+                <IconComponent
+                  iconName="Hi/HiOutlineRefresh"
+                  size={16}
+                  className={cn(isLoading && "animate-spin text-accent-500")}
+                />
+              </Button>
+
               <div className="relative">
                 <IconComponent
                   iconName="Hi/HiOutlineSearch"

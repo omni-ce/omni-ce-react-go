@@ -1,5 +1,6 @@
 export interface WarehouseLocation {
   id: number;
+  entity_name: string;
   branch_id: number;
   branch_name: string;
   pic_id: number;

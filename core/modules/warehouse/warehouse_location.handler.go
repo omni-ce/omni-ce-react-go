@@ -89,6 +89,13 @@ func LocationPaginate(c *fiber.Ctx) error {
 	variable.Db.Where("id IN ?", branchIds).Find(&branches)
 	variable.Db.Where("id IN ?", picIds).Find(&pics)
 
+	entityIds := make([]uint, 0)
+	for _, v := range branches {
+		entityIds = append(entityIds, v.EntityID)
+	}
+	entities := make([]company.CompanyEntity, 0)
+	variable.Db.Where("id IN ?", entityIds).Find(&entities)
+
 	result := make([]map[string]any, 0, len(locations))
 	for i := range locations {
 		loc := locations[i].Map()
@@ -99,6 +106,13 @@ func LocationPaginate(c *fiber.Ctx) error {
 				break
 			}
 		}
+		var entity company.CompanyEntity
+		for _, row := range entities {
+			if row.ID == branch.EntityID {
+				entity = row
+				break
+			}
+		}
 		var pic user.User
 		for _, row := range pics {
 			if row.ID == locations[i].PicID {
@@ -106,6 +120,7 @@ func LocationPaginate(c *fiber.Ctx) error {
 				break
 			}
 		}
+		loc["entity_name"] = entity.Name
 		loc["branch_name"] = branch.Name
 		loc["pic_name"] = pic.Name
 		loc["map"] = map[string]any{

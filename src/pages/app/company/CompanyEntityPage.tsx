@@ -139,7 +139,7 @@ export default function CompanyEntityPage({ ruleKey }: Props) {
         sort: true,
         search: true,
         render: (item) => (
-          <div className="flex flex-col gap-1 py-1 max-w-[300px]">
+          <div className="flex flex-col gap-1 py-1 max-w-75">
             <div className="flex items-start gap-2.5">
               <div className="mt-0.5 p-1 rounded-md bg-dark-800 border border-dark-600/30 text-dark-400 shrink-0 shadow-sm">
                 <IconComponent

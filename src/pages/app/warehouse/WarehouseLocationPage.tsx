@@ -61,7 +61,9 @@ export default function WarehouseLocationPage({ ruleKey }: Props) {
         sort: true,
         options: "company-branches",
         render: (item) => (
-          <span className="font-medium">{item.branch_name}</span>
+          <span className="font-medium">
+            {item.entity_name} - {item.branch_name}
+          </span>
         ),
       },
       {
