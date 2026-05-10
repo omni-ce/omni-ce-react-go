@@ -8,6 +8,8 @@
 
 # Objectives
 
+- Warehouse
+- POS
 - Middleware untuk handle rules
 - Switch maintenance system (bisa diaktifkan / dimatikan)
 - dynamic field: country, nama negara bukan nama bahasa

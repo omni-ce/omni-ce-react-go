@@ -162,7 +162,7 @@ func ItemPaginate(c *fiber.Ctx) error {
 		item["brand_name"] = row.Brand.Name
 		item["varian_name"] = row.Variant.Name
 		if row.MemoryID != nil {
-			item["memory_name"] = fmt.Sprintf("%s GB / %s GB", row.Memory.Ram, row.Memory.InternalStorage)
+			item["memory_name"] = fmt.Sprintf("%d GB / %d GB", row.Memory.Ram, row.Memory.InternalStorage)
 		}
 		item["color_name"] = row.Color.Name
 		item["color_hex"] = row.Color.HexCode

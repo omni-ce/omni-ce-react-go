@@ -163,6 +163,8 @@ export default function ProductItemPage({ ruleKey }: Props) {
       {
         key: "memory_name",
         header: language({ id: "Memori", en: "Memory" }),
+        search: true,
+        sort: true,
         render: (item) => (
           <span className="max-w-xs truncate block">
             {item.memory_name ?? "- "}
