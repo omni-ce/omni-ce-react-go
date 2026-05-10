@@ -36,9 +36,9 @@ export const ProductImage = ({
   };
 
   return (
-    <div className="flex gap-8 min-h-[480px]">
+    <div className="flex gap-8 min-h-120">
       {/* Left: Image List (70%) */}
-      <div className="flex-[7] flex flex-col gap-5">
+      <div className="flex-7 flex flex-col gap-5">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-base font-bold text-foreground">
@@ -53,7 +53,7 @@ export const ProductImage = ({
           </span>
         </div>
 
-        <div className="grid grid-cols-3 gap-4 overflow-y-auto pr-2 custom-scrollbar max-h-[400px]">
+        <div className="grid grid-cols-3 gap-4 overflow-y-auto pr-2 custom-scrollbar max-h-100">
           {images.map((img) => (
             <div
               key={img.id}
@@ -91,10 +91,10 @@ export const ProductImage = ({
       </div>
 
       {/* Vertical Divider */}
-      <div className="w-px bg-gradient-to-b from-transparent via-dark-600/40 to-transparent" />
+      <div className="w-px bg-linear-to-b from-transparent via-dark-600/40 to-transparent" />
 
       {/* Right: Upload Section (30%) */}
-      <div className="flex-[3] flex flex-col gap-6 pt-1">
+      <div className="flex-3 flex flex-col gap-6 pt-1">
         <div className="space-y-2">
           <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-accent-500/10 border border-accent-500/20 text-accent-500 text-[10px] font-bold uppercase tracking-widest">
             <IconComponent iconName="Hi/HiOutlinePlus" size={12} />
