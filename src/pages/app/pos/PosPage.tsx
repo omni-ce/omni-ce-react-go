@@ -4,7 +4,6 @@ import { IconComponent } from "@/components/ui/IconSelector";
 import {
   usePosStore,
   type OrderStatus,
-  type OrderType,
   type PaymentMethod,
   type MenuItem,
 } from "@/stores/posStore";
@@ -22,27 +21,24 @@ const formatRupiah = (amount: number) => {
   }).format(amount);
 };
 
-const statusConfig: Record<
-  OrderStatus,
-  { label: { id: string; en: string }; color: string; bg: string }
+const statusConfig: Partial<
+  Record<
+    OrderStatus,
+    { label: { id: string; en: string }; color: string; bg: string }
+  >
 > = {
-  in_kitchen: {
-    label: { id: "Di Dapur", en: "In Kitchen" },
-    color: "text-neon-cyan",
-    bg: "bg-card-ice border-neon-cyan/30",
-  },
   wait_list: {
     label: { id: "Menunggu", en: "Wait List" },
     color: "text-neon-yellow",
     bg: "bg-neon-yellow/10 border-neon-yellow/30",
   },
-  ready: {
-    label: { id: "Siap", en: "Ready" },
-    color: "text-neon-green",
-    bg: "bg-card-mint/30 border-neon-green/30",
+  payment: {
+    label: { id: "Pembayaran", en: "Payment" },
+    color: "text-neon-cyan",
+    bg: "bg-card-ice border-neon-cyan/30",
   },
-  served: {
-    label: { id: "Disajikan", en: "Served" },
+  finish: {
+    label: { id: "Selesai", en: "Finish" },
     color: "text-dark-400",
     bg: "bg-dark-800 border-dark-600/30",
   },
@@ -54,19 +50,14 @@ const statusConfig: Record<
 };
 
 const orderTypeConfig: {
-  key: OrderType;
+  key: OrderStatus;
   label: { id: string; en: string };
-  count: number;
 }[] = [
-  { key: "all", label: { id: "Semua", en: "All" }, count: 78 },
-  { key: "wait_list", label: { id: "Menunggu", en: "Wait List" }, count: 3 },
-  {
-    key: "payment",
-    label: { id: "Pembayaran", en: "Payment" },
-    count: 12,
-  },
-  { key: "finish", label: { id: "Selesai", en: "Finish" }, count: 59 },
-  { key: "cancel", label: { id: "Batal", en: "Cancel" }, count: 59 },
+  { key: "all", label: { id: "Semua", en: "All" } },
+  { key: "wait_list", label: { id: "Menunggu", en: "Wait List" } },
+  { key: "payment", label: { id: "Pembayaran", en: "Payment" } },
+  { key: "finish", label: { id: "Selesai", en: "Finish" } },
+  { key: "cancel", label: { id: "Batal", en: "Cancel" } },
 ];
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -110,11 +101,9 @@ export default function PosPage({ ruleKey }: Props) {
   const counts = useMemo(
     () => ({
       all: dummyOrders.length,
-      wait_list: dummyOrders.filter(
-        (o) => o.status === "wait_list" || o.status === "in_kitchen",
-      ).length,
-      payment: dummyOrders.filter((o) => o.status === "ready").length,
-      finish: dummyOrders.filter((o) => o.status === "served").length,
+      wait_list: dummyOrders.filter((o) => o.status === "wait_list").length,
+      payment: dummyOrders.filter((o) => o.status === "payment").length,
+      finish: dummyOrders.filter((o) => o.status === "finish").length,
       cancel: dummyOrders.filter((o) => o.status === "cancel").length,
     }),
     [],
@@ -122,15 +111,7 @@ export default function PosPage({ ruleKey }: Props) {
 
   const filteredOrders = useMemo(() => {
     if (activeOrderType === "all") return dummyOrders;
-    if (activeOrderType === "wait_list")
-      return dummyOrders.filter(
-        (o) => o.status === "wait_list" || o.status === "in_kitchen",
-      );
-    if (activeOrderType === "payment")
-      return dummyOrders.filter((o) => o.status === "ready");
-    if (activeOrderType === "finish")
-      return dummyOrders.filter((o) => o.status === "served");
-    return dummyOrders;
+    return dummyOrders.filter((o) => o.status === activeOrderType);
   }, [activeOrderType]);
 
   const filteredMenu = useMemo(() => {
@@ -180,7 +161,7 @@ export default function PosPage({ ruleKey }: Props) {
                       : "bg-dark-600 text-dark-300"
                   }`}
                 >
-                  {counts[type.key as keyof typeof counts]}
+                  {counts[type.key]}
                 </span>
               </button>
             ))}
@@ -193,7 +174,8 @@ export default function PosPage({ ruleKey }: Props) {
           className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide"
         >
           {filteredOrders.map((order) => {
-            const status = statusConfig[order.status];
+            const status = statusConfig[order.status as OrderStatus];
+            if (!status) return null;
             return (
               <div
                 key={order.id}
