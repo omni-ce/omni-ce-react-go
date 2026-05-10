@@ -886,7 +886,7 @@ export default function DashboardPage({}: DashboardPageProps) {
                     }
 
                     switch (rw.type) {
-                      case "timeline":
+                      case "chart_area":
                         return (
                           <WidgetAreaChart
                             title={rw.label}
@@ -897,7 +897,7 @@ export default function DashboardPage({}: DashboardPageProps) {
                             })}
                           />
                         );
-                      case "bar":
+                      case "chart_column":
                         return (
                           <WidgetColumnChart
                             title={rw.label}
@@ -908,7 +908,7 @@ export default function DashboardPage({}: DashboardPageProps) {
                             })}
                           />
                         );
-                      case "gauge":
+                      case "chart_gauge":
                         return (
                           <WidgetGaugeChart
                             title={rw.label}
@@ -922,7 +922,7 @@ export default function DashboardPage({}: DashboardPageProps) {
                             })}
                           />
                         );
-                      case "pie":
+                      case "chart_pie":
                         return (
                           <WidgetDonutChart
                             title={rw.label}
@@ -933,7 +933,7 @@ export default function DashboardPage({}: DashboardPageProps) {
                             })}
                           />
                         );
-                      case "table":
+                      case "chart_table":
                         return (
                           <WidgetTableList
                             title={rw.label}
@@ -947,7 +947,7 @@ export default function DashboardPage({}: DashboardPageProps) {
                             })}
                           />
                         );
-                      case "progress":
+                      case "chart_progress":
                         return (
                           <WidgetProgressList
                             title={rw.label}
@@ -962,7 +962,7 @@ export default function DashboardPage({}: DashboardPageProps) {
                             })}
                           />
                         );
-                      case "traffic":
+                      case "chart_traffic":
                         return (
                           <WidgetTrafficStats
                             title={rw.label}
@@ -973,7 +973,7 @@ export default function DashboardPage({}: DashboardPageProps) {
                             })}
                           />
                         );
-                      case "line":
+                      case "chart_line":
                         return (
                           <WidgetLineChart
                             title={rw.label}
@@ -1137,10 +1137,7 @@ export default function DashboardPage({}: DashboardPageProps) {
             )}
 
             {addStep === 3 && (
-              <Button
-                onClick={handleCreate}
-                disabled={!addFormData.key || !addFormData.label}
-              >
+              <Button onClick={handleCreate} disabled={!addFormData.label}>
                 {language({ id: "Tambah", en: "Add" })}
               </Button>
             )}
@@ -1180,7 +1177,10 @@ export default function DashboardPage({}: DashboardPageProps) {
               />
             </div>
             <div>
-              <label htmlFor="widget-type-select" className="block text-xs font-medium text-dark-300 mb-1.5">
+              <label
+                htmlFor="widget-type-select"
+                className="block text-xs font-medium text-dark-300 mb-1.5"
+              >
                 Type
               </label>
               <select
