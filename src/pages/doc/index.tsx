@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { Link } from "react-router";
 
 import { IconComponent } from "@/components/ui/IconSelector";
+import ControlButton from "@/components/ControlButton";
 
 // Content
 import Introduction from "@/pages/doc/Introduction";
@@ -250,6 +251,9 @@ export default function DocPage() {
                 <span className="text-foreground">{currentItem.label}</span>
               </>
             )}
+          </div>
+          <div className="ml-auto flex items-center gap-2">
+            <ControlButton />
           </div>
         </header>
 
