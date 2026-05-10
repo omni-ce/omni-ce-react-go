@@ -253,8 +253,8 @@ export default function ProductItemPage({ ruleKey }: Props) {
         }}
         extraActions={[
           {
-            icon: "Hi/HiOutlineKey",
-            width: 90, // width of popup modal
+            icon: "Io/IoIosImages",
+            width: "90%",
             component: (row, onClose) => (
               <ProductImage row={row} onClose={onClose} />
             ),

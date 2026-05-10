@@ -31,7 +31,9 @@ function Dialog({ open, onClose, width, children }: DialogProps) {
       <div
         role="button"
         tabIndex={-1}
-        onKeyDown={(e) => { if (e.key === 'Escape') onClose(); }}
+        onKeyDown={(e) => {
+          if (e.key === "Escape") onClose();
+        }}
         className="fixed inset-0 bg-black/40 backdrop-blur-sm animate-fade-in"
         onClick={onClose}
       />

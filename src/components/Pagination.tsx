@@ -82,6 +82,7 @@ export interface PaginationColumn<T, TFilter = unknown> {
 
 export interface PaginationExtraAction<T> {
   icon: string;
+  width?: string | number;
   component: ReactNode | ((row: T, onClose: () => void) => ReactNode);
 }
 
@@ -1482,7 +1483,16 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
       {/* ─── Extra Action Dialog ─────────────────────────────── */}
       {extraActionState !== null &&
         extraActions?.[extraActionState.actionIndex] && (
-          <Dialog open={true} onClose={() => {}}>
+          <Dialog
+            open={true}
+            onClose={() => {}}
+            width={
+              (typeof extraActions[extraActionState.actionIndex].width ===
+              "number"
+                ? `${extraActions[extraActionState.actionIndex].width}px`
+                : extraActions[extraActionState.actionIndex].width) as string
+            }
+          >
             <DialogContent onClose={() => setExtraActionState(null)}>
               <div className="overflow-y-auto max-h-[80vh] -mx-6 px-6 py-1">
                 {typeof extraActions[extraActionState.actionIndex].component ===
