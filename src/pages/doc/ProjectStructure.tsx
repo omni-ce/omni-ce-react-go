@@ -13,20 +13,20 @@ export default function ProjectStructure() {
         })}
       </p>
       <CodeBlock>{`react-go/
-├── src/                    # React frontend source
-│   ├── components/         # Reusable UI components
-│   ├── layouts/            # Layout wrappers (App, Auth, Main)
-│   ├── pages/              # Page components
-│   │   ├── app/            # Authenticated pages
-│   │   ├── auth/           # Login page
-│   │   └── error/          # Error pages
-│   ├── stores/             # Zustand state stores
-│   ├── services/           # API service layer
-│   ├── lib/                # Utility libraries
-│   ├── types/              # TypeScript type definitions
-│   └── main.tsx            # App entry point & routing
-├── main.go                 # Go backend entry point
-├── dist/                   # Production build output
+├── src/                    # ${language({ id: "Kode Source", en: "Source Code" })}
+│   ├── components/         # ${language({ id: "Komponen UI yang dapat digunakan kembali", en: "Reusable UI components" })}
+│   ├── layouts/            # ${language({ id: "Layout pembungkus (App, Auth, Main)", en: "Layout wrappers (App, Auth, Main)" })}
+│   ├── pages/              # ${language({ id: "Komponen halaman", en: "Page components" })}
+│   │   ├── app/            # ${language({ id: "Halaman terotentikasi", en: "Authenticated pages" })}
+│   │   ├── auth/           # ${language({ id: "Halaman login", en: "Login page" })}
+│   │   └── error/          # ${language({ id: "Halaman error", en: "Error pages" })}
+│   ├── stores/             # ${language({ id: "Zustand state stores", en: "Zustand state stores" })}
+│   ├── services/           # ${language({ id: "Layanan API", en: "API service layer" })}
+│   ├── lib/                # ${language({ id: "Library utilitas", en: "Utility libraries" })}
+│   ├── types/              # ${language({ id: "Definisi tipe TypeScript", en: "TypeScript type definitions" })}
+│   └── main.tsx            # ${language({ id: "Titik masuk & routing aplikasi", en: "App entry point & routing" })}
+├── main.go                 # ${language({ id: "Titik masuk backend Go", en: "Go backend entry point" })}
+├── dist/                   # ${language({ id: "Output hasil build produksi", en: "Production build output" })}
 ├── package.json
 ├── tsconfig.json
 ├── vite.config.ts

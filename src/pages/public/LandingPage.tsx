@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router";
 import { useLanguageStore } from "@/stores/languageStore";
 import { Fragment } from "react/jsx-runtime";
 import { IconComponent } from "@/components/ui/IconSelector";
+import { useAuthStore } from "@/stores/authStore";
 
 const features = [
   {
@@ -108,6 +109,7 @@ const techStack = [
 export default function LandingPage() {
   const navigate = useNavigate();
   const { language } = useLanguageStore();
+  const { isAuthenticated } = useAuthStore();
 
   return (
     <Fragment>
@@ -163,10 +165,12 @@ export default function LandingPage() {
             style={{ animationDelay: "0.3s" }}
           >
             <Link
-              to="/app/dashboard"
+              to={isAuthenticated ? "/app/dashboard" : "/login"}
               className="flex items-center gap-2 px-6 py-3 text-sm font-semibold bg-accent-500 hover:bg-accent-600 text-white rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-accent-500/25 active:scale-[0.98]"
             >
-              {language({ id: "Ke Dashboard", en: "Go to Dashboard" })}
+              {isAuthenticated
+                ? language({ id: "Ke Dashboard", en: "Go to Dashboard" })
+                : language({ id: "Masuk Sekarang", en: "Login Now" })}
               <IconComponent iconName="Hi/HiOutlineArrowRight" size={16} />
             </Link>
             <a
@@ -404,10 +408,12 @@ export default function LandingPage() {
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
             <Link
-              to="/app/dashboard"
+              to={isAuthenticated ? "/app/dashboard" : "/login"}
               className="flex items-center gap-2 px-6 py-3 text-sm font-semibold bg-accent-500 hover:bg-accent-600 text-white rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-accent-500/25"
             >
-              {language({ id: "Buka Dashboard", en: "Open Dashboard" })}
+              {isAuthenticated
+                ? language({ id: "Buka Dashboard", en: "Open Dashboard" })
+                : language({ id: "Masuk Sekarang", en: "Login Now" })}
               <IconComponent iconName="Hi/HiOutlineArrowRight" size={16} />
             </Link>
             <button

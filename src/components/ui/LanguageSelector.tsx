@@ -18,10 +18,6 @@ export default function LanguageSelector({ className = "" }: Props) {
   const [showDropdown, setShowDropdown] = useState(false);
 
   const getCountryForLanguage = (langKey: string) => {
-    console.log({ langKey });
-    // Default mapped languages for specific languages if multiple exist
-    if (langKey === "en")
-      return arrayLanguages.find((c) => c.key === LanguageKey.ID);
     return arrayLanguages.find((c) => c.key === langKey);
   };
 

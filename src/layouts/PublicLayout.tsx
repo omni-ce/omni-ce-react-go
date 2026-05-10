@@ -5,12 +5,18 @@ import version from "@/version";
 import AppIconSvg from "@/assets/react_go.svg";
 import ControlButton from "@/components/ControlButton";
 import { IconComponent } from "@/components/ui/IconSelector";
+import { useAuthStore } from "@/stores/authStore";
 
 export default function MainLayout() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { language } = useLanguageStore();
+   const { language } = useLanguageStore();
+  const { isAuthenticated, user, validateToken } = useAuthStore();
   const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    validateToken();
+  }, [validateToken]);
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -55,12 +61,42 @@ export default function MainLayout() {
 
             <ControlButton />
 
-            <button
-              onClick={() => navigate("/login")}
-              className="px-4 py-2 text-sm font-semibold bg-accent-500 hover:bg-accent-600 text-white rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-accent-500/25 active:scale-[0.98]"
-            >
-              {language({ id: "Masuk", en: "Login" })}
-            </button>
+            {isAuthenticated && user ? (
+              <button
+                onClick={() => navigate("/app/dashboard")}
+                className="flex items-center gap-3 pl-3 border-l border-dark-600/50 ml-2 group"
+              >
+                <div className="text-right hidden sm:block">
+                  <p className="text-xs font-bold text-foreground leading-tight group-hover:text-accent-400 transition-colors">
+                    {user.name}
+                  </p>
+                  <p className="text-[10px] text-dark-400 font-mono">
+                    @{user.username}
+                  </p>
+                </div>
+                <div className="w-9 h-9 rounded-xl bg-accent-500/10 border border-accent-500/20 flex items-center justify-center overflow-hidden group-hover:border-accent-500/40 transition-all">
+                  {user.avatar ? (
+                    <img
+                      src={user.avatar}
+                      alt={user.username}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <IconComponent
+                      iconName="Hi/HiOutlineUser"
+                      className="w-5 h-5 text-accent-400"
+                    />
+                  )}
+                </div>
+              </button>
+            ) : (
+              <button
+                onClick={() => navigate("/login")}
+                className="px-4 py-2 text-sm font-semibold bg-accent-500 hover:bg-accent-600 text-white rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-accent-500/25 active:scale-[0.98]"
+              >
+                {language({ id: "Masuk", en: "Login" })}
+              </button>
+            )}
           </div>
         </div>
       </nav>
