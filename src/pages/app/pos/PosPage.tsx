@@ -187,7 +187,7 @@ export default function PosPage({ ruleKey }: Props) {
             return (
               <div
                 key={order.id}
-                className={`min-w-[220px] p-4 rounded-2xl border ${status.bg} flex flex-col gap-3 shrink-0 transition-all hover:scale-[1.02] hover:rounded-none cursor-pointer`}
+                className={`min-w-55 p-4 rounded-2xl border ${status.bg} flex flex-col gap-3 shrink-0 transition-all hover:scale-[1.02] hover:rounded-none cursor-pointer`}
               >
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-bold text-foreground">
@@ -217,7 +217,7 @@ export default function PosPage({ ruleKey }: Props) {
             );
           })}
           {/* Scroll indicator */}
-          <div className="min-w-[48px] flex items-center justify-center shrink-0">
+          <div className="min-w-12 flex items-center justify-center shrink-0">
             <div className="w-10 h-10 rounded-full bg-dark-800 border border-dark-600/40 flex items-center justify-center text-dark-400 hover:text-dark-200 hover:border-dark-500 transition-all cursor-pointer">
               <IconComponent iconName="Hi/HiOutlineChevronRight" size={18} />
             </div>
@@ -347,7 +347,7 @@ export default function PosPage({ ruleKey }: Props) {
                     >
                       −
                     </button>
-                    <span className="text-sm font-bold text-foreground min-w-[24px] text-center">
+                    <span className="text-sm font-bold text-foreground min-w-6 text-center">
                       {qty}
                     </span>
                     <button
@@ -371,11 +371,11 @@ export default function PosPage({ ruleKey }: Props) {
       <div
         className={cn(
           "shrink-0 bg-dark-900 border-l border-dark-600/40 flex flex-col overflow-hidden transition-all duration-300 ease-in-out",
-          isPanelOpen ? "w-[340px] opacity-100" : "w-0 opacity-0 border-l-0",
+          isPanelOpen ? "w-85 opacity-100" : "w-0 opacity-0 border-l-0",
         )}
       >
         {/* Header */}
-        <div className="p-5 border-b border-dark-600/30 min-w-[340px]">
+        <div className="p-5 border-b border-dark-600/30 min-w-85">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <button
@@ -408,7 +408,7 @@ export default function PosPage({ ruleKey }: Props) {
         </div>
 
         {/* Ordered Items */}
-        <div className="flex-1 overflow-y-auto p-5 min-w-[340px]">
+        <div className="flex-1 overflow-y-auto p-5 min-w-85">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-bold text-foreground">
               {language({ id: "Item Dipesan", en: "Ordered Items" })}
@@ -523,12 +523,12 @@ export default function PosPage({ ruleKey }: Props) {
         </div>
 
         {/* Footer Actions */}
-        <div className="p-5 border-t border-dark-600/30 flex gap-3 min-w-[340px]">
+        <div className="p-5 border-t border-dark-600/30 flex gap-3 min-w-85">
           <button className="flex-1 flex items-center justify-center gap-2 py-3 rounded-full border border-dark-600 bg-dark-900 text-dark-400 text-sm font-semibold hover:border-dark-500 hover:text-foreground transition-all">
             <IconComponent iconName="Hi/HiOutlinePrinter" size={16} />
             {language({ id: "Cetak", en: "Print" })}
           </button>
-          <button className="flex-[2] flex items-center justify-center gap-2 py-3 rounded-full bg-accent-500 hover:bg-accent-600 text-white text-sm font-bold transition-all duration-200 shadow-lg shadow-accent-500/25 hover:shadow-accent-500/40 active:scale-[0.98]">
+          <button className="flex-2 flex items-center justify-center gap-2 py-3 rounded-full bg-accent-500 hover:bg-accent-600 text-white text-sm font-bold transition-all duration-200 shadow-lg shadow-accent-500/25 hover:shadow-accent-500/40 active:scale-[0.98]">
             <IconComponent iconName="Hi/HiOutlineClipboardCheck" size={16} />
             {language({ id: "Buat Pesanan", en: "Place Order" })}
           </button>

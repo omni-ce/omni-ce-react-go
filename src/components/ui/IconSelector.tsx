@@ -359,8 +359,18 @@ export default function IconSelector({
                     </button>
                   ))}
                   {filteredIcons.length === 0 && (
-                    <div className="col-span-6 py-8 text-center text-sm text-dark-400">
-                      No icons found
+                    <div className="col-span-6 py-8 text-center">
+                      <p className="text-sm text-dark-400">No icons found</p>
+                      {search && (
+                        <a
+                          href={`https://react-icons.github.io/react-icons/search/#q=${encodeURIComponent(search)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-2 inline-block text-[11px] text-accent-500 hover:text-accent-400 hover:underline transition-all"
+                        >
+                          Search "{search}" on React Icons website
+                        </a>
+                      )}
                     </div>
                   )}
                 </div>
