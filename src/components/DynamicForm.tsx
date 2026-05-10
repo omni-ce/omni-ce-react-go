@@ -481,7 +481,7 @@ function DynamicAddress({
   }, [selectedDistrict]);
 
   return (
-    <div className="space-y-3 mt-1.5 p-3 rounded-xl border border-dark-600/50 bg-dark-900/30">
+    <div className="space-y-3 mt-1.5 p-3 rounded-xl border border-dark-600 bg-dark-800">
       <SearchableSelect
         id="province"
         options={provinceOptions}
@@ -648,7 +648,7 @@ function DynamicFile({
 
     if (isImage) {
       return (
-        <div className="mt-2 relative w-24 h-24 rounded-lg overflow-hidden border border-dark-600 bg-dark-900/50">
+        <div className="mt-2 relative w-24 h-24 rounded-lg overflow-hidden border border-dark-600 bg-dark-800">
           <Image
             src={value}
             alt="Preview"
@@ -672,7 +672,7 @@ function DynamicFile({
           <video
             src={value}
             controls
-            className="w-full max-w-sm rounded-lg border border-dark-600 bg-dark-900/50"
+            className="w-full max-w-sm rounded-lg border border-dark-600 bg-dark-800"
           >
             <track kind="captions" />
           </video>
@@ -718,12 +718,12 @@ function DynamicFile({
             ${
               loading
                 ? "border-accent-500/50 bg-accent-500/5"
-                : "border-dark-600 hover:border-accent-500/50 hover:bg-dark-800/50 bg-dark-900/40"
+                : "border-dark-600 hover:border-accent-500/50 hover:bg-dark-800 bg-dark-900"
             }
             ${disabled ? "opacity-50 cursor-not-allowed" : ""}
           `}
         >
-          <div className="shrink-0 w-8 h-8 rounded-lg bg-dark-800 flex items-center justify-center text-dark-400 group-hover:text-accent-400 transition-colors">
+          <div className="shrink-0 w-8 h-8 rounded-lg bg-dark-700 flex items-center justify-center text-dark-400 group-hover:text-accent-500 transition-colors">
             {loading ? (
               <span className="text-[10px] font-bold text-accent-500">
                 {progress}%
@@ -756,7 +756,7 @@ function DynamicFile({
         {!errorMsg &&
           !loading &&
           (field as DynamicFormFieldNormal).fileMaxSize && (
-            <span className="text-[10px] text-dark-400 font-mono">
+            <span className="text-[10px] text-dark-400">
               Max:{" "}
               {formatFileSize((field as DynamicFormFieldNormal).fileMaxSize!)}
             </span>
@@ -775,11 +775,11 @@ function DynamicFile({
     const isValue = value !== undefined && value !== null && value !== "";
 
     return (
-      <div className="mt-1.5 flex flex-row items-center gap-6 p-4 rounded-xl border border-dark-600/50 bg-dark-900/30">
+      <div className="mt-1.5 flex flex-row items-center gap-6 p-4 rounded-xl border border-dark-600 bg-dark-800">
         <div
           className={`shrink-0 w-24 h-24 ${
             template === "company" ? "rounded-none" : "rounded-full"
-          } overflow-hidden border-2 border-dark-500 bg-dark-800`}
+          } overflow-hidden border-2 border-dark-600 bg-dark-700`}
         >
           {isValue ? (
             <Image
@@ -860,7 +860,7 @@ function ArrayField({
       {value.map((item, index) => (
         <div
           key={index}
-          className="relative p-4 border border-dark-600 rounded-xl bg-dark-900/40"
+          className="relative p-4 border border-dark-600 rounded-xl bg-dark-800"
         >
           <button
             type="button"
@@ -901,7 +901,7 @@ function ArrayField({
                 ) : child.type === "textarea" ? (
                   <textarea
                     id={`field-${field.key}-${index}-${child.key}`}
-                    className="mt-1.5 w-full px-4 py-2.5 bg-dark-900/60 border border-dark-500/50 rounded-xl text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30 transition-all font-mono text-sm disabled:opacity-50 min-h-20 resize-y"
+                    className="mt-1.5 w-full px-4 py-2.5 bg-dark-900 border border-dark-600 rounded-lg text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500 focus:ring-1 focus:ring-accent-500/30 transition-all text-sm disabled:opacity-50 min-h-20 resize-y"
                     value={String(item[child.key] ?? "")}
                     onChange={(e) =>
                       handleChildChange(index, child.key, e.target.value)
@@ -939,7 +939,7 @@ function ArrayField({
         variant="outline"
         size="sm"
         onClick={handleAdd}
-        className="w-full flex items-center justify-center gap-2 border-dashed border-dark-500 text-dark-300 hover:text-foreground"
+        className="w-full flex items-center justify-center gap-2 border-dashed border-dark-500 text-dark-400 hover:text-foreground"
       >
         <IconComponent iconName="Hi/HiOutlinePlus" className="w-4 h-4" />
         {language({ id: "Tambah", en: "Add" })} {field.label}
@@ -1191,7 +1191,7 @@ function DynamicCol({
       {COL_BREAKPOINTS.map((bp) => (
         <div
           key={bp.key}
-          className="bg-dark-900/60 border border-dark-600/40 rounded-xl p-3"
+          className="bg-dark-800 border border-dark-600 rounded-xl p-3"
         >
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-1.5">
@@ -1200,7 +1200,7 @@ function DynamicCol({
                 {bp.label}
               </span>
             </div>
-            <span className="text-[10px] font-mono text-accent-400 bg-accent-500/10 px-1.5 py-0.5 rounded">
+            <span className="text-[10px] text-accent-500 bg-accent-500/10 px-1.5 py-0.5 rounded">
               {colVal[bp.key]}/12
             </span>
           </div>
@@ -1304,14 +1304,14 @@ function DynamicMapField({
             ${
               value
                 ? "border-accent-500/50 bg-accent-500/5 hover:bg-accent-500/10"
-                : "border-dark-600/50 bg-dark-900/40 hover:bg-dark-800/50"
+                : "border-dark-600 bg-dark-900 hover:bg-dark-800"
             }
             ${disabled ? "opacity-50 cursor-not-allowed" : ""}
           `}
         >
           <div
             className={`shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
-              value ? "bg-accent-500 text-white" : "bg-dark-800 text-dark-400"
+              value ? "bg-accent-500 text-white" : "bg-dark-700 text-dark-400"
             }`}
           >
             <IconComponent
@@ -1321,7 +1321,7 @@ function DynamicMapField({
           </div>
           <div className="flex flex-col min-w-0 flex-1">
             <span
-              className={`text-sm font-medium truncate ${value && typeof value.latitude === "number" ? "text-accent-400" : "text-foreground"}`}
+              className={`text-sm font-medium truncate ${value && typeof value.latitude === "number" ? "text-accent-500" : "text-foreground"}`}
             >
               {value && typeof value.latitude === "number"
                 ? `${value.latitude.toFixed(6)}, ${value.longitude.toFixed(6)}`
@@ -1409,7 +1409,7 @@ function DynamicGeolocationField({
           ${
             value
               ? "border-accent-500/50 bg-accent-500/5 hover:bg-accent-500/10"
-              : "border-dark-600/50 bg-dark-900/40 hover:bg-dark-800/50"
+              : "border-dark-600 bg-dark-900 hover:bg-dark-800/50"
           }
           ${disabled || loading ? "opacity-50 cursor-not-allowed" : ""}
         `}
@@ -1435,7 +1435,7 @@ function DynamicGeolocationField({
           <span
             className={`text-sm font-medium truncate ${
               value && typeof value.latitude === "number"
-                ? "text-accent-400"
+                ? "text-accent-500"
                 : "text-foreground"
             }`}
           >
@@ -1550,7 +1550,7 @@ function DynamicFieldRenderer({
       <div
         className={`${getColClass(
           field,
-        )} space-y-4 border border-dark-600/50 rounded-xl p-4 bg-dark-800/30 mt-2`}
+        )} space-y-4 border border-dark-600 rounded-xl p-4 bg-dark-800 mt-2`}
       >
         {field.label && (
           <h3 className="font-semibold text-sm text-foreground">
@@ -1620,7 +1620,7 @@ function DynamicFieldRenderer({
       ) : field.type === "textarea" ? (
         <textarea
           id={`field-${field.key}`}
-          className="mt-1.5 w-full px-4 py-2.5 bg-dark-900/60 border border-dark-500/50 rounded-xl text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30 transition-all font-mono text-sm disabled:opacity-50 min-h-20 resize-y"
+          className="mt-1.5 w-full px-4 py-2.5 bg-dark-900 border border-dark-600 rounded-lg text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500 focus:ring-1 focus:ring-accent-500/30 transition-all text-sm disabled:opacity-50 min-h-20 resize-y"
           value={String(formData[field.key] ?? "")}
           onChange={(e) => onChange(field.key!, e.target.value)}
           onBlur={(e) => handleBlur(e.target.value)}
@@ -1646,7 +1646,7 @@ function DynamicFieldRenderer({
         <Input
           id={`field-${field.key}`}
           type="text"
-          className="mt-1.5 font-mono"
+          className="mt-1.5"
           value={String(formData[field.key] ?? "")}
           onChange={(e) => {
             const val = e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, "");
@@ -1729,7 +1729,7 @@ function DynamicFieldRenderer({
           <input
             id={`field-${field.key}`}
             type="date"
-            className="w-full pl-12 pr-4 py-2.5 bg-dark-900/60 border border-dark-500/50 rounded-xl text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30 transition-all text-sm disabled:opacity-50 scheme-dark"
+            className="w-full pl-12 pr-4 py-2.5 bg-dark-900 border border-dark-600 rounded-lg text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500 focus:ring-1 focus:ring-accent-500/30 transition-all text-sm disabled:opacity-50"
             value={String(formData[field.key] ?? "")}
             onChange={(e) => onChange(field.key!, e.target.value)}
             disabled={disabled}
@@ -1795,7 +1795,7 @@ function DynamicFieldRenderer({
 
             return (
               <div key={langCode} className="relative flex items-center">
-                <div className="absolute left-3 z-10 flex items-center justify-center w-5 h-4 overflow-hidden rounded-sm border border-dark-600/50">
+                <div className="absolute left-3 z-10 flex items-center justify-center w-5 h-4 overflow-hidden rounded-sm border border-dark-600">
                   {Flag ? (
                     <Flag className="w-full h-full object-cover" />
                   ) : (

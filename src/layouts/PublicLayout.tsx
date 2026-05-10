@@ -36,7 +36,7 @@ export default function MainLayout() {
             ? "bg-dark-800/90 backdrop-blur-xl border-b border-dark-600/30 shadow-lg shadow-black/10"
             : isLandingPage
               ? "bg-transparent"
-              : "bg-dark-800/60 border-b border-dark-600/30"
+              : "bg-dark-800 border-b border-dark-600/30"
         }`}
       >
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -45,7 +45,7 @@ export default function MainLayout() {
             <span className="font-bold text-foreground tracking-tight">
               React-Go
             </span>
-            <span className="text-[10px] font-mono text-dark-400 ml-1">
+            <span className="text-[10px] text-dark-400 ml-1">
               v{version}
             </span>
           </div>
@@ -54,7 +54,7 @@ export default function MainLayout() {
               href="https://github.com/jefripunza/react-go"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:flex items-center gap-2 px-3 py-1.5 text-xs font-mono text-dark-300 hover:text-foreground transition-colors"
+              className="hidden sm:flex items-center gap-2 px-3 py-1.5 text-xs text-dark-400 hover:text-foreground transition-colors"
             >
               <IconComponent iconName="Hi/HiOutlineCode" size={14} />
               GitHub
@@ -63,16 +63,16 @@ export default function MainLayout() {
             <ControlButton />
 
             {isAuthenticated && user ? (
-              <div className="flex items-center gap-2 pl-3 border-l border-dark-600/50 ml-2">
+              <div className="flex items-center gap-2 pl-3 border-l border-dark-600 ml-2">
                 <button
                   onClick={() => navigate("/app/dashboard")}
                   className="flex items-center gap-3 group"
                 >
                   <div className="text-right hidden sm:block">
-                    <p className="text-xs font-bold text-foreground leading-tight group-hover:text-accent-400 transition-colors">
+                    <p className="text-xs font-bold text-foreground leading-tight group-hover:text-accent-500 transition-colors">
                       {user.name}
                     </p>
-                    <p className="text-[10px] text-dark-400 font-mono">
+                    <p className="text-[10px] text-dark-400">
                       @{user.username}
                     </p>
                   </div>
@@ -86,7 +86,7 @@ export default function MainLayout() {
                     ) : (
                       <IconComponent
                         iconName="Hi/HiOutlineUser"
-                        className="w-5 h-5 text-accent-400"
+                        className="w-5 h-5 text-accent-500"
                       />
                     )}
                   </div>
@@ -122,16 +122,16 @@ export default function MainLayout() {
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Image src={AppIconSvg} alt="App" className="w-8 h-8" />
-            <span className="text-xs font-mono text-dark-400">
+            <span className="text-xs text-dark-400">
               React-Go v{version}
             </span>
           </div>
-          <div className="flex items-center gap-4 text-xs font-mono text-dark-400">
+          <div className="flex items-center gap-4 text-xs text-dark-400">
             <a
               href="https://github.com/jefripunza"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-accent-400 transition-colors"
+              className="hover:text-accent-500 transition-colors"
             >
               @jefripunza
             </a>

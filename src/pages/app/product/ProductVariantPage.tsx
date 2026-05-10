@@ -69,7 +69,7 @@ export default function ProductVarianPage({ ruleKey }: Props) {
         header: language({ id: "Deskripsi", en: "Description" }),
         search: true,
         render: (item) => (
-          <span className="text-dark-300 max-w-xs truncate block">
+          <span className="text-dark-400 max-w-xs truncate block">
             {item.description}
           </span>
         ),

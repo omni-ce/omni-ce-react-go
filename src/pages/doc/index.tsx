@@ -146,8 +146,8 @@ export default function DocPage() {
             }}
             className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-all ${
               isActive
-                ? "text-accent-400 bg-accent-500/10 font-semibold"
-                : "text-dark-300 hover:text-foreground hover:bg-dark-700/50"
+                ? "text-accent-500 bg-accent-500/10 font-semibold"
+                : "text-dark-400 hover:text-foreground hover:bg-dark-800"
             }`}
             style={{ paddingLeft: `${level * 12 + 12}px` }}
           >
@@ -200,25 +200,25 @@ export default function DocPage() {
       {/* Sidebar */}
       <aside
         className={`
-          fixed top-0 left-0 h-screen z-50 w-72 bg-dark-800 border-r border-dark-600/50 flex flex-col overflow-y-auto
+          fixed top-0 left-0 h-screen z-50 w-72 bg-dark-800 border-r border-dark-600 flex flex-col overflow-y-auto
           transition-transform duration-300
           lg:sticky lg:top-0 lg:translate-x-0 lg:flex
           ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
         `}
       >
         {/* Sidebar header */}
-        <div className="h-16 flex items-center gap-3 px-5 border-b border-dark-600/50 shrink-0">
+        <div className="h-16 flex items-center gap-3 px-5 border-b border-dark-600 shrink-0">
           <div className="w-7 h-7 rounded-lg bg-accent-500/20 border border-accent-500/30 flex items-center justify-center shrink-0">
             <IconComponent
               iconName="Ri/RiBookOpenLine"
-              className="w-4 h-4 text-accent-400"
+              className="w-4 h-4 text-accent-500"
             />
           </div>
           <div>
             <p className="text-sm font-bold text-foreground">
               {language({ id: "Dokumentasi", en: "Docs" })}
             </p>
-            <p className="text-[10px] text-dark-400 font-mono">
+            <p className="text-[10px] text-dark-400">
               {language({ id: "Proyek Dasar", en: "Base Project" })}
             </p>
           </div>
@@ -236,10 +236,10 @@ export default function DocPage() {
         </nav>
 
         {/* Footer */}
-        <div className="p-4 border-t border-dark-600/50 shrink-0">
+        <div className="p-4 border-t border-dark-600 shrink-0">
           <Link
             to="/"
-            className="flex items-center gap-2 text-xs text-dark-400 hover:text-foreground transition-colors font-mono"
+            className="flex items-center gap-2 text-xs text-dark-400 hover:text-foreground transition-colors"
           >
             {language({ id: "← Kembali ke Beranda", en: "← Back to Home" })}
           </Link>
@@ -249,7 +249,7 @@ export default function DocPage() {
       {/* Content */}
       <div className="flex-1 min-w-0 flex flex-col">
         {/* Top bar */}
-        <header className="h-16 bg-dark-800/60 border-b border-dark-600/50 flex items-center px-5 gap-3 shrink-0 sticky top-0 z-30">
+        <header className="h-16 bg-dark-800 border-b border-dark-600 flex items-center px-5 gap-3 shrink-0 sticky top-0 z-30">
           <button
             onClick={() => setSidebarOpen(true)}
             className="lg:hidden p-2 text-dark-400 hover:text-foreground"
@@ -257,8 +257,8 @@ export default function DocPage() {
             <IconComponent iconName="Ri/RiMenuLine" className="w-5 h-5" />
           </button>
           {/* Breadcrumb */}
-          <div className="flex items-center gap-1.5 text-sm font-mono text-dark-400">
-            <span className="text-accent-400">
+          <div className="flex items-center gap-1.5 text-sm text-dark-400">
+            <span className="text-accent-500">
               {language({ id: "Dokumentasi", en: "Docs" })}
             </span>
             {currentItem && (
@@ -284,16 +284,16 @@ export default function DocPage() {
               <div className="doc-content mb-12">{currentItem.content}</div>
 
               {/* Next / Back Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 pt-8 border-t border-dark-600/50 mt-12">
+              <div className="flex flex-col sm:flex-row gap-4 pt-8 border-t border-dark-600 mt-12">
                 {prevItem && (
                   <button
                     onClick={() => handleNav(prevItem.id)}
-                    className="flex-1 group flex flex-col items-start gap-2 p-4 rounded-xl border border-dark-600/50 bg-dark-800/40 hover:bg-dark-700/50 hover:border-accent-500/30 transition-all text-left"
+                    className="flex-1 group flex flex-col items-start gap-2 p-4 rounded-xl border border-dark-600 bg-dark-800 hover:bg-dark-800 hover:border-accent-500/30 transition-all text-left"
                   >
-                    <span className="text-[10px] uppercase tracking-widest text-dark-400 group-hover:text-accent-400 transition-colors">
+                    <span className="text-[10px] uppercase tracking-widest text-dark-400 group-hover:text-accent-500 transition-colors">
                       {language({ id: "Sebelumnya", en: "Previous" })}
                     </span>
-                    <span className="text-sm font-bold text-foreground group-hover:text-accent-400 transition-colors flex items-center gap-2">
+                    <span className="text-sm font-bold text-foreground group-hover:text-accent-500 transition-colors flex items-center gap-2">
                       <IconComponent
                         iconName="Ri/RiArrowLeftSLine"
                         className="w-4 h-4"
@@ -306,12 +306,12 @@ export default function DocPage() {
                 {nextItem && (
                   <button
                     onClick={() => handleNav(nextItem.id)}
-                    className="flex-1 group flex flex-col items-end gap-2 p-4 rounded-xl border border-dark-600/50 bg-dark-800/40 hover:bg-dark-700/50 hover:border-accent-500/30 transition-all text-right"
+                    className="flex-1 group flex flex-col items-end gap-2 p-4 rounded-xl border border-dark-600 bg-dark-800 hover:bg-dark-800 hover:border-accent-500/30 transition-all text-right"
                   >
-                    <span className="text-[10px] uppercase tracking-widest text-dark-400 group-hover:text-accent-400 transition-colors">
+                    <span className="text-[10px] uppercase tracking-widest text-dark-400 group-hover:text-accent-500 transition-colors">
                       {language({ id: "Selanjutnya", en: "Next" })}
                     </span>
-                    <span className="text-sm font-bold text-foreground group-hover:text-accent-400 transition-colors flex items-center gap-2">
+                    <span className="text-sm font-bold text-foreground group-hover:text-accent-500 transition-colors flex items-center gap-2">
                       {nextItem.label}
                       <IconComponent
                         iconName="Ri/RiArrowRightSLine"

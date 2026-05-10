@@ -180,7 +180,7 @@ export default function ProductItemPage({ ruleKey }: Props) {
               className="h-6 w-6 rounded-full border border-dark-600"
               style={{ backgroundColor: item.color_hex }}
             />
-            <span className="text-dark-300 max-w-xs truncate block">
+            <span className="text-dark-400 max-w-xs truncate block">
               {item.color_name}
             </span>
           </div>

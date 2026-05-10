@@ -46,17 +46,17 @@ export default function AuthLayout() {
 
       {/* Background grid pattern */}
       <div
-        className="absolute inset-0 opacity-[0.03]"
+        className="absolute inset-0 opacity-[0.04]"
         style={{
           backgroundImage:
-            "linear-gradient(rgba(99,102,241,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,0.3) 1px, transparent 1px)",
+            "linear-gradient(rgba(97,97,255,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(97,97,255,0.3) 1px, transparent 1px)",
           backgroundSize: "60px 60px",
         }}
       />
 
       {/* Gradient orbs */}
-      <div className="absolute top-[-20%] left-[-10%] w-125 h-125 bg-accent-500/10 rounded-full blur-[120px]" />
-      <div className="absolute bottom-[-20%] right-[-10%] w-100 h-100 bg-neon-cyan/8 rounded-full blur-[100px]" />
+      <div className="absolute top-[-20%] left-[-10%] w-125 h-125 bg-accent-500/8 rounded-full blur-[120px]" />
+      <div className="absolute bottom-[-20%] right-[-10%] w-100 h-100 bg-card-sky/30 rounded-full blur-[100px]" />
 
       {/* Content */}
       <div className="relative z-10 w-full">

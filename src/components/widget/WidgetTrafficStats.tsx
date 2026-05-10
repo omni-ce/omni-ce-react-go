@@ -91,13 +91,13 @@ export default function WidgetTrafficStats({
   onPeriodChange,
 }: WidgetTrafficStatsProps) {
   return (
-    <div className="bg-dark-800/60 border border-dark-600/40 rounded-2xl overflow-hidden p-5">
+    <div className="bg-dark-800 border border-dark-600/40 rounded-2xl overflow-hidden p-5">
       <div className="flex items-start justify-between mb-4">
         <h3 className="text-sm font-semibold text-foreground">{title}</h3>
       </div>
 
       {periodTabs && (
-        <div className="flex items-center bg-dark-900/60 rounded-lg p-0.5 border border-dark-600/40 mb-5">
+        <div className="flex items-center bg-dark-900 rounded-lg p-0.5 border border-dark-600/40 mb-5">
           {periodTabs.map((tab) => (
             <button
               key={tab}

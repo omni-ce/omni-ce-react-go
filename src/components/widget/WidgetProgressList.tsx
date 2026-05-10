@@ -19,7 +19,7 @@ export default function WidgetProgressList({
   const defaultColors = ["#6366f1", "#10b981", "#f59e0b", "#ef4444", "#06b6d4"];
 
   return (
-    <div className="bg-dark-800/60 border border-dark-600/40 rounded-2xl overflow-hidden p-5">
+    <div className="bg-dark-800 border border-dark-600/40 rounded-2xl overflow-hidden p-5">
       <div className="mb-4">
         <h3 className="text-sm font-semibold text-foreground">{title}</h3>
         {subtitle && (

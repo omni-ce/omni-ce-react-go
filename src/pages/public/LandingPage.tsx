@@ -22,7 +22,7 @@ const features = [
       id: "Sidebar, top bar, navigasi responsif, dan mode gelap/terang bawaan.",
       en: "Sidebar, top bar, responsive navigation, and dark/light mode built-in.",
     },
-    color: "text-accent-400",
+    color: "text-accent-500",
     bg: "bg-accent-500/10 border-accent-500/20",
   },
   {
@@ -52,7 +52,7 @@ const features = [
       id: "Store i18n bawaan dengan toggle. Tambah bahasa baru dalam hitungan menit.",
       en: "Built-in i18n store with toggle. Add new languages in minutes.",
     },
-    color: "text-accent-400",
+    color: "text-accent-500",
     bg: "bg-accent-500/10 border-accent-500/20",
   },
   {
@@ -76,7 +76,7 @@ const techStack = [
   },
   {
     label: "TailwindCSS v4",
-    color: "text-accent-400",
+    color: "text-accent-500",
     link: "https://tailwindcss.com/",
   },
   {
@@ -96,7 +96,7 @@ const techStack = [
   },
   {
     label: "SSE",
-    color: "text-accent-400",
+    color: "text-accent-500",
     link: "https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events",
   },
   {
@@ -125,7 +125,7 @@ export default function LandingPage() {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-accent-500/10 border border-accent-500/20 rounded-full mb-8 animate-fade-in">
             <div className="w-2 h-2 rounded-full bg-neon-green animate-pulse-glow" />
-            <span className="text-xs font-mono text-accent-400">
+            <span className="text-xs text-accent-500">
               {language({
                 id: "Template Starter Open Source",
                 en: "Open Source Starter Template",
@@ -150,7 +150,7 @@ export default function LandingPage() {
 
           {/* Subtitle */}
           <p
-            className="mt-6 text-lg text-dark-300 max-w-2xl mx-auto leading-relaxed animate-fade-in"
+            className="mt-6 text-lg text-dark-400 max-w-2xl mx-auto leading-relaxed animate-fade-in"
             style={{ animationDelay: "0.2s" }}
           >
             {language({
@@ -177,7 +177,7 @@ export default function LandingPage() {
               href="https://github.com/jefripunza/react-go"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 px-6 py-3 text-sm font-semibold border border-dark-600/50 text-dark-300 hover:text-foreground hover:border-dark-500/60 rounded-xl transition-all duration-200"
+              className="flex items-center gap-2 px-6 py-3 text-sm font-semibold border border-dark-600 text-dark-400 hover:text-foreground hover:border-dark-500 rounded-xl transition-all duration-200"
             >
               <IconComponent iconName="Hi/HiOutlineCode" size={16} />
               {language({ id: "Lihat di GitHub", en: "View on GitHub" })}
@@ -189,18 +189,18 @@ export default function LandingPage() {
             className="mt-14 max-w-xl mx-auto animate-fade-in"
             style={{ animationDelay: "0.4s" }}
           >
-            <div className="bg-dark-800/80 border border-dark-600/40 rounded-2xl overflow-hidden shadow-2xl shadow-black/20">
+            <div className="bg-dark-800 border border-dark-600/40 rounded-2xl overflow-hidden shadow-2xl shadow-black/20">
               <div className="flex items-center gap-2 px-4 py-3 border-b border-dark-600/30">
                 <div className="flex gap-1.5">
                   <div className="w-3 h-3 rounded-full bg-neon-red/60" />
                   <div className="w-3 h-3 rounded-full bg-neon-yellow/60" />
                   <div className="w-3 h-3 rounded-full bg-neon-green/60" />
                 </div>
-                <span className="text-[10px] font-mono text-dark-400 ml-2">
+                <span className="text-[10px] text-dark-400 ml-2">
                   terminal
                 </span>
               </div>
-              <pre className="px-5 py-4 text-xs font-mono text-dark-200 leading-relaxed overflow-x-auto">
+              <pre className="px-5 py-4 text-xs text-dark-200 leading-relaxed overflow-x-auto">
                 <span className="text-neon-green">$</span>{" "}
                 <span className="text-dark-100">
                   git clone https://github.com/jefripunza/react-go.git .
@@ -221,7 +221,7 @@ export default function LandingPage() {
                 </span>
                 {"\n"}
                 <span className="text-dark-400">{"  "}➜ Local: </span>
-                <span className="text-accent-400">http://localhost:5173/</span>
+                <span className="text-accent-500">http://localhost:5173/</span>
               </pre>
             </div>
           </div>
@@ -238,7 +238,7 @@ export default function LandingPage() {
                 href={tech.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`text-xs font-mono ${tech.color} opacity-70 hover:opacity-100 transition-opacity`}
+                className={`text-xs ${tech.color} opacity-70 hover:opacity-100 transition-opacity`}
               >
                 {tech.label}
               </a>
@@ -257,7 +257,7 @@ export default function LandingPage() {
                 en: "Everything You Need",
               })}
             </h2>
-            <p className="mt-3 text-dark-300 max-w-lg mx-auto">
+            <p className="mt-3 text-dark-400 max-w-lg mx-auto">
               {language({
                 id: "Sudah dikonfigurasi dan siap produksi. Tinggal clone, kustomisasi, dan deploy.",
                 en: "Pre-configured and production-ready. Just clone, customize, and deploy.",
@@ -270,7 +270,7 @@ export default function LandingPage() {
               return (
                 <div
                   key={language(feat.title)}
-                  className="bg-dark-800/60 border border-dark-600/40 rounded-2xl p-6 hover:border-dark-500/60 transition-all duration-300 group animate-fade-in"
+                  className="bg-dark-800 border border-dark-600/40 rounded-2xl p-6 hover:border-dark-500 transition-all duration-300 group animate-fade-in"
                   style={{ animationDelay: `${i * 0.08}s` }}
                 >
                   <div
@@ -284,7 +284,7 @@ export default function LandingPage() {
                   <h3 className="text-sm font-semibold text-foreground mb-2">
                     {language(feat.title)}
                   </h3>
-                  <p className="text-xs text-dark-300 leading-relaxed">
+                  <p className="text-xs text-dark-400 leading-relaxed">
                     {language(feat.desc)}
                   </p>
                 </div>
@@ -310,7 +310,7 @@ export default function LandingPage() {
               />
               <div>
                 <p className="text-sm font-semibold text-foreground">Node.js</p>
-                <p className="text-xs text-dark-300 font-mono mt-1">
+                <p className="text-xs text-dark-400 mt-1">
                   v20.20.2+
                 </p>
               </div>
@@ -322,7 +322,7 @@ export default function LandingPage() {
               />
               <div>
                 <p className="text-sm font-semibold text-foreground">Bun</p>
-                <p className="text-xs text-dark-300 font-mono mt-1">v1.3.6+</p>
+                <p className="text-xs text-dark-400 mt-1">v1.3.6+</p>
               </div>
             </div>
             <div className="flex flex-col items-center gap-3">
@@ -332,7 +332,7 @@ export default function LandingPage() {
               />
               <div>
                 <p className="text-sm font-semibold text-foreground">Go</p>
-                <p className="text-xs text-dark-300 font-mono mt-1">v1.25.6+</p>
+                <p className="text-xs text-dark-400 mt-1">v1.25.6+</p>
               </div>
             </div>
           </div>
@@ -377,15 +377,15 @@ export default function LandingPage() {
             ].map((item) => (
               <div
                 key={item.step}
-                className="bg-dark-800/60 border border-dark-600/40 rounded-2xl p-6 text-center"
+                className="bg-dark-800 border border-dark-600/40 rounded-2xl p-6 text-center"
               >
-                <div className="text-3xl font-bold text-accent-500/30 font-mono mb-3">
+                <div className="text-3xl font-bold text-accent-500/30 mb-3">
                   {item.step}
                 </div>
                 <h3 className="text-sm font-semibold text-foreground mb-3">
                   {item.title}
                 </h3>
-                <code className="block text-[11px] font-mono text-neon-green bg-dark-900/60 px-3 py-2 rounded-lg break-all">
+                <code className="block text-[11px] text-neon-green bg-dark-900 px-3 py-2 rounded-lg break-all">
                   {item.code}
                 </code>
               </div>
@@ -400,7 +400,7 @@ export default function LandingPage() {
           <h2 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight mb-4">
             {language({ id: "Siap Membangun?", en: "Ready to Build?" })}
           </h2>
-          <p className="text-dark-300 mb-8">
+          <p className="text-dark-400 mb-8">
             {language({
               id: "Template ini open source dan gratis digunakan. Beri bintang di GitHub dan mulai kirim proyek berikutnya.",
               en: "This template is open source and free to use. Star it on GitHub and start shipping your next project.",
@@ -420,7 +420,7 @@ export default function LandingPage() {
               onClick={() =>
                 window.open("/doc", "_blank", "noopener,noreferrer")
               }
-              className="flex items-center gap-2 px-6 py-3 text-sm font-semibold border border-dark-600/50 text-dark-300 hover:text-foreground hover:border-dark-500/60 rounded-xl transition-all"
+              className="flex items-center gap-2 px-6 py-3 text-sm font-semibold border border-dark-600 text-dark-400 hover:text-foreground hover:border-dark-500 rounded-xl transition-all"
             >
               {language({ id: "Baca Dokumentasi", en: "Read Docs" })}
             </button>

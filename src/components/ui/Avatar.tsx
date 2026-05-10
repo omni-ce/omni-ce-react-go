@@ -36,7 +36,7 @@ const Avatar = React.forwardRef<HTMLImageElement, AvatarProps>(
         <div
           className={cn(
             shape === "square" ? "rounded-none" : "rounded-full",
-            "bg-accent-500/15 border border-accent-500/20 flex items-center justify-center text-accent-400 font-bold shrink-0",
+            "bg-card-lavender border border-accent-500/20 flex items-center justify-center text-accent-500 font-bold shrink-0",
             sizeClasses[size],
             className,
           )}

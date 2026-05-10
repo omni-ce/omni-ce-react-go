@@ -109,11 +109,11 @@ export function SearchableSelect({
         id={id}
         disabled={disabled || loading}
         className={cn(
-          "w-full bg-dark-900/60 border border-dark-500/50 text-foreground focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30 transition-all disabled:opacity-50 flex items-center justify-between text-left",
+          "w-full bg-dark-900 border border-dark-600 text-foreground focus:outline-none focus:border-accent-500 focus:ring-1 focus:ring-accent-500/30 transition-all disabled:opacity-50 flex items-center justify-between text-left",
           size === "sm"
             ? "h-7 px-2 py-0 text-xs rounded-lg"
-            : "px-4 py-2.5 text-sm rounded-xl",
-          !selectedOption && "text-dark-300",
+            : "px-4 py-2.5 text-sm rounded-lg",
+          !selectedOption && "text-dark-400",
         )}
         onClick={() => {
           if (!isOpen && onOpen) onOpen();
@@ -155,14 +155,14 @@ export function SearchableSelect({
         createPortal(
           <div
             id="searchable-select-portal"
-            className="absolute z-1000 bg-dark-800 border border-dark-500/50 rounded-xl shadow-xl overflow-hidden flex flex-col max-h-60"
+            className="absolute z-1000 bg-dark-900 border border-dark-600 rounded-xl shadow-[0_2px_48px_rgba(205,208,223,0.4)] overflow-hidden flex flex-col max-h-60"
             style={{
               top: `${dropdownPos.top}px`,
               left: `${dropdownPos.left}px`,
               width: `${dropdownPos.width}px`,
             }}
           >
-            <div className="p-2 border-b border-dark-500/50 flex items-center gap-2 bg-dark-900/60">
+            <div className="p-2 border-b border-dark-600 flex items-center gap-2 bg-dark-800">
               <IconComponent
                 iconName="Hi/HiSearch"
                 className="w-4 h-4 text-dark-400 shrink-0"
@@ -188,9 +188,9 @@ export function SearchableSelect({
                     key={opt.value}
                     type="button"
                     className={cn(
-                      "w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-dark-600 transition-colors flex flex-col gap-1",
+                      "w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-dark-800 transition-colors flex flex-col gap-1",
                       value === opt.value
-                        ? "bg-accent-500/20 text-accent-400"
+                        ? "bg-accent-500/20 text-accent-500"
                         : "text-foreground",
                     )}
                     onClick={() => {
@@ -213,7 +213,7 @@ export function SearchableSelect({
                           <Badge
                             key={idx}
                             variant="outline"
-                            className="text-[10px] py-0 px-1.5 bg-dark-900/40 border-dark-500/50 text-dark-300"
+                            className="text-[10px] py-0 px-1.5 bg-dark-900 border-dark-600 text-dark-300"
                           >
                             {String(item)}
                           </Badge>

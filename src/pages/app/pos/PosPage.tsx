@@ -191,22 +191,22 @@ const statusConfig: Record<
   in_kitchen: {
     label: { id: "Di Dapur", en: "In Kitchen" },
     color: "text-neon-cyan",
-    bg: "bg-neon-cyan/15 border-neon-cyan/30",
+    bg: "bg-card-ice border-neon-cyan/30",
   },
   wait_list: {
     label: { id: "Menunggu", en: "Wait List" },
     color: "text-neon-yellow",
-    bg: "bg-neon-yellow/15 border-neon-yellow/30",
+    bg: "bg-neon-yellow/10 border-neon-yellow/30",
   },
   ready: {
     label: { id: "Siap", en: "Ready" },
     color: "text-neon-green",
-    bg: "bg-neon-green/15 border-neon-green/30",
+    bg: "bg-card-mint/30 border-neon-green/30",
   },
   served: {
     label: { id: "Disajikan", en: "Served" },
-    color: "text-dark-300",
-    bg: "bg-dark-500/20 border-dark-500/30",
+    color: "text-dark-400",
+    bg: "bg-dark-800 border-dark-600/30",
   },
 };
 
@@ -279,8 +279,8 @@ export default function PosPage({ ruleKey }: Props) {
                 onClick={() => setActiveOrderType(type.key)}
                 className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-full border transition-all duration-200 ${
                   activeOrderType === type.key
-                    ? "bg-accent-500/15 border-accent-500/40 text-accent-400"
-                    : "bg-dark-800/60 border-dark-600/40 text-dark-300 hover:border-dark-500 hover:text-dark-200"
+                    ? "bg-badge-light-blue border-accent-500/40 text-accent-500"
+                    : "bg-dark-900 border-dark-600 text-dark-400 hover:border-dark-500 hover:text-foreground"
                 }`}
               >
                 {language(type.label)}
@@ -331,7 +331,7 @@ export default function PosPage({ ruleKey }: Props) {
           })}
           {/* Scroll indicator */}
           <div className="min-w-[48px] flex items-center justify-center shrink-0">
-            <div className="w-10 h-10 rounded-full bg-dark-800/60 border border-dark-600/40 flex items-center justify-center text-dark-400 hover:text-dark-200 hover:border-dark-500 transition-all cursor-pointer">
+            <div className="w-10 h-10 rounded-full bg-dark-800 border border-dark-600/40 flex items-center justify-center text-dark-400 hover:text-dark-200 hover:border-dark-500 transition-all cursor-pointer">
               <IconComponent iconName="Hi/HiOutlineChevronRight" size={18} />
             </div>
           </div>
@@ -344,10 +344,10 @@ export default function PosPage({ ruleKey }: Props) {
               {language({ id: "Menu Makanan", en: "Foodies Menu" })}
             </h2>
             <div className="flex gap-1">
-              <button className="w-8 h-8 rounded-full bg-dark-800/60 border border-dark-600/40 flex items-center justify-center text-dark-400 hover:text-dark-200 hover:border-dark-500 transition-all">
+              <button className="w-8 h-8 rounded-full bg-dark-800 border border-dark-600 flex items-center justify-center text-dark-400 hover:text-foreground hover:border-dark-500 transition-all">
                 <IconComponent iconName="Hi/HiOutlineChevronLeft" size={14} />
               </button>
-              <button className="w-8 h-8 rounded-full bg-dark-800/60 border border-dark-600/40 flex items-center justify-center text-dark-400 hover:text-dark-200 hover:border-dark-500 transition-all">
+              <button className="w-8 h-8 rounded-full bg-dark-800 border border-dark-600/40 flex items-center justify-center text-dark-400 hover:text-dark-200 hover:border-dark-500 transition-all">
                 <IconComponent iconName="Hi/HiOutlineChevronRight" size={14} />
               </button>
             </div>
@@ -361,8 +361,8 @@ export default function PosPage({ ruleKey }: Props) {
                 onClick={() => setActiveCategory(cat.key)}
                 className={`flex items-center gap-2.5 px-4 py-2.5 rounded-2xl border text-xs font-semibold shrink-0 transition-all duration-200 ${
                   activeCategory === cat.key
-                    ? "bg-accent-500/15 border-accent-500/40 text-accent-400 shadow-lg shadow-accent-500/10"
-                    : "bg-dark-800/40 border-dark-600/30 text-dark-300 hover:border-dark-500 hover:text-dark-200"
+                    ? "bg-badge-light-blue border-accent-500/40 text-accent-500 shadow-lg shadow-accent-500/10"
+                    : "bg-dark-900 border-dark-600 text-dark-400 hover:border-dark-500 hover:text-foreground"
                 }`}
               >
                 <span className="text-lg">{cat.emoji}</span>
@@ -388,12 +388,12 @@ export default function PosPage({ ruleKey }: Props) {
                 key={item.id}
                 className={`rounded-2xl border p-4 transition-all duration-200 hover:shadow-lg cursor-pointer group ${
                   isInCart
-                    ? "bg-accent-500/5 border-accent-500/30 shadow-md shadow-accent-500/5"
-                    : "bg-dark-800/40 border-dark-600/30 hover:border-dark-500"
+                    ? "bg-badge-light-blue/50 border-accent-500/30 shadow-md shadow-accent-500/5"
+                    : "bg-dark-900 border-dark-600 hover:border-dark-500"
                 }`}
               >
                 {/* Emoji as Product Image */}
-                <div className="w-full aspect-square rounded-xl bg-dark-700/50 flex items-center justify-center mb-3 group-hover:scale-[1.02] transition-transform">
+                <div className="w-full aspect-square rounded-xl bg-dark-800 flex items-center justify-center mb-3 group-hover:scale-[1.02] transition-transform">
                   <span className="text-5xl">{item.emoji}</span>
                 </div>
 
@@ -409,7 +409,7 @@ export default function PosPage({ ruleKey }: Props) {
 
                 {/* Price + Controls */}
                 <div className="flex items-center justify-between mt-3">
-                  <span className="text-sm font-bold text-accent-400">
+                  <span className="text-sm font-bold text-accent-500">
                     {formatRupiah(item.price)}
                   </span>
                   <div className="flex items-center gap-3">
@@ -418,7 +418,7 @@ export default function PosPage({ ruleKey }: Props) {
                         e.stopPropagation();
                         removeFromCart(item.id);
                       }}
-                      className="w-9 h-9 rounded-full bg-dark-600/60 text-dark-300 flex items-center justify-center hover:bg-dark-500 hover:text-foreground transition-all text-sm font-bold"
+                      className="w-9 h-9 rounded-full bg-dark-700 text-dark-400 flex items-center justify-center hover:bg-dark-700 hover:text-foreground transition-all text-sm font-bold"
                     >
                       −
                     </button>
@@ -445,17 +445,17 @@ export default function PosPage({ ruleKey }: Props) {
       {/* ─── Right: Order Panel (Slider) ───────────────────────────────── */}
       <div
         className={cn(
-          "shrink-0 bg-dark-800/60 border-l border-dark-600/40 flex flex-col overflow-hidden transition-all duration-300 ease-in-out",
+          "shrink-0 bg-dark-900 border-l border-dark-600/40 flex flex-col overflow-hidden transition-all duration-300 ease-in-out",
           isPanelOpen ? "w-[340px] opacity-100" : "w-0 opacity-0 border-l-0",
         )}
       >
         {/* Header */}
-        <div className="p-5 border-b border-dark-600/40 min-w-[340px]">
+        <div className="p-5 border-b border-dark-600/30 min-w-[340px]">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setPanelOpen(false)}
-                className="p-1.5 rounded-lg hover:bg-dark-700 text-dark-400 hover:text-foreground transition-all"
+                className="p-1.5 rounded-lg hover:bg-dark-800 text-dark-400 hover:text-foreground transition-all"
               >
                 <IconComponent iconName="Hi/HiOutlineX" size={16} />
               </button>
@@ -464,10 +464,10 @@ export default function PosPage({ ruleKey }: Props) {
               </h2>
             </div>
             <div className="flex gap-2">
-              <button className="w-8 h-8 rounded-lg bg-dark-700/60 border border-dark-600/40 flex items-center justify-center text-dark-400 hover:text-foreground hover:border-dark-500 transition-all">
+              <button className="w-8 h-8 rounded-lg bg-dark-800 border border-dark-600 flex items-center justify-center text-dark-400 hover:text-foreground hover:border-dark-500 transition-all">
                 <IconComponent iconName="Hi/HiOutlinePencil" size={14} />
               </button>
-              <button className="w-8 h-8 rounded-lg bg-dark-700/60 border border-dark-600/40 flex items-center justify-center text-dark-400 hover:text-neon-red hover:border-neon-red/30 transition-all">
+              <button className="w-8 h-8 rounded-lg bg-dark-800 border border-dark-600 flex items-center justify-center text-dark-400 hover:text-neon-red hover:border-neon-red/30 transition-all">
                 <IconComponent iconName="Hi/HiOutlineTrash" size={14} />
               </button>
             </div>
@@ -488,7 +488,7 @@ export default function PosPage({ ruleKey }: Props) {
             <h3 className="text-sm font-bold text-foreground">
               {language({ id: "Item Dipesan", en: "Ordered Items" })}
             </h3>
-            <span className="text-xs font-bold text-accent-400 bg-accent-500/10 px-2.5 py-1 rounded-full">
+            <span className="text-xs font-bold text-accent-500 bg-accent-500/10 px-2.5 py-1 rounded-full">
               {String(cart.reduce((s, c) => s + c.qty, 0)).padStart(2, "0")}
             </span>
           </div>
@@ -500,7 +500,7 @@ export default function PosPage({ ruleKey }: Props) {
                 className="flex items-center justify-between py-2 border-b border-dark-600/20 last:border-0"
               >
                 <div className="flex items-center gap-3">
-                  <span className="text-xs font-bold text-accent-400 w-5">
+                  <span className="text-xs font-bold text-accent-500 w-5">
                     {cartItem.qty}x
                   </span>
                   <span className="text-sm text-dark-200 font-medium">
@@ -515,7 +515,7 @@ export default function PosPage({ ruleKey }: Props) {
           </div>
 
           {/* Payment Summary */}
-          <div className="mt-6 pt-4 border-t border-dark-600/30">
+          <div className="mt-6 pt-4 border-t border-dark-600/20">
             <h3 className="text-sm font-bold text-foreground mb-3">
               {language({ id: "Ringkasan Pembayaran", en: "Payment Summary" })}
             </h3>
@@ -544,19 +544,19 @@ export default function PosPage({ ruleKey }: Props) {
           </div>
 
           {/* Total */}
-          <div className="mt-4 pt-4 border-t border-dark-500/40">
+          <div className="mt-4 pt-4 border-t border-dark-600/30">
             <div className="flex justify-between items-center">
               <span className="text-sm font-bold text-foreground">
                 {language({ id: "Total Bayar", en: "Total Payable" })}
               </span>
-              <span className="text-lg font-bold text-accent-400">
+              <span className="text-lg font-bold text-accent-500">
                 {formatRupiah(totalPayable)}
               </span>
             </div>
           </div>
 
           {/* Payment Method */}
-          <div className="mt-6 pt-4 border-t border-dark-600/30">
+          <div className="mt-6 pt-4 border-t border-dark-600/20">
             <h3 className="text-sm font-bold text-foreground mb-3">
               {language({
                 id: "Metode Pembayaran",
@@ -589,8 +589,8 @@ export default function PosPage({ ruleKey }: Props) {
                   className={cn(
                     "flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border text-xs font-semibold transition-all duration-200",
                     paymentMethod === method.key
-                      ? "bg-accent-500/15 border-accent-500/40 text-accent-400"
-                      : "bg-dark-800/40 border-dark-600/30 text-dark-300 hover:border-dark-500",
+                      ? "bg-badge-light-blue border-accent-500/40 text-accent-500"
+                      : "bg-dark-900 border-dark-600 text-dark-400 hover:border-dark-500",
                   )}
                 >
                   <IconComponent iconName={method.icon} size={16} />
@@ -602,12 +602,12 @@ export default function PosPage({ ruleKey }: Props) {
         </div>
 
         {/* Footer Actions */}
-        <div className="p-5 border-t border-dark-600/40 flex gap-3 min-w-[340px]">
-          <button className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border border-dark-600/40 bg-dark-800/60 text-dark-300 text-sm font-semibold hover:border-dark-500 hover:text-foreground transition-all">
+        <div className="p-5 border-t border-dark-600/30 flex gap-3 min-w-[340px]">
+          <button className="flex-1 flex items-center justify-center gap-2 py-3 rounded-full border border-dark-600 bg-dark-900 text-dark-400 text-sm font-semibold hover:border-dark-500 hover:text-foreground transition-all">
             <IconComponent iconName="Hi/HiOutlinePrinter" size={16} />
             {language({ id: "Cetak", en: "Print" })}
           </button>
-          <button className="flex-[2] flex items-center justify-center gap-2 py-3 rounded-xl bg-accent-500 hover:bg-accent-600 text-white text-sm font-bold transition-all duration-200 shadow-lg shadow-accent-500/25 hover:shadow-accent-500/40 active:scale-[0.98]">
+          <button className="flex-[2] flex items-center justify-center gap-2 py-3 rounded-full bg-accent-500 hover:bg-accent-600 text-white text-sm font-bold transition-all duration-200 shadow-lg shadow-accent-500/25 hover:shadow-accent-500/40 active:scale-[0.98]">
             <IconComponent iconName="Hi/HiOutlineClipboardCheck" size={16} />
             {language({ id: "Buat Pesanan", en: "Place Order" })}
           </button>

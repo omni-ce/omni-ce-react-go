@@ -218,7 +218,7 @@ export default function SettingPage({}: Props) {
         <h2 className="text-xl font-bold text-foreground">
           {language({ id: "Pengaturan", en: "Setting" })}
         </h2>
-        <p className="text-sm text-dark-300 mt-1">
+        <p className="text-sm text-dark-400 mt-1">
           {language({
             id: "Kelola akun dan konfigurasi Anda",
             en: "Manage your account and configuration",
@@ -229,7 +229,7 @@ export default function SettingPage({}: Props) {
       {/* Toast */}
       {saveMsg && (
         <div
-          className={`px-4 py-3 rounded-xl text-sm font-mono sticky top-4 z-50 shadow-lg ${
+          className={`px-4 py-3 rounded-xl text-sm sticky top-4 z-50 shadow-lg ${
             saveType === "success"
               ? "bg-neon-green/10 border border-neon-green/20 text-neon-green"
               : "bg-neon-red/10 border border-neon-red/20 text-neon-red"
@@ -242,7 +242,7 @@ export default function SettingPage({}: Props) {
       {/* Profile Information */}
       <form
         onSubmit={handleUpdateProfile}
-        className="bg-dark-800/60 border border-dark-600/40 rounded-2xl p-6 space-y-6"
+        className="bg-dark-800 border border-dark-600/40 rounded-2xl p-6 space-y-6"
       >
         <SectionTitle>
           {language({ id: "Informasi Profil", en: "Profile Information" })}
@@ -279,7 +279,7 @@ export default function SettingPage({}: Props) {
                 />
               </label>
             </div>
-            <p className="text-[10px] text-dark-400 font-mono uppercase tracking-wider">
+            <p className="text-[10px] text-dark-400 uppercase tracking-wider">
               {language({ id: "Foto Profil", en: "Profile Photo" })}
             </p>
           </div>
@@ -336,7 +336,7 @@ export default function SettingPage({}: Props) {
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 rows={2}
-                className="w-full px-4 py-2.5 bg-dark-900/60 border border-dark-500/50 rounded-xl text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30 transition-all font-mono text-sm resize-none"
+                className="w-full px-4 py-2.5 bg-dark-900 border border-dark-600 rounded-xl text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30 transition-all text-sm resize-none"
                 placeholder={language({
                   id: "Masukkan alamat lengkap",
                   en: "Enter full address",
@@ -365,7 +365,7 @@ export default function SettingPage({}: Props) {
       {/* Change password */}
       <form
         onSubmit={handleChangePassword}
-        className="bg-dark-800/60 border border-dark-600/40 rounded-2xl p-6 space-y-4"
+        className="bg-dark-800 border border-dark-600/40 rounded-2xl p-6 space-y-4"
       >
         <SectionTitle>
           {language({ id: "Ubah Password", en: "Change Password" })}
@@ -375,7 +375,7 @@ export default function SettingPage({}: Props) {
             iconName="Ri/RiKeyLine"
             className="w-4 h-4 text-dark-400"
           />
-          <p className="text-xs text-dark-400 font-mono">
+          <p className="text-xs text-dark-400">
             {language({
               id: "Perbarui password akun Anda",
               en: "Update your account password",
@@ -478,7 +478,7 @@ export default function SettingPage({}: Props) {
 
       {/* Maintenance Mode — su only */}
       {isSu && (
-        <div className="bg-dark-800/60 border border-dark-600/40 rounded-2xl p-6 space-y-4">
+        <div className="bg-dark-800 border border-dark-600/40 rounded-2xl p-6 space-y-4">
           <SectionTitle>
             {language({
               id: "Mode Pemeliharaan",
@@ -500,7 +500,7 @@ export default function SettingPage({}: Props) {
                     en: "Enable Maintenance Mode",
                   })}
                 </p>
-                <p className="text-xs text-dark-400 font-mono mt-0.5">
+                <p className="text-xs text-dark-400 mt-0.5">
                   {language({
                     id: "Saat aktif, hanya SU yang dapat mengakses sistem",
                     en: "When active, only SU users can access the system",
@@ -515,7 +515,7 @@ export default function SettingPage({}: Props) {
             />
           </div>
           {maintenanceMode && (
-            <div className="px-4 py-3 rounded-xl text-sm font-mono bg-neon-yellow/10 border border-neon-yellow/20 text-neon-yellow">
+            <div className="px-4 py-3 rounded-xl text-sm bg-neon-yellow/10 border border-neon-yellow/20 text-neon-yellow">
               {language({
                 id: "⚠️ Sistem sedang dalam mode pemeliharaan. Pengguna biasa tidak dapat mengakses.",
                 en: "⚠️ System is in maintenance mode. Regular users cannot access.",
@@ -526,7 +526,7 @@ export default function SettingPage({}: Props) {
       )}
 
       {/* Developer Credit */}
-      <div className="bg-dark-800/60 border border-dark-600/40 rounded-2xl p-6 space-y-3">
+      <div className="bg-dark-800 border border-dark-600/40 rounded-2xl p-6 space-y-3">
         <SectionTitle>{language({ id: "Tentang", en: "About" })}</SectionTitle>
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-accent-500/20 border border-accent-500/30 flex items-center justify-center overflow-hidden shrink-0">
@@ -536,30 +536,30 @@ export default function SettingPage({}: Props) {
             <h3 className="text-sm font-semibold text-foreground">
               Base Project
             </h3>
-            <p className="text-xs text-dark-300 font-mono mt-0.5">
+            <p className="text-xs text-dark-400 mt-0.5">
               React + Go Starter Template
             </p>
           </div>
         </div>
         <div className="border-t border-dark-600/40 pt-3 space-y-1.5">
-          <p className="text-xs text-dark-400 font-mono">
+          <p className="text-xs text-dark-400">
             Developed by{" "}
             <a
               href="https://github.com/jefripunza"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-accent-400 hover:text-accent-300 transition-colors underline underline-offset-2"
+              className="text-accent-500 hover:text-accent-300 transition-colors underline underline-offset-2"
             >
               jefripunza
             </a>
           </p>
-          <p className="text-xs text-dark-400 font-mono">
+          <p className="text-xs text-dark-400">
             Open source &middot;{" "}
             <a
               href="https://github.com/jefripunza/react-go"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-accent-400 hover:text-accent-300 transition-colors underline underline-offset-2"
+              className="text-accent-500 hover:text-accent-300 transition-colors underline underline-offset-2"
             >
               Built with Go + React + TailwindCSS
             </a>

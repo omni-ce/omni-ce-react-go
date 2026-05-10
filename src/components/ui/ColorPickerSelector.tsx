@@ -29,7 +29,7 @@ export default function ColorPickerSelector({
         </label>
       )}
       <div className="flex items-center gap-3">
-        <div className="relative h-10 w-20 shrink-0 overflow-hidden rounded-xl border border-dark-500/50 bg-dark-900/60 transition-all hover:border-accent-500/50">
+        <div className="relative h-10 w-20 shrink-0 overflow-hidden rounded-xl border border-dark-600 bg-dark-900 transition-all hover:border-accent-500/50">
           <input
             type="color"
             value={value || placeholder}
@@ -46,7 +46,7 @@ export default function ColorPickerSelector({
           // @ts-ignore
           onChange={(e) => onChange(e.target.value)}
           className={cn(
-            "flex-1 rounded-xl border border-dark-500/50 bg-dark-900/60 px-4 py-2.5 text-sm text-foreground transition-all outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30 disabled:opacity-50 disabled:cursor-not-allowed placeholder:text-dark-400 hover:bg-dark-800",
+            "flex-1 rounded-xl border border-dark-600 bg-dark-900 px-4 py-2.5 text-sm text-foreground transition-all outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30 disabled:opacity-50 disabled:cursor-not-allowed placeholder:text-dark-400 hover:bg-dark-800",
           )}
           placeholder={placeholder}
           pattern="^#[0-9A-Fa-f]{6}$"

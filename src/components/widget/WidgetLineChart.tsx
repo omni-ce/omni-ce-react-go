@@ -99,7 +99,7 @@ export default function WidgetLineChart({
   };
 
   return (
-    <div className="bg-dark-800/60 border border-dark-600/40 rounded-2xl overflow-hidden">
+    <div className="bg-dark-800 border border-dark-600/40 rounded-2xl overflow-hidden">
       <div className="px-5 py-4">
         <h3 className="text-sm font-semibold text-foreground">{title}</h3>
         {subtitle && (

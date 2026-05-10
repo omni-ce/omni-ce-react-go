@@ -47,7 +47,7 @@ export default function TabUnitPage({ ruleKey }: Props) {
         sort: true,
         search: true,
         render: (item) => (
-          <span className="font-medium text-accent-400">{item.name}</span>
+          <span className="font-medium text-accent-500">{item.name}</span>
         ),
       },
       {

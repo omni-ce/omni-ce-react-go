@@ -5,7 +5,7 @@ function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={cn(
-        "bg-dark-800/60 border border-dark-600/40 rounded-2xl overflow-hidden",
+        "bg-dark-900 border border-dark-600/40 rounded-3xl overflow-hidden shadow-[0_2px_48px_rgba(205,208,223,0.4)]",
         className,
       )}
       {...props}
@@ -19,7 +19,7 @@ function CardHeader({
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("px-5 py-4 border-b border-dark-600/40", className)}
+      className={cn("px-6 py-4 border-b border-dark-600/40", className)}
       {...props}
     />
   );
@@ -44,7 +44,7 @@ function CardContent({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("px-5 py-4", className)} {...props} />;
+  return <div className={cn("px-6 py-4", className)} {...props} />;
 }
 
 function CardFooter({
@@ -54,7 +54,7 @@ function CardFooter({
   return (
     <div
       className={cn(
-        "px-5 py-4 border-t border-dark-600/40",
+        "px-6 py-4 border-t border-dark-600/40",
         className,
       )}
       {...props}

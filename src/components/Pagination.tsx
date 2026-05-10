@@ -356,7 +356,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                   return next;
                 });
               }}
-              className="h-4 w-4 rounded border-dark-500 bg-dark-900/60 text-accent-500 focus:ring-accent-500/30 cursor-pointer accent-accent-500"
+              className="h-4 w-4 rounded border-dark-600 bg-dark-900 text-accent-500 focus:ring-accent-500/30 cursor-pointer accent-accent-500"
             />
           );
         },
@@ -1024,7 +1024,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                         type="checkbox"
                         checked={isAllChecked}
                         onChange={toggleSelectAll}
-                        className="h-4 w-4 rounded border-dark-500 bg-dark-900/60 text-accent-500 focus:ring-accent-500/30 cursor-pointer accent-accent-500"
+                        className="h-4 w-4 rounded border-dark-600 bg-dark-900 text-accent-500 focus:ring-accent-500/30 cursor-pointer accent-accent-500"
                       />
                     ) : column.sort ? (
                       <button
@@ -1257,7 +1257,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                   setLimit(Number(e.target.value));
                   setCurrentPage(1);
                 }}
-                className="w-16 h-8 px-0 py-0 text-[11px] border-accent-500/20 bg-dark-900/40 hover:border-accent-500/40 transition-all text-center"
+                className="w-16 h-8 px-0 py-0 text-[11px] border-dark-600 bg-dark-900 hover:border-accent-500/40 transition-all text-center"
               >
                 <option value={5}>5</option>
                 <option value={10}>10</option>

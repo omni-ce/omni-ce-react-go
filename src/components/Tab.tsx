@@ -50,7 +50,7 @@ export default function Tabs({ tabs, useRule }: Props) {
 
   return (
     <div className="flex flex-col space-y-6">
-      <div className="border-b border-dark-600/50">
+      <div className="border-b border-dark-600/60">
         <nav className="-mb-px flex gap-6 overflow-x-auto">
           {visibleTabs.map((tab) => (
             <button

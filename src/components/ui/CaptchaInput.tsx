@@ -232,7 +232,7 @@ export default function CaptchaInput({
           type="button"
           onClick={handleRegenerate}
           disabled={loading || disabled}
-          className="flex h-12.5 w-12.5 items-center justify-center rounded-xl border border-dark-500/80 bg-dark-900/60 text-dark-300 transition-all hover:bg-dark-800 hover:text-foreground focus:ring-1 focus:ring-accent-500/30 disabled:opacity-50 shadow-xl"
+          className="flex h-12.5 w-12.5 items-center justify-center rounded-xl border border-dark-500/80 bg-dark-900 text-dark-400 transition-all hover:bg-dark-800 hover:text-foreground focus:ring-1 focus:ring-accent-500/30 disabled:opacity-50 shadow-xl"
           title="Regenerate captcha"
         >
           <IoReload className={loading ? "animate-spin" : ""} size={20} />
@@ -254,7 +254,7 @@ export default function CaptchaInput({
             "w-full rounded-xl border px-4 py-3.5 text-sm transition-all outline-none focus:ring-1 disabled:opacity-50",
             error
               ? "border-red-500/50 bg-red-500/5 focus:ring-red-500/30"
-              : "border-dark-500/80 bg-dark-900/60 text-foreground focus:border-accent-500/60 focus:ring-accent-500/30 hover:bg-dark-800 placeholder:text-dark-400",
+              : "border-dark-500/80 bg-dark-900 text-foreground focus:border-accent-500/60 focus:ring-accent-500/30 hover:bg-dark-800 placeholder:text-dark-400",
           )}
         />
         {error && (

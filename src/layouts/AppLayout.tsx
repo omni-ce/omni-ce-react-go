@@ -106,8 +106,8 @@ const SidebarItem = ({
           w-full flex items-center gap-3 ${plClass} py-2.5 rounded-xl text-sm font-medium transition-all duration-200
           ${
             isExactActive
-              ? "bg-accent-500/15 text-accent-400 border border-accent-500/20"
-              : "text-dark-300 hover:text-foreground hover:bg-dark-700/50 border border-transparent"
+              ? "bg-badge-light-blue text-accent-500 border border-accent-500/20"
+              : "text-dark-400 hover:text-foreground hover:bg-dark-800 border border-transparent"
           }
           ${effectiveCollapsed && !isMobileOpen ? "justify-center px-0" : ""}
         `}
@@ -132,8 +132,8 @@ const SidebarItem = ({
           w-full flex items-center justify-between ${plClass} py-2.5 rounded-xl text-sm font-medium transition-all duration-200
           ${
             isActive && !isExactActive && !isExpanded
-              ? "text-accent-400 bg-accent-500/5 border border-transparent"
-              : "text-dark-300 hover:text-foreground hover:bg-dark-700/50 border border-transparent"
+              ? "text-accent-500 bg-accent-500/5 border border-transparent"
+              : "text-dark-400 hover:text-foreground hover:bg-dark-800 border border-transparent"
           }
           ${effectiveCollapsed && !isMobileOpen ? "justify-center px-0" : ""}
         `}
@@ -365,7 +365,7 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
 
       {/* Select Role Dialog */}
       <Dialog open={roleDialogOpen} onClose={() => setRoleDialogOpen(false)}>
-        <DialogContent className="max-w-md bg-dark-800/90 backdrop-blur-xl border-dark-600/50">
+        <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>
               {language({
@@ -390,14 +390,14 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
       {/* Sidebar */}
       <aside
         className={`
-          fixed top-0 left-0 h-screen z-50 bg-dark-800 border-r border-dark-600/50 flex flex-col transition-all duration-300 ease-in-out
+          fixed top-0 left-0 h-screen z-50 bg-dark-900 border-r border-dark-600/40 flex flex-col transition-all duration-300 ease-in-out
           lg:relative lg:translate-x-0
           ${isMobileOpen ? "translate-x-0 w-65" : "-translate-x-full lg:translate-x-0"}
           ${!isMobileOpen ? sidebarWidth : ""}
         `}
       >
         {/* Sidebar Header */}
-        <div className="h-16 flex items-center px-4 border-b border-dark-600/50 shrink-0">
+        <div className="h-16 flex items-center px-4 border-b border-dark-600/40 shrink-0">
           <div
             className={`flex items-center w-full min-w-0 ${
               effectiveCollapsed && !isMobileOpen ? "justify-center" : ""
@@ -414,7 +414,7 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
                     <h1 className="text-base font-bold text-foreground tracking-tight truncate">
                       Base Project
                     </h1>
-                    <p className="text-[10px] text-dark-400 font-mono truncate">
+                    <p className="text-[10px] text-dark-400 truncate">
                       {version}
                     </p>
                   </div>
@@ -425,7 +425,7 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
             {/* Desktop collapse hamburger (RIGHT side) */}
             <button
               onClick={toggleCollapse}
-              className={`hidden lg:flex text-dark-300 hover:text-foreground transition-colors shrink-0 ${
+              className={`hidden lg:flex text-dark-400 hover:text-foreground transition-colors shrink-0 ${
                 effectiveCollapsed && !isMobileOpen ? "" : "ml-auto"
               }`}
               title={effectiveCollapsed ? "Expand sidebar" : "Collapse sidebar"}
@@ -436,7 +436,7 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
             {/* Mobile close button */}
             <button
               onClick={() => setMobileOpen(false)}
-              className="ml-auto lg:hidden text-dark-300 hover:text-foreground transition-colors"
+              className="ml-auto lg:hidden text-dark-400 hover:text-foreground transition-colors"
             >
               <IconComponent iconName="Ri/RiCloseLine" className="w-5 h-5" />
             </button>
@@ -461,7 +461,7 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
         </nav>
 
         {/* Sidebar Footer */}
-        <div className="border-t border-dark-600/50 p-3 space-y-1 shrink-0">
+        <div className="border-t border-dark-600/40 p-3 space-y-1 shrink-0">
           {/* User Info */}
           {user && (
             <button
@@ -469,9 +469,9 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
                 if (canSwitchRole && user.role !== "su")
                   setRoleDialogOpen(true);
               }}
-              className={`w-full text-left px-3 py-3 mb-2 bg-dark-800/40 rounded-xl border border-dark-600/30 transition-all flex items-center gap-3 ${
+              className={`w-full text-left px-3 py-3 mb-2 bg-dark-800 rounded-xl border border-dark-600/30 transition-all flex items-center gap-3 ${
                 canSwitchRole && user.role !== "su"
-                  ? "hover:bg-dark-700/50 cursor-pointer hover:border-accent-500/30"
+                  ? "hover:bg-dark-800 cursor-pointer hover:border-accent-500/30"
                   : "cursor-default"
               } ${effectiveCollapsed && !isMobileOpen ? "justify-center px-0" : ""}`}
             >
@@ -481,10 +481,10 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
                   <Image
                     src={user.avatar}
                     alt={user.name}
-                    className="w-9 h-9 rounded-lg object-cover border border-dark-600/50"
+                    className="w-9 h-9 rounded-lg object-cover border border-dark-600"
                   />
                 ) : (
-                  <div className="w-9 h-9 rounded-lg bg-linear-to-br from-accent-500/20 to-accent-600/10 border border-accent-500/20 flex items-center justify-center text-accent-400 font-bold text-sm">
+                  <div className="w-9 h-9 rounded-lg bg-card-lavender border border-accent-500/20 flex items-center justify-center text-accent-500 font-bold text-sm">
                     {user.name.charAt(0).toUpperCase()}
                   </div>
                 )}
@@ -498,7 +498,7 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
                   <p className="text-sm font-semibold text-foreground truncate leading-tight">
                     {user.name}
                   </p>
-                  <p className="text-[10px] font-medium text-accent-400 truncate mt-0.5 uppercase tracking-wider">
+                  <p className="text-[10px] font-medium text-accent-500 truncate mt-0.5 uppercase tracking-wider">
                     {displayRole}
                   </p>
                   {displayDivision && (
@@ -520,8 +520,8 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200
               ${
                 location.pathname === "/app/setting"
-                  ? "bg-accent-500/15 text-accent-400 border border-accent-500/20"
-                  : "text-dark-300 hover:text-foreground hover:bg-dark-700/50 border border-transparent"
+                  ? "bg-badge-light-blue text-accent-500 border border-accent-500/20"
+                  : "text-dark-400 hover:text-foreground hover:bg-dark-800 border border-transparent"
               }
               ${effectiveCollapsed && !isMobileOpen ? "justify-center" : ""}
             `}
@@ -539,7 +539,7 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
           {/* Docs */}
           <button
             onClick={() => window.open("/doc", "_blank", "noopener,noreferrer")}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-dark-300 hover:text-foreground hover:bg-dark-700/50 transition-all border border-transparent ${effectiveCollapsed && !isMobileOpen ? "justify-center" : ""}`}
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-dark-400 hover:text-foreground hover:bg-dark-800 transition-all border border-transparent ${effectiveCollapsed && !isMobileOpen ? "justify-center" : ""}`}
             title={language({ id: "Dokumen", en: "Documentation" })}
           >
             <IconComponent
@@ -554,7 +554,7 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
           {/* Logout */}
           <button
             onClick={handleLogout}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-dark-300 hover:text-neon-red hover:bg-neon-red/5 transition-all border border-transparent ${effectiveCollapsed && !isMobileOpen ? "justify-center" : ""}`}
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-dark-400 hover:text-neon-red hover:bg-neon-red/5 transition-all border border-transparent ${effectiveCollapsed && !isMobileOpen ? "justify-center" : ""}`}
             title={language({ id: "Keluar", en: "Sign out" })}
           >
             <IconComponent
@@ -571,11 +571,11 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
       {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0 min-h-0">
         {/* Top bar */}
-        <header className="h-16 bg-dark-800/60 backdrop-blur-md border-b border-dark-600/50 flex items-center px-4 lg:px-6 shrink-0 sticky top-0 z-30">
+        <header className="h-16 bg-dark-900 border-b border-dark-600/40 flex items-center px-4 lg:px-6 shrink-0 sticky top-0 z-30">
           {/* Mobile menu toggle */}
           <button
             onClick={() => setMobileOpen(true)}
-            className="lg:hidden text-dark-300 hover:text-foreground transition-colors mr-4"
+            className="lg:hidden text-dark-400 hover:text-foreground transition-colors mr-4"
           >
             <IconComponent iconName="Ri/RiMenuLine" className="w-5 h-5" />
           </button>
@@ -583,7 +583,7 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
           {/* Page title from route */}
           {/* <div className="flex items-center gap-2">
             <div className="w-1.5 h-1.5 rounded-full bg-neon-green" />
-            <span className="text-sm font-mono text-dark-300">
+            <span className="text-sm text-dark-300">
               {location.pathname.replace("/app/", "")}
             </span>
           </div> */}
@@ -597,7 +597,7 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
               <button
                 ref={notifBtnRef}
                 onClick={() => setIsNotificationOpen((prev) => !prev)}
-                className="relative p-2 rounded-lg text-dark-300 hover:text-foreground hover:bg-dark-700/50 transition-all"
+                className="relative p-2 rounded-lg text-dark-400 hover:text-foreground hover:bg-dark-800 transition-all"
                 title={language({ id: "Notifikasi", en: "Notifications" })}
               >
                 <IconComponent

@@ -12,143 +12,144 @@
 ---
 
 ## Phase 0: Design Foundation
-- [ ] `src/index.css` — Global CSS tokens, font, animations
-- [ ] `index.html` — Google Fonts Poppins import
-- [ ] `src/stores/themeStore.ts` — Default to light mode
+- [x] `src/index.css` — Global CSS tokens, font, animations
+- [x] `index.html` — Google Fonts Poppins import
+- [x] `src/stores/themeStore.ts` — Default to light mode
 
 ---
 
 ## Phase 1: Base UI Components (`src/components/ui/`)
-- [ ] `src/components/ui/Button.tsx`
-- [ ] `src/components/ui/Card.tsx`
-- [ ] `src/components/ui/Input.tsx`
-- [ ] `src/components/ui/Badge.tsx`
-- [ ] `src/components/ui/Dialog.tsx`
-- [ ] `src/components/ui/Table.tsx`
-- [ ] `src/components/ui/Select.tsx`
-- [ ] `src/components/ui/Label.tsx`
-- [ ] `src/components/ui/Switch.tsx`
-- [ ] `src/components/ui/Stepper.tsx`
-- [ ] `src/components/ui/Avatar.tsx`
-- [ ] `src/components/ui/SearchableSelect.tsx`
-- [ ] `src/components/ui/CodeBlock.tsx`
-- [ ] `src/components/ui/ColorPickerSelector.tsx`
-- [ ] `src/components/ui/CameraSelector.tsx`
-- [ ] `src/components/ui/CaptchaInput.tsx`
-- [ ] `src/components/ui/CountrySelector.tsx`
-- [ ] `src/components/ui/FlagSelector.tsx`
-- [ ] `src/components/ui/IconSelector.tsx`
-- [ ] `src/components/ui/LanguageSelector.tsx`
-- [ ] `src/components/ui/MapPicker.tsx`
-- [ ] `src/components/ui/PhoneNumber.tsx`
+- [x] `src/components/ui/Button.tsx`
+- [x] `src/components/ui/Card.tsx`
+- [x] `src/components/ui/Input.tsx`
+- [x] `src/components/ui/Badge.tsx`
+- [x] `src/components/ui/Dialog.tsx`
+- [x] `src/components/ui/Table.tsx`
+- [x] `src/components/ui/Select.tsx`
+- [x] `src/components/ui/Label.tsx`
+- [x] `src/components/ui/Switch.tsx`
+- [x] `src/components/ui/Stepper.tsx`
+- [x] `src/components/ui/Avatar.tsx`
+- [x] `src/components/ui/SearchableSelect.tsx`
+- [x] `src/components/ui/CodeBlock.tsx` — (via bulk sed, font-mono preserved)
+- [x] `src/components/ui/ColorPickerSelector.tsx` — (via bulk sed)
+- [x] `src/components/ui/CameraSelector.tsx` — (via bulk sed)
+- [x] `src/components/ui/CaptchaInput.tsx` — (via bulk sed)
+- [x] `src/components/ui/CountrySelector.tsx` — (via bulk sed)
+- [x] `src/components/ui/FlagSelector.tsx` — (via bulk sed)
+- [x] `src/components/ui/IconSelector.tsx` — (via bulk sed)
+- [x] `src/components/ui/LanguageSelector.tsx` — (via bulk sed)
+- [x] `src/components/ui/MapPicker.tsx` — (via bulk sed)
+- [x] `src/components/ui/PhoneNumber.tsx` — (via bulk sed)
 
 ---
 
 ## Phase 2: Shared Components (`src/components/`)
-- [ ] `src/components/ControlButton.tsx`
-- [ ] `src/components/Loading.tsx`
-- [ ] `src/components/SectionTitle.tsx`
-- [ ] `src/components/StatCard.tsx`
-- [ ] `src/components/StatusBadge.tsx`
-- [ ] `src/components/Tab.tsx`
-- [ ] `src/components/NotificationPopup.tsx`
-- [ ] `src/components/Pagination.tsx`
-- [ ] `src/components/DynamicForm.tsx`
-- [ ] `src/components/RoleStepper.tsx`
-- [ ] `src/components/Image.tsx`
-- [ ] `src/components/JsonEditor.tsx`
-- [ ] `src/components/LineChart.tsx`
+- [x] `src/components/ControlButton.tsx`
+- [x] `src/components/Loading.tsx`
+- [x] `src/components/SectionTitle.tsx`
+- [x] `src/components/StatCard.tsx`
+- [x] `src/components/StatusBadge.tsx`
+- [x] `src/components/Tab.tsx`
+- [x] `src/components/NotificationPopup.tsx`
+- [x] `src/components/Pagination.tsx`
+- [x] `src/components/DynamicForm.tsx`
+- [x] `src/components/RoleStepper.tsx` — (via bulk sed)
+- [x] `src/components/Image.tsx` — (via bulk sed)
+- [x] `src/components/JsonEditor.tsx` — (via bulk sed)
+- [x] `src/components/LineChart.tsx` — (via bulk sed)
 
 ---
 
 ## Phase 3: Widget Components (`src/components/widget/`)
-- [ ] `src/components/widget/WidgetAreaChart.tsx`
-- [ ] `src/components/widget/WidgetColumnChart.tsx`
-- [ ] `src/components/widget/WidgetDonutChart.tsx`
-- [ ] `src/components/widget/WidgetGaugeChart.tsx`
-- [ ] `src/components/widget/WidgetLineChart.tsx`
-- [ ] `src/components/widget/WidgetProgressList.tsx`
-- [ ] `src/components/widget/WidgetTableList.tsx`
-- [ ] `src/components/widget/WidgetTrafficStats.tsx`
+- [x] `src/components/widget/WidgetAreaChart.tsx` — (via bulk sed)
+- [x] `src/components/widget/WidgetColumnChart.tsx` — (via bulk sed)
+- [x] `src/components/widget/WidgetDonutChart.tsx` — (via bulk sed)
+- [x] `src/components/widget/WidgetGaugeChart.tsx` — (via bulk sed)
+- [x] `src/components/widget/WidgetLineChart.tsx` — (via bulk sed)
+- [x] `src/components/widget/WidgetProgressList.tsx` — (via bulk sed)
+- [x] `src/components/widget/WidgetTableList.tsx` — (via bulk sed)
+- [x] `src/components/widget/WidgetTrafficStats.tsx` — (via bulk sed)
 
 ---
 
 ## Phase 4: Layouts (`src/layouts/`)
-- [ ] `src/layouts/AppLayout.tsx`
-- [ ] `src/layouts/AuthLayout.tsx`
-- [ ] `src/layouts/PublicLayout.tsx`
+- [x] `src/layouts/AppLayout.tsx`
+- [x] `src/layouts/AuthLayout.tsx`
+- [x] `src/layouts/PublicLayout.tsx` — (via bulk sed)
 
 ---
 
 ## Phase 5: Pages — Auth (`src/pages/auth/`)
-- [ ] `src/pages/auth/LoginPage.tsx`
-- [ ] `src/pages/auth/SelectRolePage.tsx`
+- [x] `src/pages/auth/LoginPage.tsx`
+- [x] `src/pages/auth/SelectRolePage.tsx` — (via bulk sed)
 
 ---
 
 ## Phase 6: Pages — Error (`src/pages/error/`)
-- [ ] `src/pages/error/ErrorBoundaryPage.tsx`
-- [ ] `src/pages/error/NotFoundPage.tsx`
-- [ ] `src/pages/error/RulePermissionPage.tsx`
+- [x] `src/pages/error/ErrorBoundaryPage.tsx`
+- [x] `src/pages/error/NotFoundPage.tsx`
+- [x] `src/pages/error/RulePermissionPage.tsx`
 
 ---
 
 ## Phase 7: Pages — Public (`src/pages/public/`)
-- [ ] `src/pages/public/LandingPage.tsx`
+- [x] `src/pages/public/LandingPage.tsx` — (via bulk sed)
 
 ---
 
 ## Phase 8: Pages — System (`src/pages/system/`)
-- [ ] `src/pages/system/DashboardPage.tsx`
-- [ ] `src/pages/system/notification/NotificationPage.tsx`
-- [ ] `src/pages/system/notification/config.tsx`
-- [ ] `src/pages/system/notification/message.tsx`
-- [ ] `src/pages/system/role/RolePage.tsx`
-- [ ] `src/pages/system/user/UserPage.tsx`
-- [ ] `src/pages/system/user/action.tsx`
+- [x] `src/pages/system/DashboardPage.tsx` — (via bulk sed)
+- [x] `src/pages/system/notification/NotificationPage.tsx` — (via bulk sed)
+- [x] `src/pages/system/notification/config.tsx` — (via bulk sed)
+- [x] `src/pages/system/notification/message.tsx` — (via bulk sed)
+- [x] `src/pages/system/role/RolePage.tsx` — (via bulk sed)
+- [x] `src/pages/system/user/UserPage.tsx` — (via bulk sed)
+- [x] `src/pages/system/user/action.tsx` — (via bulk sed)
 
 ---
 
 ## Phase 9: Pages — App (`src/pages/app/`)
-- [ ] `src/pages/app/pos/PosPage.tsx`
-- [ ] `src/pages/app/setting/SettingPage.tsx`
-- [ ] `src/pages/app/company/CompanyBranchPage.tsx`
-- [ ] `src/pages/app/company/CompanyEntityPage.tsx`
-- [ ] `src/pages/app/example/ExamplePage.tsx`
-- [ ] `src/pages/app/marketing/MarketingCustomerPage.tsx`
-- [ ] `src/pages/app/master_data/MasterDataPage.tsx`
-- [ ] `src/pages/app/master_data/TabUnitPage.tsx`
-- [ ] `src/pages/app/product/ProductBrandPage.tsx`
-- [ ] `src/pages/app/product/ProductCategoryPage.tsx`
-- [ ] `src/pages/app/product/ProductColorPage.tsx`
-- [ ] `src/pages/app/product/ProductItemPage.tsx`
-- [ ] `src/pages/app/product/ProductMemoryPage.tsx`
-- [ ] `src/pages/app/product/ProductTypePage.tsx`
-- [ ] `src/pages/app/product/ProductVariantPage.tsx`
-- [ ] `src/pages/app/warehouse/WarehouseLocationPage.tsx`
-- [ ] `src/pages/app/warehouse/WarehouseProductPage.tsx`
+- [x] `src/pages/app/pos/PosPage.tsx`
+- [x] `src/pages/app/setting/SettingPage.tsx` — (via bulk sed)
+- [x] `src/pages/app/company/CompanyBranchPage.tsx` — (via bulk sed)
+- [x] `src/pages/app/company/CompanyEntityPage.tsx` — (via bulk sed)
+- [x] `src/pages/app/example/ExamplePage.tsx` — (via bulk sed)
+- [x] `src/pages/app/marketing/MarketingCustomerPage.tsx` — (via bulk sed)
+- [x] `src/pages/app/master_data/MasterDataPage.tsx` — (via bulk sed)
+- [x] `src/pages/app/master_data/TabUnitPage.tsx` — (via bulk sed)
+- [x] `src/pages/app/product/ProductBrandPage.tsx` — (via bulk sed)
+- [x] `src/pages/app/product/ProductCategoryPage.tsx` — (via bulk sed)
+- [x] `src/pages/app/product/ProductColorPage.tsx` — (via bulk sed)
+- [x] `src/pages/app/product/ProductItemPage.tsx` — (via bulk sed)
+- [x] `src/pages/app/product/ProductMemoryPage.tsx` — (via bulk sed)
+- [x] `src/pages/app/product/ProductTypePage.tsx` — (via bulk sed)
+- [x] `src/pages/app/product/ProductVariantPage.tsx` — (via bulk sed)
+- [x] `src/pages/app/warehouse/WarehouseLocationPage.tsx` — (via bulk sed)
+- [x] `src/pages/app/warehouse/WarehouseProductPage.tsx` — (via bulk sed)
 
 ---
 
 ## Phase 10: Pages — Documentation (`src/pages/doc/`)
-- [ ] `src/pages/doc/index.tsx`
-- [ ] `src/pages/doc/Introduction.tsx`
-- [ ] `src/pages/doc/QuickStart.tsx`
-- [ ] `src/pages/doc/TechStack.tsx`
-- [ ] `src/pages/doc/Theming.tsx`
-- [ ] `src/pages/doc/AddingPages.tsx`
-- [ ] `src/pages/doc/ProjectStructure.tsx`
+- [x] `src/pages/doc/index.tsx` — (via bulk sed)
+- [x] `src/pages/doc/Introduction.tsx` — (via bulk sed)
+- [x] `src/pages/doc/QuickStart.tsx` — (via bulk sed)
+- [x] `src/pages/doc/TechStack.tsx` — (via bulk sed)
+- [x] `src/pages/doc/Theming.tsx` — (via bulk sed)
+- [x] `src/pages/doc/AddingPages.tsx` — (via bulk sed)
+- [x] `src/pages/doc/ProjectStructure.tsx` — (via bulk sed)
 
 ---
 
 ## Phase 11: Other TSX Files
-- [ ] `src/App.tsx` — (minimal: theme default)
-- [ ] `src/PWABadge.tsx` + `src/PWABadge.css`
-- [ ] `src/dummy.tsx`
-- [ ] `src/routers.tsx` — (no visual)
-- [ ] `src/sidebar.tsx` — (no visual)
-- [ ] `src/main.tsx` — (no visual)
+- [x] `src/App.tsx` — (minimal: theme default)
+- [x] `src/PWABadge.tsx` + `src/PWABadge.css` — (via bulk sed)
+- [x] `src/dummy.tsx` — (via bulk sed)
+- [x] `src/routers.tsx` — (no visual)
+- [x] `src/sidebar.tsx` — (no visual)
+- [x] `src/main.tsx` — (no visual)
 
 ---
 
 ## Total Files: **88 TSX + 2 CSS + 1 HTML = 91 files**
+## Completion: ✅ ALL FILES PROCESSED

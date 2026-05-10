@@ -111,7 +111,7 @@ export default function WidgetGaugeChart({
   };
 
   return (
-    <div className="bg-dark-800/60 border border-dark-600/40 rounded-2xl overflow-hidden p-5">
+    <div className="bg-dark-800 border border-dark-600/40 rounded-2xl overflow-hidden p-5">
       <div className="flex items-start justify-between mb-2">
         <div>
           <h3 className="text-sm font-semibold text-foreground">{title}</h3>

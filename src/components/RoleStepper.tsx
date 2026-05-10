@@ -117,7 +117,7 @@ export default function RoleStepper({
               "1"
             )}
           </div>
-          <span className="text-xs font-medium text-dark-300 mt-2">
+          <span className="text-xs font-medium text-dark-400 mt-2">
             {language({ id: "Divisi", en: "Division" })}
           </span>
         </div>
@@ -136,7 +136,7 @@ export default function RoleStepper({
           >
             2
           </div>
-          <span className="text-xs font-medium text-dark-300 mt-2">
+          <span className="text-xs font-medium text-dark-400 mt-2">
             {language({ id: "Jabatan", en: "Role" })}
           </span>
         </div>
@@ -167,13 +167,13 @@ export default function RoleStepper({
                     onClick={() => handleSelectDivision(div.value)}
                     className={`flex flex-col items-center p-4 rounded-xl border transition-all duration-200 text-center ${
                       divisionId === div.value
-                        ? "bg-accent-500/15 border-accent-500 text-accent-400"
-                        : "bg-dark-800 border-dark-600/50 hover:bg-dark-700/50 hover:border-dark-500 text-dark-200"
+                        ? "bg-badge-light-blue border-accent-500 text-accent-500"
+                        : "bg-dark-800 border-dark-600 hover:bg-dark-800 hover:border-dark-500 text-dark-200"
                     }`}
                   >
                     <IconComponent
                       iconName="Ri/RiBuilding4Line"
-                      className={`w-8 h-8 mb-2 ${divisionId === div.value ? "text-accent-400" : "text-dark-400"}`}
+                      className={`w-8 h-8 mb-2 ${divisionId === div.value ? "text-accent-500" : "text-dark-400"}`}
                     />
                     <span className="text-sm font-medium">{div.label}</span>
                   </button>
@@ -189,7 +189,7 @@ export default function RoleStepper({
             <div className="flex items-center mb-4 relative">
               <button
                 onClick={() => setStep(1)}
-                className="absolute left-0 p-2 text-dark-400 hover:text-foreground hover:bg-dark-700/50 rounded-lg transition-colors"
+                className="absolute left-0 p-2 text-dark-400 hover:text-foreground hover:bg-dark-800 rounded-lg transition-colors"
                 title={language({ id: "Kembali", en: "Back" })}
               >
                 <IconComponent
@@ -221,8 +221,8 @@ export default function RoleStepper({
                     onClick={() => handleSelectRole(role.value)}
                     className={`flex items-center p-4 rounded-xl border transition-all duration-200 text-left ${
                       roleId === role.value
-                        ? "bg-accent-500/15 border-accent-500 text-accent-400"
-                        : "bg-dark-800 border-dark-600/50 hover:bg-dark-700/50 hover:border-dark-500 text-dark-200"
+                        ? "bg-badge-light-blue border-accent-500 text-accent-500"
+                        : "bg-dark-800 border-dark-600 hover:bg-dark-800 hover:border-dark-500 text-dark-200"
                     }`}
                   >
                     <div
@@ -230,7 +230,7 @@ export default function RoleStepper({
                     >
                       <IconComponent
                         iconName="Ri/RiUserStarLine"
-                        className={`w-5 h-5 ${roleId === role.value ? "text-accent-400" : "text-dark-400"}`}
+                        className={`w-5 h-5 ${roleId === role.value ? "text-accent-500" : "text-dark-400"}`}
                       />
                     </div>
                     <span className="text-sm font-medium flex-1">
@@ -239,7 +239,7 @@ export default function RoleStepper({
                     {roleId === role.value && (
                       <IconComponent
                         iconName="Hi2/HiCheck"
-                        className="w-5 h-5 ml-2 text-accent-400 shrink-0"
+                        className="w-5 h-5 ml-2 text-accent-500 shrink-0"
                       />
                     )}
                   </button>

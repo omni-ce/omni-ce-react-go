@@ -2,11 +2,11 @@ export const typeConfig = {
   info: {
     icon: "Ri/RiInformationLine",
     label: { id: "Info", en: "Info" },
-    color: "text-accent-400",
+    color: "text-accent-500",
     bg: "bg-accent-500/10",
     border: "border-accent-500/20",
     dot: "bg-accent-400",
-    badge: "bg-accent-500/15 text-accent-400",
+    badge: "bg-badge-light-blue text-accent-500",
   },
   success: {
     icon: "Ri/RiCheckboxCircleLine",

@@ -22,7 +22,7 @@ function TableHeader({
   return (
     <thead
       className={cn(
-        "border-b border-dark-600/40 text-xs text-dark-300 uppercase tracking-wider font-semibold",
+        "border-b border-dark-600/60 text-xs text-dark-400 uppercase tracking-wider font-medium bg-dark-800",
         className,
       )}
       {...props}
@@ -44,7 +44,7 @@ function TableRow({
   return (
     <tr
       className={cn(
-        "border-b border-dark-600/20 hover:bg-dark-700/30 transition-colors",
+        "border-b border-dark-600/30 hover:bg-dark-800/50 transition-colors",
         className,
       )}
       {...props}
@@ -58,7 +58,7 @@ function TableHead({
 }: React.ThHTMLAttributes<HTMLTableCellElement>) {
   return (
     <th
-      className={cn("px-4 py-3 font-semibold whitespace-nowrap", className)}
+      className={cn("px-4 py-3 font-medium whitespace-nowrap", className)}
       {...props}
     />
   );

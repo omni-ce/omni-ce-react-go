@@ -508,7 +508,7 @@ export default function RolePage({ ruleKey }: Props) {
         {divisions.map((division) => (
           <Card key={division.id}>
             <CardHeader
-              className="cursor-pointer select-none hover:bg-dark-700/30 transition-colors"
+              className="cursor-pointer select-none hover:bg-dark-800 transition-colors"
               onClick={() => toggleDivision(division.id)}
             >
               <div className="flex items-center justify-between">
@@ -551,7 +551,7 @@ export default function RolePage({ ruleKey }: Props) {
                         e.stopPropagation();
                         openDivEdit(division);
                       }}
-                      className="p-1.5 rounded-lg text-dark-400 hover:text-accent-400 hover:bg-dark-700/50 transition-all"
+                      className="p-1.5 rounded-lg text-dark-400 hover:text-accent-500 hover:bg-dark-800 transition-all"
                     >
                       <IconComponent
                         iconName="Hi2/HiOutlinePencilSquare"
@@ -570,7 +570,7 @@ export default function RolePage({ ruleKey }: Props) {
                           name: division.name,
                         });
                       }}
-                      className="p-1.5 rounded-lg text-dark-400 hover:text-red-400 hover:bg-dark-700/50 transition-all"
+                      className="p-1.5 rounded-lg text-dark-400 hover:text-red-400 hover:bg-dark-800 transition-all"
                     >
                       <IconComponent iconName="Hi2/HiOutlineTrash" size={15} />
                     </button>
@@ -616,7 +616,7 @@ export default function RolePage({ ruleKey }: Props) {
                       className="border border-dark-600/40 rounded-xl overflow-hidden"
                     >
                       {/* Role Header */}
-                      <div className="flex items-center gap-3 px-4 py-3 hover:bg-dark-700/30 transition-colors">
+                      <div className="flex items-center gap-3 px-4 py-3 hover:bg-dark-800 transition-colors">
                         <button
                           className="flex items-center gap-3 flex-1 min-w-0 text-left"
                           onClick={() => toggleRoleAccordion(role.id)}
@@ -658,7 +658,7 @@ export default function RolePage({ ruleKey }: Props) {
                           {perm.canUpdate && (
                             <button
                               onClick={() => openRoleEdit(role)}
-                              className="p-1.5 rounded-lg text-dark-400 hover:text-accent-400 hover:bg-dark-700/50 transition-all"
+                              className="p-1.5 rounded-lg text-dark-400 hover:text-accent-500 hover:bg-dark-800 transition-all"
                             >
                               <IconComponent
                                 iconName="Hi2/HiOutlinePencilSquare"
@@ -675,7 +675,7 @@ export default function RolePage({ ruleKey }: Props) {
                                   name: role.name,
                                 })
                               }
-                              className="p-1.5 rounded-lg text-dark-400 hover:text-red-400 hover:bg-dark-700/50 transition-all"
+                              className="p-1.5 rounded-lg text-dark-400 hover:text-red-400 hover:bg-dark-800 transition-all"
                             >
                               <IconComponent
                                 iconName="Hi2/HiOutlineTrash"
@@ -697,7 +697,7 @@ export default function RolePage({ ruleKey }: Props) {
                                   "minmax(140px, 1fr) repeat(5, 80px)",
                               }}
                             >
-                              <div className="text-[10px] font-semibold text-dark-300 uppercase tracking-wider px-2">
+                              <div className="text-[10px] font-semibold text-dark-400 uppercase tracking-wider px-2">
                                 {language({ id: "Menu", en: "Menu" })}
                               </div>
                               {ACTIONS.map((act) => {
@@ -709,7 +709,7 @@ export default function RolePage({ ruleKey }: Props) {
                                     key={act.key}
                                     className="flex flex-col items-center gap-1"
                                   >
-                                    <span className="text-[10px] font-semibold text-dark-300 uppercase tracking-wider">
+                                    <span className="text-[10px] font-semibold text-dark-400 uppercase tracking-wider">
                                       {act.label}
                                     </span>
                                     <input
@@ -734,7 +734,7 @@ export default function RolePage({ ruleKey }: Props) {
                                 return (
                                   <React.Fragment key={menu.key}>
                                     <div
-                                      className="grid gap-2 min-w-150 items-center py-1.5 border-t border-dark-600/20 bg-dark-800/40"
+                                      className="grid gap-2 min-w-150 items-center py-1.5 border-t border-dark-600/20 bg-dark-800"
                                       style={{
                                         gridTemplateColumns:
                                           "minmax(140px, 1fr) repeat(5, 80px)",
@@ -859,7 +859,7 @@ export default function RolePage({ ruleKey }: Props) {
                                             }
                                             className="w-3.5 h-3.5 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                                           />
-                                          <span className="text-sm text-dark-300 font-medium">
+                                          <span className="text-sm text-dark-400 font-medium">
                                             └ {extra.label}
                                           </span>
                                         </div>

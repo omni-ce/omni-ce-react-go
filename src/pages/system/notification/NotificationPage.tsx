@@ -98,7 +98,7 @@ export default function NotificationPage({}: Props) {
               en: "Notification Center",
             })}
           </h2>
-          <p className="text-sm text-dark-300 mt-1">
+          <p className="text-sm text-dark-400 mt-1">
             {language({
               id: `${unreadCount} belum dibaca dari ${notifs.length} total notifikasi`,
               en: `${unreadCount} unread of ${notifs.length} total notifications`,
@@ -111,7 +111,7 @@ export default function NotificationPage({}: Props) {
           {unreadCount > 0 && (
             <button
               onClick={handleMarkAllRead}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono text-accent-400 hover:text-accent-300 bg-accent-500/10 hover:bg-accent-500/15 border border-accent-500/20 rounded-lg transition-all"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-accent-500 hover:text-accent-300 bg-accent-500/10 hover:bg-badge-light-blue border border-accent-500/20 rounded-lg transition-all"
             >
               <IconComponent
                 iconName="Ri/RiCheckDoubleLine"
@@ -123,7 +123,7 @@ export default function NotificationPage({}: Props) {
           {notifs.length > 0 && (
             <button
               onClick={handleClearAll}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono text-dark-400 hover:text-neon-red bg-dark-700/50 hover:bg-neon-red/10 border border-dark-600/30 hover:border-neon-red/20 rounded-lg transition-all"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-dark-400 hover:text-neon-red bg-dark-800 hover:bg-neon-red/10 border border-dark-600/30 hover:border-neon-red/20 rounded-lg transition-all"
             >
               <IconComponent
                 iconName="Ri/RiDeleteBinLine"
@@ -151,10 +151,10 @@ export default function NotificationPage({}: Props) {
               <button
                 key={f.key}
                 onClick={() => setActiveFilter(f.key)}
-                className={`px-3 py-1.5 text-[11px] font-mono rounded-lg border transition-all ${
+                className={`px-3 py-1.5 text-[11px] rounded-lg border transition-all ${
                   activeFilter === f.key
-                    ? "bg-accent-500/15 text-accent-400 border-accent-500/30"
-                    : "text-dark-400 hover:text-dark-200 bg-dark-700/30 border-dark-600/30 hover:border-dark-500/40"
+                    ? "bg-badge-light-blue text-accent-500 border-accent-500/30"
+                    : "text-dark-400 hover:text-dark-200 bg-dark-800 border-dark-600/30 hover:border-dark-500/40"
                 }`}
               >
                 {language(f.label)} ({count})
@@ -166,10 +166,10 @@ export default function NotificationPage({}: Props) {
         {/* Unread toggle */}
         <button
           onClick={() => setShowUnreadOnly(!showUnreadOnly)}
-          className={`ml-auto flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-mono rounded-lg border transition-all ${
+          className={`ml-auto flex items-center gap-1.5 px-3 py-1.5 text-[11px] rounded-lg border transition-all ${
             showUnreadOnly
-              ? "bg-accent-500/15 text-accent-400 border-accent-500/30"
-              : "text-dark-400 bg-dark-700/30 border-dark-600/30 hover:text-dark-200"
+              ? "bg-badge-light-blue text-accent-500 border-accent-500/30"
+              : "text-dark-400 bg-dark-800 border-dark-600/30 hover:text-dark-200"
           }`}
         >
           <div
@@ -192,20 +192,20 @@ export default function NotificationPage({}: Props) {
 
       {/* Notification list */}
       {filteredNotifs.length === 0 ? (
-        <div className="bg-dark-800/60 border border-dark-600/40 rounded-2xl p-12 text-center">
-          <div className="w-16 h-16 rounded-full bg-dark-700/50 flex items-center justify-center mx-auto mb-4">
+        <div className="bg-dark-800 border border-dark-600/40 rounded-2xl p-12 text-center">
+          <div className="w-16 h-16 rounded-full bg-dark-800 flex items-center justify-center mx-auto mb-4">
             <IconComponent
               iconName="Ri/RiNotificationLine"
               className="w-8 h-8 text-dark-500"
             />
           </div>
-          <h3 className="text-sm font-semibold text-dark-300 mb-1">
+          <h3 className="text-sm font-semibold text-dark-400 mb-1">
             {language({
               id: "Tidak ada notifikasi",
               en: "No notifications",
             })}
           </h3>
-          <p className="text-xs text-dark-500 font-mono">
+          <p className="text-xs text-dark-500">
             {showUnreadOnly
               ? language({
                   id: "Semua notifikasi sudah dibaca",
@@ -223,11 +223,11 @@ export default function NotificationPage({}: Props) {
             <div key={dateGroup}>
               {/* Date group header */}
               <div className="flex items-center gap-3 mb-3">
-                <span className="text-[11px] font-mono font-semibold text-dark-400 uppercase tracking-wider">
+                <span className="text-[11px] font-semibold text-dark-400 uppercase tracking-wider">
                   {dateGroup}
                 </span>
                 <div className="flex-1 h-px bg-dark-600/30" />
-                <span className="text-[10px] font-mono text-dark-500">
+                <span className="text-[10px] text-dark-500">
                   {items.length}{" "}
                   {language({ id: "notifikasi", en: "notifications" })}
                 </span>
@@ -240,9 +240,9 @@ export default function NotificationPage({}: Props) {
                   return (
                     <div
                       key={notif.id}
-                      className={`group relative bg-dark-800/60 border rounded-xl p-4 transition-all duration-200 hover:bg-dark-800/80 ${
+                      className={`group relative bg-dark-800 border rounded-xl p-4 transition-all duration-200 hover:bg-dark-800 ${
                         !notif.is_read
-                          ? `${config.border} bg-dark-800/80`
+                          ? `${config.border} bg-dark-800`
                           : "border-dark-600/30"
                       }`}
                     >
@@ -286,7 +286,7 @@ export default function NotificationPage({}: Props) {
                             <div className="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
                               <button
                                 onClick={() => handleToggleRead(notif.id)}
-                                className="p-1.5 rounded-lg text-dark-400 hover:text-accent-400 hover:bg-accent-500/10 transition-all"
+                                className="p-1.5 rounded-lg text-dark-400 hover:text-accent-500 hover:bg-accent-500/10 transition-all"
                                 title={
                                   notif.is_read
                                     ? language({
@@ -330,7 +330,7 @@ export default function NotificationPage({}: Props) {
                           {/* Meta row */}
                           <div className="flex items-center gap-2 mt-2">
                             <span
-                              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-medium ${config.badge}`}
+                              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium ${config.badge}`}
                             >
                               <IconComponent
                                 iconName={config.icon}
@@ -338,7 +338,7 @@ export default function NotificationPage({}: Props) {
                               />
                               {language(config.label)}
                             </span>
-                            <span className="text-[10px] font-mono text-dark-500">
+                            <span className="text-[10px] text-dark-500">
                               {formatTimestamp(notif.created_at, language)}
                             </span>
                           </div>
@@ -354,7 +354,7 @@ export default function NotificationPage({}: Props) {
           {/* Infinite scroll sentinel */}
           <div ref={sentinelRef} className="flex justify-center py-4">
             {isLoadingMore && (
-              <div className="flex items-center gap-2 text-dark-400 text-xs font-mono">
+              <div className="flex items-center gap-2 text-dark-400 text-xs">
                 <IconComponent
                   iconName="Ri/RiLoader4Line"
                   className="w-4 h-4 animate-spin"
@@ -363,7 +363,7 @@ export default function NotificationPage({}: Props) {
               </div>
             )}
             {!hasMore && notifs.length > 0 && (
-              <p className="text-dark-500 text-[11px] font-mono">
+              <p className="text-dark-500 text-[11px]">
                 {language({
                   id: "Semua notifikasi telah dimuat",
                   en: "All notifications loaded",

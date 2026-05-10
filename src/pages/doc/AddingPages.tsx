@@ -27,7 +27,7 @@ export default function MyPage() {
         <h2 className="text-xl font-bold text-foreground">
           My Page
         </h2>
-        <p className="text-sm text-dark-300 mt-1">
+        <p className="text-sm text-dark-400 mt-1">
           Description here
         </p>
       </div>

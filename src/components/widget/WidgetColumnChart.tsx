@@ -108,7 +108,7 @@ export default function WidgetColumnChart({
   };
 
   return (
-    <div className="bg-dark-800/60 border border-dark-600/40 rounded-2xl overflow-hidden">
+    <div className="bg-dark-800 border border-dark-600/40 rounded-2xl overflow-hidden">
       <div className="px-5 py-4 flex items-start justify-between">
         <div>
           <h3 className="text-sm font-semibold text-foreground">{title}</h3>
@@ -117,7 +117,7 @@ export default function WidgetColumnChart({
           )}
         </div>
         {periodTabs && (
-          <div className="flex items-center bg-dark-900/60 rounded-lg p-0.5 border border-dark-600/40 shrink-0">
+          <div className="flex items-center bg-dark-900 rounded-lg p-0.5 border border-dark-600/40 shrink-0">
             {periodTabs.map((tab) => (
               <button
                 key={tab}

@@ -16,7 +16,7 @@ export default function ControlButton() {
       {/* Dark mode toggle */}
       <button
         onClick={toggleTheme}
-        className="p-2 rounded-lg text-dark-300 hover:text-foreground hover:bg-dark-700/50 transition-all"
+        className="p-2 rounded-lg text-dark-400 hover:text-foreground hover:bg-dark-800 transition-all"
         title={
           isDarkMode
             ? language({ id: "Mode terang", en: "Switch to light mode" })

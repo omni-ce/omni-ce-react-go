@@ -108,7 +108,7 @@ export default function WarehouseLocationPage({ ruleKey }: Props) {
               href={`https://www.openstreetmap.org/?mlat=${item.map.latitude}&mlon=${item.map.longitude}#map=17/${item.map.latitude}/${item.map.longitude}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-[11px] font-medium text-accent-500 hover:text-accent-400 transition-colors"
+              className="inline-flex items-center gap-1 text-[11px] font-medium text-accent-500 hover:text-accent-500 transition-colors"
             >
               <IconComponent
                 iconName="Ri/RiExternalLinkLine"

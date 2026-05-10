@@ -163,8 +163,8 @@ export default function PhoneNumber({
               "flex h-12.5 items-center gap-2 rounded-xl border px-3 transition-all outline-none focus:ring-1 focus:ring-accent-500/30 disabled:opacity-50",
               isOpen
                 ? "border-accent-500/60 ring-1 ring-accent-500/30 bg-dark-800"
-                : "border-dark-500/50 bg-dark-900/60 hover:bg-dark-800",
-              error ? "border-neon-red/50" : "border-dark-500/50",
+                : "border-dark-600 bg-dark-900 hover:bg-dark-800",
+              error ? "border-neon-red/50" : "border-dark-600",
             )}
           >
             {FlagComponent && (
@@ -190,14 +190,14 @@ export default function PhoneNumber({
             createPortal(
               <div
                 id="phone-dropdown-portal"
-                className="absolute z-[1000] bg-dark-800 border border-dark-500/50 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-80"
+                className="absolute z-[1000] bg-dark-800 border border-dark-600 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-80"
                 style={{
                   top: `${dropdownPos.top}px`,
                   left: `${dropdownPos.left}px`,
                   width: `${dropdownPos.width}px`,
                 }}
               >
-                <div className="p-2 border-b border-dark-500/50 flex items-center gap-2 bg-dark-900/60 sticky top-0 z-10">
+                <div className="p-2 border-b border-dark-600 flex items-center gap-2 bg-dark-900 sticky top-0 z-10">
                   <IconComponent
                     iconName="Hi/HiSearch"
                     className="w-4 h-4 text-dark-400 shrink-0"
@@ -235,9 +235,9 @@ export default function PhoneNumber({
                           type="button"
                           onClick={() => handleCountrySelect(country.code)}
                           className={cn(
-                            "flex w-full items-center gap-3 px-3 py-2 text-left text-sm rounded-lg transition-colors hover:bg-dark-600",
+                            "flex w-full items-center gap-3 px-3 py-2 text-left text-sm rounded-lg transition-colors hover:bg-dark-700",
                             selectedCountry === country.code
-                              ? "bg-accent-500/20 text-accent-400"
+                              ? "bg-accent-500/20 text-accent-500"
                               : "text-foreground",
                           )}
                         >
@@ -249,7 +249,7 @@ export default function PhoneNumber({
                           <span className="flex-1 truncate">
                             {country.name}
                           </span>
-                          <span className="text-dark-400 text-xs font-mono">
+                          <span className="text-dark-400 text-xs">
                             +{country.phoneCode}
                           </span>
                         </button>
@@ -285,8 +285,8 @@ export default function PhoneNumber({
           maxLength={maxLength}
           placeholder={languageCode === "id" ? "Nomor telepon" : "Phone number"}
           className={cn(
-            "flex-1 px-4 py-3 bg-dark-900/60 border border-dark-500/50 rounded-xl text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30 transition-all font-mono text-sm disabled:opacity-50",
-            error ? "border-neon-red/50" : "border-dark-500/50",
+            "flex-1 px-4 py-3 bg-dark-900 border border-dark-600 rounded-xl text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30 transition-all text-sm disabled:opacity-50",
+            error ? "border-neon-red/50" : "border-dark-600",
           )}
         />
       </div>

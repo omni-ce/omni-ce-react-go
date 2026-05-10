@@ -32,12 +32,12 @@ function Dialog({ open, onClose, width, children }: DialogProps) {
         role="button"
         tabIndex={-1}
         onKeyDown={(e) => { if (e.key === 'Escape') onClose(); }}
-        className="fixed inset-0 bg-black/70 backdrop-blur-sm animate-fade-in"
+        className="fixed inset-0 bg-black/40 backdrop-blur-sm animate-fade-in"
         onClick={onClose}
       />
 
       {/* Control Button at top right of overlay */}
-      <div className="fixed top-4 right-4 z-60 animate-fade-in flex items-center gap-2 bg-white/80 dark:bg-black/20 dark:text-gray-400 backdrop-blur-md rounded-lg p-2 shadow-sm">
+      <div className="fixed top-4 right-4 z-60 animate-fade-in flex items-center gap-2 bg-dark-900/90 backdrop-blur-md rounded-lg p-2 shadow-sm border border-dark-600/40">
         <ControlButton />
       </div>
 
@@ -68,7 +68,7 @@ function DialogContent({
   return (
     <div
       className={cn(
-        "rounded-2xl border border-dark-600/40 bg-dark-800/95 backdrop-blur-xl p-6 shadow-2xl shadow-black/30 space-y-5 max-h-[90vh] overflow-y-auto",
+        "rounded-3xl border border-dark-600/40 bg-dark-900 backdrop-blur-xl p-6 shadow-[0_2px_48px_rgba(205,208,223,0.4)] space-y-5 max-h-[90vh] overflow-y-auto",
         className,
       )}
       {...props}
@@ -78,7 +78,7 @@ function DialogContent({
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-4 top-4 rounded-lg p-2 text-dark-400 hover:text-foreground hover:bg-dark-700/50 transition-all focus:outline-none"
+          className="absolute right-4 top-4 rounded-lg p-2 text-dark-400 hover:text-foreground hover:bg-dark-800 transition-all focus:outline-none"
         >
           <IconComponent iconName="Ri/RiCloseLine" className="h-4 w-4" />
           <span className="sr-only">Close</span>
@@ -133,7 +133,7 @@ function DialogDescription({
   className,
   ...props
 }: React.HTMLAttributes<HTMLParagraphElement>) {
-  return <p className={cn("text-sm text-dark-300", className)} {...props} />;
+  return <p className={cn("text-sm text-dark-400", className)} {...props} />;
 }
 
 export {

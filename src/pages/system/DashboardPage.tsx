@@ -339,7 +339,7 @@ export default function DashboardPage({}: DashboardPageProps) {
           <h2 className="text-xl font-bold text-foreground">
             {language({ id: "Dashboard", en: "Dashboard" })}
           </h2>
-          <p className="text-sm text-dark-300 mt-1">
+          <p className="text-sm text-dark-400 mt-1">
             {language({
               id: "Ikhtisar sistem secara real-time",
               en: "Real-time overview of your system",
@@ -391,7 +391,7 @@ export default function DashboardPage({}: DashboardPageProps) {
 
       {selectedRole === "" && (
         <div className="flex items-center justify-center">
-          <p className="text-sm text-dark-300 mt-1">
+          <p className="text-sm text-dark-400 mt-1">
             {language({
               id: "Pilih Role terlebih dahulu",
               en: "Please select a role first",
@@ -841,7 +841,7 @@ export default function DashboardPage({}: DashboardPageProps) {
                   <div className="absolute top-2 right-2 z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
                       onClick={() => openEdit(rw)}
-                      className="p-1.5 rounded-lg bg-dark-700/80 backdrop-blur-sm text-dark-300 hover:text-accent-400 hover:bg-dark-600/80 transition-all"
+                      className="p-1.5 rounded-lg bg-dark-700/80 backdrop-blur-sm text-dark-400 hover:text-accent-500 hover:bg-dark-700/80 transition-all"
                       title={language({ id: "Edit", en: "Edit" })}
                     >
                       <IconComponent
@@ -854,7 +854,7 @@ export default function DashboardPage({}: DashboardPageProps) {
                         setDeletingWidget(rw);
                         setDeleteModalOpen(true);
                       }}
-                      className="p-1.5 rounded-lg bg-dark-700/80 backdrop-blur-sm text-dark-300 hover:text-neon-red hover:bg-dark-600/80 transition-all"
+                      className="p-1.5 rounded-lg bg-dark-700/80 backdrop-blur-sm text-dark-400 hover:text-neon-red hover:bg-dark-700/80 transition-all"
                       title={language({ id: "Hapus", en: "Delete" })}
                     >
                       <IconComponent
@@ -865,7 +865,7 @@ export default function DashboardPage({}: DashboardPageProps) {
                   </div>
                 )}
                 {/* Widget Component */}
-                <div className="h-full bg-dark-800/60 border border-dark-600/40 rounded-2xl overflow-hidden relative">
+                <div className="h-full bg-dark-800 border border-dark-600/40 rounded-2xl overflow-hidden relative">
                   {(() => {
                     const widgetData = liveWidgetsData[rw.id];
 
@@ -1054,7 +1054,7 @@ export default function DashboardPage({}: DashboardPageProps) {
                     className={`p-4 rounded-xl border text-left transition-all ${
                       selectedWidgetKey === w.key
                         ? "border-accent-500 bg-accent-500/10 text-foreground"
-                        : "border-dark-600/40 bg-dark-700/30 text-dark-300 hover:border-dark-500/60 hover:text-foreground"
+                        : "border-dark-600/40 bg-dark-800 text-dark-400 hover:border-dark-500 hover:text-foreground"
                     }`}
                   >
                     <p className="text-sm font-semibold">{w.label}</p>
@@ -1091,7 +1091,7 @@ export default function DashboardPage({}: DashboardPageProps) {
                       className={`p-4 rounded-xl border text-left transition-all ${
                         selectedFunctionKey === f.key
                           ? "border-accent-500 bg-accent-500/10 text-foreground"
-                          : "border-dark-600/40 bg-dark-700/30 text-dark-300 hover:border-dark-500/60 hover:text-foreground"
+                          : "border-dark-600/40 bg-dark-800 text-dark-400 hover:border-dark-500 hover:text-foreground"
                       }`}
                     >
                       <p className="text-sm font-semibold">{f.label}</p>
@@ -1155,31 +1155,31 @@ export default function DashboardPage({}: DashboardPageProps) {
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-dark-300 mb-1.5">
+              <label className="block text-xs font-medium text-dark-400 mb-1.5">
                 {language({ id: "Label", en: "Label" })}
               </label>
               <input
                 type="text"
                 value={formLabel}
                 onChange={(e) => setFormLabel(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-dark-700/50 border border-dark-600/40 text-foreground text-sm focus:outline-none focus:border-accent-500"
+                className="w-full px-3 py-2 rounded-lg bg-dark-800 border border-dark-600/40 text-foreground text-sm focus:outline-none focus:border-accent-500"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-dark-300 mb-1.5">
+              <label className="block text-xs font-medium text-dark-400 mb-1.5">
                 {language({ id: "Deskripsi", en: "Description" })}
               </label>
               <input
                 type="text"
                 value={formDesc}
                 onChange={(e) => setFormDesc(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-dark-700/50 border border-dark-600/40 text-foreground text-sm focus:outline-none focus:border-accent-500"
+                className="w-full px-3 py-2 rounded-lg bg-dark-800 border border-dark-600/40 text-foreground text-sm focus:outline-none focus:border-accent-500"
               />
             </div>
             <div>
               <label
                 htmlFor="widget-type-select"
-                className="block text-xs font-medium text-dark-300 mb-1.5"
+                className="block text-xs font-medium text-dark-400 mb-1.5"
               >
                 Type
               </label>
@@ -1187,7 +1187,7 @@ export default function DashboardPage({}: DashboardPageProps) {
                 id="widget-type-select"
                 value={formType}
                 onChange={(e) => setFormType(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-dark-700/50 border border-dark-600/40 text-foreground text-sm focus:outline-none focus:border-accent-500"
+                className="w-full px-3 py-2 rounded-lg bg-dark-800 border border-dark-600/40 text-foreground text-sm focus:outline-none focus:border-accent-500"
               >
                 {widgets.map((w) => (
                   <option key={w.key} value={w.key}>
@@ -1197,7 +1197,7 @@ export default function DashboardPage({}: DashboardPageProps) {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-dark-300 mb-2 uppercase tracking-wider">
+              <label className="block text-xs font-medium text-dark-400 mb-2 uppercase tracking-wider">
                 {language({
                   id: "Lebar Kolom Responsif",
                   en: "Responsive Column Width",
@@ -1234,7 +1234,7 @@ export default function DashboardPage({}: DashboardPageProps) {
                 ).map((bp) => (
                   <div
                     key={bp.key}
-                    className="bg-dark-900/60 border border-dark-600/40 rounded-xl p-3"
+                    className="bg-dark-900 border border-dark-600/40 rounded-xl p-3"
                   >
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-1.5">
@@ -1243,7 +1243,7 @@ export default function DashboardPage({}: DashboardPageProps) {
                           {bp.label}
                         </span>
                       </div>
-                      <span className="text-[10px] font-mono text-accent-400 bg-accent-500/10 px-1.5 py-0.5 rounded">
+                      <span className="text-[10px] text-accent-500 bg-accent-500/10 px-1.5 py-0.5 rounded">
                         {formColObj[bp.key]}/12
                       </span>
                     </div>

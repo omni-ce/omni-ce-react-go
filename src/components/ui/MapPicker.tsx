@@ -139,15 +139,15 @@ export default function MapPicker({
 
   return createPortal(
     <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 sm:p-6 md:p-8">
-      <div className="bg-dark-900 border border-dark-600/50 rounded-2xl w-full max-w-4xl h-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden relative">
+      <div className="bg-dark-900 border border-dark-600 rounded-2xl w-full max-w-4xl h-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden relative">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-dark-600/50 bg-dark-800/50 shrink-0">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-dark-600 bg-dark-800/50 shrink-0">
           <h2 className="text-lg font-bold text-foreground">
             {language({ id: "Pilih Lokasi", en: "Pick Location" })}
           </h2>
           <button
             onClick={onClose}
-            className="p-2 text-dark-300 hover:text-foreground hover:bg-dark-700/50 rounded-lg transition-colors"
+            className="p-2 text-dark-400 hover:text-foreground hover:bg-dark-800 rounded-lg transition-colors"
           >
             <IconComponent iconName="Ri/RiCloseLine" className="w-5 h-5" />
           </button>
@@ -157,7 +157,7 @@ export default function MapPicker({
         <div className="flex-1 flex flex-col relative min-h-0">
           {/* Search Bar */}
           <div className="absolute top-4 left-4 right-4 z-400 max-w-md mx-auto">
-            <div className="relative flex items-center bg-dark-800 border border-dark-600/50 rounded-xl shadow-lg">
+            <div className="relative flex items-center bg-dark-800 border border-dark-600 rounded-xl shadow-lg">
               <input
                 type="text"
                 placeholder={language({
@@ -172,7 +172,7 @@ export default function MapPicker({
               <button
                 onClick={handleSearch}
                 disabled={isSearching}
-                className="px-4 text-dark-300 hover:text-accent-400 transition-colors"
+                className="px-4 text-dark-400 hover:text-accent-500 transition-colors"
               >
                 {isSearching ? (
                   <IconComponent
@@ -190,12 +190,12 @@ export default function MapPicker({
 
             {/* Search Results */}
             {searchResults.length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-dark-800 border border-dark-600/50 rounded-xl shadow-xl max-h-60 overflow-y-auto">
+              <div className="absolute top-full left-0 right-0 mt-2 bg-dark-800 border border-dark-600 rounded-xl shadow-xl max-h-60 overflow-y-auto">
                 {searchResults.map((result, idx) => (
                   <button
                     key={idx}
                     onClick={() => handleSelectResult(result)}
-                    className="w-full text-left px-4 py-3 text-sm hover:bg-dark-700/50 border-b border-dark-700/30 last:border-0 transition-colors"
+                    className="w-full text-left px-4 py-3 text-sm hover:bg-dark-800 border-b border-dark-700/30 last:border-0 transition-colors"
                   >
                     <p className="text-foreground font-medium truncate">
                       {result.name || result.display_name.split(",")[0]}
@@ -238,13 +238,13 @@ export default function MapPicker({
 
             {/* Basemap Switcher */}
             <div className="absolute bottom-6 right-6 z-400">
-              <div className="flex bg-dark-900/80 backdrop-blur-md border border-dark-600/50 rounded-xl p-1 shadow-2xl">
+              <div className="flex bg-dark-900/80 backdrop-blur-md border border-dark-600 rounded-xl p-1 shadow-2xl">
                 <button
                   onClick={() => setBasemap("street")}
                   className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                     basemap === "street"
                       ? "bg-accent-500 text-white"
-                      : "text-dark-300 hover:text-foreground"
+                      : "text-dark-400 hover:text-foreground"
                   }`}
                 >
                   {language({ id: "Peta", en: "Street" })}
@@ -254,7 +254,7 @@ export default function MapPicker({
                   className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                     basemap === "satellite"
                       ? "bg-accent-500 text-white"
-                      : "text-dark-300 hover:text-foreground"
+                      : "text-dark-400 hover:text-foreground"
                   }`}
                 >
                   {language({ id: "Satelit", en: "Satellite" })}
@@ -265,8 +265,8 @@ export default function MapPicker({
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-dark-600/50 bg-dark-800/50 shrink-0 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-dark-300 text-sm">
+        <div className="p-4 border-t border-dark-600 bg-dark-800/50 shrink-0 flex items-center justify-between">
+          <div className="flex items-center gap-2 text-dark-400 text-sm">
             <IconComponent
               iconName="Hi/HiOutlineInformationCircle"
               className="w-4 h-4"
@@ -281,7 +281,7 @@ export default function MapPicker({
           <div className="flex items-center gap-3">
             <button
               onClick={onClose}
-              className="px-4 py-2 rounded-lg text-sm font-medium text-dark-300 hover:text-foreground hover:bg-dark-700/50 transition-colors"
+              className="px-4 py-2 rounded-lg text-sm font-medium text-dark-400 hover:text-foreground hover:bg-dark-800 transition-colors"
             >
               {language({ id: "Batal", en: "Cancel" })}
             </button>

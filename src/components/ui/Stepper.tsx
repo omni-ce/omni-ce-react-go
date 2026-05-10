@@ -23,7 +23,7 @@ export default function Stepper({ currentStep, labels }: StepperProps) {
                 className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all ${
                   isActive
                     ? "bg-accent-500 border-accent-500 text-white shadow-lg shadow-accent-500/20"
-                    : "border-dark-600 text-dark-400 bg-dark-800"
+                    : "border-dark-600 text-dark-400 bg-dark-900"
                 }`}
               >
                 {isCompleted ? (

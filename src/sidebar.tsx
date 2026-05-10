@@ -175,6 +175,21 @@ const sidebarLinks: ISidebarLink[] = [
       },
     ],
   },
+
+  {
+    label: { id: "Loyalty", en: "Loyalty" },
+    path: "loyalty",
+    icon: "Md/MdOutlineCardGiftcard",
+    children: [
+      {
+        label: { id: "Poin", en: "Point" },
+        path: "point",
+        element: <MarketingCustomerPage ruleKey="marketing/customer" />,
+        strict: true,
+        icon: "Hi/HiUserGroup",
+      },
+    ],
+  },
 ];
 
 export default sidebarLinks;

@@ -5,7 +5,7 @@ export default function TechStack() {
 
   return (
     <div className="space-y-4">
-      <div className="overflow-x-auto rounded-xl border border-dark-600/50">
+      <div className="overflow-x-auto rounded-xl border border-dark-600">
         <table className="w-full text-sm text-left">
           <thead className="bg-dark-800 text-dark-200">
             <tr>

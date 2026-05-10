@@ -117,7 +117,7 @@ export default function CompanyEntityPage({ ruleKey }: Props) {
               {item.is_taxpayer && (
                 <Badge
                   variant="outline"
-                  className="text-[10px] px-1 py-0 h-4 border-accent-500/50 text-accent-400 bg-accent-500/5"
+                  className="text-[10px] px-1 py-0 h-4 border-accent-500/50 text-accent-500 bg-accent-500/5"
                 >
                   {language({ id: "Wajib Pajak", en: "Taxpayer" })}
                 </Badge>

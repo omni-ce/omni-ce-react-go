@@ -27,7 +27,7 @@ export default function LanguageSelector({ className = "" }: Props) {
     return (
       <button
         onClick={toggleLanguage}
-        className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono text-dark-300 hover:text-foreground hover:bg-dark-700/50 rounded-lg transition-all ${className}`}
+        className={`flex items-center gap-1.5 px-3 py-1.5 text-xs text-dark-400 hover:text-foreground hover:bg-dark-800 rounded-lg transition-all ${className}`}
         title={language({
           id: "Ganti bahasa",
           en: "Switch language",
