@@ -10,6 +10,7 @@ import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import type { CompanyBranch, CompanyEntityOption } from "@/types/company";
 import { Badge } from "@/components/ui/Badge";
 import { IconComponent } from "@/components/ui/IconSelector";
+import Image from "@/components/Image";
 
 interface Props {
   ruleKey?: string;
@@ -20,7 +21,7 @@ export default function CompanyBranchPage({ ruleKey }: Props) {
   const paginationRef = useRef<PaginationHandle>(null);
   const { languageCode, language } = useLanguageStore();
 
-  const fields = useMemo<PaginationField[]>(
+  const fields = useMemo<PaginationField<CompanyEntityOption>[]>(
     () => [
       {
         key: "entity_id",
@@ -32,7 +33,7 @@ export default function CompanyBranchPage({ ruleKey }: Props) {
           value: item.value,
           render: (
             <div className="flex items-center gap-2">
-              <img src={item.meta.logo} alt="logo" className="w-6 h-6" />
+              <Image src={item.meta.logo} alt="logo" className="w-6 h-6" />
               <span>{item.label}</span>
             </div>
           ),
@@ -100,6 +101,7 @@ export default function CompanyBranchPage({ ruleKey }: Props) {
         search: true,
         render: (item) => (
           <div className="flex items-center gap-3">
+            <Image src={item.entity_logo} alt="logo" className="w-8 h-8" />
             <span className="font-medium">{item.entity_name}</span>
           </div>
         ),
@@ -251,7 +253,7 @@ export default function CompanyBranchPage({ ruleKey }: Props) {
         })}
         columns={columns}
         module="company/branch"
-        fields={fields}
+        fields={fields as PaginationField[]}
         ruleKey={ruleKey}
         useIsActive
       />

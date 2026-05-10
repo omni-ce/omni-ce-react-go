@@ -27,8 +27,9 @@ import Image from "@/components/Image";
 
 export interface DynamicFormFieldOption {
   value: string;
-  label: string;
+  label?: string;
   icon?: string;
+  render?: React.ReactNode;
   default?: boolean;
   array?: string[];
 }
@@ -229,6 +230,8 @@ function DynamicSelect({
             return {
               ...formatted,
               value: String(formatted.value),
+              label: formatted.label || "",
+              render: formatted.render,
             };
           }
           const item = d as unknown as Option;
@@ -815,9 +818,7 @@ function DynamicFile({
             />
           </div>
         )}
-        <div className="w-full">
-          {renderUploader()}
-        </div>
+        <div className="w-full">{renderUploader()}</div>
       </div>
     );
   }

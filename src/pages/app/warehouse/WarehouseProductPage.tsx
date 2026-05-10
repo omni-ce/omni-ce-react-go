@@ -9,17 +9,10 @@ import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import { Badge } from "@/components/ui/Badge";
 import type { WarehouseProduct } from "@/types/warehouse";
+import type { ProductItemOption } from "@/types/product";
 
 interface Props {
   ruleKey?: string;
-}
-interface ProductItemOption {
-  value: number;
-  label: string;
-  id: number;
-  name: string;
-  category_name: string;
-  type_name: string;
 }
 
 export default function WarehouseProductPage({ ruleKey }: Props) {
@@ -43,18 +36,45 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
         type: "select",
         required: true,
         selectOptions: "product-items",
-        selectFormat: (row: ProductItemOption) => {
-          let prefix = "";
-          try {
-            const category = JSON.parse(row.category_name);
-            const type = JSON.parse(row.type_name);
-            prefix = `[${language(category)} ${language(type)}]`;
-          } catch (error) {
-            //
-          }
+        selectFormat: (item: ProductItemOption) => {
           return {
-            value: String(row.value),
-            label: prefix ? `${prefix} ${row.label}` : row.label,
+            value: String(item.value),
+            render: (
+              <div className="flex flex-col gap-1 w-full py-1">
+                <div className="flex items-center justify-between gap-4">
+                  <span className="font-bold text-foreground text-sm truncate">
+                    {item.label}
+                  </span>
+                  <Badge
+                    variant="outline"
+                    className="text-[10px] py-0 h-4 border-dark-600 bg-dark-800 text-dark-300 shrink-0"
+                  >
+                    {item.meta.sku}
+                  </Badge>
+                </div>
+                <div className="flex items-center gap-2 text-[11px] text-dark-400">
+                  <span className="bg-dark-700 px-1.5 rounded border border-dark-600">
+                    {item.meta.category}
+                  </span>
+                  <span>•</span>
+                  <span>{item.meta.brand}</span>
+                  <span>•</span>
+                  <span>{item.meta.type}</span>
+                  {item.meta.color && (
+                    <>
+                      <span>•</span>
+                      <div className="flex items-center gap-1">
+                        <div
+                          className="w-2.5 h-2.5 rounded-full border border-white/10"
+                          style={{ backgroundColor: item.meta.color_hex }}
+                        />
+                        <span>{item.meta.color}</span>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            ),
           };
         },
       },

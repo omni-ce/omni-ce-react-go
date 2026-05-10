@@ -6,8 +6,9 @@ import { Badge } from "./Badge";
 
 interface Option {
   value: string;
-  label: string;
+  label?: string;
   icon?: string;
+  render?: React.ReactNode;
   array?: unknown[];
 }
 
@@ -92,11 +93,14 @@ export function SearchableSelect({
   const filteredOptions = useMemo(() => {
     if (!search) return options;
     const lowerSearch = search.toLowerCase();
-    return options.filter(
-      (opt) =>
-        opt.label.toLowerCase().includes(lowerSearch) ||
-        opt.value.toLowerCase().includes(lowerSearch),
-    );
+    return options.filter((opt) => {
+      const label = opt.label || "";
+      const value = opt.value || "";
+      return (
+        label.toLowerCase().includes(lowerSearch) ||
+        value.toLowerCase().includes(lowerSearch)
+      );
+    });
   }, [options, search]);
 
   const selectedOption = options.find((opt) => opt.value === value);
@@ -120,15 +124,15 @@ export function SearchableSelect({
           setIsOpen(!isOpen);
         }}
       >
-        <span className="truncate">
+        <span className="truncate w-full">
           {loading
             ? "Loading..."
             : selectedOption
-              ? selectedOption.label
+              ? selectedOption.render || selectedOption.label
               : placeholder}
         </span>
         {value && value !== "all" && !disabled && !loading ? (
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 shrink-0">
             <IconComponent
               iconName="Hi/HiX"
               className="w-4 h-4 text-dark-400 hover:text-dark-100 cursor-pointer"
@@ -145,7 +149,7 @@ export function SearchableSelect({
         ) : (
           <IconComponent
             iconName="Hi/HiChevronDown"
-            className="w-4 h-4 text-dark-400"
+            className="w-4 h-4 text-dark-400 shrink-0"
           />
         )}
       </button>
@@ -198,14 +202,18 @@ export function SearchableSelect({
                       setIsOpen(false);
                     }}
                   >
-                    <div className="flex items-center gap-2.5">
+                    <div className="flex items-center gap-2.5 w-full">
                       {opt.icon && (
                         <IconComponent
                           iconName={opt.icon}
                           className="w-4 h-4 text-dark-400 shrink-0"
                         />
                       )}
-                      <span className="font-medium">{opt.label}</span>
+                      <div className="flex-1 truncate">
+                        {opt.render || (
+                          <span className="font-medium">{opt.label}</span>
+                        )}
+                      </div>
                     </div>
                     {opt.array && opt.array.length > 0 && (
                       <div className="flex flex-wrap gap-1">

@@ -100,6 +100,7 @@ func BranchPaginate(c *fiber.Ctx) error {
 	for _, row := range branches {
 		branch := row.Map()
 		branch["entity_name"] = row.Entity.Name
+		branch["entity_logo"] = row.Entity.Logo
 		branch["pic_name"] = row.Pic.Name
 		branch["full_address"] = addresses[row.AddressCode]
 		branch["map"] = fiber.Map{

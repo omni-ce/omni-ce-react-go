@@ -29,6 +29,7 @@ export interface CompanyBranch {
   id: number;
   entity_id: number;
   entity_name: string;
+  entity_logo: string;
   pic_id: number;
   pic_name: string;
   code: string;
