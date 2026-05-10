@@ -7,8 +7,8 @@ import Pagination, {
 } from "@/components/Pagination";
 import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
-import type { ProductCategory } from "@/types/product";
 import { Badge } from "@/components/ui/Badge";
+import type { WarehouseProduct } from "@/types/warehouse";
 
 interface Props {
   ruleKey?: string;
@@ -63,24 +63,45 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
     [languageCode, language],
   );
 
-  const columns = useMemo<PaginationColumn<ProductCategory>[]>(
+  const columns = useMemo<PaginationColumn<WarehouseProduct>[]>(
     () => [
       {
-        key: "name",
-        header: language({ id: "Nama", en: "Name" }),
+        key: "warehouse_location_name",
+        header: language({ id: "Lokasi Gudang", en: "Warehouse Location" }),
+        sort: true,
+        search: true,
+        render: (item) => (
+          <span className="font-medium">{item.warehouse_location_name}</span>
+        ),
+      },
+      {
+        key: "product_name",
+        header: language({ id: "Nama Produk", en: "Product Name" }),
         sort: true,
         search: true,
         render: (item) => {
-          let name = item.name;
+          let categoryName = item.product_category_name;
+          let typeName = item.product_type_name;
           try {
-            if (name.startsWith("{")) {
-              const obj = JSON.parse(name);
-              name = language(obj);
+            if (categoryName.startsWith("{")) {
+              const obj = JSON.parse(categoryName);
+              categoryName = language(obj);
+            }
+            if (typeName.startsWith("{")) {
+              const obj = JSON.parse(typeName);
+              typeName = language(obj);
             }
           } catch (e) {
             // fallback to raw name
           }
-          return <span className="font-medium">{name}</span>;
+          return (
+            <div className="flex flex-col gap-1">
+              <span className="font-medium">{item.product_name}</span>
+              <span className="text-xs text-muted-foreground">
+                {categoryName} {typeName}
+              </span>
+            </div>
+          );
         },
       },
       {

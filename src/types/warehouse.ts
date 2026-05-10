@@ -18,6 +18,8 @@ export interface WarehouseProduct {
   warehouse_location_name: string;
   product_id: number;
   product_name: string;
+  product_category_name: string;
+  product_type_name: string;
   qty: number;
   is_active: boolean;
 }
