@@ -430,7 +430,9 @@ func ProductItems(c *fiber.Ctx) error {
 		if row.MemoryID != nil {
 			memoryIds = append(memoryIds, *row.MemoryID)
 		}
-		colorIds = append(colorIds, row.ColorID)
+		if row.ColorID != nil {
+			colorIds = append(colorIds, *row.ColorID)
+		}
 	}
 
 	categories := make([]product.ProductCategory, 0)
@@ -505,7 +507,10 @@ func ProductItems(c *fiber.Ctx) error {
 		if row.MemoryID != nil {
 			memory = memoryMap[*row.MemoryID]
 		}
-		color := colorMap[row.ColorID]
+		color := ""
+		if row.ColorID != nil {
+			color = colorMap[*row.ColorID]
+		}
 
 		label := fmt.Sprintf("%s %s", brand, variant)
 		if memory != "" {

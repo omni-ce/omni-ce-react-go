@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -23,22 +24,34 @@ func LocationCreate(c *fiber.Ctx) error {
 	}
 
 	var body struct {
-		BranchID  uint    `json:"branch_id" validate:"required"`
-		PicID     uint    `json:"pic_id" validate:"required"`
-		Name      string  `json:"name" validate:"required"`
-		Longitude float64 `json:"longitude"`
-		Latitude  float64 `json:"latitude"`
+		BranchID string `json:"branch_id" validate:"required"`
+		PicID    string `json:"pic_id" validate:"required"`
+		Name     string `json:"name" validate:"required"`
+		Map      struct {
+			Longitude float64 `json:"longitude"`
+			Latitude  float64 `json:"latitude"`
+		} `json:"map" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
 	}
 
+	branchId, err := strconv.Atoi(body.BranchID)
+	if err != nil {
+		return dto.BadRequest(c, "Invalid branch ID", nil)
+	}
+
+	picId, err := uuid.Parse(body.PicID)
+	if err != nil {
+		return dto.BadRequest(c, "Invalid PIC ID", nil)
+	}
+
 	location := model.WarehouseLocation{
-		BranchID:  body.BranchID,
-		PicID:     body.PicID,
+		BranchID:  uint(branchId),
+		PicID:     picId,
 		Name:      strings.TrimSpace(body.Name),
-		Longitude: body.Longitude,
-		Latitude:  body.Latitude,
+		Longitude: body.Map.Longitude,
+		Latitude:  body.Map.Latitude,
 		IsActive:  true,
 		CreatedBy: currentUser.ID,
 		UpdatedBy: currentUser.ID,
@@ -66,7 +79,7 @@ func LocationPaginate(c *fiber.Ctx) error {
 	for _, location := range locations {
 		branchIds = append(branchIds, location.BranchID)
 	}
-	picIds := make([]uint, 0, len(locations))
+	picIds := make([]uuid.UUID, 0, len(locations))
 	for _, location := range locations {
 		picIds = append(picIds, location.PicID)
 	}
@@ -79,10 +92,22 @@ func LocationPaginate(c *fiber.Ctx) error {
 	result := make([]map[string]any, 0, len(locations))
 	for i := range locations {
 		loc := locations[i].Map()
-		branch := branches[i].Map()
-		pic := pics[i].Map()
-		loc["branch_name"] = branch["name"]
-		loc["pic_name"] = pic["name"]
+		var branch company.CompanyBranch
+		for _, row := range branches {
+			if row.ID == locations[i].BranchID {
+				branch = row
+				break
+			}
+		}
+		var pic user.User
+		for _, row := range pics {
+			if row.ID == locations[i].PicID {
+				pic = row
+				break
+			}
+		}
+		loc["branch_name"] = branch.Name
+		loc["pic_name"] = pic.Name
 		loc["map"] = map[string]any{
 			"latitude":  locations[i].Latitude,
 			"longitude": locations[i].Longitude,
@@ -106,11 +131,13 @@ func LocationEdit(c *fiber.Ctx) error {
 	}
 
 	var body struct {
-		BranchID  uint    `json:"branch_id"`
-		PicID     uint    `json:"pic_id"`
-		Name      string  `json:"name"`
-		Longitude float64 `json:"longitude"`
-		Latitude  float64 `json:"latitude"`
+		BranchID string `json:"branch_id"`
+		PicID    string `json:"pic_id"`
+		Name     string `json:"name"`
+		Map      struct {
+			Longitude float64 `json:"longitude"`
+			Latitude  float64 `json:"latitude"`
+		} `json:"map" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
@@ -125,21 +152,23 @@ func LocationEdit(c *fiber.Ctx) error {
 		"updated_by": currentUser.ID,
 	}
 
-	if body.BranchID != 0 {
-		updates["branch_id"] = body.BranchID
+	if body.BranchID != "" {
+		branchId, _ := strconv.Atoi(body.BranchID)
+		updates["branch_id"] = uint(branchId)
 	}
-	if body.PicID != 0 {
-		updates["pic_id"] = body.PicID
+	if body.PicID != "" {
+		picId, _ := uuid.Parse(body.PicID)
+		updates["pic_id"] = picId
 	}
 	name := strings.TrimSpace(body.Name)
 	if name != "" {
 		updates["name"] = name
 	}
-	if body.Longitude != 0 {
-		updates["longitude"] = body.Longitude
+	if body.Map.Longitude != 0 {
+		updates["longitude"] = body.Map.Longitude
 	}
-	if body.Latitude != 0 {
-		updates["latitude"] = body.Latitude
+	if body.Map.Latitude != 0 {
+		updates["latitude"] = body.Map.Latitude
 	}
 
 	if err := variable.Db.Model(&existing).Updates(updates).Error; err != nil {

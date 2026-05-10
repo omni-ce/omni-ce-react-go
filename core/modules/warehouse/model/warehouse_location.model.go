@@ -11,13 +11,13 @@ import (
 )
 
 type WarehouseLocation struct {
-	ID        uint    `json:"id" gorm:"autoIncrement;primaryKey"`
-	BranchID  uint    `json:"branch_id" gorm:"type:integer;not null"`
-	PicID     uint    `json:"pic_id" gorm:"type:integer;not null"`
-	Name      string  `json:"name" gorm:"type:varchar(255)"`
-	Longitude float64 `json:"longitude" gorm:"type:decimal(10,8)"`
-	Latitude  float64 `json:"latitude" gorm:"type:decimal(10,8)"`
-	IsActive  bool    `json:"is_active" gorm:"default:true"`
+	ID        uint      `json:"id" gorm:"autoIncrement;primaryKey"`
+	BranchID  uint      `json:"branch_id" gorm:"type:integer;not null"`
+	PicID     uuid.UUID `json:"pic_id" gorm:"type:integer;not null"`
+	Name      string    `json:"name" gorm:"type:varchar(255)"`
+	Longitude float64   `json:"longitude" gorm:"type:decimal(10,8)"`
+	Latitude  float64   `json:"latitude" gorm:"type:decimal(10,8)"`
+	IsActive  bool      `json:"is_active" gorm:"default:true"`
 
 	// relations
 	Branch company.CompanyBranch `json:"branch" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`

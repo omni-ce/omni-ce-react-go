@@ -57,6 +57,8 @@ func ItemCreate(c *fiber.Ctx) error {
 		return dto.BadRequest(c, "Invalid color ID", nil)
 	}
 
+	ColorID := uint(colorID)
+
 	var memoryID *uint
 	if body.MemoryID != "" {
 		if mid, err := strconv.Atoi(body.MemoryID); err == nil {
@@ -81,7 +83,7 @@ func ItemCreate(c *fiber.Ctx) error {
 		BrandID:    uint(brandID),
 		VariantID:  uint(variantID),
 		MemoryID:   memoryID,
-		ColorID:    uint(colorID),
+		ColorID:    &ColorID,
 		SKU:        body.SKU,
 		SkuIMEI:    body.SkuIMEI,
 		CreatedBy:  currentUser.ID,
@@ -241,7 +243,8 @@ func ItemEdit(c *fiber.Ctx) error {
 	if err != nil {
 		return dto.BadRequest(c, "Invalid color ID", nil)
 	}
-	existing.ColorID = uint(colID)
+	uColID := uint(colID)
+	existing.ColorID = &uColID
 
 	if body.MemoryID != "" {
 		if mid, err := strconv.Atoi(body.MemoryID); err == nil {

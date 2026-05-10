@@ -1,6 +1,7 @@
 package warehouse
 
 import (
+	"fmt"
 	"react-go/core/dto"
 	"react-go/core/function"
 	product "react-go/core/modules/product/model"
@@ -60,6 +61,7 @@ func ProductPaginate(c *fiber.Ctx) error {
 	for _, product := range warehouseProducts {
 		warehouseLocationIds = append(warehouseLocationIds, product.WarehouseLocationID)
 	}
+
 	productIds := make([]uint, 0, len(warehouseProducts))
 	for _, product := range warehouseProducts {
 		productIds = append(productIds, product.ProductID)
@@ -70,13 +72,122 @@ func ProductPaginate(c *fiber.Ctx) error {
 	variable.Db.Where("id IN ?", warehouseLocationIds).Find(&warehouseLocations)
 	variable.Db.Where("id IN ?", productIds).Find(&products)
 
-	result := make([]map[string]any, 0, len(products))
-	for i := range products {
-		p := products[i].Map()
-		warehouse_location := warehouseLocations[warehouseLocationIds[i]]
-		product := products[productIds[i]]
+	productCategoryIds := make([]uint, 0, len(products))
+	for _, product := range products {
+		productCategoryIds = append(productCategoryIds, product.CategoryID)
+	}
+	productTypeIds := make([]uint, 0, len(products))
+	for _, product := range products {
+		productTypeIds = append(productTypeIds, product.TypeID)
+	}
+	productBrandIds := make([]uint, 0, len(products))
+	for _, product := range products {
+		productBrandIds = append(productBrandIds, product.BrandID)
+	}
+	productVariantIds := make([]uint, 0, len(products))
+	for _, product := range products {
+		productVariantIds = append(productVariantIds, product.VariantID)
+	}
+	productMemoryIds := make([]uint, 0, len(products))
+	for _, product := range products {
+		if product.MemoryID != nil {
+			productMemoryIds = append(productMemoryIds, *product.MemoryID)
+		}
+	}
+	productColorIds := make([]uint, 0, len(products))
+	for _, product := range products {
+		if product.ColorID != nil {
+			productColorIds = append(productColorIds, *product.ColorID)
+		}
+	}
+
+	productCategories := make([]product.ProductCategory, 0)
+	variable.Db.Where("id IN ?", productCategoryIds).Find(&productCategories)
+	productTypes := make([]product.ProductType, 0)
+	variable.Db.Where("id IN ?", productTypeIds).Find(&productTypes)
+	productBrands := make([]product.ProductBrand, 0)
+	variable.Db.Where("id IN ?", productBrandIds).Find(&productBrands)
+	productVariants := make([]product.ProductVariant, 0)
+	variable.Db.Where("id IN ?", productVariantIds).Find(&productVariants)
+	productMemories := make([]product.ProductMemory, 0)
+	variable.Db.Where("id IN ?", productMemoryIds).Find(&productMemories)
+	productColors := make([]product.ProductColor, 0)
+	variable.Db.Where("id IN ?", productColorIds).Find(&productColors)
+
+	result := make([]map[string]any, 0, len(warehouseProducts))
+	for i := range warehouseProducts {
+		p := warehouseProducts[i].Map()
+		var warehouse_location model.WarehouseLocation
+		for _, wl := range warehouseLocations {
+			if wl.ID == warehouseProducts[i].WarehouseLocationID {
+				warehouse_location = wl
+				break
+			}
+		}
+		var product_item product.ProductItem
+		for _, pr := range products {
+			if pr.ID == warehouseProducts[i].ProductID {
+				product_item = pr
+				break
+			}
+		}
+		var product_category product.ProductCategory
+		for _, pc := range productCategories {
+			if pc.ID == product_item.CategoryID {
+				product_category = pc
+				break
+			}
+		}
+		var product_type product.ProductType
+		for _, pt := range productTypes {
+			if pt.ID == product_item.TypeID {
+				product_type = pt
+				break
+			}
+		}
+		var product_brand product.ProductBrand
+		for _, pb := range productBrands {
+			if pb.ID == product_item.BrandID {
+				product_brand = pb
+				break
+			}
+		}
+		var product_variant product.ProductVariant
+		for _, pv := range productVariants {
+			if pv.ID == product_item.VariantID {
+				product_variant = pv
+				break
+			}
+		}
+		var product_memory product.ProductMemory
+		for _, pm := range productMemories {
+			if pm.ID == *product_item.MemoryID {
+				product_memory = pm
+				break
+			}
+		}
+		var product_color product.ProductColor
+		for _, pc := range productColors {
+			if pc.ID == *product_item.ColorID {
+				product_color = pc
+				break
+			}
+		}
 		p["warehouse_location_name"] = warehouse_location.Name
-		p["product_name"] = product.Name
+		p["product_sku"] = product_item.SKU
+		product_name := fmt.Sprintf("[%s %s] %s %s", product_category.Name, product_type.Name, product_brand.Name, product_variant.Name)
+		if product_memory.ID != 0 {
+			product_name += fmt.Sprintf(" (%d GB / %d GB)", product_memory.Ram, product_memory.InternalStorage)
+		}
+		if product_color.ID != 0 {
+			product_name += fmt.Sprintf(" - %s", product_color.Name)
+		}
+		p["product_name"] = product_name
+		p["product_category_name"] = product_category.Name
+		p["product_type_name"] = product_type.Name
+		p["product_brand_name"] = product_brand.Name
+		p["product_variant_name"] = product_variant.Name
+		p["product_color_name"] = product_color.Name
 		result = append(result, p)
 	}
 

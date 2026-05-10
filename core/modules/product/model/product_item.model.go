@@ -14,7 +14,7 @@ type ProductItem struct {
 	BrandID    uint  `json:"brand_id" gorm:"not null"`
 	VariantID  uint  `json:"varian_id" gorm:"not null"`
 	MemoryID   *uint `json:"memory_id" gorm:"default:null"`
-	ColorID    uint  `json:"color_id" gorm:"not null"`
+	ColorID    *uint `json:"color_id" gorm:"default:null"`
 	IsActive   bool  `json:"is_active" gorm:"default:true"`
 
 	// StockKeeping Unit
