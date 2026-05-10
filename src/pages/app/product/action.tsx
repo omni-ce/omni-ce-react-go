@@ -40,16 +40,20 @@ export const ProductImage = ({
 
   useEffect(() => {
     fetchImages();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [row.id]);
 
   const handleUpload = async () => {
     if (!formData.image) return;
     setLoading(true);
     try {
-      const res = await satellite.post(`/api/product/item/image/set/${row.id}`, {
-        url: formData.image as string,
-      });
-      if (res.data.status === "OK") {
+      const res = await satellite.post(
+        `/api/product/item/image/set/${row.id}`,
+        {
+          url: formData.image as string,
+        },
+      );
+      if (res.data.status === 200) {
         await fetchImages();
         setFormData({});
       }
@@ -63,7 +67,9 @@ export const ProductImage = ({
   const handleDelete = async (id: string) => {
     setLoading(true);
     try {
-      const res = await satellite.delete(`/api/product/item/image/remove/${id}`);
+      const res = await satellite.delete(
+        `/api/product/item/image/remove/${id}`,
+      );
       if (res.data.status === "OK") {
         await fetchImages();
       }

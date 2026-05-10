@@ -64,3 +64,21 @@ export interface ProductItem {
   price: number;
   is_active: boolean;
 }
+
+export interface ProductItemOption {
+  label: string;
+  value: number;
+  meta: {
+    sku: string;
+    sku_imei?: string;
+    category: string;
+    type: string;
+    brand: string;
+    varian: string;
+    memory?: string;
+    color?: string;
+    color_hex?: string;
+    qty: number;
+    price: number;
+  };
+}

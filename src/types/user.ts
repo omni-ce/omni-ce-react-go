@@ -18,3 +18,9 @@ export interface User {
   is_active: boolean;
   created_at: string;
 }
+
+export interface UserOption {
+  label: string;
+  value: string;
+  array: string[]; // roles name
+}

@@ -16,6 +16,14 @@ export interface CompanyEntity {
   updated_by: number;
 }
 
+export interface CompanyEntityOption {
+  label: string;
+  value: string;
+  meta: {
+    logo: string;
+  };
+}
+
 // cabang
 export interface CompanyBranch {
   id: number;

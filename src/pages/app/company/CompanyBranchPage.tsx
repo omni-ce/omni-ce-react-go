@@ -7,7 +7,7 @@ import Pagination, {
 } from "@/components/Pagination";
 import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
-import type { CompanyBranch } from "@/types/company";
+import type { CompanyBranch, CompanyEntityOption } from "@/types/company";
 import { Badge } from "@/components/ui/Badge";
 import { IconComponent } from "@/components/ui/IconSelector";
 
@@ -28,6 +28,15 @@ export default function CompanyBranchPage({ ruleKey }: Props) {
         type: "select",
         required: true,
         selectOptions: "company-entities",
+        selectFormat: (item: CompanyEntityOption) => ({
+          value: item.value,
+          render: (
+            <div className="flex items-center gap-2">
+              <img src={item.meta.logo} alt="logo" className="w-6 h-6" />
+              <span>{item.label}</span>
+            </div>
+          ),
+        }),
       },
       {
         key: "pic_id",

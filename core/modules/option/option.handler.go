@@ -115,7 +115,13 @@ func CompanyEntities(c *fiber.Ctx) error {
 	rows := make([]types.Option, 0)
 	for _, row := range entities {
 		if row.IsActive {
-			rows = append(rows, row.Option())
+			rows = append(rows, types.Option{
+				Label: row.Name,
+				Value: row.ID,
+				Meta: &map[string]any{
+					"logo": row.Logo,
+				},
+			})
 		}
 	}
 
@@ -442,10 +448,10 @@ func ProductItems(c *fiber.Ctx) error {
 		Find(&categories).Error; err != nil {
 		return dto.InternalServerError(c, "Failed to find product categories", nil)
 	}
-	types := make([]product.ProductType, 0)
+	_types := make([]product.ProductType, 0)
 	if err := variable.Db.Model(&product.ProductType{}).
 		Where("id IN (?)", typeIds).
-		Find(&types).Error; err != nil {
+		Find(&_types).Error; err != nil {
 		return dto.InternalServerError(c, "Failed to find product types", nil)
 	}
 	brands := make([]product.ProductBrand, 0)
@@ -478,7 +484,7 @@ func ProductItems(c *fiber.Ctx) error {
 		categoryMap[row.ID] = row.Name
 	}
 	typeMap := make(map[uint]string)
-	for _, row := range types {
+	for _, row := range _types {
 		typeMap[row.ID] = row.Name
 	}
 	brandMap := make(map[uint]string)
@@ -494,11 +500,13 @@ func ProductItems(c *fiber.Ctx) error {
 		memoryMap[row.ID] = fmt.Sprintf("%d GB / %d GB", row.Ram, row.InternalStorage)
 	}
 	colorMap := make(map[uint]string)
+	colorHexMap := make(map[uint]string)
 	for _, row := range colors {
 		colorMap[row.ID] = row.Name
+		colorHexMap[row.ID] = row.HexCode
 	}
 
-	rows := make([]map[string]interface{}, 0)
+	rows := make([]types.Option, 0)
 	for _, row := range items {
 		category := categoryMap[row.CategoryID]
 		_type := typeMap[row.TypeID]
@@ -509,8 +517,10 @@ func ProductItems(c *fiber.Ctx) error {
 			memory = memoryMap[*row.MemoryID]
 		}
 		color := ""
+		colorHex := ""
 		if row.ColorID != nil {
 			color = colorMap[*row.ColorID]
+			colorHex = colorHexMap[*row.ColorID]
 		}
 
 		label := fmt.Sprintf("%s %s", brand, variant)
@@ -520,31 +530,22 @@ func ProductItems(c *fiber.Ctx) error {
 		if color != "" {
 			label += fmt.Sprintf(" (%s)", color)
 		}
-		rows = append(rows, map[string]interface{}{
-			"value":         row.ID,
-			"label":         label,
-			"id":            row.ID,
-			"name":          label,
-			"sku":           row.SKU,
-			"sku_imei":      row.SkuIMEI,
-			"category_id":   row.CategoryID,
-			"category_name": category,
-			"type_id":       row.TypeID,
-			"type_name":     _type,
-			"brand_id":      row.BrandID,
-			"brand_name":    brand,
-			"variant_id":    row.VariantID,
-			"variant_name":  variant,
-			"memory_id":     row.MemoryID,
-			"memory_name":   memory,
-			"color_id":      row.ColorID,
-			"color_name":    color,
-			"qty":           row.Qty,
-			"price":         row.Price,
-			"created_at":    row.CreatedAt,
-			"created_by":    row.CreatedBy,
-			"updated_at":    row.UpdatedAt,
-			"updated_by":    row.UpdatedBy,
+		rows = append(rows, types.Option{
+			Label: label,
+			Value: row.ID,
+			Meta: &map[string]any{
+				"sku":       row.SKU,
+				"sku_imei":  row.SkuIMEI,
+				"category":  category,
+				"type":      _type,
+				"brand":     brand,
+				"variant":   variant,
+				"memory":    memory,
+				"color":     color,
+				"color_hex": colorHex,
+				"qty":       row.Qty,
+				"price":     row.Price,
+			},
 		})
 	}
 
