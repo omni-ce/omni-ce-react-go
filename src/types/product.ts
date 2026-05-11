@@ -66,10 +66,12 @@ export interface ProductItem {
   sku_imei?: string;
   category_id: number;
   category_name: string;
+  category_icon: string;
   type_id: number;
   type_name: string;
   varian_id: number;
   brand_name: string;
+  brand_logo: string;
   varian_name: string;
   memory_id?: number;
   memory_name?: string;

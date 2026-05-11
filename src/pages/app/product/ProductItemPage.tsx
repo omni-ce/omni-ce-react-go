@@ -149,18 +149,27 @@ export default function ProductItemPage({ ruleKey }: Props) {
       {
         key: "category_name",
         header: language({ id: "Kategori", en: "Category" }),
-        options: "product-categories",
+        sort: true,
+        search: true,
         render: (item) => {
-          let name = item.category_name;
+          let category_name = item.category_name;
           try {
-            if (name.startsWith("{")) {
-              const obj = JSON.parse(name);
-              name = language(obj);
+            if (category_name.startsWith("{")) {
+              const obj = JSON.parse(category_name);
+              category_name = language(obj);
             }
           } catch (e) {
             // fallback to raw name
           }
-          return <span className="font-medium">{name}</span>;
+          return (
+            <span className="font-medium flex items-center gap-2">
+              <IconComponent
+                iconName={item.category_icon}
+                className="text-lg"
+              />
+              <span>{category_name}</span>
+            </span>
+          );
         },
       },
       {
@@ -186,7 +195,20 @@ export default function ProductItemPage({ ruleKey }: Props) {
         header: language({ id: "Merek Varian", en: "Brand Variant" }),
         options: "product-brands",
         render: (item) => (
-          <span className="max-w-xs truncate block">{item.brand_name}</span>
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 overflow-hidden rounded-lg border border-dark-600 bg-dark-800/50 p-1.5 flex items-center justify-center group-hover:border-accent-500/30 transition-colors">
+              <Image
+                src={item.brand_logo}
+                alt={item.brand_name}
+                className="max-h-full max-w-full object-contain"
+              />
+            </div>
+            <div className="flex flex-col">
+              <span className="font-semibold text-dark-100">
+                {item.brand_name}
+              </span>
+            </div>
+          </div>
         ),
       },
       {

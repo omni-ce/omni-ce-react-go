@@ -160,8 +160,10 @@ func ItemPaginate(c *fiber.Ctx) error {
 		item := row.Map()
 		// Inject relationship names for FE display
 		item["category_name"] = row.Category.Name
+		item["category_icon"] = row.Category.Icon
 		item["type_name"] = row.Type.Name
 		item["brand_name"] = row.Brand.Name
+		item["brand_logo"] = row.Brand.Logo
 		item["varian_name"] = row.Variant.Name
 		if row.MemoryID != nil {
 			item["memory_name"] = fmt.Sprintf("%d GB / %d GB", row.Memory.Ram, row.Memory.InternalStorage)

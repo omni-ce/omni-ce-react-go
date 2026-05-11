@@ -73,7 +73,7 @@ export const ProductImage = ({
       const res = await satellite.delete(
         `/api/product/item/image/remove/${id}`,
       );
-      if (res.data.status === "OK") {
+      if (res.data.status === 200) {
         await fetchImages();
       }
     } catch (e) {
@@ -89,7 +89,7 @@ export const ProductImage = ({
       const res = await satellite.patch(
         `/api/product/item/image/set-primary/${id}`,
       );
-      if (res.data.status === "OK") {
+      if (res.data.status === 200) {
         await fetchImages();
       }
     } catch (e) {
