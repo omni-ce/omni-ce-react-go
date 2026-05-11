@@ -85,7 +85,7 @@ export default function ProductItemPage({ ruleKey }: Props) {
         col: 6,
       },
       {
-        key: "varian_id",
+        key: "variant_id",
         label: language({ id: "Varian", en: "Variant" }),
         type: "select",
         required: true,
@@ -105,6 +105,13 @@ export default function ProductItemPage({ ruleKey }: Props) {
         type: "select",
         required: true,
         selectOptions: "product-colors",
+      },
+      {
+        key: "buy_price",
+        label: language({ id: "Harga Beli", en: "Buy Price" }),
+        type: "price",
+        pricePrefix: "Rp",
+        required: true,
       },
       {
         label: language({ id: "SKU", en: "SKU" }),
@@ -194,7 +201,7 @@ export default function ProductItemPage({ ruleKey }: Props) {
       },
       {
         key: "brand_name",
-        header: language({ id: "Merek Varian", en: "Brand Variant" }),
+        header: language({ id: "Merek", en: "Brand" }),
         options: "product-brands",
         render: (item) => (
           <div className="flex items-center gap-3">
@@ -214,12 +221,12 @@ export default function ProductItemPage({ ruleKey }: Props) {
         ),
       },
       {
-        key: "varian_name",
-        header: language({ id: "Merek Varian", en: "Brand Variant" }),
+        key: "variant_name",
+        header: language({ id: "Varian", en: "Variant" }),
         ref: "brand_name",
         options: "product-variants/{brand_name}",
         render: (item) => (
-          <span className="max-w-xs truncate block">{item.varian_name}</span>
+          <span className="max-w-xs truncate block">{item.variant_name}</span>
         ),
       },
       {
@@ -316,7 +323,7 @@ export default function ProductItemPage({ ruleKey }: Props) {
           } catch (e) {
             // fallback to raw name
           }
-          return `${category_name} ${item.brand_name} ${item.varian_name} (${item.memory_name ?? "-"}) ${item.color_name}`;
+          return `${category_name} ${item.brand_name} ${item.variant_name} (${item.memory_name ?? "-"}) ${item.color_name}`;
         }}
         extraActions={[
           {

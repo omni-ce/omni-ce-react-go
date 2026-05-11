@@ -74,10 +74,11 @@ export interface ProductItem {
   category_icon: string;
   type_id: number;
   type_name: string;
-  varian_id: number;
+  brand_id: number;
   brand_name: string;
   brand_logo: string;
-  varian_name: string;
+  variant_id: number;
+  variant_name: string;
   memory_id?: number;
   memory_name?: string;
   color_id?: number;
