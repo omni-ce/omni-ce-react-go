@@ -11,6 +11,7 @@ import type { CompanyBranch, CompanyEntityOption } from "@/types/company";
 import { Badge } from "@/components/ui/Badge";
 import { IconComponent } from "@/components/ui/IconSelector";
 import Image from "@/components/Image";
+import { LanguageKey } from "@/types/world";
 
 interface Props {
   ruleKey?: string;
@@ -79,6 +80,7 @@ export default function CompanyBranchPage({ ruleKey }: Props) {
         label: language({ id: "Nomor Telepon", en: "Phone Number" }),
         type: "phone",
         required: true,
+        phoneDefaultCountry: LanguageKey.ID,
         phoneFirstAntiZero: true,
       },
       {

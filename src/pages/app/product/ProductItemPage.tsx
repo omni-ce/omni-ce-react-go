@@ -88,7 +88,7 @@ export default function ProductItemPage({ ruleKey }: Props) {
         type: "select",
         required: true,
         ref: "brand_id",
-        selectOptions: "product-variants/{brand_id}",
+        selectOptions: "product-variants/{type_id}/{brand_id}",
       },
       {
         key: "memory_id",

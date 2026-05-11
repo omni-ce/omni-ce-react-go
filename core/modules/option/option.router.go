@@ -21,7 +21,7 @@ func ProtectedRoute(api fiber.Router) {
 	api.Get("/product-categories", ProductCategories)
 	api.Get("/product-types/:category_id", ProductTypesByCategory)
 	api.Get("/product-brands", ProductBrands)
-	api.Get("/product-variants/:brand_id", ProductVariant)
+	api.Get("/product-variants/:type_id/:brand_id", ProductVariant)
 	api.Get("/product-memories", ProductMemories)
 	api.Get("/product-colors", ProductColors)
 	api.Get("/product-items", ProductItems)

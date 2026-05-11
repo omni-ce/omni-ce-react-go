@@ -376,8 +376,14 @@ func ProductVariants(c *fiber.Ctx) error {
 }
 
 func ProductVariant(c *fiber.Ctx) error {
-	idParam := c.Params("brand_id")
-	brandID, err := strconv.Atoi(idParam)
+	typeIdParam := c.Params("type_id")
+	typeID, err := strconv.Atoi(typeIdParam)
+	if err != nil {
+		return dto.BadRequest(c, "Invalid type id", nil)
+	}
+
+	brandIdParam := c.Params("brand_id")
+	brandID, err := strconv.Atoi(brandIdParam)
 	if err != nil {
 		return dto.BadRequest(c, "Invalid brand id", nil)
 	}
@@ -385,7 +391,7 @@ func ProductVariant(c *fiber.Ctx) error {
 	variants := make([]product.ProductVariant, 0)
 	if err := variable.Db.
 		Model(&product.ProductVariant{}).
-		Where("brand_id = ? AND is_active = ?", brandID, true).
+		Where("type_id = ? AND brand_id = ? AND is_active = ?", typeID, brandID, true).
 		Find(&variants).
 		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to find product variants", nil)
