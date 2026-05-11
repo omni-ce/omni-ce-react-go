@@ -39,7 +39,10 @@ export default function RoleStepper({
       .then((res) => {
         const data = res.data.data || [];
         setDivisions(
-          data.map((d) => ({ value: String(d.value), label: d.label })),
+          data.map((d) => ({
+            value: String(d.value),
+            label: d.label as string,
+          })),
         );
       })
       .catch(() => setDivisions([]))
@@ -60,7 +63,12 @@ export default function RoleStepper({
       .get<Response<Option[]>>(`/api/option/roles/${divisionId}`)
       .then((res) => {
         const data = res.data.data || [];
-        setRoles(data.map((d) => ({ value: String(d.value), label: d.label })));
+        setRoles(
+          data.map((d) => ({
+            value: String(d.value),
+            label: d.label as string,
+          })),
+        );
       })
       .catch(() => setRoles([]))
       .finally(() => setLoadingRoles(false));

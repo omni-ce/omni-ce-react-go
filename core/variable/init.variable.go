@@ -1,11 +1,13 @@
 package variable
 
 import (
+	"io/fs"
 	"os"
 	"path/filepath"
 )
 
 var UploadsPath string
+var EmbedDist fs.FS
 
 func init() {
 	cwd, _ := os.Getwd()

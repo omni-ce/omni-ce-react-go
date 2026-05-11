@@ -109,7 +109,7 @@ export const ProductImage = ({
               {language({ id: "Galeri Foto Produk", en: "Product Gallery" })}
             </h3>
             <p className="text-xs text-dark-400 mt-1">
-              {row.brand_name} {row.varian_name}{" "}
+              {row.brand_name} {row.variant_name}{" "}
               <span className="font-semibold">({row.memory_name})</span>{" "}
               <span className="text-primary-500 font-semibold">
                 ({row.color_name})

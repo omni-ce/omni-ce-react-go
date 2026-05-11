@@ -369,10 +369,14 @@ export default function DashboardPage({}: DashboardPageProps) {
                   },
                   ...roles
                     .sort((a, b) =>
-                      a.label.localeCompare(b.label, undefined, {
-                        numeric: true,
-                        sensitivity: "base",
-                      }),
+                      (a.label as string).localeCompare(
+                        b.label as string,
+                        undefined,
+                        {
+                          numeric: true,
+                          sensitivity: "base",
+                        },
+                      ),
                     )
                     .map((r) => ({
                       value: String(r.value),
