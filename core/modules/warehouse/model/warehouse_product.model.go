@@ -10,8 +10,8 @@ import (
 
 type WarehouseProduct struct {
 	ID                  uint `json:"id" gorm:"autoIncrement;primaryKey"`
-	WarehouseLocationID uint `json:"warehouse_location_id" gorm:"type:integer;not null"`
-	ProductID           uint `json:"product_id" gorm:"type:integer;not null"`
+	WarehouseLocationID uint `json:"warehouse_location_id" gorm:"type:integer;uniqueIndex:idx_warehouse_product;not null"`
+	ProductID           uint `json:"product_id" gorm:"type:integer;uniqueIndex:idx_warehouse_product;not null"`
 	Qty                 int  `json:"qty" gorm:"type:integer;not null"`
 	IsActive            bool `json:"is_active" gorm:"default:true"`
 

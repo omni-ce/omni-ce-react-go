@@ -217,6 +217,7 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
       }}
     >
       <Pagination
+        ruleKey={ruleKey}
         ref={paginationRef}
         title={language({
           id: "Daftar Produk Gudang",
@@ -226,7 +227,13 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
         module="warehouse/product"
         fields={fields as PaginationField[]}
         popupWidth="80%"
-        ruleKey={ruleKey}
+        extraActions={[
+          {
+            icon: "Ai/AiOutlineProduct",
+            button: (row, onClose) => <>ok</>,
+            component: (row, onClose) => <>ok</>,
+          },
+        ]}
         useIsActive
       />
     </GuardLayout>
