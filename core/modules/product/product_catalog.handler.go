@@ -3,6 +3,7 @@ package product
 import (
 	"fmt"
 	"react-go/core/dto"
+	"react-go/core/function"
 	"react-go/core/modules/product/model"
 	"react-go/core/variable"
 	"strconv"
@@ -11,6 +12,18 @@ import (
 )
 
 func CatalogInfiniteScroll(c *fiber.Ctx) error {
+	var body struct {
+		CategoryID int   `json:"category_id"`
+		TypeID     int   `json:"type_id"`
+		BrandID    int   `json:"brand_id"`
+		Page       int   `json:"page"`  // default: 1
+		Limit      int   `json:"limit"` // default: 20
+		IDs        []int `json:"ids"`   // not in ids
+	}
+	if err := function.RequestBody(c, &body); err != nil {
+		return dto.BadRequest(c, err.Error(), nil)
+	}
+
 	// 1. Get Categories (Fetch into struct to avoid panic, then map to clean response)
 	categoriesData := make([]model.ProductCategory, 0)
 	if err := variable.Db.

@@ -67,5 +67,5 @@ func ProtectedRoute(api fiber.Router) {
 	api.Patch("/item/image/set-primary/:id", ItemImageSetPrimary)
 
 	// Catalog
-	api.Get("/catalog/infinite-scroll", CatalogInfiniteScroll)
+	api.Post("/catalog/infinite-scroll", CatalogInfiniteScroll)
 }
