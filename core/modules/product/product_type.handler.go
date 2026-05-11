@@ -132,6 +132,8 @@ func TypeEdit(c *fiber.Ctx) error {
 		return dto.InternalServerError(c, "Failed to update type", nil)
 	}
 
+	RegenerateItemKeysByAttribute("type", existing.ID)
+
 	return dto.OK(c, "Type updated", fiber.Map{
 		"type": existing.Map(),
 	})

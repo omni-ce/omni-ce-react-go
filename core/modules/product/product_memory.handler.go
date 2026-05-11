@@ -137,6 +137,8 @@ func MemoryEdit(c *fiber.Ctx) error {
 		return dto.InternalServerError(c, "Failed to update memory", nil)
 	}
 
+	RegenerateItemKeysByAttribute("memory", existing.ID)
+
 	return dto.OK(c, "Memory updated", fiber.Map{
 		"memory": existing.Map(),
 	})

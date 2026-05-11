@@ -118,6 +118,8 @@ func BrandEdit(c *fiber.Ctx) error {
 		return dto.InternalServerError(c, "Failed to update brand", nil)
 	}
 
+	RegenerateItemKeysByAttribute("brand", existing.ID)
+
 	return dto.OK(c, "Brand updated", fiber.Map{
 		"brand": existing.Map(),
 	})

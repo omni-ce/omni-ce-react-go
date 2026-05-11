@@ -183,6 +183,8 @@ func VariantEdit(c *fiber.Ctx) error {
 		return dto.InternalServerError(c, "Failed to update variant", nil)
 	}
 
+	RegenerateItemKeysByAttribute("variant", existing.ID)
+
 	return dto.OK(c, "Variant updated", fiber.Map{
 		"variant": existing.Map(),
 	})

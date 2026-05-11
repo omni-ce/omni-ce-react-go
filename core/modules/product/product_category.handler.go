@@ -118,6 +118,8 @@ func CategoryEdit(c *fiber.Ctx) error {
 		return dto.InternalServerError(c, "Failed to update category", nil)
 	}
 
+	RegenerateItemKeysByAttribute("category", existing.ID)
+
 	return dto.OK(c, "Category updated", fiber.Map{
 		"category": existing.Map(),
 	})

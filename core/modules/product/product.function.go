@@ -2,7 +2,10 @@ package product
 
 import (
 	"encoding/json"
+	"fmt"
 	"react-go/core/dto"
+	"react-go/core/modules/product/model"
+	"react-go/core/variable"
 	"regexp"
 	"strings"
 
@@ -45,4 +48,52 @@ func sanitizeKey(s string) string {
 	// Trim dashes from start/end
 	s = strings.Trim(s, "-")
 	return s
+}
+
+func RegenerateItemKeysByAttribute(attribute string, id uint) {
+	var items []model.ProductItem
+	query := variable.Db.Model(&model.ProductItem{})
+	switch attribute {
+	case "category":
+		query = query.Where("category_id = ?", id)
+	case "type":
+		query = query.Where("type_id = ?", id)
+	case "brand":
+		query = query.Where("brand_id = ?", id)
+	case "variant":
+		query = query.Where("varian_id = ?", id)
+	case "memory":
+		query = query.Where("memory_id = ?", id)
+	case "color":
+		query = query.Where("color_id = ?", id)
+	default:
+		return
+	}
+
+	query.Preload("Category").Preload("Type").Preload("Brand").Preload("Variant").Preload("Memory").Preload("Color").Find(&items)
+
+	for _, item := range items {
+		keyNames := make([]string, 0)
+		if item.Category.ID != 0 {
+			keyNames = append(keyNames, item.Category.Name)
+		}
+		if item.Type.ID != 0 {
+			keyNames = append(keyNames, item.Type.Name)
+		}
+		if item.Brand.ID != 0 {
+			keyNames = append(keyNames, item.Brand.Name)
+		}
+		if item.Variant.ID != 0 {
+			keyNames = append(keyNames, item.Variant.Name)
+		}
+		if item.ColorID != nil && item.Color.ID != 0 {
+			keyNames = append(keyNames, item.Color.Name)
+		}
+		if item.MemoryID != nil && item.Memory.ID != 0 {
+			keyNames = append(keyNames, fmt.Sprintf("%d GB / %d GB", item.Memory.Ram, item.Memory.InternalStorage))
+		}
+		
+		newKey := generateKeyFromName(keyNames...)
+		variable.Db.Model(&item).UpdateColumn("key", newKey)
+	}
 }

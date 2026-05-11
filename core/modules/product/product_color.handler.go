@@ -118,6 +118,8 @@ func ColorEdit(c *fiber.Ctx) error {
 		return dto.InternalServerError(c, "Failed to update color", nil)
 	}
 
+	RegenerateItemKeysByAttribute("color", existing.ID)
+
 	return dto.OK(c, "Color updated", fiber.Map{
 		"color": existing.Map(),
 	})
