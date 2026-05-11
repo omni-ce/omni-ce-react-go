@@ -22,8 +22,15 @@ import {
   dummyMenuItems,
   dummyOrders,
 } from "@/dummy";
-import type { CatalogRow, CatalogProductItem } from "@/stores/posStore";
+import type {
+  CatalogRow,
+  CatalogProductItem,
+  CatalogCategory,
+  CatalogType,
+  CatalogBrand,
+} from "@/stores/posStore";
 import { formatRupiah } from "@/utils/convert";
+import type { Response } from "@/types/response";
 
 // ─── Helper ──────────────────────────────────────────────────────────────────
 
@@ -108,17 +115,21 @@ export default function PosPage({ ruleKey }: Props) {
 
   const fetchCatalog = async () => {
     try {
-      const response = await satellite.post(
-        "/api/product/catalog/infinite-scroll",
-        {
-          category_id: activeCategoryId,
-          type_id: activeTypeId,
-          brand_id: activeBrandId,
-          search: debouncedSearch,
-          page: 1,
-          limit: 50,
-        },
-      );
+      const response = await satellite.post<
+        Response<{
+          categories: CatalogCategory[];
+          types: CatalogType[];
+          brands: CatalogBrand[];
+          rows: CatalogRow[];
+        }>
+      >("/api/product/catalog/infinite-scroll", {
+        category_id: activeCategoryId,
+        type_id: activeTypeId,
+        brand_id: activeBrandId,
+        search: debouncedSearch,
+        page: 1,
+        limit: 50,
+      });
       if (response.data.status === 200) {
         setCatalogData(response.data.data);
       }

@@ -50,7 +50,7 @@ export const ProductImage = ({
     if (!formData.image) return;
     setLoading(true);
     try {
-      const res = await satellite.post(
+      const res = await satellite.post<Response<unknown>>(
         `/api/product/item/image/set/${row.id}`,
         {
           url: formData.image as string,
@@ -70,7 +70,7 @@ export const ProductImage = ({
   const handleDelete = async (id: string) => {
     setLoading(true);
     try {
-      const res = await satellite.delete(
+      const res = await satellite.delete<Response<unknown>>(
         `/api/product/item/image/remove/${id}`,
       );
       if (res.data.status === 200) {
@@ -86,7 +86,7 @@ export const ProductImage = ({
   const handleSetPrimary = async (id: string) => {
     setLoading(true);
     try {
-      const res = await satellite.patch(
+      const res = await satellite.patch<Response<unknown>>(
         `/api/product/item/image/set-primary/${id}`,
       );
       if (res.data.status === 200) {

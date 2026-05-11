@@ -244,7 +244,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
     const id = getRowId(row);
     setTogglingActiveId(id);
     try {
-      await satellite.patch(setActiveUrl(id));
+      await satellite.patch<Response<unknown>>(setActiveUrl(id));
       // Optimistic update
       setRows((prev) =>
         prev.map((r) => {
@@ -826,9 +826,12 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
       }
 
       if (editingRow) {
-        await satellite.put(editUrl(getRowId(editingRow)), payload);
+        await satellite.put<Response<unknown>>(
+          editUrl(getRowId(editingRow)),
+          payload,
+        );
       } else {
-        await satellite.post(createUrl, payload);
+        await satellite.post<Response<unknown>>(createUrl, payload);
       }
 
       setDialogOpen(false);
@@ -854,7 +857,9 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
     if (!deletingRow) return;
     setIsSubmitting(true);
     try {
-      await satellite.delete(removeUrl(getRowId(deletingRow)));
+      await satellite.delete<Response<unknown>>(
+        removeUrl(getRowId(deletingRow)),
+      );
       setDeleteDialogOpen(false);
       setDeletingRow(null);
       await fetchRows(
@@ -898,7 +903,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
     if (selectedIds.size === 0) return;
     setIsBulkDeleting(true);
     try {
-      await satellite.post(bulkRemoveUrl, {
+      await satellite.post<Response<unknown>>(bulkRemoveUrl, {
         ids: Array.from(selectedIds),
       });
       setBulkDeleteDialogOpen(false);

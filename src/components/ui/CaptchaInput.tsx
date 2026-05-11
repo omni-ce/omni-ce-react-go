@@ -6,6 +6,7 @@ import { useThemeStore } from "@/stores/themeStore";
 import { cn } from "@/lib/utils";
 import * as encryption from "@/lib/encryption";
 import { GeneralEnigmaSchema } from "@/enigma/general.enigma";
+import type { Response } from "@/types/response";
 
 export type CaptchaSecurity = "low" | "medium" | "strong";
 interface CaptchaProps {
@@ -122,21 +123,19 @@ export default function CaptchaInput({
 
         let response;
         if (lastId) {
-          response = await satellite.post(
+          response = await satellite.post<Response<unknown>>(
             `/api/captcha/regenerate${previewQuery}`,
             {
               last_captcha_id: lastId,
             },
           );
         } else {
-          response = await satellite.get(
+          response = await satellite.get<Response<unknown>>(
             `/api/captcha/generate${previewQuery}`,
           );
         }
         if (response.status !== 200) {
-          throw new Error(
-            response.data?.message || "Failed to generate captcha",
-          );
+          throw new Error(response.data?.message);
         }
         const data = response.data?.data;
 
@@ -180,10 +179,13 @@ export default function CaptchaInput({
         }
 
         try {
-          const response = await satellite.post("/captcha/validate", {
-            captcha_id: captchaId,
-            captcha: userInput,
-          });
+          const response = await satellite.post<Response<unknown>>(
+            "/captcha/validate",
+            {
+              captcha_id: captchaId,
+              captcha: userInput,
+            },
+          );
 
           if (response.status === 204) {
             setError("");

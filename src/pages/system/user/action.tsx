@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import type { User } from "@/types/user";
 import type { AxiosError } from "axios";
 import { LanguageKey } from "@/types/world";
+import type { Response } from "@/types/response";
 
 interface ChangePasswordProps {
   row: User;
@@ -38,7 +39,7 @@ export const ChangePassword = ({ row, onClose }: ChangePasswordProps) => {
 
     setLoading(true);
     try {
-      const res = await satellite.post(
+      const res = await satellite.post<Response<unknown>>(
         `/api/user/change-password-from-user/${row.id}`,
         {
           password: formData.password,

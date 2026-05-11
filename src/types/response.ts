@@ -1,6 +1,8 @@
+import type { LanguageCode } from "@/stores/languageStore";
+
 export interface Response<T> {
   status: number;
-  message: string;
+  message: Record<LanguageCode, string>;
   data: T;
 }
 
