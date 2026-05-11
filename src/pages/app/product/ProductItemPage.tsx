@@ -87,7 +87,7 @@ export default function ProductItemPage({ ruleKey }: Props) {
         label: language({ id: "Varian", en: "Variant" }),
         type: "select",
         required: true,
-        ref: "brand_id",
+        ref: ["type_id", "brand_id"],
         selectOptions: "product-variants/{type_id}/{brand_id}",
       },
       {

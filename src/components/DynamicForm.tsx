@@ -116,7 +116,7 @@ export type DynamicFormFieldNormal<T = unknown> = {
   required?: boolean;
   minLength?: number;
   maxLength?: number;
-  ref?: string;
+  ref?: string | string[];
   debounce?: string;
   fileTarget?: string;
   fileMaxSize?: number;
@@ -203,17 +203,26 @@ function DynamicSelect({
     ) {
       endpoint = (field as DynamicFormFieldNormal).selectOptions as string;
       if ((field as DynamicFormFieldNormal).ref) {
-        const refVal = formData[(field as DynamicFormFieldNormal).ref!];
-        if (!refVal) {
+        const refs = Array.isArray((field as DynamicFormFieldNormal).ref)
+          ? ((field as DynamicFormFieldNormal).ref as string[])
+          : [(field as DynamicFormFieldNormal).ref as string];
+
+        let hasAllRefs = true;
+        for (const r of refs) {
+          const val = formData[r];
+          if (!val) {
+            hasAllRefs = false;
+            break;
+          }
+          endpoint = endpoint.replace(`{${r}}`, String(val));
+        }
+
+        if (!hasAllRefs) {
           setOpts([]);
           setDisabled(true);
           return;
         }
         setDisabled(false);
-        endpoint = endpoint.replace(
-          `{${(field as DynamicFormFieldNormal).ref}}`,
-          String(refVal),
-        );
       }
     } else {
       return;
@@ -288,19 +297,32 @@ function DynamicSelect({
     }
 
     if ((field as DynamicFormFieldNormal).ref) {
-      const refVal = formData[(field as DynamicFormFieldNormal).ref!];
-      if (!refVal) {
+      const refs = Array.isArray((field as DynamicFormFieldNormal).ref)
+        ? ((field as DynamicFormFieldNormal).ref as string[])
+        : [(field as DynamicFormFieldNormal).ref as string];
+
+      const currentRefVals = refs.map((r) => formData[r]);
+      const hasAnyEmpty = currentRefVals.some((v) => !v);
+
+      if (hasAnyEmpty) {
         setOpts([]);
         setDisabled(true);
       } else {
         setDisabled(false);
       }
 
-      if (prevRefVal.current !== undefined && prevRefVal.current !== refVal) {
-        onChangeRef.current("");
-        setOpts([]); // Clear options when dependency changes
+      if (prevRefVal.current !== undefined) {
+        const prevVals = JSON.parse(prevRefVal.current) as (
+          | string
+          | undefined
+        )[];
+        const changed = currentRefVals.some((v, i) => v !== prevVals[i]);
+        if (changed) {
+          onChangeRef.current("");
+          setOpts([]);
+        }
       }
-      prevRefVal.current = refVal;
+      prevRefVal.current = JSON.stringify(currentRefVals);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -310,7 +332,7 @@ function DynamicSelect({
     (field as DynamicFormFieldNormal).ref,
     // eslint-disable-next-line react-hooks/exhaustive-deps
     (field as DynamicFormFieldNormal).ref
-      ? formData[(field as DynamicFormFieldNormal).ref!]
+      ? formData[(field as DynamicFormFieldNormal).ref! as string]
       : undefined,
     // eslint-disable-next-line react-hooks/exhaustive-deps
     formData[(field as DynamicFormFieldNormal).key], // Re-run if value changes externally

@@ -72,7 +72,7 @@ export interface PaginationColumn<T, TFilter = unknown> {
   sort?: boolean;
   search?: boolean;
   options?: { label: string; value: string | number }[] | string;
-  ref?: string;
+  ref?: string | string[];
   headerClassName?: string;
   cellClassName?: string;
   rule?: RuleType;
@@ -419,26 +419,35 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
         let endpoint = col.options;
 
         if (col.ref) {
-          const refValue = columnSearches[col.ref];
-          if (!refValue) {
-            setDynamicOptions((prev) => ({ ...prev, [col.key]: [] }));
-            return;
+          const refs = Array.isArray(col.ref) ? col.ref : [col.ref];
+          let hasAllRefs = true;
+
+          for (const r of refs) {
+            const refValue = columnSearches[r];
+            if (!refValue) {
+              hasAllRefs = false;
+              break;
+            }
+
+            // Find the ID/Value for this label in the ref column's options
+            const refCol = mergedColumns.find((c) => c.key === r);
+            if (refCol) {
+              const refOptions =
+                typeof refCol.options === "string"
+                  ? dynamicOptions[refCol.key]
+                  : refCol.options;
+              const found = refOptions?.find((o) => o.label === refValue);
+              if (found) {
+                endpoint = endpoint.replace(`{${r}}`, String(found.value));
+              } else {
+                endpoint = endpoint.replace(`{${r}}`, refValue);
+              }
+            }
           }
 
-          // Find the ID/Value for this label in the ref column's options
-          const refCol = mergedColumns.find((c) => c.key === col.ref);
-          if (refCol) {
-            const refOptions =
-              typeof refCol.options === "string"
-                ? dynamicOptions[refCol.key]
-                : refCol.options;
-            const found = refOptions?.find((o) => o.label === refValue);
-            if (found) {
-              endpoint = endpoint.replace(`{${col.ref}}`, String(found.value));
-            } else {
-              // If not found, it might be a direct value or we can't resolve
-              endpoint = endpoint.replace(`{${col.ref}}`, refValue);
-            }
+          if (!hasAllRefs) {
+            setDynamicOptions((prev) => ({ ...prev, [col.key]: [] }));
+            return;
           }
         }
 
@@ -1129,7 +1138,11 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                             <SearchableSelect
                               size="sm"
                               disabled={
-                                column.ref ? !columnSearches[column.ref] : false
+                                column.ref
+                                  ? Array.isArray(column.ref)
+                                    ? column.ref.some((r) => !columnSearches[r])
+                                    : !columnSearches[column.ref]
+                                  : false
                               }
                               onOpen={() => handleFetchOptions(column)}
                               value={(() => {
@@ -1159,8 +1172,13 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                                   // Cascading clear: if this column is cleared, clear all columns that depend on it
                                   if (!searchVal || searchVal === "") {
                                     mergedColumns.forEach((c) => {
-                                      if (c.ref === column.key) {
-                                        newState[c.key] = "";
+                                      if (c.ref) {
+                                        const isDependent = Array.isArray(c.ref)
+                                          ? c.ref.includes(column.key)
+                                          : c.ref === column.key;
+                                        if (isDependent) {
+                                          newState[c.key] = "";
+                                        }
                                       }
                                     });
                                   }
