@@ -6,19 +6,19 @@ import (
 	"react-go/core/function"
 	"react-go/core/modules/product/model"
 	"react-go/core/variable"
-	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 func CatalogInfiniteScroll(c *fiber.Ctx) error {
 	var body struct {
-		CategoryID int   `json:"category_id"`
-		TypeID     int   `json:"type_id"`
-		BrandID    int   `json:"brand_id"`
-		Page       int   `json:"page"`  // default: 1
-		Limit      int   `json:"limit"` // default: 20
-		IDs        []int `json:"ids"`   // not in ids
+		CategoryID int    `json:"category_id"`
+		TypeID     int    `json:"type_id"`
+		BrandID    int    `json:"brand_id"`
+		Search     string `json:"search"`
+		Page       int    `json:"page"`  // default: 1
+		Limit      int    `json:"limit"` // default: 20
+		IDs        []int  `json:"ids"`   // not in ids
 	}
 	if err := function.RequestBody(c, &body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
@@ -44,11 +44,10 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 
 	// 2. Get Types
 	typesData := make([]model.ProductType, 0)
-	categoryID := c.Query("category_id")
-	if categoryID != "" {
+	if body.CategoryID != 0 {
 		if err := variable.Db.
 			Select("id, key, name").
-			Where("category_id = ? AND is_active = ?", categoryID, true).
+			Where("category_id = ? AND is_active = ?", body.CategoryID, true).
 			Find(&typesData).Error; err != nil {
 			return dto.InternalServerError(c, "Failed to get types", nil)
 		}
@@ -63,12 +62,11 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 	}
 
 	// 3. Get Brand
-	typeID := c.Query("type_id")
 	brandsData := make([]model.ProductBrand, 0)
-	if typeID != "" {
+	if body.TypeID != 0 {
 		if err := variable.Db.
 			Select("id, key, name, logo").
-			Where("type_id = ? AND is_active = ?", typeID, true).
+			Where("type_id = ? AND is_active = ?", body.TypeID, true).
 			Find(&brandsData).Error; err != nil {
 			return dto.InternalServerError(c, "Failed to get brands", nil)
 		}
@@ -95,25 +93,33 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 		Where("is_active = ?", true)
 
 	// Filter conditions
-	if categoryID != "" {
-		db = db.Where("category_id = ?", categoryID)
+	if body.CategoryID != 0 {
+		db = db.Where("category_id = ?", body.CategoryID)
 	}
-	if typeID != "" {
-		db = db.Where("type_id = ?", typeID)
+	if body.TypeID != 0 {
+		db = db.Where("type_id = ?", body.TypeID)
 	}
-	if brandID := c.Query("brand_id"); brandID != "" {
-		db = db.Where("brand_id = ?", brandID)
+	if body.BrandID != 0 {
+		db = db.Where("brand_id = ?", body.BrandID)
 	}
-	if search := c.Query("search"); search != "" {
-		db = db.Where("sku LIKE ?", "%"+search+"%")
+	if body.Search != "" {
+		db = db.Where("sku LIKE ?", "%"+body.Search+"%")
+	}
+	if len(body.IDs) > 0 {
+		db = db.Where("id NOT IN ?", body.IDs)
 	}
 
 	// Pagination parameters
-	limit, _ := strconv.Atoi(c.Query("limit", "20"))
-	offset, _ := strconv.Atoi(c.Query("offset", "0"))
+	if body.Page <= 0 {
+		body.Page = 1
+	}
+	if body.Limit <= 0 {
+		body.Limit = 20
+	}
+	offset := (body.Page - 1) * body.Limit
 
 	var items []model.ProductItem
-	if err := db.Limit(limit).Offset(offset).Find(&items).Error; err != nil {
+	if err := db.Limit(body.Limit).Offset(offset).Find(&items).Error; err != nil {
 		return dto.InternalServerError(c, "Failed to get catalog items", nil)
 	}
 
@@ -144,6 +150,7 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 	return dto.OK(c, "Success get catalog", fiber.Map{
 		"categories": categories,
 		"types":      types,
+		"brands":     brands,
 		"rows":       rows,
 	})
 }

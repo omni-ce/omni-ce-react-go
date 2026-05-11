@@ -234,7 +234,7 @@ export default function PosPage({ ruleKey }: Props) {
               </h2>
               <button
                 onClick={() =>
-                  satellite.get("/api/product/catalog/infinite-scroll")
+                  satellite.post("/api/product/catalog/infinite-scroll", {})
                 }
                 className="p-1.5 rounded-lg hover:bg-dark-800 text-dark-400 hover:text-foreground transition-all"
                 title="Refresh Catalog (Debug)"
