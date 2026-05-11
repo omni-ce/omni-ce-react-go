@@ -56,13 +56,28 @@ export default function WarehouseLocationPage({ ruleKey }: Props) {
         selectFormat: (item: UserOption) => ({
           value: item.value,
           render: (
-            <div className="flex items-center gap-2">
-              <Image
-                src={item.meta.avatar}
-                alt="avatar"
-                className="w-6 h-6 rounded-full"
-              />
-              <span>{item.label}</span>
+            <div className="flex flex-col gap-1 py-1">
+              <div className="flex items-center gap-2">
+                <Image
+                  src={item.meta.avatar}
+                  alt="avatar"
+                  className="w-6 h-6 rounded-full"
+                />
+                <span className="font-medium">{item.label}</span>
+              </div>
+              {item.array && item.array.length > 0 && (
+                <div className="flex flex-wrap gap-1 ml-8">
+                  {item.array.map((tag) => (
+                    <Badge
+                      key={tag}
+                      variant="outline"
+                      className="text-[9px] py-0 h-4 border-dark-600 bg-dark-800 text-dark-300 px-1.5"
+                    >
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              )}
             </div>
           ),
         }),
