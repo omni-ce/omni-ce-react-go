@@ -227,9 +227,11 @@ func ProductPaginate(c *fiber.Ctx) error {
 		}
 
 		p["entity_name"] = entity.Name
+		p["entity_logo"] = entity.Logo
 		p["branch_name"] = branch.Name
 		p["warehouse_location_name"] = warehouse_location.Name
 		p["product_sku"] = product_item.SKU
+		p["product_brand_logo"] = product_brand.Logo
 		product_name := fmt.Sprintf("%s %s", product_brand.Name, product_variant.Name)
 		if product_memory.ID != 0 {
 			product_name += fmt.Sprintf(" (%d GB / %d GB)", product_memory.Ram, product_memory.InternalStorage)

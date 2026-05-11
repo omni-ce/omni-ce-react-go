@@ -105,9 +105,16 @@ export default function WarehouseLocationPage({ ruleKey }: Props) {
         sort: true,
         options: "company-branches",
         render: (item) => (
-          <span className="font-medium">
-            {item.entity_name} - {item.branch_name}
-          </span>
+          <div className="flex items-center gap-2">
+            <Image
+              src={item.entity_logo}
+              alt="logo"
+              className="w-6 h-6 rounded-full"
+            />
+            <span className="font-medium">
+              {item.entity_name} - {item.branch_name}
+            </span>
+          </div>
         ),
       },
       {
@@ -115,7 +122,16 @@ export default function WarehouseLocationPage({ ruleKey }: Props) {
         header: language({ id: "PIC", en: "PIC" }),
         sort: true,
         search: true,
-        render: (item) => <span className="font-medium">{item.pic_name}</span>,
+        render: (item) => (
+          <div className="flex items-center gap-2">
+            <Image
+              src={item.pic_avatar}
+              alt="avatar"
+              className="w-6 h-6 rounded-full"
+            />
+            <span className="font-medium">{item.pic_name}</span>
+          </div>
+        ),
       },
       {
         key: "name",

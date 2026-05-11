@@ -126,8 +126,16 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
         sort: true,
         search: true,
         render: (item) => (
-          <span className="font-medium">
-            {item.entity_name} - {item.branch_name}: {` `}
+          <span className="font-medium flex flex-col">
+            <div className="flex items-center gap-2">
+              <Image
+                src={item.entity_logo}
+                alt="logo"
+                className="w-6 h-6 rounded-full"
+              />
+              <span>{item.entity_name}</span>
+            </div>
+            {item.branch_name}: {` `}
             {item.warehouse_location_name}
           </span>
         ),
@@ -154,6 +162,11 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
           }
           return (
             <div className="flex flex-col gap-1">
+              <Image
+                src={item.product_brand_logo}
+                alt={item.product_name}
+                className="max-h-full max-w-full object-contain"
+              />
               <span className="font-medium">{item.product_name}</span>
               <span className="text-xs text-muted-foreground">
                 {categoryName} {typeName}

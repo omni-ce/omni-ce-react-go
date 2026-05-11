@@ -121,8 +121,10 @@ func LocationPaginate(c *fiber.Ctx) error {
 			}
 		}
 		loc["entity_name"] = entity.Name
+		loc["entity_logo"] = entity.Logo
 		loc["branch_name"] = branch.Name
 		loc["pic_name"] = pic.Name
+		loc["pic_avatar"] = pic.Avatar
 		loc["map"] = map[string]any{
 			"latitude":  locations[i].Latitude,
 			"longitude": locations[i].Longitude,
