@@ -97,6 +97,7 @@ export interface PaginationProps<T, F = unknown> {
   dataDeleteName?: (row: T) => string;
   onSelectRow?: (row: T) => void;
   dummyData?: unknown[];
+  popupWidth?: string | number;
 }
 
 export interface PaginationHandle {
@@ -131,6 +132,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
     dataDeleteName,
     onSelectRow,
     dummyData,
+    popupWidth,
   }: PaginationProps<T, F>,
   ref: Ref<PaginationHandle>,
 ) {
@@ -1354,7 +1356,11 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
 
       {/* ─── Add / Edit Dialog ──────────────────────────────────────── */}
       {hasCrud && filteredFields && (
-        <Dialog open={dialogOpen} onClose={() => {}} width="520px">
+        <Dialog
+          open={dialogOpen}
+          onClose={() => {}}
+          width={popupWidth ? String(popupWidth) : "520px"}
+        >
           <DialogContent onClose={() => setDialogOpen(false)}>
             <DialogHeader>
               <DialogTitle>
