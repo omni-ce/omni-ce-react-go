@@ -304,6 +304,38 @@ func ItemEdit(c *fiber.Ctx) error {
 	existing.SkuIMEI = body.SkuIMEI
 	existing.UpdatedBy = currentUser.ID
 
+	// Regenerate Key
+	keyNames := make([]string, 0)
+	var cat model.ProductCategory
+	if err := variable.Db.First(&cat, existing.CategoryID).Error; err == nil {
+		keyNames = append(keyNames, cat.Name)
+	}
+	var typ model.ProductType
+	if err := variable.Db.First(&typ, existing.TypeID).Error; err == nil {
+		keyNames = append(keyNames, typ.Name)
+	}
+	var brnd model.ProductBrand
+	if err := variable.Db.First(&brnd, existing.BrandID).Error; err == nil {
+		keyNames = append(keyNames, brnd.Name)
+	}
+	var vrnt model.ProductVariant
+	if err := variable.Db.First(&vrnt, existing.VariantID).Error; err == nil {
+		keyNames = append(keyNames, vrnt.Name)
+	}
+	if existing.ColorID != nil {
+		var clr model.ProductColor
+		if err := variable.Db.First(&clr, *existing.ColorID).Error; err == nil {
+			keyNames = append(keyNames, clr.Name)
+		}
+	}
+	if existing.MemoryID != nil {
+		var mem model.ProductMemory
+		if err := variable.Db.First(&mem, *existing.MemoryID).Error; err == nil {
+			keyNames = append(keyNames, fmt.Sprintf("%d GB / %d GB", mem.Ram, mem.InternalStorage))
+		}
+	}
+	existing.Key = generateKeyFromName(keyNames...)
+
 	if err := variable.Db.
 		Save(&existing).
 		Error; err != nil {
