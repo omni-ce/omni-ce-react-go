@@ -118,14 +118,28 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 	}
 	offset := (body.Page - 1) * body.Limit
 
-	var items []model.ProductItem
+	items := make([]model.ProductItem, 0)
 	if err := db.Limit(body.Limit).Offset(offset).Find(&items).Error; err != nil {
+		return dto.InternalServerError(c, "Failed to get catalog items", nil)
+	}
+	brandIds := make([]uint, 0)
+	for _, item := range items {
+		brandIds = append(brandIds, item.BrandID)
+	}
+
+	variants := make([]model.ProductVariant, 0)
+	if err := variable.Db.Model(&model.ProductVariant{}).
+		Select("id, key, name, price, qty").
+		Preload("Memory").
+		Preload("Color").
+		Where("is_active = ? AND brand_id IN ?", true, brandIds).
+		Limit(body.Limit).Offset(offset).Find(&variants).Error; err != nil {
 		return dto.InternalServerError(c, "Failed to get catalog items", nil)
 	}
 
 	// 4. Map Result (Explicitly select fields for response)
-	rows := make([]fiber.Map, 0, len(items))
-	for _, row := range items {
+	rows := make([]fiber.Map, 0)
+	for _, row := range variants {
 		item := fiber.Map{
 			"id":            row.ID,
 			"sku":           row.SKU,
