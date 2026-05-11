@@ -29,12 +29,27 @@ interface PosState {
   paymentMethod: PaymentMethod;
   isPanelOpen: boolean;
   activeOrderType: OrderStatus;
-  activeCategory: string;
+  activeCategoryId: number;
+  activeTypeId: number;
+  activeBrandId: number;
+
+  categories: any[];
+  types: any[];
+  brands: any[];
+  catalogItems: any[];
 
   setPanelOpen: (open: boolean) => void;
   setPaymentMethod: (method: PaymentMethod) => void;
   setActiveOrderType: (type: OrderStatus) => void;
-  setActiveCategory: (category: string) => void;
+  setActiveCategoryId: (id: number) => void;
+  setActiveTypeId: (id: number) => void;
+  setActiveBrandId: (id: number) => void;
+  setCatalogData: (data: {
+    categories: any[];
+    types: any[];
+    brands: any[];
+    rows: any[];
+  }) => void;
   addToCart: (item: MenuItem) => void;
   removeFromCart: (itemId: number) => void;
   clearCart: () => void;
@@ -45,12 +60,29 @@ export const usePosStore = create<PosState>((set) => ({
   paymentMethod: "card",
   isPanelOpen: false,
   activeOrderType: "all",
-  activeCategory: "all",
+  activeCategoryId: 0,
+  activeTypeId: 0,
+  activeBrandId: 0,
+
+  categories: [],
+  types: [],
+  brands: [],
+  catalogItems: [],
 
   setPanelOpen: (open) => set({ isPanelOpen: open }),
   setPaymentMethod: (method) => set({ paymentMethod: method }),
   setActiveOrderType: (type) => set({ activeOrderType: type }),
-  setActiveCategory: (category) => set({ activeCategory: category }),
+  setActiveCategoryId: (id) =>
+    set({ activeCategoryId: id, activeTypeId: 0, activeBrandId: 0 }),
+  setActiveTypeId: (id) => set({ activeTypeId: id, activeBrandId: 0 }),
+  setActiveBrandId: (id) => set({ activeBrandId: id }),
+  setCatalogData: (data) =>
+    set({
+      categories: data.categories || [],
+      types: data.types || [],
+      brands: data.brands || [],
+      catalogItems: data.rows || [],
+    }),
 
   addToCart: (menuItem) =>
     set((state) => {

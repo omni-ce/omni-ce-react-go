@@ -66,9 +66,18 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 	// 3. Get Brand
 	brandsData := make([]model.ProductBrand, 0)
 	if body.TypeID != 0 {
+		brandIds := make([]uint, 0)
+		if err := variable.Db.
+			Model(&model.ProductItem{}).
+			Where("type_id = ? AND is_active = ?", body.TypeID, true).
+			Distinct("brand_id").
+			Pluck("brand_id", &brandIds).
+			Error; err != nil {
+			return dto.InternalServerError(c, "Failed to get brand IDs", nil)
+		}
 		if err := variable.Db.
 			Select("id, key, name, logo").
-			Where("type_id = ? AND is_active = ?", body.TypeID, true).
+			Where("id IN ? AND is_active = ?", brandIds, true).
 			Find(&brandsData).
 			Error; err != nil {
 			return dto.InternalServerError(c, "Failed to get brands", nil)

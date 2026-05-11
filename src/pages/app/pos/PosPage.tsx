@@ -9,7 +9,13 @@ import {
   type MenuItem,
 } from "@/stores/posStore";
 import { cn } from "@/lib/utils";
-import { categories, dummyMenuItems, dummyOrders } from "@/dummy";
+import { useEffect } from "react";
+import { useDebounce } from "@/hooks/useDebounce";
+import {
+  categories as dummyCategories,
+  dummyMenuItems,
+  dummyOrders,
+} from "@/dummy";
 
 // ─── Helper ──────────────────────────────────────────────────────────────────
 
@@ -74,16 +80,55 @@ export default function PosPage({ ruleKey }: Props) {
     paymentMethod,
     isPanelOpen,
     activeOrderType,
-    activeCategory,
     setPanelOpen,
     setPaymentMethod,
     setActiveOrderType,
-    setActiveCategory,
     addToCart,
     removeFromCart,
   } = usePosStore();
 
   const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearch = useDebounce(searchQuery, 500);
+
+  const {
+    categories,
+    types,
+    brands,
+    catalogItems,
+    activeCategoryId,
+    activeTypeId,
+    activeBrandId,
+    setActiveCategoryId,
+    setActiveTypeId,
+    setActiveBrandId,
+    setCatalogData,
+  } = usePosStore();
+
+  const fetchCatalog = async () => {
+    try {
+      const response = await satellite.post(
+        "/api/product/catalog/infinite-scroll",
+        {
+          category_id: activeCategoryId,
+          type_id: activeTypeId,
+          brand_id: activeBrandId,
+          search: debouncedSearch,
+          page: 1,
+          limit: 50,
+        },
+      );
+      if (response.data.status === 200) {
+        setCatalogData(response.data.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch catalog:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCatalog();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeCategoryId, activeTypeId, activeBrandId, debouncedSearch]);
 
   const orderScrollRef = useRef<HTMLDivElement>(null);
   const categoryScrollRef = useRef<HTMLDivElement>(null);
@@ -118,15 +163,8 @@ export default function PosPage({ ruleKey }: Props) {
   }, [activeOrderType]);
 
   const filteredMenu = useMemo(() => {
-    return dummyMenuItems.filter((item) => {
-      const matchesCategory =
-        activeCategory === "all" || item.category === activeCategory;
-      const matchesSearch = item.name
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
-      return matchesCategory && matchesSearch;
-    });
-  }, [activeCategory, searchQuery]);
+    return catalogItems;
+  }, [catalogItems]);
 
   const getCartQty = (menuItemId: number) => {
     const item = cart.find((c) => c.menuItem.id === menuItemId);
@@ -292,27 +330,91 @@ export default function PosPage({ ruleKey }: Props) {
           {/* Category Tabs */}
           <div
             ref={categoryScrollRef}
-            className="flex gap-2 overflow-x-auto pb-3 scrollbar-hide"
+            className="flex flex-col gap-3 pb-3 overflow-visible"
           >
-            {categories.map((cat) => (
+            {/* Categories */}
+            <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
               <button
-                key={cat.key}
-                onClick={() => setActiveCategory(cat.key)}
+                onClick={() => setActiveCategoryId(0)}
                 className={`flex items-center gap-2.5 px-4 py-2.5 rounded-2xl border text-xs font-semibold shrink-0 transition-all duration-200 ${
-                  activeCategory === cat.key
+                  activeCategoryId === 0
                     ? "bg-badge-light-blue border-accent-500/40 text-accent-500 shadow-lg shadow-accent-500/10"
                     : "bg-dark-900 border-dark-600 text-dark-400 hover:border-dark-500 hover:text-foreground"
                 }`}
               >
-                <span className="text-lg">{cat.emoji}</span>
-                <div className="flex flex-col items-start">
-                  <span>{language(cat.label)}</span>
-                  <span className="text-[10px] font-normal text-dark-400">
-                    {cat.count} {language({ id: "item", en: "items" })}
-                  </span>
-                </div>
+                <span className="text-lg">🛍️</span>
+                <span>{language({ id: "Semua", en: "All" })}</span>
               </button>
-            ))}
+              {categories.map((cat) => (
+                <button
+                  key={cat.id}
+                  onClick={() => setActiveCategoryId(cat.id)}
+                  className={`flex items-center gap-2.5 px-4 py-2.5 rounded-2xl border text-xs font-semibold shrink-0 transition-all duration-200 ${
+                    activeCategoryId === cat.id
+                      ? "bg-badge-light-blue border-accent-500/40 text-accent-500 shadow-lg shadow-accent-500/10"
+                      : "bg-dark-900 border-dark-600 text-dark-400 hover:border-dark-500 hover:text-foreground"
+                  }`}
+                >
+                  <IconComponent iconName={cat.icon} className="text-lg" />
+                  <span>
+                    {(() => {
+                      try {
+                        return language(JSON.parse(cat.name));
+                      } catch {
+                        return cat.name;
+                      }
+                    })()}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            {/* Types (Under Category) */}
+            {activeCategoryId !== 0 && types.length > 0 && (
+              <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 border-t border-dark-600/30 pt-3">
+                {types.map((type) => (
+                  <button
+                    key={type.id}
+                    onClick={() => setActiveTypeId(type.id)}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-[11px] font-medium shrink-0 transition-all duration-200 ${
+                      activeTypeId === type.id
+                        ? "bg-accent-500/10 border-accent-500/40 text-accent-500"
+                        : "bg-dark-800 border-dark-700 text-dark-400 hover:border-dark-600 hover:text-foreground"
+                    }`}
+                  >
+                    <span>
+                      {(() => {
+                        try {
+                          return language(JSON.parse(type.name));
+                        } catch {
+                          return type.name;
+                        }
+                      })()}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Brands (Under Type) */}
+            {activeTypeId !== 0 && brands.length > 0 && (
+              <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 border-t border-dark-600/30 pt-3">
+                {brands.map((brand) => (
+                  <button
+                    key={brand.id}
+                    onClick={() => setActiveBrandId(brand.id)}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-[10px] font-medium shrink-0 transition-all duration-200 ${
+                      activeBrandId === brand.id
+                        ? "bg-accent-500/20 border-accent-500/40 text-accent-500"
+                        : "bg-dark-900 border-dark-700 text-dark-500 hover:border-dark-600 hover:text-foreground"
+                    }`}
+                  >
+                    {/* <Image src={brand.logo} className="w-4 h-4 rounded-full" /> */}
+                    <span>{brand.name}</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -331,20 +433,44 @@ export default function PosPage({ ruleKey }: Props) {
                     : "bg-dark-900 border-dark-600 hover:border-dark-500"
                 }`}
               >
-                {/* Emoji as Product Image */}
-                <div className="w-full aspect-square rounded-lg bg-dark-800 flex items-center justify-center mb-2 group-hover:scale-[1.02] transition-transform">
-                  <span className="text-3xl">{item.emoji}</span>
+                {/* Image as Product Image */}
+                <div className="w-full aspect-square rounded-lg bg-dark-800 flex items-center justify-center mb-2 group-hover:scale-[1.02] transition-transform overflow-hidden">
+                  {/* {item.brand_logo ? (
+                    <Image
+                      src={item.brand_logo}
+                      alt={item.varian_name}
+                      className="w-full h-full object-cover opacity-80"
+                    />
+                  ) : (
+                    <span className="text-3xl">📦</span>
+                  )} */}
                 </div>
 
                 {/* Category Tag */}
                 <span className="text-[10px] font-medium text-dark-400 uppercase tracking-wider">
-                  {item.category}
+                  {(() => {
+                    try {
+                      return language(JSON.parse(item.category_name));
+                    } catch {
+                      return item.category_name;
+                    }
+                  })()}
                 </span>
 
                 {/* Name */}
                 <h3 className="text-[13px] font-bold text-foreground mt-0.5 leading-tight line-clamp-1">
-                  {item.name}
+                  {item.varian_name}
                 </h3>
+                <p className="text-[10px] text-dark-400 line-clamp-1">
+                  {item.brand_name} •{" "}
+                  {(() => {
+                    try {
+                      return language(JSON.parse(item.type_name));
+                    } catch {
+                      return item.type_name;
+                    }
+                  })()}
+                </p>
 
                 {/* Price + Controls */}
                 <div className="flex flex-col gap-2 mt-2">
@@ -357,7 +483,7 @@ export default function PosPage({ ruleKey }: Props) {
                         e.stopPropagation();
                         removeFromCart(item.id);
                       }}
-                      className="w-11 h-11 rounded-lg bg-dark-700 text-dark-400 flex items-center justify-center hover:bg-dark-600 hover:text-foreground transition-all text-xl font-bold"
+                      className="w-10 h-10 rounded-lg bg-dark-700 text-dark-400 flex items-center justify-center hover:bg-dark-600 hover:text-foreground transition-all text-xl font-bold"
                     >
                       −
                     </button>
@@ -367,9 +493,15 @@ export default function PosPage({ ruleKey }: Props) {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        addToCart(item);
+                        addToCart({
+                          id: item.id,
+                          name: item.varian_name,
+                          price: item.price,
+                          category: item.category_name,
+                          emoji: "📦",
+                        });
                       }}
-                      className="w-11 h-11 rounded-lg bg-accent-500 text-white flex items-center justify-center hover:bg-accent-600 transition-all text-xl font-bold shadow-md shadow-accent-500/30"
+                      className="w-10 h-10 rounded-lg bg-accent-500 text-white flex items-center justify-center hover:bg-accent-600 transition-all text-xl font-bold shadow-md shadow-accent-500/30"
                     >
                       +
                     </button>
