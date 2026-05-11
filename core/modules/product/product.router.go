@@ -53,6 +53,13 @@ func ProtectedRoute(api fiber.Router) {
 	api.Delete("/color/remove/:id", ColorRemove)
 	api.Post("/color/bulk-remove", ColorBulkRemove)
 
+	// Condition
+	api.Post("/condition/create", ConditionCreate)
+	api.Get("/condition/paginate", ConditionPaginate)
+	api.Put("/condition/edit/:id", ConditionEdit)
+	api.Delete("/condition/remove/:id", ConditionRemove)
+	api.Post("/condition/bulk-remove", ConditionBulkRemove)
+
 	// Item
 	api.Post("/item/create", ItemCreate)
 	api.Get("/item/paginate", ItemPaginate)

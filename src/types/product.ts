@@ -64,6 +64,12 @@ export interface ProductColor {
   name: string;
   hex_code: string;
 }
+export interface ProductCondition {
+  id: number;
+  key: string;
+  name: string;
+  description: string;
+}
 export interface ProductItem {
   id: number;
   key: string;

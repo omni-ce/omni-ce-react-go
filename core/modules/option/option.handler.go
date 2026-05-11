@@ -442,6 +442,23 @@ func ProductColors(c *fiber.Ctx) error {
 	return dto.OK(c, "Get product colors success", rows)
 }
 
+func ProductConditions(c *fiber.Ctx) error {
+	conditions := make([]product.ProductCondition, 0)
+	if err := variable.Db.
+		Model(&product.ProductCondition{}).
+		Find(&conditions).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to find product conditions", nil)
+	}
+
+	rows := make([]types.Option, 0)
+	for _, row := range conditions {
+		rows = append(rows, row.Option())
+	}
+
+	return dto.OK(c, "Get product conditions success", rows)
+}
+
 func ProductItems(c *fiber.Ctx) error {
 	items := make([]product.ProductItem, 0)
 	if err := variable.Db.

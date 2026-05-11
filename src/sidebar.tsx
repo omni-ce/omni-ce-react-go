@@ -17,6 +17,7 @@ import ProductBrandPage from "@/pages/app/product/ProductBrandPage";
 import ProductVariantPage from "@/pages/app/product/ProductVariantPage";
 import ProductMemoryPage from "@/pages/app/product/ProductMemoryPage";
 import ProductColorPage from "@/pages/app/product/ProductColorPage";
+import ProductConditionPage from "@/pages/app/product/ProductConditionPage";
 import ProductItemPage from "@/pages/app/product/ProductItemPage";
 
 // Warehouse
@@ -120,6 +121,13 @@ const sidebarLinks: ISidebarLink[] = [
         element: <ProductColorPage ruleKey="product/color" />,
         strict: true,
         icon: "Hi/HiColorSwatch",
+      },
+      {
+        label: { id: "Kondisi", en: "Condition" },
+        path: "condition",
+        element: <ProductConditionPage ruleKey="product/condition" />,
+        strict: true,
+        icon: "Gi/GiBrokenHeartZone",
       },
       {
         label: { id: "Item (Grup)", en: "Item (Group)" },

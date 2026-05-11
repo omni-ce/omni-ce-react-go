@@ -66,11 +66,21 @@ func RegenerateItemKeysByAttribute(attribute string, id uint) {
 		query = query.Where("memory_id = ?", id)
 	case "color":
 		query = query.Where("color_id = ?", id)
+	case "condition":
+		query = query.Where("condition_id = ?", id)
 	default:
 		return
 	}
 
-	query.Preload("Category").Preload("Type").Preload("Brand").Preload("Variant").Preload("Memory").Preload("Color").Find(&items)
+	query.
+		Preload("Category").
+		Preload("Type").
+		Preload("Brand").
+		Preload("Variant").
+		Preload("Memory").
+		Preload("Color").
+		Preload("Condition").
+		Find(&items)
 
 	for _, item := range items {
 		keyNames := make([]string, 0)

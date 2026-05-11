@@ -107,6 +107,13 @@ export default function ProductItemPage({ ruleKey }: Props) {
         selectOptions: "product-colors",
       },
       {
+        key: "condition_id",
+        label: language({ id: "Kondisi", en: "Condition" }),
+        type: "select",
+        required: true,
+        selectOptions: "product-conditions",
+      },
+      {
         key: "buy_price",
         label: language({ id: "Harga Beli", en: "Buy Price" }),
         type: "price",

@@ -136,6 +136,10 @@ func ItemCreate(c *fiber.Ctx) error {
 	if err := variable.Db.
 		Create(&item).
 		Error; err != nil {
+		message := err.Error()
+		if strings.Contains(message, "UNIQUE constraint") {
+			return dto.BadRequest(c, "Product item already exists", nil)
+		}
 		return dto.InternalServerError(c, "Failed to create product item", nil)
 	}
 
@@ -354,6 +358,10 @@ func ItemEdit(c *fiber.Ctx) error {
 		if err := variable.Db.First(&clr, *existing.ColorID).Error; err == nil {
 			keyNames = append(keyNames, clr.Name)
 		}
+	}
+	var con model.ProductCondition
+	if err := variable.Db.First(&con, existing.ConditionID).Error; err == nil {
+		keyNames = append(keyNames, con.Name)
 	}
 	existing.Key = generateKeyFromName(keyNames...)
 
