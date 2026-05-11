@@ -175,8 +175,8 @@ func ItemCreate(c *fiber.Ctx) error {
 		First(&existing).
 		Error; err == nil {
 		return dto.BadRequest(c, types.Language{
-			Id: "Item dengan SKU ini sudah ada",
-			En: "Item with this SKU already exists",
+			Id: "Item ini sudah ada",
+			En: "Item already exists",
 		}, nil)
 	}
 
@@ -201,8 +201,8 @@ func ItemCreate(c *fiber.Ctx) error {
 		message := err.Error()
 		if strings.Contains(message, "UNIQUE constraint") {
 			return dto.BadRequest(c, types.Language{
-				Id: "Item dengan SKU ini sudah ada",
-				En: "Item with this SKU already exists",
+				Id: "Item ini sudah ada",
+				En: "Item already exists",
 			}, nil)
 		}
 		return dto.InternalServerError(c, types.Language{
@@ -235,7 +235,8 @@ func ItemPaginate(c *fiber.Ctx) error {
 		Preload("Brand").
 		Preload("Variant").
 		Preload("Memory").
-		Preload("Color")
+		Preload("Color").
+		Preload("Condition")
 
 	// Filter SKU & IMEI (Manual karena butuh OR)
 	if col_sku != "" {
@@ -331,7 +332,6 @@ func ItemEdit(c *fiber.Ctx) error {
 		MemoryID    string `json:"memory_id"`
 		ColorID     string `json:"color_id" validate:"required"`
 		ConditionID string `json:"condition_id" validate:"required"`
-		BuyPrice    string `json:"buy_price" validate:"required"`
 		SKU         string `json:"sku" validate:"required"`
 		SkuIMEI     string `json:"sku_imei"`
 	}
@@ -357,8 +357,8 @@ func ItemEdit(c *fiber.Ctx) error {
 			First(&dup).
 			Error; err == nil {
 			return dto.BadRequest(c, types.Language{
-				Id: "Item dengan SKU ini sudah ada",
-				En: "Item with this SKU already exists",
+				Id: "Item ini sudah ada",
+				En: "Item already exists",
 			}, nil)
 		}
 	}
@@ -475,8 +475,8 @@ func ItemEdit(c *fiber.Ctx) error {
 		Error; err == nil {
 		keyNames = append(keyNames, con.Name)
 	}
-	existing.Key = generateKeyFromName(keyNames...)
 
+	existing.Key = generateKeyFromName(keyNames...)
 	if err := variable.Db.
 		Save(&existing).
 		Error; err != nil {

@@ -258,9 +258,22 @@ export default function ProductItemPage({ ruleKey }: Props) {
       {
         key: "condition_name",
         header: language({ id: "Kondisi", en: "Condition" }),
-        render: (item) => (
-          <span className="max-w-xs truncate block">{item.condition_name}</span>
-        ),
+        render: (item) => {
+          let condition_name = item.condition_name;
+          try {
+            if (condition_name.startsWith("{")) {
+              const obj = JSON.parse(condition_name);
+              condition_name = language(obj);
+            }
+          } catch (e) {
+            // fallback to raw name
+          }
+          return (
+            <span className="font-medium flex items-center gap-2">
+              <span>{condition_name}</span>
+            </span>
+          );
+        },
       },
       {
         key: "qty",
