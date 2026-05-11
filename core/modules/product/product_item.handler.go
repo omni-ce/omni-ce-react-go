@@ -21,15 +21,15 @@ func ItemCreate(c *fiber.Ctx) error {
 	}
 
 	var body struct {
-		CategoryID string `json:"category_id" validate:"required"`
-		TypeID     string `json:"type_id" validate:"required"`
-		BrandID    string `json:"brand_id" validate:"required"`
-		VariantID  string `json:"variant_id" validate:"required"`
-		MemoryID   string `json:"memory_id"`
-		ColorID    string `json:"color_id" validate:"required"`
-		BuyPrice   string `json:"buy_price" validate:"required"`
-		SKU        string `json:"sku" validate:"required"`
-		SkuIMEI    string `json:"sku_imei"`
+		CategoryID  string `json:"category_id" validate:"required"`
+		TypeID      string `json:"type_id" validate:"required"`
+		BrandID     string `json:"brand_id" validate:"required"`
+		VariantID   string `json:"variant_id" validate:"required"`
+		MemoryID    string `json:"memory_id"`
+		ColorID     string `json:"color_id" validate:"required"`
+		ConditionID string `json:"condition_id" validate:"required"`
+		SKU         string `json:"sku" validate:"required"`
+		SkuIMEI     string `json:"sku_imei"`
 	}
 
 	if err := function.RequestBody(c, &body); err != nil {
@@ -53,9 +53,9 @@ func ItemCreate(c *fiber.Ctx) error {
 	if err != nil {
 		return dto.BadRequest(c, "Invalid variant ID", nil)
 	}
-	buyPrice, err := strconv.Atoi(body.BuyPrice)
+	conditionID, err := strconv.Atoi(body.ConditionID)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid buy price", nil)
+		return dto.BadRequest(c, "Invalid condition ID", nil)
 	}
 
 	names := make([]string, 0)
@@ -80,6 +80,11 @@ func ItemCreate(c *fiber.Ctx) error {
 		return dto.NotFound(c, "Variant not found", nil)
 	}
 	names = append(names, variant.Name)
+	var condition model.ProductCondition
+	if err := variable.Db.First(&condition, "id = ?", body.ConditionID).Error; err != nil {
+		return dto.NotFound(c, "Condition not found", nil)
+	}
+	names = append(names, condition.Name)
 
 	var memoryID *uint
 	if body.MemoryID != "" {
@@ -119,18 +124,18 @@ func ItemCreate(c *fiber.Ctx) error {
 	}
 
 	item := model.ProductItem{
-		Key:        key,
-		CategoryID: uint(categoryID),
-		TypeID:     uint(typeID),
-		BrandID:    uint(brandID),
-		VariantID:  uint(variantID),
-		MemoryID:   memoryID,
-		ColorID:    colorID,
-		BuyPrice:   uint(buyPrice),
-		SKU:        body.SKU,
-		SkuIMEI:    body.SkuIMEI,
-		CreatedBy:  currentUser.ID,
-		UpdatedBy:  currentUser.ID,
+		Key:         key,
+		CategoryID:  uint(categoryID),
+		TypeID:      uint(typeID),
+		BrandID:     uint(brandID),
+		VariantID:   uint(variantID),
+		MemoryID:    memoryID,
+		ColorID:     colorID,
+		ConditionID: uint(conditionID),
+		SKU:         body.SKU,
+		SkuIMEI:     body.SkuIMEI,
+		CreatedBy:   currentUser.ID,
+		UpdatedBy:   currentUser.ID,
 	}
 
 	if err := variable.Db.
@@ -212,7 +217,7 @@ func ItemPaginate(c *fiber.Ctx) error {
 			"id":            row.ID,
 			"sku":           row.SKU,
 			"sku_imei":      row.SkuIMEI,
-			"buy_price":     row.BuyPrice,
+			"buy_price":     0,
 			"qty":           0,
 			"category_id":   row.Category.ID,
 			"category_name": row.Category.Name,
@@ -247,15 +252,16 @@ func ItemEdit(c *fiber.Ctx) error {
 	}
 
 	var body struct {
-		CategoryID string `json:"category_id" validate:"required"`
-		TypeID     string `json:"type_id" validate:"required"`
-		BrandID    string `json:"brand_id" validate:"required"`
-		VariantID  string `json:"variant_id" validate:"required"`
-		MemoryID   string `json:"memory_id"`
-		ColorID    string `json:"color_id" validate:"required"`
-		BuyPrice   string `json:"buy_price" validate:"required"`
-		SKU        string `json:"sku" validate:"required"`
-		SkuIMEI    string `json:"sku_imei"`
+		CategoryID  string `json:"category_id" validate:"required"`
+		TypeID      string `json:"type_id" validate:"required"`
+		BrandID     string `json:"brand_id" validate:"required"`
+		VariantID   string `json:"variant_id" validate:"required"`
+		MemoryID    string `json:"memory_id"`
+		ColorID     string `json:"color_id" validate:"required"`
+		ConditionID string `json:"condition_id" validate:"required"`
+		BuyPrice    string `json:"buy_price" validate:"required"`
+		SKU         string `json:"sku" validate:"required"`
+		SkuIMEI     string `json:"sku_imei"`
 	}
 
 	if err := function.RequestBody(c, &body); err != nil {
@@ -319,11 +325,11 @@ func ItemEdit(c *fiber.Ctx) error {
 		existing.ColorID = nil
 	}
 
-	buyPrice, err := strconv.Atoi(body.BuyPrice)
+	condID, err := strconv.Atoi(body.ConditionID)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid buy price", nil)
+		return dto.BadRequest(c, "Invalid condition ID", nil)
 	}
-	existing.BuyPrice = uint(buyPrice)
+	existing.ConditionID = uint(condID)
 
 	existing.SKU = body.SKU
 	existing.SkuIMEI = body.SkuIMEI

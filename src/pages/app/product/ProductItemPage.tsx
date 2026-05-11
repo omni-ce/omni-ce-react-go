@@ -114,13 +114,6 @@ export default function ProductItemPage({ ruleKey }: Props) {
         selectOptions: "product-conditions",
       },
       {
-        key: "buy_price",
-        label: language({ id: "Harga Beli", en: "Buy Price" }),
-        type: "price",
-        pricePrefix: "Rp",
-        required: true,
-      },
-      {
         label: language({ id: "SKU", en: "SKU" }),
         children: [
           {

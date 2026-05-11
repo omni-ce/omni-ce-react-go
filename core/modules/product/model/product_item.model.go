@@ -23,9 +23,6 @@ type ProductItem struct {
 	SKU     string `json:"sku" gorm:"type:varchar(255);uniqueIndex;not null"`
 	SkuIMEI string `json:"sku_imei" gorm:"type:varchar(255);default:null"`
 
-	// Value
-	BuyPrice uint `json:"buy_price" gorm:"default:0;not null"`
-
 	// relations
 	Category  ProductCategory  `json:"category" gorm:"foreignKey:CategoryID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Type      ProductType      `json:"type" gorm:"foreignKey:TypeID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`

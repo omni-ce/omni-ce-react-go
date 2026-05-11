@@ -589,8 +589,6 @@ func ProductItems(c *fiber.Ctx) error {
 				"memory":    memory,
 				"color":     color,
 				"color_hex": colorHex,
-				"qty":       0,
-				"buy_price": row.BuyPrice,
 			},
 		})
 	}
