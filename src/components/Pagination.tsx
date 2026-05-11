@@ -1365,7 +1365,10 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
           width={popupWidth ? String(popupWidth) : "520px"}
           height={popupHeight ? String(popupHeight) : "auto"}
         >
-          <DialogContent onClose={() => setDialogOpen(false)}>
+          <DialogContent
+            onClose={() => setDialogOpen(false)}
+            className={popupHeight ? "h-full flex flex-col" : ""}
+          >
             <DialogHeader>
               <DialogTitle>
                 {editingRow
@@ -1374,7 +1377,12 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                 : {title}
               </DialogTitle>
             </DialogHeader>
-            <div className="overflow-y-auto max-h-[60vh] -mx-6 px-6 py-1">
+            <div
+              className={cn(
+                "overflow-y-auto -mx-6 px-6 py-1",
+                popupHeight ? "flex-1" : "max-h-[60vh]",
+              )}
+            >
               {filteredFields && filteredFields.length > 0 && (
                 <DynamicForm
                   fields={filteredFields}
@@ -1509,8 +1517,22 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                 : extraActions[extraActionState.actionIndex].height) as string
             }
           >
-            <DialogContent onClose={() => setExtraActionState(null)}>
-              <div className="overflow-y-auto max-h-[80vh] -mx-6 px-6 py-1">
+            <DialogContent
+              onClose={() => setExtraActionState(null)}
+              className={
+                extraActions[extraActionState.actionIndex].height
+                  ? "h-full flex flex-col"
+                  : ""
+              }
+            >
+              <div
+                className={cn(
+                  "overflow-y-auto -mx-6 px-6 py-1",
+                  extraActions[extraActionState.actionIndex].height
+                    ? "flex-1"
+                    : "max-h-[80vh]",
+                )}
+              >
                 {typeof extraActions[extraActionState.actionIndex].component ===
                 "function"
                   ? (
