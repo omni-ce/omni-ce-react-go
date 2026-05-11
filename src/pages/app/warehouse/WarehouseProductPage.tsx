@@ -230,8 +230,9 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
         extraActions={[
           {
             icon: "Ai/AiOutlineProduct",
-            button: (row, onClose) => <>ok</>,
-            component: (row, onClose) => <>ok</>,
+            button: (row) => {
+              alert(JSON.stringify(row));
+            },
           },
         ]}
         useIsActive

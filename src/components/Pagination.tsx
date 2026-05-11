@@ -84,10 +84,11 @@ export interface PaginationColumn<T, TFilter = unknown> {
 }
 
 export interface PaginationExtraAction<T> {
-  icon: string;
+  icon?: string;
   width?: string | number;
   height?: string | number;
-  component: ReactNode | ((row: T, onClose: () => void) => ReactNode);
+  button?: (row: T, onClose: () => void) => ReactNode | void;
+  component?: ReactNode | ((row: T, onClose: () => void) => ReactNode);
 }
 
 export interface PaginationProps<T, F = unknown> {
@@ -324,18 +325,36 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
               </div>
               {extraActions && extraActions.length > 0 && (
                 <div className="flex flex-wrap justify-center gap-1 max-w-30">
-                  {extraActions.map((action, idx) => (
-                    <Button
-                      key={`ea-${idx}`}
-                      variant="ghost"
-                      size="icon"
-                      onClick={() =>
-                        setExtraActionState({ actionIndex: idx, row })
-                      }
-                    >
-                      <IconComponent iconName={action.icon} size={16} />
-                    </Button>
-                  ))}
+                  {extraActions.map((action, idx) => {
+                    const reload = () =>
+                      fetchRows(
+                        currentPage,
+                        debouncedSearch,
+                        limit,
+                        sortBy,
+                        sortOrder,
+                        debouncedColumnSearches,
+                      );
+
+                    return (
+                      <div key={`ea-${idx}`} className="contents">
+                        {!action.icon && action.button && action.button(row, reload)}
+                        {action.icon && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                              if (action.button) action.button(row, reload);
+                              if (action.component)
+                                setExtraActionState({ actionIndex: idx, row });
+                            }}
+                          >
+                            <IconComponent iconName={action.icon} size={16} />
+                          </Button>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>
