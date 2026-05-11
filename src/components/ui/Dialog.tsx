@@ -12,9 +12,17 @@ interface DialogProps {
   width?: string;
   height?: string;
   children: React.ReactNode;
+  closeOnOverlayClick?: boolean;
 }
 
-function Dialog({ open, onClose, width, height, children }: DialogProps) {
+function Dialog({
+  open,
+  onClose,
+  width,
+  height,
+  children,
+  closeOnOverlayClick = true,
+}: DialogProps) {
   React.useEffect(() => {
     if (!open) return;
     const handler = (e: KeyboardEvent) => {
@@ -36,7 +44,7 @@ function Dialog({ open, onClose, width, height, children }: DialogProps) {
           if (e.key === "Escape") onClose();
         }}
         className="fixed inset-0 bg-black/40 backdrop-blur-sm animate-fade-in"
-        onClick={onClose}
+        onClick={() => closeOnOverlayClick && onClose()}
       />
 
       {/* Control Button at top right of overlay */}

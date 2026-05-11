@@ -281,11 +281,7 @@ export default function PosPage({ ruleKey }: Props) {
                 {language({ id: "Katalog Produk", en: "Product Catalog" })}
               </h2>
               <button
-                onClick={() =>
-                  satellite.post("/api/product/catalog/infinite-scroll", {
-                    category_id: 1,
-                  })
-                }
+                onClick={() => fetchCatalog()}
                 className="p-1.5 rounded-lg hover:bg-dark-800 text-dark-400 hover:text-foreground transition-all"
                 title="Refresh Catalog (Debug)"
               >
@@ -692,16 +688,17 @@ export default function PosPage({ ruleKey }: Props) {
         open={!!selectedVariant}
         onClose={() => setSelectedVariant(null)}
         width="600px"
+        closeOnOverlayClick={false}
       >
         <DialogContent onClose={() => setSelectedVariant(null)}>
           <DialogHeader>
             <DialogTitle>
               {selectedVariant?.varian_name}{" "}
-              <span className="text-sm font-normal text-dark-400 ml-2">
+              <span className="text-sm font-normal text-dark-300 ml-2">
                 ({selectedVariant?.brand_name})
               </span>
             </DialogTitle>
-            <div className="text-xs text-dark-500 flex gap-2">
+            <div className="text-xs text-dark-400 flex gap-2">
               <span>
                 {(() => {
                   try {
@@ -737,8 +734,8 @@ export default function PosPage({ ruleKey }: Props) {
                   className={cn(
                     "p-4 rounded-2xl border transition-all flex items-center justify-between group",
                     cartQty > 0
-                      ? "bg-badge-light-blue/40 border-accent-500/30"
-                      : "bg-dark-800/50 border-dark-600 hover:border-dark-500",
+                      ? "bg-accent-500/10 border-accent-500/50"
+                      : "bg-dark-800 border-dark-600/50 hover:border-dark-400",
                   )}
                 >
                   <div className="flex flex-col gap-1">
@@ -754,8 +751,8 @@ export default function PosPage({ ruleKey }: Props) {
                       </span>
                     </div>
                     <div className="flex items-center gap-3 text-[11px]">
-                      <span className="text-dark-400">SKU: {it.sku}</span>
-                      <span className="text-dark-500">|</span>
+                      <span className="text-dark-300">SKU: {it.sku}</span>
+                      <span className="text-dark-400">|</span>
                       <span
                         className={cn(
                           "font-medium",
@@ -772,8 +769,14 @@ export default function PosPage({ ruleKey }: Props) {
 
                   <div className="flex items-center gap-4 bg-dark-900 rounded-2xl p-1 border border-dark-600/30">
                     <button
+                      disabled={cartQty === 0}
                       onClick={() => removeFromCart(it.id)}
-                      className="w-10 h-10 rounded-xl bg-dark-800 text-dark-300 flex items-center justify-center hover:bg-dark-700 hover:text-foreground transition-all text-xl font-bold"
+                      className={cn(
+                        "w-10 h-10 rounded-xl flex items-center justify-center transition-all text-xl font-bold",
+                        cartQty > 0
+                          ? "bg-dark-800 text-dark-300 hover:bg-dark-700 hover:text-foreground"
+                          : "bg-dark-700 text-dark-500 cursor-not-allowed",
+                      )}
                     >
                       −
                     </button>

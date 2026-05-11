@@ -1,3 +1,4 @@
 
 
-fix, revisi, focus, hindari any di FE, no mistake;
+fix, revisi, focus, hindari any di FE, selalu coba validasi jika FE menggunakan "yarn lint" jika BE di build golang nya,
+no mistake;
