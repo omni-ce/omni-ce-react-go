@@ -11,6 +11,7 @@ import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import { Badge } from "@/components/ui/Badge";
 import Image from "@/components/Image";
+import { IconComponent } from "@/components/ui/IconSelector";
 
 interface Props {
   ruleKey?: string;
@@ -57,6 +58,49 @@ export default function ProductVarianPage({ ruleKey }: Props) {
 
   const columns = useMemo<PaginationColumn<ProductVarian>[]>(
     () => [
+      {
+        key: "category_name",
+        header: language({ id: "Kategori", en: "Category" }),
+        options: "product-categories",
+        render: (item) => {
+          let category_name = item.category_name;
+          try {
+            if (category_name.startsWith("{")) {
+              const obj = JSON.parse(category_name);
+              category_name = language(obj);
+            }
+          } catch (e) {
+            // fallback to raw name
+          }
+          return (
+            <span className="font-medium flex items-center gap-2">
+              <IconComponent
+                iconName={item.category_icon}
+                className="text-lg"
+              />
+              <span>{category_name}</span>
+            </span>
+          );
+        },
+      },
+      {
+        key: "type_name",
+        header: language({ id: "Tipe", en: "Type" }),
+        ref: "category_name",
+        options: "product-types/{category_name}",
+        render: (item) => {
+          let name = item.type_name;
+          try {
+            if (name.startsWith("{")) {
+              const obj = JSON.parse(name);
+              name = language(obj);
+            }
+          } catch (e) {
+            // fallback to raw name
+          }
+          return <span className="font-medium">{name}</span>;
+        },
+      },
       {
         key: "brand_id",
         header: language({ id: "Merek", en: "Brand" }),

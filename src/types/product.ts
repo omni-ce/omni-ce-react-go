@@ -33,6 +33,11 @@ export interface ProductBrand {
 export interface ProductVarian {
   id: number;
   key: string;
+  category_id: number;
+  category_name: string;
+  category_icon: string;
+  type_id: number;
+  type_name: string;
   brand_id: number;
   brand_name: string;
   brand_logo: string;
