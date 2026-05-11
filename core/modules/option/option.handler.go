@@ -148,14 +148,22 @@ func CompanyBranches(c *fiber.Ctx) error {
 	rows := make([]types.Option, 0)
 	for _, row := range branches {
 		if row.IsActive {
-			branch := row.Option()
-			for _, entity := range entities {
-				if entity.ID == row.EntityID {
-					branch.Label = fmt.Sprintf("%s - %s", entity.Name, row.Name)
+			label := ""
+			entity := company.CompanyEntity{}
+			for _, e := range entities {
+				if e.ID == row.EntityID {
+					label = fmt.Sprintf("%s - %s", e.Name, row.Name)
+					entity = e
 					break
 				}
 			}
-			rows = append(rows, branch)
+			rows = append(rows, types.Option{
+				Label: label,
+				Value: row.ID,
+				Meta: &map[string]any{
+					"entity_logo": entity.Logo,
+				},
+			})
 		}
 	}
 
@@ -244,6 +252,9 @@ func Users(c *fiber.Ctx) error {
 			Label: row.Name,
 			Value: row.ID,
 			Array: &formattedRoles,
+			Meta: &map[string]any{
+				"avatar": row.Avatar,
+			},
 		})
 	}
 

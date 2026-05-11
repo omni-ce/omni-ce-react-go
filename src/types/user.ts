@@ -23,4 +23,7 @@ export interface UserOption {
   label: string;
   value: string;
   array: string[]; // roles name
+  meta: {
+    avatar: string;
+  };
 }

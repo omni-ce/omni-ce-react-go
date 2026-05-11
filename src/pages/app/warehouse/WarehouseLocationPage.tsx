@@ -8,8 +8,13 @@ import Pagination, {
 import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import { Badge } from "@/components/ui/Badge";
-import type { WarehouseLocation } from "@/types/warehouse";
+import type {
+  WarehouseBranchOption,
+  WarehouseLocation,
+} from "@/types/warehouse";
 import { IconComponent } from "@/components/ui/IconSelector";
+import Image from "@/components/Image";
+import type { UserOption } from "@/types/user";
 
 interface Props {
   ruleKey?: string;
@@ -20,7 +25,7 @@ export default function WarehouseLocationPage({ ruleKey }: Props) {
   const paginationRef = useRef<PaginationHandle>(null);
   const { languageCode, language } = useLanguageStore();
 
-  const fields = useMemo<PaginationField[]>(
+  const fields = useMemo(
     () => [
       {
         key: "branch_id",
@@ -28,6 +33,19 @@ export default function WarehouseLocationPage({ ruleKey }: Props) {
         type: "select",
         required: true,
         selectOptions: "company-branches",
+        selectFormat: (item: WarehouseBranchOption) => ({
+          value: item.value,
+          render: (
+            <div className="flex items-center gap-2">
+              <Image
+                src={item.meta?.entity_logo}
+                alt="logo"
+                className="w-6 h-6 rounded-full"
+              />
+              <span>{item.label}</span>
+            </div>
+          ),
+        }),
       },
       {
         key: "pic_id",
@@ -35,6 +53,19 @@ export default function WarehouseLocationPage({ ruleKey }: Props) {
         type: "select",
         required: true,
         selectOptions: "users",
+        selectFormat: (item: UserOption) => ({
+          value: item.value,
+          render: (
+            <div className="flex items-center gap-2">
+              <Image
+                src={item.meta.avatar}
+                alt="avatar"
+                className="w-6 h-6 rounded-full"
+              />
+              <span>{item.label}</span>
+            </div>
+          ),
+        }),
       },
       {
         key: "name",
@@ -164,7 +195,7 @@ export default function WarehouseLocationPage({ ruleKey }: Props) {
         })}
         columns={columns}
         module="warehouse/location"
-        fields={fields}
+        fields={fields as PaginationField[]}
         ruleKey={ruleKey}
         useIsActive
       />

@@ -12,6 +12,13 @@ export interface WarehouseLocation {
   };
   is_active: boolean;
 }
+export interface WarehouseBranchOption {
+  value: number;
+  label: string;
+  meta: {
+    entity_logo: string;
+  };
+}
 
 export interface WarehouseProduct {
   id: number;
