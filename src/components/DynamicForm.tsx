@@ -24,6 +24,7 @@ import { spanMap, mdMap, lgMap, xlMap } from "@/responsive";
 import { formatFileSize } from "@/utils/format";
 import MapPicker, { type MapCoordinates } from "@/components/ui/MapPicker";
 import Image from "@/components/Image";
+import { cn } from "@/lib/utils";
 
 export interface DynamicFormFieldOption<T = unknown> {
   value: string | number;
@@ -107,7 +108,8 @@ export type DynamicFormFieldType =
   | "checkbox"
   | "switch"
   | "map"
-  | "geolocation";
+  | "geolocation"
+  | "price";
 
 export type DynamicFormFieldNormal<T = unknown> = {
   key: string;
@@ -133,6 +135,7 @@ export type DynamicFormFieldNormal<T = unknown> = {
   textareaRows?: number;
   booleanDefault?: boolean;
   selectFormat?: (row: T) => DynamicFormFieldOption;
+  pricePrefix?: string;
 };
 
 type DynamicFormFieldChildren = {
@@ -1759,6 +1762,37 @@ function DynamicFieldRenderer({
           disabled={disabled}
           onBlur={() => handleBlur(String(formData[field.key!] || ""))}
         />
+      ) : field.type === "price" ? (
+        <div className="relative mt-1.5 flex items-center">
+          {(field as DynamicFormFieldNormal).pricePrefix && (
+            <div className="absolute left-3 flex items-center pointer-events-none">
+              <span className="text-sm font-semibold text-dark-400">
+                {(field as DynamicFormFieldNormal).pricePrefix}
+              </span>
+            </div>
+          )}
+          <Input
+            id={`field-${field.key}`}
+            className={cn(
+              (field as DynamicFormFieldNormal).pricePrefix ? "pl-10" : "",
+            )}
+            value={(() => {
+              const val = String(formData[field.key] ?? "");
+              if (val === "") return "";
+              const num = Number(val);
+              if (isNaN(num)) return val;
+              return new Intl.NumberFormat("id-ID").format(num);
+            })()}
+            onChange={(e) => {
+              const rawValue = e.target.value.replace(/\./g, "");
+              if (!isNaN(Number(rawValue)) || rawValue === "") {
+                onChange(field.key!, rawValue);
+              }
+            }}
+            disabled={disabled}
+            onBlur={(e) => handleBlur(e.target.value.replace(/\./g, ""))}
+          />
+        </div>
       ) : field.type === "switch" ? (
         <div className="mt-2">
           <Switch

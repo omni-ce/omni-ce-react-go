@@ -24,9 +24,10 @@ func ItemCreate(c *fiber.Ctx) error {
 		CategoryID string `json:"category_id" validate:"required"`
 		TypeID     string `json:"type_id" validate:"required"`
 		BrandID    string `json:"brand_id" validate:"required"`
-		VariantID  string `json:"varian_id" validate:"required"`
+		VariantID  string `json:"variant_id" validate:"required"`
 		MemoryID   string `json:"memory_id"`
 		ColorID    string `json:"color_id" validate:"required"`
+		BuyPrice   string `json:"buy_price" validate:"required"`
 		SKU        string `json:"sku" validate:"required"`
 		SkuIMEI    string `json:"sku_imei"`
 	}
@@ -51,6 +52,10 @@ func ItemCreate(c *fiber.Ctx) error {
 	variantID, err := strconv.Atoi(body.VariantID)
 	if err != nil {
 		return dto.BadRequest(c, "Invalid variant ID", nil)
+	}
+	buyPrice, err := strconv.Atoi(body.BuyPrice)
+	if err != nil {
+		return dto.BadRequest(c, "Invalid buy price", nil)
 	}
 
 	names := make([]string, 0)
@@ -121,6 +126,7 @@ func ItemCreate(c *fiber.Ctx) error {
 		VariantID:  uint(variantID),
 		MemoryID:   memoryID,
 		ColorID:    colorID,
+		BuyPrice:   uint(buyPrice),
 		SKU:        body.SKU,
 		SkuIMEI:    body.SkuIMEI,
 		CreatedBy:  currentUser.ID,
@@ -142,14 +148,14 @@ func ItemPaginate(c *fiber.Ctx) error {
 	/*
 		http://localhost:3000/api/product/item/paginate
 		?page=1&limit=10
-		&search_fields=sku,category_name,type_name,brand_name,varian_name
-		&col_sku=a&col_category_name=b&col_type_name=c&col_brand_name=d&col_varian_name=e
+		&search_fields=sku,category_name,type_name,brand_name,variant_name
+		&col_sku=a&col_category_name=b&col_type_name=c&col_brand_name=d&col_variant_name=e
 	*/
 	col_sku := c.Query("col_sku")
 	col_category_name := c.Query("col_category_name")
 	col_type_name := c.Query("col_type_name")
 	col_brand_name := c.Query("col_brand_name")
-	col_varian_name := c.Query("col_varian_name")
+	col_variant_name := c.Query("col_variant_name")
 
 	items := make([]model.ProductItem, 0)
 
@@ -181,8 +187,8 @@ func ItemPaginate(c *fiber.Ctx) error {
 	if col_brand_name != "" {
 		query = query.Joins("Brand").Where("LOWER(Brand.name) LIKE ?", "%"+strings.ToLower(col_brand_name)+"%")
 	}
-	if col_varian_name != "" {
-		query = query.Joins("Variant").Where("LOWER(Variant.name) LIKE ?", "%"+strings.ToLower(col_varian_name)+"%")
+	if col_variant_name != "" {
+		query = query.Joins("Variant").Where("LOWER(Variant.name) LIKE ?", "%"+strings.ToLower(col_variant_name)+"%")
 	}
 
 	// Gunakan PaginationScoped agar Count menyertakan filter Join & Where di atas
@@ -240,9 +246,10 @@ func ItemEdit(c *fiber.Ctx) error {
 		CategoryID string `json:"category_id" validate:"required"`
 		TypeID     string `json:"type_id" validate:"required"`
 		BrandID    string `json:"brand_id" validate:"required"`
-		VariantID  string `json:"varian_id" validate:"required"`
+		VariantID  string `json:"variant_id" validate:"required"`
 		MemoryID   string `json:"memory_id"`
 		ColorID    string `json:"color_id" validate:"required"`
+		BuyPrice   string `json:"buy_price" validate:"required"`
 		SKU        string `json:"sku" validate:"required"`
 		SkuIMEI    string `json:"sku_imei"`
 	}
@@ -290,12 +297,6 @@ func ItemEdit(c *fiber.Ctx) error {
 		return dto.BadRequest(c, "Invalid variant ID", nil)
 	}
 	existing.VariantID = uint(varID)
-	colID, err := strconv.Atoi(body.ColorID)
-	if err != nil {
-		return dto.BadRequest(c, "Invalid color ID", nil)
-	}
-	uColID := uint(colID)
-	existing.ColorID = &uColID
 
 	if body.MemoryID != "" {
 		if mid, err := strconv.Atoi(body.MemoryID); err == nil {
@@ -305,6 +306,20 @@ func ItemEdit(c *fiber.Ctx) error {
 	} else {
 		existing.MemoryID = nil
 	}
+	if body.ColorID != "" {
+		if mid, err := strconv.Atoi(body.ColorID); err == nil {
+			uMid := uint(mid)
+			existing.ColorID = &uMid
+		}
+	} else {
+		existing.ColorID = nil
+	}
+
+	buyPrice, err := strconv.Atoi(body.BuyPrice)
+	if err != nil {
+		return dto.BadRequest(c, "Invalid buy price", nil)
+	}
+	existing.BuyPrice = uint(buyPrice)
 
 	existing.SKU = body.SKU
 	existing.SkuIMEI = body.SkuIMEI
