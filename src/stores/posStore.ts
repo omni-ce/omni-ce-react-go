@@ -42,6 +42,26 @@ export interface CatalogRow {
   items: CatalogProductItem[];
 }
 
+export interface CatalogCategory {
+  id: number;
+  key: string;
+  name: string;
+  icon: string;
+}
+
+export interface CatalogType {
+  id: number;
+  key: string;
+  name: string;
+}
+
+export interface CatalogBrand {
+  id: number;
+  key: string;
+  name: string;
+  logo: string;
+}
+
 export interface CartItem {
   menuItem: MenuItem;
   qty: number;
@@ -56,9 +76,9 @@ interface PosState {
   activeTypeId: number;
   activeBrandId: number;
 
-  categories: any[];
-  types: any[];
-  brands: any[];
+  categories: CatalogCategory[];
+  types: CatalogType[];
+  brands: CatalogBrand[];
   catalogItems: CatalogRow[];
 
   setPanelOpen: (open: boolean) => void;
@@ -68,10 +88,10 @@ interface PosState {
   setActiveTypeId: (id: number) => void;
   setActiveBrandId: (id: number) => void;
   setCatalogData: (data: {
-    categories: any[];
-    types: any[];
-    brands: any[];
-    rows: any[];
+    categories: CatalogCategory[];
+    types: CatalogType[];
+    brands: CatalogBrand[];
+    rows: CatalogRow[];
   }) => void;
   addToCart: (item: MenuItem) => void;
   removeFromCart: (itemId: number) => void;

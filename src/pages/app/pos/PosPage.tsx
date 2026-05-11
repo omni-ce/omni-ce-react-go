@@ -498,34 +498,11 @@ export default function PosPage({ ruleKey }: Props) {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      if (item.items.length === 1) {
-                        const productItem = item.items[0];
-                        addToCart({
-                          id: productItem.id,
-                          name: item.varian_name,
-                          price: productItem.price,
-                          category: item.category_name,
-                          emoji: "📦",
-                          sku: productItem.sku,
-                          color_name: productItem.color_name,
-                          memory_name: productItem.memory_name,
-                        });
-                      } else {
-                        setSelectedVariant(item);
-                      }
+                      setSelectedVariant(item);
                     }}
-                    className={cn(
-                      "w-full py-2.5 rounded-xl text-xs font-bold transition-all shadow-lg",
-                      item.items.length === 1 && getCartQty(item.items[0].id) > 0
-                        ? "bg-badge-light-blue text-accent-500 border border-accent-500/30"
-                        : "bg-accent-500 text-white hover:bg-accent-600 shadow-accent-500/20",
-                    )}
+                    className="w-full py-2.5 mt-1 rounded-xl text-xs font-bold transition-all shadow-lg bg-accent-500 text-white hover:bg-accent-600 shadow-accent-500/20"
                   >
-                    {item.items.length === 1
-                      ? getCartQty(item.items[0].id) > 0
-                        ? `${getCartQty(item.items[0].id)} in Cart`
-                        : language({ id: "Tambah", en: "Add to Cart" })
-                      : language({ id: "Pilih", en: "Select" })}
+                    {language({ id: "Pilih", en: "Select" })}
                   </button>
                 </div>
               </div>

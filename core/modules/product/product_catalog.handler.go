@@ -175,12 +175,12 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 		itemsList := make([]fiber.Map, 0, len(vItems))
 		for _, it := range vItems {
 			memoryName := ""
-			if it.Memory != nil {
+			if it.MemoryID != nil {
 				memoryName = fmt.Sprintf("%d GB / %d GB", it.Memory.Ram, it.Memory.InternalStorage)
 			}
 			colorName := ""
 			colorHex := ""
-			if it.Color != nil {
+			if it.ColorID != nil {
 				colorName = it.Color.Name
 				colorHex = it.Color.HexCode
 			}
