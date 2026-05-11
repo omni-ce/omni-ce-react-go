@@ -10,18 +10,15 @@ import {
   type ProductCategoryOption,
   type ProductVarian,
 } from "@/types/product";
-import { usePermission } from "@/hooks/usePermission";
-import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import { Badge } from "@/components/ui/Badge";
 import Image from "@/components/Image";
 import { IconComponent } from "@/components/ui/IconSelector";
+import GuardLayout from "@/components/GuardLayout";
 
 interface Props {
-  ruleKey?: string;
+  ruleKey: string;
 }
 export default function ProductVarianPage({ ruleKey }: Props) {
-  const perm = usePermission(ruleKey);
-
   const paginationRef = useRef<PaginationHandle>(null);
   const { languageCode, language } = useLanguageStore();
 
@@ -188,24 +185,15 @@ export default function ProductVarianPage({ ruleKey }: Props) {
     [languageCode, language],
   );
 
-  if (!perm.canRead) return <RulePermissionPage />;
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="font-heading text-2xl font-bold text-foreground">
-            {language({ id: "Varian Produk", en: "Product Variants" })}
-          </h1>
-          <p className="mt-1 text-sm text-dark-400">
-            {language({
-              id: "Kelola semua varian produk pada sistem",
-              en: "Manage all product variants in the system",
-            })}
-          </p>
-        </div>
-      </div>
-
+    <GuardLayout
+      ruleKey={ruleKey}
+      title={{ id: "Varian Produk", en: "Product Variants" }}
+      subtitle={{
+        id: "Kelola semua varian produk pada sistem",
+        en: "Manage all product variants in the system",
+      }}
+    >
       <Pagination
         ref={paginationRef}
         title={language({ id: "Daftar Varian", en: "Variants List" })}
@@ -215,6 +203,6 @@ export default function ProductVarianPage({ ruleKey }: Props) {
         ruleKey={ruleKey}
         useIsActive
       />
-    </div>
+    </GuardLayout>
   );
 }

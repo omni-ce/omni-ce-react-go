@@ -5,21 +5,18 @@ import Pagination, {
   type PaginationField,
   type PaginationHandle,
 } from "@/components/Pagination";
-import { usePermission } from "@/hooks/usePermission";
-import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import type { CompanyEntity } from "@/types/company";
 import { Badge } from "@/components/ui/Badge";
 import { FileType } from "@/components/DynamicForm";
 import { Avatar } from "@/components/ui/Avatar";
 import BlankCompany from "@/assets/blank-company.svg";
 import { IconComponent } from "@/components/ui/IconSelector";
+import GuardLayout from "@/components/GuardLayout";
 
 interface Props {
-  ruleKey?: string;
+  ruleKey: string;
 }
 export default function CompanyEntityPage({ ruleKey }: Props) {
-  const perm = usePermission(ruleKey);
-
   const paginationRef = useRef<PaginationHandle>(null);
   const { languageCode, language } = useLanguageStore();
 
@@ -178,27 +175,18 @@ export default function CompanyEntityPage({ ruleKey }: Props) {
     [languageCode, language],
   );
 
-  if (!perm.canRead) return <RulePermissionPage />;
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="font-heading text-2xl font-bold text-foreground">
-            {language({
-              id: "Entitas Perusahaan",
-              en: "Company Entity",
-            })}
-          </h1>
-          <p className="mt-1 text-sm text-dark-400">
-            {language({
-              id: "Kelola semua entitas perusahaan pada sistem",
-              en: "Manage all company entities in the system",
-            })}
-          </p>
-        </div>
-      </div>
-
+    <GuardLayout
+      ruleKey={ruleKey}
+      title={{
+        id: "Entitas Perusahaan",
+        en: "Company Entity",
+      }}
+      subtitle={{
+        id: "Kelola semua entitas perusahaan pada sistem",
+        en: "Manage all company entities in the system",
+      }}
+    >
       <Pagination
         ref={paginationRef}
         title={language({
@@ -211,6 +199,6 @@ export default function CompanyEntityPage({ ruleKey }: Props) {
         ruleKey={ruleKey}
         useIsActive
       />
-    </div>
+    </GuardLayout>
   );
 }

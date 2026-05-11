@@ -10,9 +10,10 @@ import type { Unit } from "@/services/master_data.service";
 import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import { Badge } from "@/components/ui/Badge";
+import GuardLayout from "@/components/GuardLayout";
 
 interface Props {
-  ruleKey?: string;
+  ruleKey: string;
 }
 export default function TabUnitPage({ ruleKey }: Props) {
   const perm = usePermission(ruleKey);
@@ -77,7 +78,7 @@ export default function TabUnitPage({ ruleKey }: Props) {
 
   if (!perm.canRead) return <RulePermissionPage />;
   return (
-    <div className="space-y-6">
+    <GuardLayout ruleKey={ruleKey} useHeader={false}>
       <Pagination
         ref={paginationRef}
         title={language({ id: "Daftar Satuan", en: "Unit List" })}
@@ -87,6 +88,6 @@ export default function TabUnitPage({ ruleKey }: Props) {
         ruleKey={ruleKey}
         useIsActive
       />
-    </div>
+    </GuardLayout>
   );
 }

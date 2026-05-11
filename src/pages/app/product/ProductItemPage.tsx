@@ -1,6 +1,5 @@
 import { useMemo, useRef } from "react";
 import { useLanguageStore } from "@/stores/languageStore";
-import { formatDateTime } from "@/utils/datetime";
 import Pagination, {
   type PaginationColumn,
   type PaginationField,
@@ -11,20 +10,17 @@ import {
   type ProductCategoryOption,
   type ProductItem,
 } from "@/types/product";
-import { usePermission } from "@/hooks/usePermission";
-import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import { Badge } from "@/components/ui/Badge";
 import { ProductImage } from "@/pages/app/product/action";
 import { IconComponent } from "@/components/ui/IconSelector";
 import Image from "@/components/Image";
 import { formatRupiah } from "@/utils/convert";
+import GuardLayout from "@/components/GuardLayout";
 
 interface Props {
-  ruleKey?: string;
+  ruleKey: string;
 }
 export default function ProductItemPage({ ruleKey }: Props) {
-  const perm = usePermission(ruleKey);
-
   const paginationRef = useRef<PaginationHandle>(null);
   const { languageCode, language } = useLanguageStore();
 
@@ -307,27 +303,24 @@ export default function ProductItemPage({ ruleKey }: Props) {
     [languageCode, language],
   );
 
-  if (!perm.canRead) return <RulePermissionPage />;
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="font-heading text-2xl font-bold text-foreground">
-            {language({ id: "Item Produk", en: "Product Item" })}
-          </h1>
-          <p className="mt-1 text-sm text-dark-400">
-            {language({
-              id: "Kelola semua item produk pada sistem",
-              en: "Manage all product items in the system",
-            })}
-          </p>
-        </div>
-      </div>
-
+    <GuardLayout
+      ruleKey={ruleKey}
+      title={{
+        id: "Item Produk",
+        en: "Product Item",
+      }}
+      subtitle={{
+        id: "Kelola semua item produk pada sistem",
+        en: "Manage all product items in the system",
+      }}
+    >
       <Pagination
         ref={paginationRef}
-        title={language({ id: "Daftar Item Produk", en: "Product Item List" })}
+        title={language({
+          id: "Daftar Item Produk",
+          en: "Product Item List",
+        })}
         columns={columns}
         module="product/item"
         fields={fields as PaginationField[]}
@@ -356,6 +349,6 @@ export default function ProductItemPage({ ruleKey }: Props) {
           },
         ]}
       />
-    </div>
+    </GuardLayout>
   );
 }
