@@ -31,6 +31,7 @@ export interface WarehouseProduct {
   warehouse_location_name: string;
   product_id: number;
   product_name: string;
+  product_sku: string;
   product_category_name: string;
   product_type_name: string;
   product_brand_logo: string;

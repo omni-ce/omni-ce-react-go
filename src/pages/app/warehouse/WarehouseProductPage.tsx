@@ -161,16 +161,34 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
             // fallback to raw name
           }
           return (
-            <div className="flex flex-col gap-1">
-              <Image
-                src={item.product_brand_logo}
-                alt={item.product_name}
-                className="max-h-full max-w-full object-contain"
-              />
-              <span className="font-medium">{item.product_name}</span>
-              <span className="text-xs text-muted-foreground">
-                {categoryName} {typeName}
-              </span>
+            <div className="flex items-center gap-3 py-1">
+              <div className="w-12 h-12 rounded-xl bg-dark-800 border border-dark-600/40 p-1.5 flex items-center justify-center shrink-0">
+                <Image
+                  src={item.product_brand_logo}
+                  alt={item.product_name}
+                  className="max-h-full max-w-full object-contain"
+                />
+              </div>
+              <div className="flex flex-col min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-foreground text-sm truncate">
+                    {item.product_name}
+                  </span>
+                  <Badge
+                    variant="outline"
+                    className="text-[10px] py-0 h-4 border-dark-600 bg-dark-800 text-dark-300 shrink-0"
+                  >
+                    {item.product_sku}
+                  </Badge>
+                </div>
+                <div className="flex items-center gap-1.5 text-[11px] text-dark-400 mt-0.5">
+                  <span className="bg-dark-700 px-1.5 rounded border border-dark-600">
+                    {categoryName}
+                  </span>
+                  <span>•</span>
+                  <span>{typeName}</span>
+                </div>
+              </div>
             </div>
           );
         },
