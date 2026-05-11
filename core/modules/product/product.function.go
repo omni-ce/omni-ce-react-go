@@ -86,13 +86,13 @@ func RegenerateItemKeysByAttribute(attribute string, id uint) {
 		if item.Variant.ID != 0 {
 			keyNames = append(keyNames, item.Variant.Name)
 		}
-		if item.ColorID != nil && item.Color.ID != 0 {
-			keyNames = append(keyNames, item.Color.Name)
-		}
 		if item.MemoryID != nil && item.Memory.ID != 0 {
 			keyNames = append(keyNames, fmt.Sprintf("%d GB / %d GB", item.Memory.Ram, item.Memory.InternalStorage))
 		}
-		
+		if item.ColorID != nil && item.Color.ID != 0 {
+			keyNames = append(keyNames, item.Color.Name)
+		}
+
 		newKey := generateKeyFromName(keyNames...)
 		variable.Db.Model(&item).UpdateColumn("key", newKey)
 	}

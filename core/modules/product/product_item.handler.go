@@ -76,18 +76,6 @@ func ItemCreate(c *fiber.Ctx) error {
 	}
 	names = append(names, variant.Name)
 
-	var colorID *uint
-	if body.ColorID != "" {
-		if mid, err := strconv.Atoi(body.ColorID); err == nil {
-			uMid := uint(mid)
-			colorID = &uMid
-			var color model.ProductColor
-			if err := variable.Db.First(&color, "id = ?", body.ColorID).Error; err != nil {
-				return dto.NotFound(c, "Color not found", nil)
-			}
-			names = append(names, color.Name)
-		}
-	}
 	var memoryID *uint
 	if body.MemoryID != "" {
 		if mid, err := strconv.Atoi(body.MemoryID); err == nil {
@@ -98,6 +86,18 @@ func ItemCreate(c *fiber.Ctx) error {
 				return dto.NotFound(c, "Memory not found", nil)
 			}
 			names = append(names, fmt.Sprintf("%d GB / %d GB", memory.Ram, memory.InternalStorage))
+		}
+	}
+	var colorID *uint
+	if body.ColorID != "" {
+		if mid, err := strconv.Atoi(body.ColorID); err == nil {
+			uMid := uint(mid)
+			colorID = &uMid
+			var color model.ProductColor
+			if err := variable.Db.First(&color, "id = ?", body.ColorID).Error; err != nil {
+				return dto.NotFound(c, "Color not found", nil)
+			}
+			names = append(names, color.Name)
 		}
 	}
 
@@ -322,16 +322,16 @@ func ItemEdit(c *fiber.Ctx) error {
 	if err := variable.Db.First(&vrnt, existing.VariantID).Error; err == nil {
 		keyNames = append(keyNames, vrnt.Name)
 	}
-	if existing.ColorID != nil {
-		var clr model.ProductColor
-		if err := variable.Db.First(&clr, *existing.ColorID).Error; err == nil {
-			keyNames = append(keyNames, clr.Name)
-		}
-	}
 	if existing.MemoryID != nil {
 		var mem model.ProductMemory
 		if err := variable.Db.First(&mem, *existing.MemoryID).Error; err == nil {
 			keyNames = append(keyNames, fmt.Sprintf("%d GB / %d GB", mem.Ram, mem.InternalStorage))
+		}
+	}
+	if existing.ColorID != nil {
+		var clr model.ProductColor
+		if err := variable.Db.First(&clr, *existing.ColorID).Error; err == nil {
+			keyNames = append(keyNames, clr.Name)
 		}
 	}
 	existing.Key = generateKeyFromName(keyNames...)
