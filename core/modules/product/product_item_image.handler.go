@@ -29,10 +29,7 @@ func ItemImageSet(c *fiber.Ctx) error {
 		Url string `json:"url" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Body request tidak valid",
-			En: "Invalid request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	itemIdInt, err := strconv.Atoi(itemId)

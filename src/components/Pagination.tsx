@@ -49,6 +49,8 @@ import DynamicForm, {
 import { IconComponent } from "@/components/ui/IconSelector";
 import type { RuleType } from "@/stores/ruleStore";
 import { cn } from "@/lib/utils";
+import type { AxiosError } from "axios";
+import type { LanguageKey } from "@/types/world";
 
 interface PaginationFetchParams {
   page: number;
@@ -178,7 +180,10 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
   const [togglingActiveId, setTogglingActiveId] = useState<
     string | number | null
   >(null);
-  const [saveError, setSaveError] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<Record<
+    LanguageKey,
+    string
+  > | null>(null);
 
   // Per-column search state
   const [columnSearches, setColumnSearches] = useState<Record<string, string>>(
@@ -843,11 +848,9 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
         sortOrder,
         debouncedColumnSearches,
       );
-    } catch (err: unknown) {
-      const msg =
-        (err as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message ?? "Operation failed";
-      setSaveError(msg);
+    } catch (err) {
+      const error = err as AxiosError<{ message: Record<LanguageKey, string> }>;
+      setSaveError(error.response?.data.message as Record<LanguageKey, string>);
     } finally {
       setIsSubmitting(false);
     }
@@ -1428,7 +1431,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
             </div>
             {saveError && (
               <p className="px-6 text-xs text-neon-red font-semibold animate-in fade-in slide-in-from-top-1 duration-200">
-                {saveError}
+                {language(saveError)}
               </p>
             )}
             <DialogFooter>

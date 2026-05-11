@@ -19,10 +19,7 @@ func DivisionCreate(c *fiber.Ctx) error {
 		Description string `json:"description"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Body tidak valid",
-			En: "Invalid request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	// Check duplicate
@@ -77,10 +74,7 @@ func DivisionUpdate(c *fiber.Ctx) error {
 		Description string `json:"description"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Body tidak valid",
-			En: "Invalid request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	var division model.RoleDivision

@@ -22,12 +22,7 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 		IDs        []int  `json:"ids"`   // not in ids
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Kesalahan pada body request",
-			En: "Error on body request",
-		}, fiber.Map{
-			"error": err.Error(),
-		})
+		return dto.BodyBadRequest(c, err)
 	}
 
 	// 1. Get Categories (Fetch into struct to avoid panic, then map to clean response)

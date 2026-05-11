@@ -163,6 +163,7 @@ export default function CaptchaInput({
         setLoading(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [length, drawCaptcha],
   );
 

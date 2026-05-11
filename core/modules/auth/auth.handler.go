@@ -72,12 +72,7 @@ func Login(c *fiber.Ctx) error {
 		Password string `json:"password" validate:"required,min=8"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Permintaan tidak valid",
-			En: "Invalid request body",
-		}, fiber.Map{
-			"error": err.Error(),
-		})
+		return dto.BodyBadRequest(c, err)
 	}
 
 	if body.Username == "" {

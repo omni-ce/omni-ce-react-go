@@ -34,10 +34,7 @@ func ChangePassword(c *fiber.Ctx) error {
 		Password         string `json:"password" validate:"required,min=8,max=50"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Body permintaan tidak valid",
-			En: "Invalid request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	// check if password == previous password
@@ -102,10 +99,7 @@ func Create(c *fiber.Ctx) error {
 		} `json:"roles" validate:"required,min=1"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Gagal mendapatkan request body",
-			En: "Failed to get request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	roleIds := make([]string, 0)
@@ -310,10 +304,7 @@ func Edit(c *fiber.Ctx) error {
 		} `json:"roles"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Request body tidak valid",
-			En: "Invalid request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	// Handle avatar upload
@@ -539,10 +530,7 @@ func BulkRemove(c *fiber.Ctx) error {
 		IDs []string `json:"ids" validate:"required,min=1,dive,gt=0"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Gagal memvalidasi request body",
-			En: "Failed to validate request body",
-		}, err.Error())
+		return dto.BodyBadRequest(c, err)
 	}
 
 	// Filter out self
@@ -668,10 +656,7 @@ func ChangePasswordFromUser(c *fiber.Ctx) error {
 		Password string `json:"password" validate:"required,min=8,max=50"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Gagal memvalidasi request body",
-			En: "Failed to validate request body",
-		}, err.Error())
+		return dto.BodyBadRequest(c, err)
 	}
 
 	var current_user model.User
@@ -800,10 +785,7 @@ func UpdateProfile(c *fiber.Ctx) error {
 		Address     string `json:"address"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Gagal memvalidasi request body",
-			En: "Failed to validate request body",
-		}, err.Error())
+		return dto.BodyBadRequest(c, err)
 	}
 
 	updates := map[string]any{}

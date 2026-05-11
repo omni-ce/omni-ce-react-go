@@ -38,10 +38,7 @@ func BranchCreate(c *fiber.Ctx) error {
 		} `json:"map" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Body request tidak valid",
-			En: "Invalid request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	entityID, err := strconv.Atoi(body.EntityID)
@@ -183,10 +180,7 @@ func BranchEdit(c *fiber.Ctx) error {
 		} `json:"map"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Body request tidak valid",
-			En: "Invalid request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	var branch model.CompanyBranch
@@ -284,10 +278,7 @@ func BranchBulkRemove(c *fiber.Ctx) error {
 		IDs []uint `json:"ids" validate:"required,min=1"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Body request tidak valid",
-			En: "Invalid request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	if err := variable.Db.

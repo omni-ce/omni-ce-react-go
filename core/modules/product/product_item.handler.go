@@ -35,12 +35,8 @@ func ItemCreate(c *fiber.Ctx) error {
 		SKU         string `json:"sku" validate:"required"`
 		SkuIMEI     string `json:"sku_imei"`
 	}
-
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Gagal mendapatkan request body",
-			En: "Failed to get request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	// Convert IDs
@@ -122,16 +118,6 @@ func ItemCreate(c *fiber.Ctx) error {
 		}, nil)
 	}
 	names = append(names, variant.Name)
-	var condition model.ProductCondition
-	if err := variable.Db.
-		First(&condition, "id = ?", body.ConditionID).
-		Error; err != nil {
-		return dto.NotFound(c, types.Language{
-			Id: "Kondisi tidak ditemukan",
-			En: "Condition not found",
-		}, nil)
-	}
-	names = append(names, condition.Name)
 
 	var memoryID *uint
 	if body.MemoryID != "" {
@@ -167,6 +153,17 @@ func ItemCreate(c *fiber.Ctx) error {
 			names = append(names, color.Name)
 		}
 	}
+
+	var condition model.ProductCondition
+	if err := variable.Db.
+		First(&condition, "id = ?", body.ConditionID).
+		Error; err != nil {
+		return dto.NotFound(c, types.Language{
+			Id: "Kondisi tidak ditemukan",
+			En: "Condition not found",
+		}, nil)
+	}
+	names = append(names, condition.Name)
 
 	key := generateKeyFromName(names...)
 
@@ -223,12 +220,6 @@ func ItemCreate(c *fiber.Ctx) error {
 }
 
 func ItemPaginate(c *fiber.Ctx) error {
-	/*
-		http://localhost:3000/api/product/item/paginate
-		?page=1&limit=10
-		&search_fields=sku,category_name,type_name,brand_name,variant_name
-		&col_sku=a&col_category_name=b&col_type_name=c&col_brand_name=d&col_variant_name=e
-	*/
 	col_sku := c.Query("col_sku")
 	col_category_name := c.Query("col_category_name")
 	col_type_name := c.Query("col_type_name")
@@ -286,27 +277,30 @@ func ItemPaginate(c *fiber.Ctx) error {
 			memory_name = fmt.Sprintf("%d GB / %d GB", row.Memory.Ram, row.Memory.InternalStorage)
 		}
 		rows = append(rows, map[string]any{
-			"id":            row.ID,
-			"sku":           row.SKU,
-			"sku_imei":      row.SkuIMEI,
-			"buy_price":     0,
-			"qty":           0,
-			"category_id":   row.Category.ID,
-			"category_name": row.Category.Name,
-			"category_icon": row.Category.Icon,
-			"type_id":       row.Type.ID,
-			"type_name":     row.Type.Name,
-			"brand_id":      row.Brand.ID,
-			"brand_name":    row.Brand.Name,
-			"brand_logo":    row.Brand.Logo,
-			"variant_id":    row.Variant.ID,
-			"variant_name":  row.Variant.Name,
-			"memory_id":     row.Memory.ID,
-			"memory_name":   memory_name,
-			"color_id":      row.Color.ID,
-			"color_name":    row.Color.Name,
-			"color_hex":     row.Color.HexCode,
-			"is_active":     row.IsActive,
+			"id":             row.ID,
+			"key":            row.Key,
+			"sku":            row.SKU,
+			"sku_imei":       row.SkuIMEI,
+			"buy_price":      0,
+			"qty":            0,
+			"category_id":    row.Category.ID,
+			"category_name":  row.Category.Name,
+			"category_icon":  row.Category.Icon,
+			"type_id":        row.Type.ID,
+			"type_name":      row.Type.Name,
+			"brand_id":       row.Brand.ID,
+			"brand_name":     row.Brand.Name,
+			"brand_logo":     row.Brand.Logo,
+			"variant_id":     row.Variant.ID,
+			"variant_name":   row.Variant.Name,
+			"memory_id":      row.Memory.ID,
+			"memory_name":    memory_name,
+			"color_id":       row.Color.ID,
+			"color_name":     row.Color.Name,
+			"color_hex":      row.Color.HexCode,
+			"condition_id":   row.Condition.ID,
+			"condition_name": row.Condition.Name,
+			"is_active":      row.IsActive,
 		})
 	}
 
@@ -341,12 +335,8 @@ func ItemEdit(c *fiber.Ctx) error {
 		SKU         string `json:"sku" validate:"required"`
 		SkuIMEI     string `json:"sku_imei"`
 	}
-
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Body permintaan tidak valid",
-			En: "Invalid request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	var existing model.ProductItem
@@ -527,10 +517,7 @@ func ItemBulkRemove(c *fiber.Ctx) error {
 		IDs []uint `json:"ids" validate:"required,min=1"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Gagal mendapatkan request body",
-			En: "Failed to get request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	if err := variable.Db.

@@ -37,10 +37,7 @@ func LocationCreate(c *fiber.Ctx) error {
 		} `json:"map" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Gagal memvalidasi request body",
-			En: "Failed to validate request body",
-		}, err.Error())
+		return dto.BodyBadRequest(c, err)
 	}
 
 	branchId, err := strconv.Atoi(body.BranchID)
@@ -194,10 +191,7 @@ func LocationEdit(c *fiber.Ctx) error {
 		} `json:"map" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Gagal memvalidasi request body",
-			En: "Failed to validate request body",
-		}, err.Error())
+		return dto.BodyBadRequest(c, err)
 	}
 
 	var existing model.WarehouseLocation
@@ -275,10 +269,7 @@ func LocationBulkRemove(c *fiber.Ctx) error {
 		IDs []uint `json:"ids" validate:"required,min=1"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Gagal memvalidasi request body",
-			En: "Failed to validate request body",
-		}, err.Error())
+		return dto.BodyBadRequest(c, err)
 	}
 
 	if err := variable.Db.

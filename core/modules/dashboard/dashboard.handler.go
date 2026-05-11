@@ -41,10 +41,7 @@ func WidgetCreate(c *fiber.Ctx) error {
 		Description string         `json:"description" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Body request tidak valid",
-			En: "Invalid request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	if body.Col["mobile"] == 0 {
@@ -180,10 +177,7 @@ func WidgetEdit(c *fiber.Ctx) error {
 		Description *string         `json:"description" validate:"omitempty"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Body request tidak valid",
-			En: "Invalid request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	var widget model.DashboardWidget

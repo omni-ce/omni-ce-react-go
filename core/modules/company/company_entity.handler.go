@@ -31,10 +31,7 @@ func EntityCreate(c *fiber.Ctx) error {
 		AddressCode string `json:"address_code" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Body permintaan tidak valid",
-			En: "Invalid request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	entity := model.CompanyEntity{
@@ -142,10 +139,7 @@ func EntityEdit(c *fiber.Ctx) error {
 		AddressCode string `json:"address_code"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Body permintaan tidak valid",
-			En: "Invalid request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	var entity model.CompanyEntity
@@ -225,10 +219,7 @@ func EntityBulkRemove(c *fiber.Ctx) error {
 		IDs []uint `json:"ids" validate:"required,min=1"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Body permintaan tidak valid",
-			En: "Invalid request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	if err := variable.Db.

@@ -33,10 +33,7 @@ func ProductCreate(c *fiber.Ctx) error {
 		Qty                 int    `json:"qty"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Gagal memvalidasi request body",
-			En: "Failed to validate request body",
-		}, err.Error())
+		return dto.BodyBadRequest(c, err)
 	}
 
 	warehouseLocationId, err := strconv.Atoi(body.WarehouseLocationID)
@@ -310,10 +307,7 @@ func ProductEdit(c *fiber.Ctx) error {
 		Qty                 int    `json:"qty"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Gagal memvalidasi request body",
-			En: "Failed to validate request body",
-		}, err.Error())
+		return dto.BodyBadRequest(c, err)
 	}
 
 	warehouseLocationId, err := strconv.Atoi(body.WarehouseLocationID)
@@ -395,10 +389,7 @@ func ProductBulkRemove(c *fiber.Ctx) error {
 		IDs []uint `json:"ids" validate:"required,min=1"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Gagal memvalidasi request body",
-			En: "Failed to validate request body",
-		}, err.Error())
+		return dto.BodyBadRequest(c, err)
 	}
 
 	if err := variable.Db.

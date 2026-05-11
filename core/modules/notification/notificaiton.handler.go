@@ -67,10 +67,7 @@ func MarkRead(c *fiber.Ctx) error {
 		IDs []uint `json:"ids" validate:"required,dive,min=1"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Permintaan tidak valid",
-			En: "Invalid request",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	now := time.Now()
@@ -109,10 +106,7 @@ func ToggleRead(c *fiber.Ctx) error {
 		ID uint `json:"id" validate:"required,dive,min=1"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Permintaan tidak valid",
-			En: "Invalid request",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	var notif model.Notification

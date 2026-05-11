@@ -27,10 +27,7 @@ func MemoryCreate(c *fiber.Ctx) error {
 		InternalStorage string `json:"internal_storage" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Gagal mendapatkan request body",
-			En: "Failed to get request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	ramInt, err := strconv.Atoi(body.Ram)
@@ -133,10 +130,7 @@ func MemoryEdit(c *fiber.Ctx) error {
 		InternalStorage string `json:"internal_storage" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Gagal mendapatkan request body",
-			En: "Failed to get request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	ramInt, err := strconv.Atoi(body.Ram)
@@ -227,10 +221,7 @@ func MemoryBulkRemove(c *fiber.Ctx) error {
 		IDs []uint `json:"ids" validate:"required,min=1"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Gagal mendapatkan request body",
-			En: "Failed to get request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	if err := variable.Db.

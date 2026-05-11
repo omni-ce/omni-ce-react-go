@@ -256,6 +256,13 @@ export default function ProductItemPage({ ruleKey }: Props) {
         ),
       },
       {
+        key: "condition_name",
+        header: language({ id: "Kondisi", en: "Condition" }),
+        render: (item) => (
+          <span className="max-w-xs truncate block">{item.condition_name}</span>
+        ),
+      },
+      {
         key: "qty",
         header: language({ id: "Stok", en: "Stock" }),
         render: (item) => (

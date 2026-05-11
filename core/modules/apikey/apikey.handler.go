@@ -37,12 +37,7 @@ func Create(c *fiber.Ctx) error {
 		ExpiresAt *string `json:"expires_at,omitempty" validate:"omitempty"` // RFC3339
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Body tidak valid",
-			En: "Invalid request body",
-		}, fiber.Map{
-			"error": err.Error(),
-		})
+		return dto.BodyBadRequest(c, err)
 	}
 
 	entry := model.ApiKey{
@@ -90,12 +85,7 @@ func Toggle(c *fiber.Ctx) error {
 		IsActive bool `json:"is_active" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Body tidak valid",
-			En: "Invalid request body",
-		}, fiber.Map{
-			"error": err.Error(),
-		})
+		return dto.BodyBadRequest(c, err)
 	}
 
 	var entry model.ApiKey

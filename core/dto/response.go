@@ -56,6 +56,18 @@ func BadRequest(c *fiber.Ctx, message types.Language, data interface{}) error {
 		Data:    data,
 	})
 }
+func BodyBadRequest(c *fiber.Ctx, err error) error {
+	return c.Status(fiber.StatusBadRequest).JSON(Response{
+		Status: fiber.StatusBadRequest,
+		Message: types.Language{
+			Id: "Body permintaan tidak valid",
+			En: "Invalid request body",
+		},
+		Data: fiber.Map{
+			"error": err.Error(),
+		},
+	})
+}
 
 // 401
 func Unauthorized(c *fiber.Ctx, message types.Language, data interface{}) error {

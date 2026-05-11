@@ -18,10 +18,7 @@ func Username(c *fiber.Ctx) error {
 		Value string `json:"value" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Body permintaan tidak valid",
-			En: "Invalid request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	var existing user.User
@@ -58,10 +55,7 @@ func ProductSKU(c *fiber.Ctx) error {
 		Value string `json:"value" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Body permintaan tidak valid",
-			En: "Invalid request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	var existing product.ProductItem
@@ -98,10 +92,7 @@ func ProductIMEI(c *fiber.Ctx) error {
 		Value string `json:"value" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Body permintaan tidak valid",
-			En: "Invalid request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	var existing product.ProductItem

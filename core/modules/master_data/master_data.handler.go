@@ -37,10 +37,7 @@ func Create(c *fiber.Ctx) error {
 		Value    string `json:"value" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Permintaan tidak valid",
-			En: "Invalid request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	// Check duplicate key within same category
@@ -90,10 +87,7 @@ func Update(c *fiber.Ctx) error {
 		Value    string `json:"value" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Permintaan tidak valid",
-			En: "Invalid request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	var item model.MasterData
@@ -175,10 +169,7 @@ func BulkDelete(c *fiber.Ctx) error {
 		IDs []uint64 `json:"ids" validate:"required,dive,min=1"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Permintaan tidak valid",
-			En: "Invalid request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	if len(body.IDs) == 0 {

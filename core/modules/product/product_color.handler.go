@@ -26,10 +26,7 @@ func ColorCreate(c *fiber.Ctx) error {
 		HexCode string `json:"hex_code" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Gagal mendapatkan request body",
-			En: "Failed to get request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	key := generateKeyFromName(body.Name)
@@ -117,10 +114,7 @@ func ColorEdit(c *fiber.Ctx) error {
 		HexCode string `json:"hex_code" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Gagal mendapatkan request body",
-			En: "Failed to get request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	var existing model.ProductColor
@@ -196,10 +190,7 @@ func ColorBulkRemove(c *fiber.Ctx) error {
 		IDs []uint `json:"ids" validate:"required,min=1"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Gagal mendapatkan request body",
-			En: "Failed to get request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	if err := variable.Db.

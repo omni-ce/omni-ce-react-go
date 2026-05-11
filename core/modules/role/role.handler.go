@@ -87,10 +87,7 @@ func Create(c *fiber.Ctx) error {
 		Description    string `json:"description"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Permintaan tidak valid",
-			En: "Invalid request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	// Check division exists
@@ -176,10 +173,7 @@ func Update(c *fiber.Ctx) error {
 		Description string `json:"description"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Permintaan tidak valid",
-			En: "Invalid request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	var role model.Role
@@ -311,10 +305,7 @@ func BulkDelete(c *fiber.Ctx) error {
 		IDs []uint64 `json:"ids" validate:"required,min=1,dive,gt=0"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Permintaan tidak valid",
-			En: "Invalid request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	// Cascade: delete rules for these roles

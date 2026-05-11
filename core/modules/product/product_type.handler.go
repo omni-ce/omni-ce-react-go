@@ -27,10 +27,7 @@ func TypeCreate(c *fiber.Ctx) error {
 		Name       string `json:"name" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Gagal mendapatkan request body",
-			En: "Failed to get request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	categoryID, err := strconv.Atoi(body.CategoryID)
@@ -131,10 +128,7 @@ func TypeEdit(c *fiber.Ctx) error {
 		Name       string `json:"name" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Gagal mendapatkan request body",
-			En: "Failed to get request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	var existing model.ProductType
@@ -212,10 +206,7 @@ func TypeBulkRemove(c *fiber.Ctx) error {
 		IDs []uint `json:"ids" validate:"required,min=1"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Gagal mendapatkan request body",
-			En: "Failed to get request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
 
 	if err := variable.Db.

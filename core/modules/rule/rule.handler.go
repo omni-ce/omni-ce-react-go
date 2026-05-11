@@ -23,11 +23,9 @@ func Set(c *fiber.Ctx) error {
 		} `json:"data" validate:"required,gt=0,dive"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Permintaan tidak valid",
-			En: "Invalid request body",
-		}, nil)
+		return dto.BodyBadRequest(c, err)
 	}
+
 	if len(body.Data) == 0 {
 		return dto.BadRequest(c, types.Language{
 			Id: "Data tidak ditemukan",

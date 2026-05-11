@@ -35,10 +35,7 @@ func Create(c *fiber.Ctx) error {
 		Label *string `json:"label,omitempty" validate:"omitempty"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, types.Language{
-			Id: "Gagal memvalidasi request body",
-			En: "Failed to validate request body",
-		}, err.Error())
+		return dto.BodyBadRequest(c, err)
 	}
 
 	if body.Type != "ip" && body.Type != "domain" {
