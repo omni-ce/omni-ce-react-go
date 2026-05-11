@@ -17,6 +17,29 @@ export interface MenuItem {
   category: string;
   price: number;
   emoji: string;
+  sku?: string;
+  color_name?: string;
+  memory_name?: string;
+}
+
+export interface CatalogProductItem {
+  id: number;
+  sku: string;
+  color_hex: string;
+  color_name: string;
+  memory_name: string;
+  price: number;
+  qty: number;
+}
+
+export interface CatalogRow {
+  id: number;
+  varian_name: string;
+  brand_name: string;
+  brand_logo: string;
+  type_name: string;
+  category_name: string;
+  items: CatalogProductItem[];
 }
 
 export interface CartItem {
@@ -36,7 +59,7 @@ interface PosState {
   categories: any[];
   types: any[];
   brands: any[];
-  catalogItems: any[];
+  catalogItems: CatalogRow[];
 
   setPanelOpen: (open: boolean) => void;
   setPaymentMethod: (method: PaymentMethod) => void;

@@ -12,10 +12,17 @@ import { cn } from "@/lib/utils";
 import { useEffect } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/Dialog";
+import {
   categories as dummyCategories,
   dummyMenuItems,
   dummyOrders,
 } from "@/dummy";
+import type { CatalogRow, CatalogProductItem } from "@/stores/posStore";
 
 // ─── Helper ──────────────────────────────────────────────────────────────────
 
@@ -88,6 +95,9 @@ export default function PosPage({ ruleKey }: Props) {
   } = usePosStore();
 
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedVariant, setSelectedVariant] = useState<CatalogRow | null>(
+    null,
+  );
   const debouncedSearch = useDebounce(searchQuery, 500);
 
   const {
@@ -474,38 +484,49 @@ export default function PosPage({ ruleKey }: Props) {
 
                 {/* Price + Controls */}
                 <div className="flex flex-col gap-2 mt-2">
-                  <span className="text-xs font-bold text-accent-500">
-                    {formatRupiah(item.price)}
-                  </span>
-                  <div className="flex items-center justify-between bg-dark-800 rounded-xl p-1.5">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        removeFromCart(item.id);
-                      }}
-                      className="w-10 h-10 rounded-lg bg-dark-700 text-dark-400 flex items-center justify-center hover:bg-dark-600 hover:text-foreground transition-all text-xl font-bold"
-                    >
-                      −
-                    </button>
-                    <span className="text-sm font-bold text-foreground min-w-6 text-center">
-                      {qty}
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-accent-500">
+                      {item.items.length > 1
+                        ? `${formatRupiah(Math.min(...item.items.map((i) => i.price)))} - ${formatRupiah(Math.max(...item.items.map((i) => i.price)))}`
+                        : formatRupiah(item.items[0]?.price || 0)}
                     </span>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
+                    <span className="text-[10px] text-dark-400">
+                      {item.items.reduce((s, i) => s + i.qty, 0)} available
+                    </span>
+                  </div>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (item.items.length === 1) {
+                        const productItem = item.items[0];
                         addToCart({
-                          id: item.id,
+                          id: productItem.id,
                           name: item.varian_name,
-                          price: item.price,
+                          price: productItem.price,
                           category: item.category_name,
                           emoji: "📦",
+                          sku: productItem.sku,
+                          color_name: productItem.color_name,
+                          memory_name: productItem.memory_name,
                         });
-                      }}
-                      className="w-10 h-10 rounded-lg bg-accent-500 text-white flex items-center justify-center hover:bg-accent-600 transition-all text-xl font-bold shadow-md shadow-accent-500/30"
-                    >
-                      +
-                    </button>
-                  </div>
+                      } else {
+                        setSelectedVariant(item);
+                      }
+                    }}
+                    className={cn(
+                      "w-full py-2.5 rounded-xl text-xs font-bold transition-all shadow-lg",
+                      item.items.length === 1 && getCartQty(item.items[0].id) > 0
+                        ? "bg-badge-light-blue text-accent-500 border border-accent-500/30"
+                        : "bg-accent-500 text-white hover:bg-accent-600 shadow-accent-500/20",
+                    )}
+                  >
+                    {item.items.length === 1
+                      ? getCartQty(item.items[0].id) > 0
+                        ? `${getCartQty(item.items[0].id)} in Cart`
+                        : language({ id: "Tambah", en: "Add to Cart" })
+                      : language({ id: "Pilih", en: "Select" })}
+                  </button>
                 </div>
               </div>
             );
@@ -574,9 +595,18 @@ export default function PosPage({ ruleKey }: Props) {
                   <span className="text-xs font-bold text-accent-500 w-5">
                     {cartItem.qty}x
                   </span>
-                  <span className="text-sm text-dark-200 font-medium">
+                  <span className="text-sm text-dark-200 font-medium line-clamp-1">
                     {cartItem.menuItem.name}
                   </span>
+                  <div className="text-[10px] text-dark-400 flex flex-col">
+                    <span>
+                      {cartItem.menuItem.memory_name}{" "}
+                      {cartItem.menuItem.color_name}
+                    </span>
+                    <span className="text-dark-500 italic">
+                      {cartItem.menuItem.sku}
+                    </span>
+                  </div>
                 </div>
                 <span className="text-sm font-bold text-foreground">
                   {formatRupiah(cartItem.menuItem.price * cartItem.qty)}
@@ -680,6 +710,129 @@ export default function PosPage({ ruleKey }: Props) {
           </button>
         </div>
       </div>
+      {/* ─── Item Selection Modal ────────────────────────────────────── */}
+      <Dialog
+        open={!!selectedVariant}
+        onClose={() => setSelectedVariant(null)}
+        width="600px"
+      >
+        <DialogContent onClose={() => setSelectedVariant(null)}>
+          <DialogHeader>
+            <DialogTitle>
+              {selectedVariant?.varian_name}{" "}
+              <span className="text-sm font-normal text-dark-400 ml-2">
+                ({selectedVariant?.brand_name})
+              </span>
+            </DialogTitle>
+            <div className="text-xs text-dark-500 flex gap-2">
+              <span>
+                {(() => {
+                  try {
+                    return language(
+                      JSON.parse(selectedVariant?.category_name || "{}"),
+                    );
+                  } catch {
+                    return selectedVariant?.category_name;
+                  }
+                })()}
+              </span>
+              <span>•</span>
+              <span>
+                {(() => {
+                  try {
+                    return language(
+                      JSON.parse(selectedVariant?.type_name || "{}"),
+                    );
+                  } catch {
+                    return selectedVariant?.type_name;
+                  }
+                })()}
+              </span>
+            </div>
+          </DialogHeader>
+
+          <div className="space-y-3 mt-4 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar-v">
+            {selectedVariant?.items.map((it) => {
+              const cartQty = getCartQty(it.id);
+              return (
+                <div
+                  key={it.id}
+                  className={cn(
+                    "p-4 rounded-2xl border transition-all flex items-center justify-between group",
+                    cartQty > 0
+                      ? "bg-badge-light-blue/40 border-accent-500/30"
+                      : "bg-dark-800/50 border-dark-600 hover:border-dark-500",
+                  )}
+                >
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-2">
+                      {it.color_hex && (
+                        <div
+                          className="w-3 h-3 rounded-full border border-white/20"
+                          style={{ backgroundColor: it.color_hex }}
+                        />
+                      )}
+                      <span className="text-sm font-bold text-foreground">
+                        {it.memory_name} {it.color_name}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3 text-[11px]">
+                      <span className="text-dark-400">SKU: {it.sku}</span>
+                      <span className="text-dark-500">|</span>
+                      <span
+                        className={cn(
+                          "font-medium",
+                          it.qty > 0 ? "text-neon-cyan" : "text-red-400",
+                        )}
+                      >
+                        {it.qty} available
+                      </span>
+                    </div>
+                    <span className="text-sm font-bold text-accent-500 mt-1">
+                      {formatRupiah(it.price)}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-4 bg-dark-900 rounded-2xl p-1 border border-dark-600/30">
+                    <button
+                      onClick={() => removeFromCart(it.id)}
+                      className="w-10 h-10 rounded-xl bg-dark-800 text-dark-300 flex items-center justify-center hover:bg-dark-700 hover:text-foreground transition-all text-xl font-bold"
+                    >
+                      −
+                    </button>
+                    <span className="text-base font-bold text-foreground min-w-8 text-center">
+                      {cartQty}
+                    </span>
+                    <button
+                      disabled={it.qty <= 0}
+                      onClick={() =>
+                        addToCart({
+                          id: it.id,
+                          name: selectedVariant.varian_name,
+                          price: it.price,
+                          category: selectedVariant.category_name,
+                          emoji: "📦",
+                          sku: it.sku,
+                          color_name: it.color_name,
+                          memory_name: it.memory_name,
+                        })
+                      }
+                      className={cn(
+                        "w-10 h-10 rounded-xl flex items-center justify-center transition-all text-xl font-bold shadow-lg",
+                        it.qty > 0
+                          ? "bg-accent-500 text-white hover:bg-accent-600 shadow-accent-500/20"
+                          : "bg-dark-700 text-dark-500 cursor-not-allowed",
+                      )}
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

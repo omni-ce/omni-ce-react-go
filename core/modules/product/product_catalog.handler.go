@@ -164,7 +164,7 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 		itemsByVariant[it.VariantID] = append(itemsByVariant[it.VariantID], it)
 	}
 
-	// 6. Map Result (Variant-centric with Color/Memory arrays)
+	// 6. Map Result (Variant-centric with Items array)
 	rows := make([]fiber.Map, 0, len(variants))
 	for _, v := range variants {
 		vItems, ok := itemsByVariant[v.ID]
@@ -172,41 +172,28 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 			continue
 		}
 
-		// Aggregate item data
-		colorsMap := make(map[uint]fiber.Map)
-		memoriesMap := make(map[uint]fiber.Map)
-		var minPrice float64 = -1
-		var totalQty float64 = 0
-
+		itemsList := make([]fiber.Map, 0, len(vItems))
 		for _, it := range vItems {
-			totalQty += it.Qty
-			if minPrice == -1 || it.Price < minPrice {
-				minPrice = it.Price
+			memoryName := ""
+			if it.Memory != nil {
+				memoryName = fmt.Sprintf("%d GB / %d GB", it.Memory.Ram, it.Memory.InternalStorage)
+			}
+			colorName := ""
+			colorHex := ""
+			if it.Color != nil {
+				colorName = it.Color.Name
+				colorHex = it.Color.HexCode
 			}
 
-			if it.ColorID != nil {
-				colorsMap[*it.ColorID] = fiber.Map{
-					"id":   it.Color.ID,
-					"name": it.Color.Name,
-					"hex":  it.Color.HexCode,
-				}
-			}
-			if it.MemoryID != nil {
-				memoriesMap[*it.MemoryID] = fiber.Map{
-					"id":   it.Memory.ID,
-					"name": fmt.Sprintf("%d GB / %d GB", it.Memory.Ram, it.Memory.InternalStorage),
-				}
-			}
-		}
-
-		// Flatten maps to slices
-		colors := make([]fiber.Map, 0, len(colorsMap))
-		for _, c := range colorsMap {
-			colors = append(colors, c)
-		}
-		memories := make([]fiber.Map, 0, len(memoriesMap))
-		for _, m := range memoriesMap {
-			memories = append(memories, m)
+			itemsList = append(itemsList, fiber.Map{
+				"id":          it.ID,
+				"sku":         it.SKU,
+				"color_hex":   colorHex,
+				"color_name":  colorName,
+				"memory_name": memoryName,
+				"price":       it.Price,
+				"qty":         it.Qty,
+			})
 		}
 
 		// Pick representative data from first item
@@ -218,11 +205,7 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 			"brand_logo":    first.Brand.Logo,
 			"type_name":     first.Type.Name,
 			"category_name": first.Category.Name,
-			"sku":           first.SKU, // Representative SKU
-			"price":         minPrice,  // Starting price
-			"qty":           totalQty,  // Total variant qty
-			"colors":        colors,
-			"memories":      memories,
+			"items":         itemsList,
 		})
 	}
 
