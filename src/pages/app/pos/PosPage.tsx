@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState, type RefObject } from "react";
 import { useLanguageStore } from "@/stores/languageStore";
+import satellite from "@/lib/satellite";
 import { IconComponent } from "@/components/ui/IconSelector";
 import {
   usePosStore,
@@ -227,9 +228,20 @@ export default function PosPage({ ruleKey }: Props) {
         {/* Menu Section */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-foreground tracking-tight">
-              {language({ id: "Katalog Produk", en: "Product Catalog" })}
-            </h2>
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-bold text-foreground tracking-tight">
+                {language({ id: "Katalog Produk", en: "Product Catalog" })}
+              </h2>
+              <button
+                onClick={() =>
+                  satellite.get("/api/product/catalog/infinite-scroll")
+                }
+                className="p-1.5 rounded-lg hover:bg-dark-800 text-dark-400 hover:text-foreground transition-all"
+                title="Refresh Catalog (Debug)"
+              >
+                <IconComponent iconName="Hi/HiOutlineRefresh" size={16} />
+              </button>
+            </div>
             <div className="flex gap-1">
               <button
                 onClick={() =>

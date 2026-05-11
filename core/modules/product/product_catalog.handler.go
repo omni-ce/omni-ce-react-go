@@ -11,6 +11,7 @@ import (
 func CatalogInfiniteScroll(c *fiber.Ctx) error {
 	categories := make([]model.ProductCategory, 0)
 	if err := variable.Db.
+		Select("`id`, `key`, `icon`, `name`").
 		Where("`is_active` = ?", true).
 		Find(&categories).
 		Error; err != nil {
