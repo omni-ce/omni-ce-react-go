@@ -185,13 +185,7 @@ export default function SettingPage({}: Props) {
         newPassword,
       );
       setSaveType("success");
-      setSaveMsg(
-        res.message ||
-          language({
-            id: "Password berhasil diubah.",
-            en: "Password changed successfully.",
-          }),
-      );
+      setSaveMsg(language(res.message));
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");

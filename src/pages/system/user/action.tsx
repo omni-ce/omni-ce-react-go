@@ -54,7 +54,7 @@ export const ChangePassword = ({ row, onClose }: ChangePasswordProps) => {
         );
         onClose();
       } else {
-        setErrorMsg(res.data?.message || "Failed to change password");
+        setErrorMsg(language(res.data?.message));
       }
     } catch (e) {
       const error = e as AxiosError<{

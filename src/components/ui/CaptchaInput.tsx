@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import * as encryption from "@/lib/encryption";
 import { GeneralEnigmaSchema } from "@/enigma/general.enigma";
 import type { Response } from "@/types/response";
+import { useLanguageStore } from "@/stores/languageStore";
 
 export type CaptchaSecurity = "low" | "medium" | "strong";
 interface CaptchaProps {
@@ -30,6 +31,8 @@ export default function CaptchaInput({
   messagePleaseEnter = "Please enter verification code",
   messageWrong = "Verification code is incorrect",
 }: CaptchaProps) {
+  const { language } = useLanguageStore();
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [captchaId, setCaptchaId] = useState("");
   const [captchaText, setCaptchaText] = useState("");
@@ -123,19 +126,24 @@ export default function CaptchaInput({
 
         let response;
         if (lastId) {
-          response = await satellite.post<Response<unknown>>(
-            `/api/captcha/regenerate${previewQuery}`,
-            {
-              last_captcha_id: lastId,
-            },
-          );
+          response = await satellite.post<
+            Response<{
+              captcha: string;
+              captcha_id: string;
+            }>
+          >(`/api/captcha/regenerate${previewQuery}`, {
+            last_captcha_id: lastId,
+          });
         } else {
-          response = await satellite.get<Response<unknown>>(
-            `/api/captcha/generate${previewQuery}`,
-          );
+          response = await satellite.get<
+            Response<{
+              captcha: string;
+              captcha_id: string;
+            }>
+          >(`/api/captcha/generate${previewQuery}`);
         }
         if (response.status !== 200) {
-          throw new Error(response.data?.message);
+          language(response.data?.message);
         }
         const data = response.data?.data;
 
