@@ -11,33 +11,68 @@ import (
 )
 
 func CatalogInfiniteScroll(c *fiber.Ctx) error {
-	// 1. Get Categories & Types (Selective columns to avoid "all columns" issue)
-	categories := make([]fiber.Map, 0)
+	// 1. Get Categories (Fetch into struct to avoid panic, then map to clean response)
+	categoriesData := make([]model.ProductCategory, 0)
 	if err := variable.Db.
-		Model(&model.ProductCategory{}).
 		Select("id, key, name, icon").
 		Where("is_active = ?", true).
-		Find(&categories).
-		Error; err != nil {
+		Find(&categoriesData).Error; err != nil {
 		return dto.InternalServerError(c, "Failed to get categories", nil)
 	}
+	categories := make([]fiber.Map, 0, len(categoriesData))
+	for _, cat := range categoriesData {
+		categories = append(categories, fiber.Map{
+			"id":   cat.ID,
+			"key":  cat.Key,
+			"name": cat.Name,
+			"icon": cat.Icon,
+		})
+	}
 
-	types := make([]fiber.Map, 0)
+	// 2. Get Types
+	typesData := make([]model.ProductType, 0)
 	categoryID := c.Query("category_id")
 	if categoryID != "" {
 		if err := variable.Db.
-			Model(&model.ProductType{}).
 			Select("id, key, name").
 			Where("category_id = ? AND is_active = ?", categoryID, true).
-			Find(&types).
-			Error; err != nil {
+			Find(&typesData).Error; err != nil {
 			return dto.InternalServerError(c, "Failed to get types", nil)
 		}
 	}
+	types := make([]fiber.Map, 0, len(typesData))
+	for _, t := range typesData {
+		types = append(types, fiber.Map{
+			"id":   t.ID,
+			"key":  t.Key,
+			"name": t.Name,
+		})
+	}
 
-	// 2. Main Product Query with Selective Columns
+	// 3. Get Brand
+	typeID := c.Query("type_id")
+	brandsData := make([]model.ProductBrand, 0)
+	if typeID != "" {
+		if err := variable.Db.
+			Select("id, key, name, logo").
+			Where("type_id = ? AND is_active = ?", typeID, true).
+			Find(&brandsData).Error; err != nil {
+			return dto.InternalServerError(c, "Failed to get brands", nil)
+		}
+	}
+	brands := make([]fiber.Map, 0, len(brandsData))
+	for _, b := range brandsData {
+		brands = append(brands, fiber.Map{
+			"id":   b.ID,
+			"key":  b.Key,
+			"name": b.Name,
+			"logo": b.Logo,
+		})
+	}
+
+	// 4. Main Product Query
 	db := variable.Db.Model(&model.ProductItem{}).
-		Select("id, sku, price, qty, category_id, type_id, brand_id, varian_id, memory_id, color_id").
+		Select("id, category_id, type_id, brand_id, variant_id, memory_id, color_id, sku, sku_imei, price, qty").
 		Preload("Category").
 		Preload("Type").
 		Preload("Brand").
@@ -50,8 +85,11 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 	if categoryID != "" {
 		db = db.Where("category_id = ?", categoryID)
 	}
-	if typeID := c.Query("type_id"); typeID != "" {
+	if typeID != "" {
 		db = db.Where("type_id = ?", typeID)
+	}
+	if brandID := c.Query("brand_id"); brandID != "" {
+		db = db.Where("brand_id = ?", brandID)
 	}
 	if search := c.Query("search"); search != "" {
 		db = db.Where("sku LIKE ?", "%"+search+"%")
@@ -66,7 +104,7 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 		return dto.InternalServerError(c, "Failed to get catalog items", nil)
 	}
 
-	// 3. Map Result (Explicitly select fields for response)
+	// 4. Map Result (Explicitly select fields for response)
 	rows := make([]fiber.Map, 0, len(items))
 	for _, row := range items {
 		item := fiber.Map{

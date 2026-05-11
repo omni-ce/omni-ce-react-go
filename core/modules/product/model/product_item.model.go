@@ -21,6 +21,10 @@ type ProductItem struct {
 	SKU     string `json:"sku" gorm:"type:varchar(255);uniqueIndex;not null"`
 	SkuIMEI string `json:"sku_imei" gorm:"type:varchar(255);default:null"`
 
+	// Value
+	Qty   float64 `json:"qty" gorm:"default:0;not null"`
+	Price float64 `json:"price" gorm:"default:0;not null"`
+
 	// relations
 	Category ProductCategory `json:"category" gorm:"foreignKey:CategoryID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Type     ProductType     `json:"type" gorm:"foreignKey:TypeID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
@@ -28,10 +32,6 @@ type ProductItem struct {
 	Variant  ProductVariant  `json:"varian" gorm:"foreignKey:VariantID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Memory   ProductMemory   `json:"memory" gorm:"foreignKey:MemoryID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	Color    ProductColor    `json:"color" gorm:"foreignKey:ColorID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-
-	// Value
-	Qty   float64 `json:"qty" gorm:"default:0;not null"`
-	Price float64 `json:"price" gorm:"default:0;not null"`
 
 	// SLA: create & update by user
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
