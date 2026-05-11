@@ -19,12 +19,18 @@ func VariantCreate(c *fiber.Ctx) error {
 	}
 
 	var body struct {
+		TypeID      string `json:"type_id" validate:"required"`
 		BrandID     string `json:"brand_id" validate:"required"`
 		Name        string `json:"name" validate:"required"`
 		Description string `json:"description"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
 		return dto.BadRequest(c, err.Error(), nil)
+	}
+
+	typeID, err := strconv.Atoi(body.TypeID)
+	if err != nil {
+		return dto.BadRequest(c, "Invalid type id", nil)
 	}
 
 	brandID, err := strconv.Atoi(body.BrandID)
@@ -44,6 +50,7 @@ func VariantCreate(c *fiber.Ctx) error {
 	}
 
 	variant := model.ProductVariant{
+		TypeID:      uint(typeID),
 		BrandID:     uint(brandID),
 		Key:         key,
 		Name:        body.Name,
@@ -66,15 +73,51 @@ func VariantCreate(c *fiber.Ctx) error {
 func VariantPaginate(c *fiber.Ctx) error {
 	variants := make([]model.ProductVariant, 0)
 	pagination, err := function.Pagination(c, &model.ProductVariant{}, func(db *gorm.DB) *gorm.DB {
-		return db.Preload("Brand")
+		return db.Preload("Type").Preload("Brand")
 	}, []string{"name", "key"}, &variants)
 	if err != nil {
 		return dto.InternalServerError(c, "Failed to prepare pagination", nil)
 	}
 
+	typeIds := make([]uint, 0)
+	for _, row := range variants {
+		typeIds = append(typeIds, row.TypeID)
+	}
+	types := make([]model.ProductType, 0)
+	if err := variable.Db.
+		Where("id IN ?", typeIds).
+		Find(&types).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to get types", nil)
+	}
+	typeMap := make(map[uint]model.ProductType)
+	for _, t := range types {
+		typeMap[t.ID] = t
+	}
+
+	categoryIds := make([]uint, 0)
+	for _, row := range variants {
+		categoryIds = append(categoryIds, typeMap[row.TypeID].CategoryID)
+	}
+	categories := make([]model.ProductCategory, 0)
+	if err := variable.Db.
+		Where("id IN ?", categoryIds).
+		Find(&categories).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to get categories", nil)
+	}
+	categoryMap := make(map[uint]model.ProductCategory)
+	for _, t := range categories {
+		categoryMap[t.ID] = t
+	}
+
 	rows := make([]map[string]any, 0, len(variants))
 	for _, row := range variants {
+
 		variant := row.Map()
+		variant["category_name"] = categoryMap[typeMap[row.TypeID].CategoryID].Name
+		variant["category_icon"] = categoryMap[typeMap[row.TypeID].CategoryID].Icon
+		variant["type_name"] = typeMap[row.TypeID].Name
 		variant["brand_name"] = row.Brand.Name
 		variant["brand_logo"] = row.Brand.Logo
 		rows = append(rows, variant)
@@ -94,6 +137,7 @@ func VariantEdit(c *fiber.Ctx) error {
 	}
 
 	var body struct {
+		TypeID      string `json:"type_id" validate:"required"`
 		BrandID     string `json:"brand_id" validate:"required"`
 		Name        string `json:"name" validate:"required"`
 		Description string `json:"description"`
@@ -122,6 +166,9 @@ func VariantEdit(c *fiber.Ctx) error {
 		}
 	}
 
+	if typeID, err := strconv.Atoi(body.TypeID); err == nil {
+		existing.TypeID = uint(typeID)
+	}
 	if brandID, err := strconv.Atoi(body.BrandID); err == nil {
 		existing.BrandID = uint(brandID)
 	}

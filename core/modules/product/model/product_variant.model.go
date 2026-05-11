@@ -9,6 +9,7 @@ import (
 
 type ProductVariant struct {
 	ID          uint   `json:"id" gorm:"autoIncrement;primaryKey"`
+	TypeID      uint   `json:"type_id" gorm:"null"`
 	BrandID     uint   `json:"brand_id" gorm:"not null"`
 	Key         string `json:"key" gorm:"type:varchar(255);uniqueIndex;not null"`
 	Name        string `json:"name" gorm:"type:varchar(255);not null"`
@@ -16,6 +17,7 @@ type ProductVariant struct {
 	IsActive    bool   `json:"is_active" gorm:"default:true"`
 
 	// relations
+	Type  ProductType  `json:"type" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Brand ProductBrand `json:"brand" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 
 	// SLA: create & update by user

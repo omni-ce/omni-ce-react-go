@@ -6,7 +6,11 @@ import Pagination, {
   type PaginationField,
   type PaginationHandle,
 } from "@/components/Pagination";
-import { type ProductBrandOption, type ProductVarian } from "@/types/product";
+import {
+  type ProductBrandOption,
+  type ProductCategoryOption,
+  type ProductVarian,
+} from "@/types/product";
 import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import { Badge } from "@/components/ui/Badge";
@@ -22,8 +26,45 @@ export default function ProductVarianPage({ ruleKey }: Props) {
   const paginationRef = useRef<PaginationHandle>(null);
   const { languageCode, language } = useLanguageStore();
 
-  const fields = useMemo<PaginationField<ProductBrandOption>[]>(
+  const fields = useMemo(
     () => [
+      {
+        key: "category_id",
+        label: language({ id: "Kategori", en: "Category" }),
+        type: "select",
+        required: true,
+        selectOptions: "product-categories",
+        selectFormat: (item: ProductCategoryOption) => {
+          const category_name = item.label;
+          let category: string = "";
+          try {
+            if (category_name.startsWith("{")) {
+              const obj = JSON.parse(category_name);
+              category = language(obj);
+            }
+          } catch (e) {
+            // fallback to raw name
+          }
+          return {
+            value: item.value,
+            label: category || category_name,
+            render: (
+              <div className="flex items-center gap-2">
+                <IconComponent iconName={item.meta?.icon} className="text-lg" />
+                <span>{category}</span>
+              </div>
+            ),
+          };
+        },
+      },
+      {
+        key: "type_id",
+        label: language({ id: "Tipe", en: "Type" }),
+        type: "select",
+        required: true,
+        ref: "category_id",
+        selectOptions: "product-types/{category_id}",
+      },
       {
         key: "brand_id",
         label: language({ id: "Merek", en: "Brand" }),
