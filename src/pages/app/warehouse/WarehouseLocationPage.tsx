@@ -8,13 +8,11 @@ import Pagination, {
 import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import { Badge } from "@/components/ui/Badge";
-import type {
-  WarehouseBranchOption,
-  WarehouseLocation,
-} from "@/types/warehouse";
+import type { WarehouseLocation } from "@/types/warehouse";
 import { IconComponent } from "@/components/ui/IconSelector";
 import Image from "@/components/Image";
 import type { UserOption } from "@/types/user";
+import type { CompanyBranchOption } from "@/types/company";
 
 interface Props {
   ruleKey?: string;
@@ -33,7 +31,7 @@ export default function WarehouseLocationPage({ ruleKey }: Props) {
         type: "select",
         required: true,
         selectOptions: "company-branches",
-        selectFormat: (item: WarehouseBranchOption) => ({
+        selectFormat: (item: CompanyBranchOption) => ({
           value: item.value,
           render: (
             <div className="flex items-center gap-2">

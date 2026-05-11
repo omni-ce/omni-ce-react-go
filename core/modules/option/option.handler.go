@@ -632,6 +632,9 @@ func WarehouseLocations(c *fiber.Ctx) error {
 			rows = append(rows, types.Option{
 				Label: fmt.Sprintf("%s - %s : %s", entity.Name, branch.Name, row.Name),
 				Value: row.ID,
+				Meta: &map[string]any{
+					"entity_logo": entity.Logo,
+				},
 			})
 		}
 	}

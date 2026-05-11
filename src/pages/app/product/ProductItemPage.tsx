@@ -253,7 +253,7 @@ export default function ProductItemPage({ ruleKey }: Props) {
       },
       {
         key: "price",
-        header: language({ id: "Harga", en: "Price" }),
+        header: language({ id: "Harga Beli", en: "Buy Price" }),
         render: (item) => <span className="max-w-xs truncate block">0</span>,
       },
       {

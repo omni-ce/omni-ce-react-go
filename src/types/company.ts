@@ -48,3 +48,10 @@ export interface CompanyBranch {
   updated_at: string;
   updated_by: number;
 }
+export interface CompanyBranchOption {
+  value: number;
+  label: string;
+  meta: {
+    entity_logo: string;
+  };
+}

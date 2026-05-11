@@ -8,8 +8,12 @@ import Pagination, {
 import { usePermission } from "@/hooks/usePermission";
 import RulePermissionPage from "@/pages/error/RulePermissionPage";
 import { Badge } from "@/components/ui/Badge";
-import type { WarehouseProduct } from "@/types/warehouse";
+import type {
+  WarehouseLocationOption,
+  WarehouseProduct,
+} from "@/types/warehouse";
 import type { ProductItemOption } from "@/types/product";
+import Image from "@/components/Image";
 
 interface Props {
   ruleKey?: string;
@@ -21,7 +25,7 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
   const paginationRef = useRef<PaginationHandle>(null);
   const { languageCode, language } = useLanguageStore();
 
-  const fields = useMemo<PaginationField<ProductItemOption>[]>(
+  const fields = useMemo(
     () => [
       {
         key: "warehouse_location_id",
@@ -29,6 +33,19 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
         type: "select",
         required: true,
         selectOptions: "warehouse-locations",
+        selectFormat: (item: WarehouseLocationOption) => ({
+          value: item.value,
+          render: (
+            <div className="flex items-center gap-2">
+              <Image
+                src={item.meta?.entity_logo}
+                alt="logo"
+                className="w-6 h-6 rounded-full"
+              />
+              <span>{item.label}</span>
+            </div>
+          ),
+        }),
       },
       {
         key: "product_id",
@@ -37,6 +54,24 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
         required: true,
         selectOptions: "product-items",
         selectFormat: (item: ProductItemOption) => {
+          let category_name = item.meta.category;
+          try {
+            if (category_name.startsWith("{")) {
+              const obj = JSON.parse(category_name);
+              category_name = language(obj);
+            }
+          } catch (e) {
+            // fallback to raw name
+          }
+          let type_name = item.meta.type;
+          try {
+            if (type_name.startsWith("{")) {
+              const obj = JSON.parse(type_name);
+              type_name = language(obj);
+            }
+          } catch (e) {
+            // fallback to raw name
+          }
           return {
             value: String(item.value),
             render: (
@@ -45,21 +80,15 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
                   <span className="font-bold text-foreground text-sm truncate">
                     {item.label}
                   </span>
-                  <Badge
-                    variant="outline"
-                    className="text-[10px] py-0 h-4 border-dark-600 bg-dark-800 text-dark-300 shrink-0"
-                  >
-                    {item.meta.sku}
-                  </Badge>
                 </div>
                 <div className="flex items-center gap-2 text-[11px] text-dark-400">
                   <span className="bg-dark-700 px-1.5 rounded border border-dark-600">
-                    {item.meta.category}
+                    {category_name}
                   </span>
                   <span>•</span>
                   <span>{item.meta.brand}</span>
                   <span>•</span>
-                  <span>{item.meta.type}</span>
+                  <span>{type_name}</span>
                   {item.meta.color && (
                     <>
                       <span>•</span>
@@ -72,6 +101,12 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
                       </div>
                     </>
                   )}
+                  <Badge
+                    variant="outline"
+                    className="text-[10px] py-0 h-4 border-dark-600 bg-dark-800 text-dark-300 shrink-0"
+                  >
+                    {item.meta.sku}
+                  </Badge>
                 </div>
               </div>
             ),

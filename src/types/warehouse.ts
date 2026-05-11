@@ -12,9 +12,9 @@ export interface WarehouseLocation {
   };
   is_active: boolean;
 }
-export interface WarehouseBranchOption {
-  value: number;
+export interface WarehouseLocationOption {
   label: string;
+  value: number;
   meta: {
     entity_logo: string;
   };
