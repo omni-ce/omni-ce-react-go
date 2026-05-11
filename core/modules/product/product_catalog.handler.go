@@ -29,7 +29,8 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 	if err := variable.Db.
 		Select("id, key, name, icon").
 		Where("is_active = ?", true).
-		Find(&categoriesData).Error; err != nil {
+		Find(&categoriesData).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to get categories", nil)
 	}
 	categories := make([]fiber.Map, 0, len(categoriesData))
@@ -48,7 +49,8 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 		if err := variable.Db.
 			Select("id, key, name").
 			Where("category_id = ? AND is_active = ?", body.CategoryID, true).
-			Find(&typesData).Error; err != nil {
+			Find(&typesData).
+			Error; err != nil {
 			return dto.InternalServerError(c, "Failed to get types", nil)
 		}
 	}
@@ -67,7 +69,8 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 		if err := variable.Db.
 			Select("id, key, name, logo").
 			Where("type_id = ? AND is_active = ?", body.TypeID, true).
-			Find(&brandsData).Error; err != nil {
+			Find(&brandsData).
+			Error; err != nil {
 			return dto.InternalServerError(c, "Failed to get brands", nil)
 		}
 	}
@@ -81,35 +84,25 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 		})
 	}
 
-	// 4. Main Product Query
-	db := variable.Db.Model(&model.ProductItem{}).
-		Select("id, category_id, type_id, brand_id, variant_id, memory_id, color_id, sku, sku_imei, price, qty").
-		Preload("Category").
-		Preload("Type").
-		Preload("Brand").
-		Preload("Variant").
-		Preload("Memory").
-		Preload("Color").
-		Where("is_active = ?", true)
-
-	// Filter conditions
+	// 4. Get filtered Variant IDs from ProductItem
+	itemDb := variable.Db.Model(&model.ProductItem{}).Where("is_active = ?", true)
 	if body.CategoryID != 0 {
-		db = db.Where("category_id = ?", body.CategoryID)
+		itemDb = itemDb.Where("category_id = ?", body.CategoryID)
 	}
 	if body.TypeID != 0 {
-		db = db.Where("type_id = ?", body.TypeID)
+		itemDb = itemDb.Where("type_id = ?", body.TypeID)
 	}
 	if body.BrandID != 0 {
-		db = db.Where("brand_id = ?", body.BrandID)
+		itemDb = itemDb.Where("brand_id = ?", body.BrandID)
 	}
 	if body.Search != "" {
-		db = db.Where("sku LIKE ?", "%"+body.Search+"%")
+		itemDb = itemDb.Joins("Variant").Where("`Variant`.name LIKE ?", "%"+body.Search+"%")
 	}
 	if len(body.IDs) > 0 {
-		db = db.Where("id NOT IN ?", body.IDs)
+		itemDb = itemDb.Where("variant_id NOT IN ?", body.IDs)
 	}
 
-	// Pagination parameters
+	// Pagination on Variants
 	if body.Page <= 0 {
 		body.Page = 1
 	}
@@ -118,47 +111,109 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 	}
 	offset := (body.Page - 1) * body.Limit
 
-	items := make([]model.ProductItem, 0)
-	if err := db.Limit(body.Limit).Offset(offset).Find(&items).Error; err != nil {
-		return dto.InternalServerError(c, "Failed to get catalog items", nil)
-	}
-	brandIds := make([]uint, 0)
-	for _, item := range items {
-		brandIds = append(brandIds, item.BrandID)
+	variantIDs := make([]uint, 0)
+	if err := itemDb.Distinct("variant_id").
+		Limit(body.Limit).Offset(offset).
+		Pluck("variant_id", &variantIDs).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to get variant IDs", nil)
 	}
 
+	if len(variantIDs) == 0 {
+		return dto.OK(c, "Success get catalog", fiber.Map{
+			"categories": categories,
+			"types":      types,
+			"brands":     brands,
+			"rows":       []any{},
+		})
+	}
+
+	// 5. Fetch Variant details and their Items
 	variants := make([]model.ProductVariant, 0)
-	if err := variable.Db.Model(&model.ProductVariant{}).
-		Select("id, key, name, price, qty").
-		Preload("Memory").
-		Preload("Color").
-		Where("is_active = ? AND brand_id IN ?", true, brandIds).
-		Limit(body.Limit).Offset(offset).Find(&variants).Error; err != nil {
-		return dto.InternalServerError(c, "Failed to get catalog items", nil)
+	if err := variable.Db.
+		Where("id IN ?", variantIDs).
+		Find(&variants).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to get variants", nil)
 	}
 
-	// 4. Map Result (Explicitly select fields for response)
-	rows := make([]fiber.Map, 0)
-	for _, row := range variants {
-		item := fiber.Map{
-			"id":            row.ID,
-			"sku":           row.SKU,
-			"price":         row.Price,
-			"qty":           row.Qty,
-			"category_id":   row.CategoryID,
-			"type_id":       row.TypeID,
-			"category_name": row.Category.Name,
-			"type_name":     row.Type.Name,
-			"brand_name":    row.Brand.Name,
-			"brand_logo":    row.Brand.Logo,
-			"varian_name":   row.Variant.Name,
-			"color_name":    row.Color.Name,
-			"color_hex":     row.Color.HexCode,
+	items := make([]model.ProductItem, 0)
+	if err := variable.Db.
+		Where("variant_id IN ?", variantIDs).
+		Where("is_active = ?", true).
+		Preload("Category").Preload("Type").Preload("Brand").
+		Preload("Color").Preload("Memory").
+		Find(&items).
+		Error; err != nil {
+		return dto.InternalServerError(c, "Failed to get items", nil)
+	}
+
+	// Group items by VariantID
+	itemsByVariant := make(map[uint][]model.ProductItem)
+	for _, it := range items {
+		itemsByVariant[it.VariantID] = append(itemsByVariant[it.VariantID], it)
+	}
+
+	// 6. Map Result (Variant-centric with Color/Memory arrays)
+	rows := make([]fiber.Map, 0, len(variants))
+	for _, v := range variants {
+		vItems, ok := itemsByVariant[v.ID]
+		if !ok || len(vItems) == 0 {
+			continue
 		}
-		if row.MemoryID != nil {
-			item["memory_name"] = fmt.Sprintf("%d GB / %d GB", row.Memory.Ram, row.Memory.InternalStorage)
+
+		// Aggregate item data
+		colorsMap := make(map[uint]fiber.Map)
+		memoriesMap := make(map[uint]fiber.Map)
+		var minPrice float64 = -1
+		var totalQty float64 = 0
+
+		for _, it := range vItems {
+			totalQty += it.Qty
+			if minPrice == -1 || it.Price < minPrice {
+				minPrice = it.Price
+			}
+
+			if it.ColorID != nil {
+				colorsMap[*it.ColorID] = fiber.Map{
+					"id":   it.Color.ID,
+					"name": it.Color.Name,
+					"hex":  it.Color.HexCode,
+				}
+			}
+			if it.MemoryID != nil {
+				memoriesMap[*it.MemoryID] = fiber.Map{
+					"id":   it.Memory.ID,
+					"name": fmt.Sprintf("%d GB / %d GB", it.Memory.Ram, it.Memory.InternalStorage),
+				}
+			}
 		}
-		rows = append(rows, item)
+
+		// Flatten maps to slices
+		colors := make([]fiber.Map, 0, len(colorsMap))
+		for _, c := range colorsMap {
+			colors = append(colors, c)
+		}
+		memories := make([]fiber.Map, 0, len(memoriesMap))
+		for _, m := range memoriesMap {
+			memories = append(memories, m)
+		}
+
+		// Pick representative data from first item
+		first := vItems[0]
+		rows = append(rows, fiber.Map{
+			"id":            v.ID,
+			"varian_name":   v.Name,
+			"brand_name":    first.Brand.Name,
+			"brand_logo":    first.Brand.Logo,
+			"type_name":     first.Type.Name,
+			"category_name": first.Category.Name,
+			"sku":           first.SKU, // Representative SKU
+			"price":         minPrice,  // Starting price
+			"qty":           totalQty,  // Total variant qty
+			"colors":        colors,
+			"memories":      memories,
+		})
 	}
 
 	return dto.OK(c, "Success get catalog", fiber.Map{
