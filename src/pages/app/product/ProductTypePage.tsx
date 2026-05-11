@@ -23,6 +23,13 @@ export default function ProductTypePage({ ruleKey }: Props) {
   const fields = useMemo<PaginationField<ProductCategoryOption>[]>(
     () => [
       {
+        key: "name",
+        label: language({ id: "Nama", en: "Name" }),
+        type: "text",
+        required: true,
+        textMultiLanguage: true,
+      },
+      {
         key: "category_id",
         label: language({ id: "Kategori", en: "Category" }),
         type: "select",
@@ -49,13 +56,6 @@ export default function ProductTypePage({ ruleKey }: Props) {
             ),
           };
         },
-      },
-      {
-        key: "name",
-        label: language({ id: "Nama", en: "Name" }),
-        type: "text",
-        required: true,
-        textMultiLanguage: true,
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
