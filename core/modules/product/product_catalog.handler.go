@@ -5,6 +5,7 @@ import (
 	"react-go/core/dto"
 	"react-go/core/function"
 	"react-go/core/modules/product/model"
+	"react-go/core/types"
 	"react-go/core/variable"
 
 	"github.com/gofiber/fiber/v2"
@@ -21,7 +22,12 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 		IDs        []int  `json:"ids"`   // not in ids
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Kesalahan pada body request",
+			En: "Error on body request",
+		}, fiber.Map{
+			"error": err.Error(),
+		})
 	}
 
 	// 1. Get Categories (Fetch into struct to avoid panic, then map to clean response)
@@ -31,7 +37,10 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 		Where("is_active = ?", true).
 		Find(&categoriesData).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to get categories", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mengambil kategori",
+			En: "Failed to get categories",
+		}, nil)
 	}
 	categories := make([]fiber.Map, 0, len(categoriesData))
 	for _, cat := range categoriesData {
@@ -51,12 +60,15 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 			Where("category_id = ? AND is_active = ?", body.CategoryID, true).
 			Find(&typesData).
 			Error; err != nil {
-			return dto.InternalServerError(c, "Failed to get types", nil)
+			return dto.InternalServerError(c, types.Language{
+				Id: "Gagal mengambil tipe",
+				En: "Failed to get types",
+			}, nil)
 		}
 	}
-	types := make([]fiber.Map, 0, len(typesData))
+	_types := make([]fiber.Map, 0, len(typesData))
 	for _, t := range typesData {
-		types = append(types, fiber.Map{
+		_types = append(_types, fiber.Map{
 			"id":   t.ID,
 			"key":  t.Key,
 			"name": t.Name,
@@ -73,14 +85,20 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 			Distinct("brand_id").
 			Pluck("brand_id", &brandIds).
 			Error; err != nil {
-			return dto.InternalServerError(c, "Failed to get brand IDs", nil)
+			return dto.InternalServerError(c, types.Language{
+				Id: "Gagal mengambil brand ids",
+				En: "Failed to get brand ids",
+			}, nil)
 		}
 		if err := variable.Db.
 			Select("id, key, name, logo").
 			Where("id IN ? AND is_active = ?", brandIds, true).
 			Find(&brandsData).
 			Error; err != nil {
-			return dto.InternalServerError(c, "Failed to get brands", nil)
+			return dto.InternalServerError(c, types.Language{
+				Id: "Gagal mengambil brand",
+				En: "Failed to get brands",
+			}, nil)
 		}
 	}
 	brands := make([]fiber.Map, 0, len(brandsData))
@@ -126,13 +144,19 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 		Limit(body.Limit).Offset(offset).
 		Pluck("variant_id", &variantIDs).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to get variant IDs", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mendapatkan variant ids",
+			En: "Failed to get variant ids",
+		}, nil)
 	}
 
 	if len(variantIDs) == 0 {
-		return dto.OK(c, "Success get catalog", fiber.Map{
+		return dto.OK(c, types.Language{
+			Id: "Berhasil mendapatkan katalog",
+			En: "Success get catalog",
+		}, fiber.Map{
 			"categories": categories,
-			"types":      types,
+			"types":      _types,
 			"brands":     brands,
 			"rows":       []any{},
 		})
@@ -144,7 +168,10 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 		Where("id IN ?", variantIDs).
 		Find(&variants).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to get variants", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mendapatkan varian",
+			En: "Failed to get variants",
+		}, nil)
 	}
 
 	items := make([]model.ProductItem, 0)
@@ -155,7 +182,10 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 		Preload("Color").Preload("Memory").
 		Find(&items).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to get items", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mendapatkan items",
+			En: "Failed to get items",
+		}, nil)
 	}
 
 	// Group items by VariantID
@@ -209,9 +239,12 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 		})
 	}
 
-	return dto.OK(c, "Success get catalog", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Berhasil mendapatkan katalog",
+		En: "Success get catalog",
+	}, fiber.Map{
 		"categories": categories,
-		"types":      types,
+		"types":      _types,
 		"brands":     brands,
 		"rows":       rows,
 	})

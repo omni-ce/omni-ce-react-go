@@ -4,6 +4,7 @@ import (
 	"react-go/core/dto"
 	"react-go/core/function"
 	model "react-go/core/modules/setting/model"
+	"react-go/core/types"
 	"react-go/core/variable"
 
 	"github.com/gofiber/fiber/v2"
@@ -30,5 +31,8 @@ func UseMaintenance(c *fiber.Ctx) error {
 		return c.Next()
 	}
 
-	return dto.Custom(c, 503, "System is under maintenance. Please try again later.", nil)
+	return dto.Custom(c, 503, types.Language{
+		Id: "Sistem sedang dalam pemeliharaan. Silakan coba lagi nanti.",
+		En: "System is under maintenance. Please try again later.",
+	}, nil)
 }

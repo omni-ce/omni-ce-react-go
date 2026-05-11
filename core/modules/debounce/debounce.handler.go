@@ -5,6 +5,7 @@ import (
 	"react-go/core/function"
 	product "react-go/core/modules/product/model"
 	user "react-go/core/modules/user/model"
+	"react-go/core/types"
 	"react-go/core/variable"
 
 	"github.com/gofiber/fiber/v2"
@@ -17,7 +18,10 @@ func Username(c *fiber.Ctx) error {
 		Value string `json:"value" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Body permintaan tidak valid",
+			En: "Invalid request body",
+		}, nil)
 	}
 
 	var existing user.User
@@ -26,7 +30,10 @@ func Username(c *fiber.Ctx) error {
 		Where("username = ?", body.Value).
 		First(&existing).
 		Error; err == nil {
-		return dto.OK(c, "Username not available", fiber.Map{
+		return dto.OK(c, types.Language{
+			Id: "Username tidak tersedia",
+			En: "Username not available",
+		}, fiber.Map{
 			"available": false,
 			"message": fiber.Map{
 				"id": "Username sudah digunakan",
@@ -34,7 +41,10 @@ func Username(c *fiber.Ctx) error {
 			},
 		})
 	}
-	return dto.OK(c, "Username available", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Username tersedia",
+		En: "Username available",
+	}, fiber.Map{
 		"available": true,
 		"message": fiber.Map{
 			"id": "Username tersedia",
@@ -48,7 +58,10 @@ func ProductSKU(c *fiber.Ctx) error {
 		Value string `json:"value" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Body permintaan tidak valid",
+			En: "Invalid request body",
+		}, nil)
 	}
 
 	var existing product.ProductItem
@@ -57,7 +70,10 @@ func ProductSKU(c *fiber.Ctx) error {
 		Where("sku = ?", body.Value).
 		First(&existing).
 		Error; err == nil {
-		return dto.OK(c, "SKU already used", fiber.Map{
+		return dto.OK(c, types.Language{
+			Id: "SKU tidak tersedia",
+			En: "SKU not available",
+		}, fiber.Map{
 			"available": false,
 			"message": fiber.Map{
 				"id": "SKU sudah digunakan",
@@ -65,7 +81,10 @@ func ProductSKU(c *fiber.Ctx) error {
 			},
 		})
 	}
-	return dto.OK(c, "SKU available", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "SKU tersedia",
+		En: "SKU available",
+	}, fiber.Map{
 		"available": true,
 		"message": fiber.Map{
 			"id": "SKU tersedia",
@@ -79,7 +98,10 @@ func ProductIMEI(c *fiber.Ctx) error {
 		Value string `json:"value" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Body permintaan tidak valid",
+			En: "Invalid request body",
+		}, nil)
 	}
 
 	var existing product.ProductItem
@@ -88,7 +110,10 @@ func ProductIMEI(c *fiber.Ctx) error {
 		Where("sku_imei = ?", body.Value).
 		First(&existing).
 		Error; err == nil {
-		return dto.OK(c, "SKU IMEI already used", fiber.Map{
+		return dto.OK(c, types.Language{
+			Id: "SKU IMEI tidak tersedia",
+			En: "SKU IMEI not available",
+		}, fiber.Map{
 			"available": false,
 			"message": fiber.Map{
 				"id": "SKU IMEI sudah digunakan",
@@ -96,7 +121,10 @@ func ProductIMEI(c *fiber.Ctx) error {
 			},
 		})
 	}
-	return dto.OK(c, "SKU IMEI available", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "SKU IMEI tersedia",
+		En: "SKU IMEI available",
+	}, fiber.Map{
 		"available": true,
 		"message": fiber.Map{
 			"id": "SKU IMEI tersedia",

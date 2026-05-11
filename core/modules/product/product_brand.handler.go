@@ -1,10 +1,10 @@
 package product
 
 import (
-	"fmt"
 	"react-go/core/dto"
 	"react-go/core/function"
 	"react-go/core/modules/product/model"
+	"react-go/core/types"
 	"react-go/core/variable"
 	"strings"
 
@@ -14,7 +14,10 @@ import (
 func BrandCreate(c *fiber.Ctx) error {
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terautentikasi",
+			En: "Unauthorized",
+		}, nil)
 	}
 
 	var body struct {
@@ -22,7 +25,10 @@ func BrandCreate(c *fiber.Ctx) error {
 		Name string `json:"name" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Permintaan tidak valid",
+			En: "Invalid request body",
+		}, nil)
 	}
 
 	key := generateKeyFromName(body.Name)
@@ -33,7 +39,10 @@ func BrandCreate(c *fiber.Ctx) error {
 		Where("`key` = ?", key).
 		First(&existing).
 		Error; err == nil {
-		return dto.BadRequest(c, "Brand with this name already exists", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Brand dengan nama ini sudah ada",
+			En: "Brand with this name already exists",
+		}, nil)
 	}
 
 	brand := model.ProductBrand{
@@ -49,12 +58,21 @@ func BrandCreate(c *fiber.Ctx) error {
 		Error; err != nil {
 		message := err.Error()
 		if strings.Contains(message, "UNIQUE constraint") {
-			return dto.BadRequest(c, "Product brand already exists", nil)
+			return dto.BadRequest(c, types.Language{
+				Id: "Brand dengan nama ini sudah ada",
+				En: "Brand with this name already exists",
+			}, nil)
 		}
-		return dto.InternalServerError(c, "Failed to create product brand", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal membuat brand",
+			En: "Failed to create brand",
+		}, nil)
 	}
 
-	return dto.Created(c, "Product brand created", fiber.Map{
+	return dto.Created(c, types.Language{
+		Id: "Brand berhasil dibuat",
+		En: "Brand created successfully",
+	}, fiber.Map{
 		"brand": brand.Map(),
 	})
 }
@@ -63,7 +81,10 @@ func BrandPaginate(c *fiber.Ctx) error {
 	var categories []model.ProductBrand
 	pagination, err := function.Pagination(c, &model.ProductBrand{}, nil, []string{"name", "key"}, &categories)
 	if err != nil {
-		return dto.InternalServerError(c, "Failed to prepare pagination", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menyiapkan paginasi",
+			En: "Failed to prepare pagination",
+		}, nil)
 	}
 
 	rows := make([]map[string]any, 0, len(categories))
@@ -71,7 +92,10 @@ func BrandPaginate(c *fiber.Ctx) error {
 		rows = append(rows, cat.Map())
 	}
 
-	return dto.OK(c, "Success get categories", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Kategori berhasil diambil",
+		En: "Categories retrieved successfully",
+	}, fiber.Map{
 		"rows":       rows,
 		"pagination": pagination.Meta(),
 	})
@@ -81,7 +105,10 @@ func BrandEdit(c *fiber.Ctx) error {
 	id := c.Params("id")
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terautentikasi",
+			En: "Unauthorized",
+		}, nil)
 	}
 
 	var body struct {
@@ -89,14 +116,20 @@ func BrandEdit(c *fiber.Ctx) error {
 		Name string `json:"name" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Permintaan tidak valid",
+			En: "Invalid request body",
+		}, nil)
 	}
 
 	var existing model.ProductBrand
 	if err := variable.Db.
 		First(&existing, "id = ?", id).
 		Error; err != nil {
-		return dto.NotFound(c, "Brand not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "Brand tidak ditemukan",
+			En: "Brand not found",
+		}, nil)
 	}
 
 	key := generateKeyFromName(body.Name)
@@ -108,7 +141,10 @@ func BrandEdit(c *fiber.Ctx) error {
 			Where("`key` = ? AND id != ?", key, id).
 			First(&dup).
 			Error; err == nil {
-			return dto.BadRequest(c, "Brand with this name already exists", nil)
+			return dto.BadRequest(c, types.Language{
+				Id: "Brand dengan nama ini sudah ada",
+				En: "Brand with this name already exists",
+			}, nil)
 		}
 	}
 
@@ -120,12 +156,18 @@ func BrandEdit(c *fiber.Ctx) error {
 	if err := variable.Db.
 		Save(&existing).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to update brand", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal memperbarui brand",
+			En: "Failed to update brand",
+		}, nil)
 	}
 
 	RegenerateItemKeysByAttribute("brand", existing.ID)
 
-	return dto.OK(c, "Brand updated", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Brand berhasil diperbarui",
+		En: "Brand updated successfully",
+	}, fiber.Map{
 		"brand": existing.Map(),
 	})
 }
@@ -136,10 +178,16 @@ func BrandRemove(c *fiber.Ctx) error {
 	if err := variable.Db.
 		Delete(&model.ProductBrand{}, "id = ?", id).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to delete brand", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menghapus brand",
+			En: "Failed to delete brand",
+		}, nil)
 	}
 
-	return dto.OK(c, "Brand deleted", nil)
+	return dto.OK(c, types.Language{
+		Id: "Brand berhasil dihapus",
+		En: "Brand deleted successfully",
+	}, nil)
 }
 
 func BrandBulkRemove(c *fiber.Ctx) error {
@@ -147,16 +195,25 @@ func BrandBulkRemove(c *fiber.Ctx) error {
 		IDs []uint `json:"ids" validate:"required,min=1"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Permintaan tidak valid",
+			En: "Invalid request body",
+		}, nil)
 	}
 
 	if err := variable.Db.
 		Delete(&model.ProductBrand{}, "id IN ?", body.IDs).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to bulk delete categories", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menghapus brand",
+			En: "Failed to delete brand",
+		}, nil)
 	}
 
-	return dto.OK(c, fmt.Sprintf("Success delete %d categories", len(body.IDs)), nil)
+	return dto.OK(c, types.Language{
+		Id: "Brand berhasil dihapus",
+		En: "Brand deleted successfully",
+	}, nil)
 }
 
 func BrandSetActive(c *fiber.Ctx) error {
@@ -166,17 +223,26 @@ func BrandSetActive(c *fiber.Ctx) error {
 	if err := variable.Db.
 		First(&existing, "id = ?", id).
 		Error; err != nil {
-		return dto.NotFound(c, "Brand not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "Brand tidak ditemukan",
+			En: "Brand not found",
+		}, nil)
 	}
 
 	existing.IsActive = !existing.IsActive
 	if err := variable.Db.
 		Save(&existing).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to toggle brand status", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mengaktifkan/menonaktifkan brand",
+			En: "Failed to toggle brand status",
+		}, nil)
 	}
 
-	return dto.OK(c, "Brand status updated", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Status brand berhasil diubah",
+		En: "Brand status updated successfully",
+	}, fiber.Map{
 		"brand": existing.Map(),
 	})
 }

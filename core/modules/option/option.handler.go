@@ -22,7 +22,10 @@ func Divisions(c *fiber.Ctx) error {
 		Model(&role.RoleDivision{}).
 		Find(&divisions).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to find divisions", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari divisi",
+			En: "Failed to find divisions",
+		}, nil)
 	}
 
 	rows := make([]types.Option, 0)
@@ -32,14 +35,20 @@ func Divisions(c *fiber.Ctx) error {
 		}
 	}
 
-	return dto.OK(c, "Get divisions success", rows)
+	return dto.OK(c, types.Language{
+		Id: "Divisi berhasil diambil",
+		En: "Divisi retrieved successfully",
+	}, rows)
 }
 
 func RolesOnDivision(c *fiber.Ctx) error {
 	idParam := c.Params("id")
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid division id", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "ID divisi tidak valid",
+			En: "Invalid division id",
+		}, nil)
 	}
 
 	roles := make([]role.Role, 0)
@@ -48,7 +57,10 @@ func RolesOnDivision(c *fiber.Ctx) error {
 		Where("role_division_id = ?", id).
 		Find(&roles).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to find roles", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari peran",
+			En: "Failed to find roles",
+		}, nil)
 	}
 
 	rows := make([]types.Option, 0)
@@ -58,7 +70,10 @@ func RolesOnDivision(c *fiber.Ctx) error {
 		}
 	}
 
-	return dto.OK(c, "Get roles success", rows)
+	return dto.OK(c, types.Language{
+		Id: "Peran berhasil diambil",
+		En: "Roles retrieved successfully",
+	}, rows)
 }
 
 func Roles(c *fiber.Ctx) error {
@@ -68,7 +83,10 @@ func Roles(c *fiber.Ctx) error {
 		Where("is_active = ?", true).
 		Find(&divisions).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to find divisions", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari divisi",
+			En: "Failed to find divisions",
+		}, nil)
 	}
 	divisionIds := make([]uint, 0)
 	for _, d := range divisions {
@@ -81,7 +99,10 @@ func Roles(c *fiber.Ctx) error {
 		Where("is_active = ? AND role_division_id IN (?)", true, divisionIds).
 		Find(&roles).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to find roles", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari peran",
+			En: "Failed to find roles",
+		}, nil)
 	}
 
 	rows := make([]types.Option, 0)
@@ -100,7 +121,10 @@ func Roles(c *fiber.Ctx) error {
 		})
 	}
 
-	return dto.OK(c, "Get roles success", rows)
+	return dto.OK(c, types.Language{
+		Id: "Peran berhasil diambil",
+		En: "Roles retrieved successfully",
+	}, rows)
 }
 
 func CompanyEntities(c *fiber.Ctx) error {
@@ -109,7 +133,10 @@ func CompanyEntities(c *fiber.Ctx) error {
 		Model(&company.CompanyEntity{}).
 		Find(&entities).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to find categories", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari entitas perusahaan",
+			En: "Failed to find company entities",
+		}, nil)
 	}
 
 	rows := make([]types.Option, 0)
@@ -125,7 +152,10 @@ func CompanyEntities(c *fiber.Ctx) error {
 		}
 	}
 
-	return dto.OK(c, "Get company entities success", rows)
+	return dto.OK(c, types.Language{
+		Id: "Entitas perusahaan berhasil diambil",
+		En: "Company entities retrieved successfully",
+	}, rows)
 }
 
 func CompanyBranches(c *fiber.Ctx) error {
@@ -134,7 +164,10 @@ func CompanyBranches(c *fiber.Ctx) error {
 		Model(&company.CompanyBranch{}).
 		Find(&branches).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to find company branches", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari cabang perusahaan",
+			En: "Failed to find company branches",
+		}, nil)
 	}
 
 	entities := make([]company.CompanyEntity, 0)
@@ -142,7 +175,10 @@ func CompanyBranches(c *fiber.Ctx) error {
 		Model(&company.CompanyEntity{}).
 		Find(&entities).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to find company entities", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari entitas perusahaan",
+			En: "Failed to find company entities",
+		}, nil)
 	}
 
 	rows := make([]types.Option, 0)
@@ -167,7 +203,10 @@ func CompanyBranches(c *fiber.Ctx) error {
 		}
 	}
 
-	return dto.OK(c, "Get company branches success", rows)
+	return dto.OK(c, types.Language{
+		Id: "Cabang perusahaan berhasil diambil",
+		En: "Company branches retrieved successfully",
+	}, rows)
 }
 
 func Users(c *fiber.Ctx) error {
@@ -177,7 +216,10 @@ func Users(c *fiber.Ctx) error {
 		Where("role = ? AND is_active = ?", user.UserRoleClient, true).
 		Find(&users).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to find users", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari pengguna",
+			En: "Failed to find users",
+		}, nil)
 	}
 	userIds := make([]string, 0)
 	for _, u := range users {
@@ -190,7 +232,10 @@ func Users(c *fiber.Ctx) error {
 		Where("user_id IN (?)", userIds).
 		Find(&roleUsers).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to find role users", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari role users",
+			En: "Failed to find role users",
+		}, nil)
 	}
 	roleIds := make([]uint, 0)
 	for _, r := range roleUsers {
@@ -211,7 +256,10 @@ func Users(c *fiber.Ctx) error {
 		Where("is_active = ? AND id IN (?)", true, roleIds).
 		Find(&roles).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to find roles", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari peran",
+			En: "Failed to find roles",
+		}, nil)
 	}
 	divisionIds := make([]uint, 0)
 	for _, r := range roles {
@@ -224,7 +272,10 @@ func Users(c *fiber.Ctx) error {
 		Where("is_active = ? AND id IN (?)", true, divisionIds).
 		Find(&divisions).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to find divisions", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari divisi",
+			En: "Failed to find divisions",
+		}, nil)
 	}
 
 	roleDivisions := make(map[uint]string)
@@ -258,7 +309,10 @@ func Users(c *fiber.Ctx) error {
 		})
 	}
 
-	return dto.OK(c, "Get users success", rows)
+	return dto.OK(c, types.Language{
+		Id: "Pengguna berhasil diambil",
+		En: "Users retrieved successfully",
+	}, rows)
 }
 
 // Product
@@ -269,7 +323,10 @@ func ProductCategories(c *fiber.Ctx) error {
 		Model(&product.ProductCategory{}).
 		Find(&categories).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to find categories", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari kategori",
+			En: "Failed to find categories",
+		}, nil)
 	}
 
 	rows := make([]types.Option, 0)
@@ -285,13 +342,19 @@ func ProductCategories(c *fiber.Ctx) error {
 		}
 	}
 
-	return dto.OK(c, "Get product categories success", rows)
+	return dto.OK(c, types.Language{
+		Id: "Kategori produk berhasil diambil",
+		En: "Product categories retrieved successfully",
+	}, rows)
 }
 
 func ProductTypesByCategory(c *fiber.Ctx) error {
 	categoryID := c.Params("category_id")
 	if categoryID == "" {
-		return dto.BadRequest(c, "Category ID is required", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "ID kategori tidak ada",
+			En: "Category ID is required",
+		}, nil)
 	}
 	_types := make([]product.ProductType, 0)
 	if err := variable.Db.
@@ -299,7 +362,10 @@ func ProductTypesByCategory(c *fiber.Ctx) error {
 		Where("category_id = ?", categoryID).
 		Find(&_types).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to find product types", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari tipe produk",
+			En: "Failed to find product types",
+		}, nil)
 	}
 
 	rows := make([]types.Option, 0)
@@ -309,7 +375,10 @@ func ProductTypesByCategory(c *fiber.Ctx) error {
 		}
 	}
 
-	return dto.OK(c, "Get product types success", rows)
+	return dto.OK(c, types.Language{
+		Id: "Tipe produk berhasil diambil",
+		En: "Product types retrieved successfully",
+	}, rows)
 }
 
 func ProductBrands(c *fiber.Ctx) error {
@@ -318,7 +387,10 @@ func ProductBrands(c *fiber.Ctx) error {
 		Model(&product.ProductBrand{}).
 		Find(&brands).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to find product brands", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari brand produk",
+			En: "Failed to find product brands",
+		}, nil)
 	}
 
 	rows := make([]types.Option, 0)
@@ -334,7 +406,10 @@ func ProductBrands(c *fiber.Ctx) error {
 		}
 	}
 
-	return dto.OK(c, "Get product brands success", rows)
+	return dto.OK(c, types.Language{
+		Id: "Brand produk berhasil diambil",
+		En: "Product brands retrieved successfully",
+	}, rows)
 }
 
 func ProductVariants(c *fiber.Ctx) error {
@@ -344,7 +419,10 @@ func ProductVariants(c *fiber.Ctx) error {
 		Where("is_active = ?", true).
 		Find(&variants).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to find product variants", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari varian produk",
+			En: "Failed to find product variants",
+		}, nil)
 	}
 	brandIDs := make([]uint, 0)
 	for _, v := range variants {
@@ -356,7 +434,10 @@ func ProductVariants(c *fiber.Ctx) error {
 		Where("id IN (?)", brandIDs).
 		Find(&brands).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to find product brand", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari brand produk",
+			En: "Failed to find product brand",
+		}, nil)
 	}
 	brandMap := make(map[uint]string)
 	for _, b := range brands {
@@ -372,20 +453,29 @@ func ProductVariants(c *fiber.Ctx) error {
 		})
 	}
 
-	return dto.OK(c, "Get product variants success", rows)
+	return dto.OK(c, types.Language{
+		Id: "Varian produk berhasil diambil",
+		En: "Product variants retrieved successfully",
+	}, rows)
 }
 
 func ProductVariant(c *fiber.Ctx) error {
 	typeIdParam := c.Params("type_id")
 	typeID, err := strconv.Atoi(typeIdParam)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid type id", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "ID tipe tidak valid",
+			En: "Invalid type id",
+		}, nil)
 	}
 
 	brandIdParam := c.Params("brand_id")
 	brandID, err := strconv.Atoi(brandIdParam)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid brand id", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "ID brand tidak valid",
+			En: "Invalid brand id",
+		}, nil)
 	}
 
 	variants := make([]product.ProductVariant, 0)
@@ -394,7 +484,10 @@ func ProductVariant(c *fiber.Ctx) error {
 		Where("type_id = ? AND brand_id = ? AND is_active = ?", typeID, brandID, true).
 		Find(&variants).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to find product variants", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari varian produk",
+			En: "Failed to find product variants",
+		}, nil)
 	}
 
 	rows := make([]types.Option, 0)
@@ -405,7 +498,10 @@ func ProductVariant(c *fiber.Ctx) error {
 		})
 	}
 
-	return dto.OK(c, "Get product variants success", rows)
+	return dto.OK(c, types.Language{
+		Id: "Varian produk berhasil diambil",
+		En: "Product variants retrieved successfully",
+	}, rows)
 }
 
 func ProductMemories(c *fiber.Ctx) error {
@@ -414,7 +510,10 @@ func ProductMemories(c *fiber.Ctx) error {
 		Model(&product.ProductMemory{}).
 		Find(&memories).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to find product memories", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari memori produk",
+			En: "Failed to find product memories",
+		}, nil)
 	}
 
 	rows := make([]types.Option, 0)
@@ -422,7 +521,10 @@ func ProductMemories(c *fiber.Ctx) error {
 		rows = append(rows, row.Option())
 	}
 
-	return dto.OK(c, "Get product memories success", rows)
+	return dto.OK(c, types.Language{
+		Id: "Memori produk berhasil diambil",
+		En: "Product memories retrieved successfully",
+	}, rows)
 }
 
 func ProductColors(c *fiber.Ctx) error {
@@ -431,7 +533,10 @@ func ProductColors(c *fiber.Ctx) error {
 		Model(&product.ProductColor{}).
 		Find(&colors).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to find product colors", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari warna produk",
+			En: "Failed to find product colors",
+		}, nil)
 	}
 
 	rows := make([]types.Option, 0)
@@ -439,7 +544,10 @@ func ProductColors(c *fiber.Ctx) error {
 		rows = append(rows, row.Option())
 	}
 
-	return dto.OK(c, "Get product colors success", rows)
+	return dto.OK(c, types.Language{
+		Id: "Warna produk berhasil diambil",
+		En: "Product colors retrieved successfully",
+	}, rows)
 }
 
 func ProductConditions(c *fiber.Ctx) error {
@@ -448,7 +556,10 @@ func ProductConditions(c *fiber.Ctx) error {
 		Model(&product.ProductCondition{}).
 		Find(&conditions).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to find product conditions", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari kondisi produk",
+			En: "Failed to find product conditions",
+		}, nil)
 	}
 
 	rows := make([]types.Option, 0)
@@ -456,7 +567,10 @@ func ProductConditions(c *fiber.Ctx) error {
 		rows = append(rows, row.Option())
 	}
 
-	return dto.OK(c, "Get product conditions success", rows)
+	return dto.OK(c, types.Language{
+		Id: "Kondisi produk berhasil diambil",
+		En: "Product conditions retrieved successfully",
+	}, rows)
 }
 
 func ProductItems(c *fiber.Ctx) error {
@@ -465,7 +579,10 @@ func ProductItems(c *fiber.Ctx) error {
 		Model(&product.ProductItem{}).
 		Find(&items).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to find product items", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari item produk",
+			En: "Failed to find product items",
+		}, nil)
 	}
 
 	categoryIds := make([]uint, 0)
@@ -494,7 +611,10 @@ func ProductItems(c *fiber.Ctx) error {
 		Where("id IN (?)", categoryIds).
 		Find(&categories).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to find product categories", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari kategori produk",
+			En: "Failed to find product categories",
+		}, nil)
 	}
 	_types := make([]product.ProductType, 0)
 	if err := variable.Db.
@@ -502,7 +622,10 @@ func ProductItems(c *fiber.Ctx) error {
 		Where("id IN (?)", typeIds).
 		Find(&_types).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to find product types", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari tipe produk",
+			En: "Failed to find product types",
+		}, nil)
 	}
 	brands := make([]product.ProductBrand, 0)
 	if err := variable.Db.
@@ -510,7 +633,10 @@ func ProductItems(c *fiber.Ctx) error {
 		Where("id IN (?)", brandIds).
 		Find(&brands).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to find product brands", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari brand produk",
+			En: "Failed to find product brands",
+		}, nil)
 	}
 	variants := make([]product.ProductVariant, 0)
 	if err := variable.Db.
@@ -518,7 +644,10 @@ func ProductItems(c *fiber.Ctx) error {
 		Where("id IN (?)", variantIds).
 		Find(&variants).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to find product variants", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari varian produk",
+			En: "Failed to find product variants",
+		}, nil)
 	}
 	memories := make([]product.ProductMemory, 0)
 	if err := variable.Db.
@@ -526,7 +655,10 @@ func ProductItems(c *fiber.Ctx) error {
 		Where("id IN (?)", memoryIds).
 		Find(&memories).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to find product memories", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari memori produk",
+			En: "Failed to find product memories",
+		}, nil)
 	}
 	colors := make([]product.ProductColor, 0)
 	if err := variable.Db.
@@ -534,7 +666,10 @@ func ProductItems(c *fiber.Ctx) error {
 		Where("id IN (?)", colorIds).
 		Find(&colors).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to find product colors", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari warna produk",
+			En: "Failed to find product colors",
+		}, nil)
 	}
 
 	categoryMap := make(map[uint]string)
@@ -605,7 +740,10 @@ func ProductItems(c *fiber.Ctx) error {
 		})
 	}
 
-	return dto.OK(c, "Get product items success", rows)
+	return dto.OK(c, types.Language{
+		Id: "Item produk berhasil diambil",
+		En: "Product items retrieved successfully",
+	}, rows)
 }
 
 // Warehouse
@@ -616,7 +754,10 @@ func WarehouseLocations(c *fiber.Ctx) error {
 		Model(&warehouse.WarehouseLocation{}).
 		Find(&locations).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to find warehouse locations", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari lokasi gudang",
+			En: "Failed to find warehouse locations",
+		}, nil)
 	}
 	branchIds := make([]uint, 0)
 	for _, row := range locations {
@@ -629,7 +770,10 @@ func WarehouseLocations(c *fiber.Ctx) error {
 		Where("id IN (?)", branchIds).
 		Find(&branches).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to find company branches", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari cabang perusahaan",
+			En: "Failed to find company branches",
+		}, nil)
 	}
 	entityIds := make([]uint, 0)
 	for _, row := range branches {
@@ -642,7 +786,10 @@ func WarehouseLocations(c *fiber.Ctx) error {
 		Where("id IN (?)", entityIds).
 		Find(&entities).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to find company entities", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari entitas perusahaan",
+			En: "Failed to find company entities",
+		}, nil)
 	}
 
 	rows := make([]types.Option, 0)
@@ -672,5 +819,8 @@ func WarehouseLocations(c *fiber.Ctx) error {
 		}
 	}
 
-	return dto.OK(c, "Get warehouse locations success", rows)
+	return dto.OK(c, types.Language{
+		Id: "Lokasi gudang berhasil diambil",
+		En: "Warehouse locations retrieved successfully",
+	}, rows)
 }

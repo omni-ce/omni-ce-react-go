@@ -3,6 +3,7 @@ package middlewares
 import (
 	"net"
 	"react-go/core/dto"
+	"react-go/core/types"
 	"react-go/core/variable"
 	"strings"
 
@@ -64,7 +65,10 @@ func UseWhitelist(c *fiber.Ctx) error {
 		}
 	}
 
-	return dto.Forbidden(c, "Access denied: IP/domain not whitelisted", nil)
+	return dto.Forbidden(c, types.Language{
+		Id: "Tidak diizinkan: IP/domain tidak ada di whitelist",
+		En: "Access denied: IP/domain not whitelisted",
+	}, nil)
 }
 
 func matchIP(clientIP, whitelistValue string) bool {

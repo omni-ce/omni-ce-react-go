@@ -10,6 +10,7 @@ import (
 	role "react-go/core/modules/role/model"
 	rule "react-go/core/modules/rule/model"
 	user "react-go/core/modules/user/model"
+	"react-go/core/types"
 	"react-go/core/variable"
 
 	"github.com/gofiber/fiber/v2"
@@ -71,14 +72,25 @@ func Login(c *fiber.Ctx) error {
 		Password string `json:"password" validate:"required,min=8"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Permintaan tidak valid",
+			En: "Invalid request body",
+		}, fiber.Map{
+			"error": err.Error(),
+		})
 	}
 
 	if body.Username == "" {
-		return dto.BadRequest(c, "Username is required", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Username tidak boleh kosong",
+			En: "Username is required",
+		}, nil)
 	}
 	if body.Password == "" {
-		return dto.BadRequest(c, "Password is required", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Password tidak boleh kosong",
+			En: "Password is required",
+		}, nil)
 	}
 
 	// Find user by username
@@ -87,12 +99,18 @@ func Login(c *fiber.Ctx) error {
 		Where("username = ?", body.Username).
 		First(&current_user).
 		Error; err != nil {
-		return dto.Unauthorized(c, "Invalid username or password", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Username atau password salah",
+			En: "Invalid username or password",
+		}, nil)
 	}
 
 	// Verify password
 	if !hash.ValidatePassword(body.Password, current_user.Password) {
-		return dto.Unauthorized(c, "Invalid username or password", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Username atau password salah",
+			En: "Invalid username or password",
+		}, nil)
 	}
 
 	token, err := function.JwtGenerateToken(function.JwtClaims{
@@ -100,15 +118,24 @@ func Login(c *fiber.Ctx) error {
 		Role: current_user.Role,
 	})
 	if err != nil {
-		return dto.InternalServerError(c, "Failed to generate token", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal membuat token",
+			En: "Failed to generate token",
+		}, nil)
 	}
 
 	rules, err := getRules(current_user)
 	if err != nil {
-		return dto.InternalServerError(c, err.Error(), nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mendapatkan rules",
+			En: "Failed to get rules",
+		}, nil)
 	}
 
-	return dto.OK(c, "Login success", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Login berhasil",
+		En: "Login success",
+	}, fiber.Map{
 		"token": token,
 		"user":  getUserMapWithRoles(current_user),
 		"rules": rules,
@@ -117,7 +144,10 @@ func Login(c *fiber.Ctx) error {
 
 func Logout(c *fiber.Ctx) error {
 	// logic revoke
-	return dto.OK(c, "Logout success", nil)
+	return dto.OK(c, types.Language{
+		Id: "Logout berhasil",
+		En: "Logout success",
+	}, nil)
 }
 
 func Validate(c *fiber.Ctx) error {
@@ -125,17 +155,29 @@ func Validate(c *fiber.Ctx) error {
 	if err != nil {
 		message := err.Error()
 		if strings.Contains(message, "user not found") {
-			return dto.Unauthorized(c, "user not found", nil)
+			return dto.Unauthorized(c, types.Language{
+				Id: "User tidak ditemukan",
+				En: "User not found",
+			}, nil)
 		}
-		return dto.InternalServerError(c, message, nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal memvalidasi token",
+			En: "Failed to validate token",
+		}, nil)
 	}
 
 	rules, err := getRules(current_user)
 	if err != nil {
-		return dto.InternalServerError(c, err.Error(), nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mendapatkan rules",
+			En: "Failed to get rules",
+		}, nil)
 	}
 
-	return dto.OK(c, "Token valid", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Token valid",
+		En: "Token valid",
+	}, fiber.Map{
 		"user":  getUserMapWithRoles(current_user),
 		"rules": rules,
 	})

@@ -1,10 +1,10 @@
 package product
 
 import (
-	"fmt"
 	"react-go/core/dto"
 	"react-go/core/function"
 	"react-go/core/modules/product/model"
+	"react-go/core/types"
 	"react-go/core/variable"
 	"strconv"
 	"strings"
@@ -16,7 +16,10 @@ import (
 func VariantCreate(c *fiber.Ctx) error {
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terautentikasi",
+			En: "Unauthorized",
+		}, nil)
 	}
 
 	var body struct {
@@ -26,17 +29,26 @@ func VariantCreate(c *fiber.Ctx) error {
 		Description string `json:"description"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Permintaan tidak valid",
+			En: "Invalid request body",
+		}, nil)
 	}
 
 	typeID, err := strconv.Atoi(body.TypeID)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid type id", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Tipe tidak valid",
+			En: "Invalid type id",
+		}, nil)
 	}
 
 	brandID, err := strconv.Atoi(body.BrandID)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid brand id", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Brand tidak valid",
+			En: "Invalid brand id",
+		}, nil)
 	}
 
 	key := generateKeyFromName(body.Name)
@@ -47,7 +59,10 @@ func VariantCreate(c *fiber.Ctx) error {
 		Where("`key` = ?", key).
 		First(&existing).
 		Error; err == nil {
-		return dto.BadRequest(c, "Variant with this name already exists", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Variant dengan nama ini sudah ada",
+			En: "Variant with this name already exists",
+		}, nil)
 	}
 
 	variant := model.ProductVariant{
@@ -65,12 +80,21 @@ func VariantCreate(c *fiber.Ctx) error {
 		Error; err != nil {
 		message := err.Error()
 		if strings.Contains(message, "UNIQUE constraint") {
-			return dto.BadRequest(c, "Variant with this name already exists", nil)
+			return dto.BadRequest(c, types.Language{
+				Id: "Variant dengan nama ini sudah ada",
+				En: "Variant with this name already exists",
+			}, nil)
 		}
-		return dto.InternalServerError(c, "Failed to create variant", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal membuat variant",
+			En: "Failed to create variant",
+		}, nil)
 	}
 
-	return dto.Created(c, "Variant created", fiber.Map{
+	return dto.Created(c, types.Language{
+		Id: "Variant berhasil dibuat",
+		En: "Variant created successfully",
+	}, fiber.Map{
 		"variant": variant.Map(),
 	})
 }
@@ -81,22 +105,28 @@ func VariantPaginate(c *fiber.Ctx) error {
 		return db.Preload("Type").Preload("Brand")
 	}, []string{"name", "key"}, &variants)
 	if err != nil {
-		return dto.InternalServerError(c, "Failed to prepare pagination", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mendapatkan data variant",
+			En: "Failed to get variant data",
+		}, nil)
 	}
 
 	typeIds := make([]uint, 0)
 	for _, row := range variants {
 		typeIds = append(typeIds, row.TypeID)
 	}
-	types := make([]model.ProductType, 0)
+	_types := make([]model.ProductType, 0)
 	if err := variable.Db.
 		Where("id IN ?", typeIds).
-		Find(&types).
+		Find(&_types).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to get types", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mendapatkan tipe",
+			En: "Failed to get types",
+		}, nil)
 	}
 	typeMap := make(map[uint]model.ProductType)
-	for _, t := range types {
+	for _, t := range _types {
 		typeMap[t.ID] = t
 	}
 
@@ -109,7 +139,10 @@ func VariantPaginate(c *fiber.Ctx) error {
 		Where("id IN ?", categoryIds).
 		Find(&categories).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to get categories", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mendapatkan kategori",
+			En: "Failed to get categories",
+		}, nil)
 	}
 	categoryMap := make(map[uint]model.ProductCategory)
 	for _, t := range categories {
@@ -128,7 +161,10 @@ func VariantPaginate(c *fiber.Ctx) error {
 		rows = append(rows, variant)
 	}
 
-	return dto.OK(c, "Success get variants", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Variant berhasil diambil",
+		En: "Variant retrieved successfully",
+	}, fiber.Map{
 		"rows":       rows,
 		"pagination": pagination.Meta(),
 	})
@@ -138,7 +174,10 @@ func VariantEdit(c *fiber.Ctx) error {
 	id := c.Params("id")
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terautentikasi",
+			En: "Unauthorized",
+		}, nil)
 	}
 
 	var body struct {
@@ -148,14 +187,20 @@ func VariantEdit(c *fiber.Ctx) error {
 		Description string `json:"description"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Permintaan tidak valid",
+			En: "Invalid request body",
+		}, nil)
 	}
 
 	var existing model.ProductVariant
 	if err := variable.Db.
 		First(&existing, "id = ?", id).
 		Error; err != nil {
-		return dto.NotFound(c, "Variant not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "Variant tidak ditemukan",
+			En: "Variant not found",
+		}, nil)
 	}
 
 	key := generateKeyFromName(body.Name)
@@ -167,7 +212,10 @@ func VariantEdit(c *fiber.Ctx) error {
 			Where("`key` = ? AND id != ?", key, id).
 			First(&dup).
 			Error; err == nil {
-			return dto.BadRequest(c, "Variant with this name already exists", nil)
+			return dto.BadRequest(c, types.Language{
+				Id: "Variant dengan nama ini sudah ada",
+				En: "Variant with this name already exists",
+			}, nil)
 		}
 	}
 
@@ -185,12 +233,18 @@ func VariantEdit(c *fiber.Ctx) error {
 	if err := variable.Db.
 		Save(&existing).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to update variant", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal memperbarui variant",
+			En: "Failed to update variant",
+		}, nil)
 	}
 
 	RegenerateItemKeysByAttribute("variant", existing.ID)
 
-	return dto.OK(c, "Variant updated", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Variant berhasil diperbarui",
+		En: "Variant updated successfully",
+	}, fiber.Map{
 		"variant": existing.Map(),
 	})
 }
@@ -201,10 +255,16 @@ func VariantRemove(c *fiber.Ctx) error {
 	if err := variable.Db.
 		Delete(&model.ProductVariant{}, "id = ?", id).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to delete variant", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menghapus variant",
+			En: "Failed to delete variant",
+		}, nil)
 	}
 
-	return dto.OK(c, "Variant deleted", nil)
+	return dto.OK(c, types.Language{
+		Id: "Variant berhasil dihapus",
+		En: "Variant deleted successfully",
+	}, nil)
 }
 
 func VariantBulkRemove(c *fiber.Ctx) error {
@@ -212,16 +272,25 @@ func VariantBulkRemove(c *fiber.Ctx) error {
 		IDs []uint `json:"ids" validate:"required,min=1"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Permintaan tidak valid",
+			En: "Invalid request body",
+		}, nil)
 	}
 
 	if err := variable.Db.
 		Delete(&model.ProductVariant{}, "id IN ?", body.IDs).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to bulk delete variants", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menghapus variant",
+			En: "Failed to delete variant",
+		}, nil)
 	}
 
-	return dto.OK(c, fmt.Sprintf("Success delete %d variants", len(body.IDs)), nil)
+	return dto.OK(c, types.Language{
+		Id: "Variant berhasil dihapus",
+		En: "Variant deleted successfully",
+	}, nil)
 }
 
 func VariantSetActive(c *fiber.Ctx) error {
@@ -231,17 +300,26 @@ func VariantSetActive(c *fiber.Ctx) error {
 	if err := variable.Db.
 		First(&existing, "id = ?", id).
 		Error; err != nil {
-		return dto.NotFound(c, "Variant not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "Variant tidak ditemukan",
+			En: "Variant not found",
+		}, nil)
 	}
 
 	existing.IsActive = !existing.IsActive
 	if err := variable.Db.
 		Save(&existing).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to toggle variant status", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mengaktifkan/menonaktifkan variant",
+			En: "Failed to toggle variant status",
+		}, nil)
 	}
 
-	return dto.OK(c, "Variant status updated", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Variant berhasil diaktifkan/dinonaktifkan",
+		En: "Variant status updated successfully",
+	}, fiber.Map{
 		"variant": existing.Map(),
 	})
 }

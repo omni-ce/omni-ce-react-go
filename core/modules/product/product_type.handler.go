@@ -1,10 +1,10 @@
 package product
 
 import (
-	"fmt"
 	"react-go/core/dto"
 	"react-go/core/function"
 	"react-go/core/modules/product/model"
+	"react-go/core/types"
 	"react-go/core/variable"
 	"strconv"
 	"strings"
@@ -16,7 +16,10 @@ import (
 func TypeCreate(c *fiber.Ctx) error {
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak ada hak akses",
+			En: "Unauthorized",
+		}, nil)
 	}
 
 	var body struct {
@@ -24,12 +27,18 @@ func TypeCreate(c *fiber.Ctx) error {
 		Name       string `json:"name" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Gagal mendapatkan request body",
+			En: "Failed to get request body",
+		}, nil)
 	}
 
 	categoryID, err := strconv.Atoi(body.CategoryID)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid category id", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Kategori tidak ditemukan",
+			En: "Category not found",
+		}, nil)
 	}
 
 	key := generateKeyFromName(body.Name)
@@ -40,7 +49,10 @@ func TypeCreate(c *fiber.Ctx) error {
 		Where("`key` = ?", key).
 		First(&existing).
 		Error; err == nil {
-		return dto.BadRequest(c, "Type with this name already exists", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Tipe dengan nama ini sudah ada",
+			En: "Type with this name already exists",
+		}, nil)
 	}
 
 	_type := model.ProductType{
@@ -56,34 +68,49 @@ func TypeCreate(c *fiber.Ctx) error {
 		Error; err != nil {
 		message := err.Error()
 		if strings.Contains(message, "UNIQUE constraint") {
-			return dto.BadRequest(c, "Type with this name already exists", nil)
+			return dto.BadRequest(c, types.Language{
+				Id: "Tipe dengan nama ini sudah ada",
+				En: "Type with this name already exists",
+			}, nil)
 		}
-		return dto.InternalServerError(c, "Failed to create type", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal membuat tipe",
+			En: "Failed to create type",
+		}, nil)
 	}
 
-	return dto.Created(c, "Type created", fiber.Map{
+	return dto.Created(c, types.Language{
+		Id: "Tipe berhasil dibuat",
+		En: "Type created",
+	}, fiber.Map{
 		"type": _type.Map(),
 	})
 }
 
 func TypePaginate(c *fiber.Ctx) error {
-	types := make([]model.ProductType, 0)
+	_types := make([]model.ProductType, 0)
 	pagination, err := function.Pagination(c, &model.ProductType{}, func(db *gorm.DB) *gorm.DB {
 		return db.Preload("Category")
-	}, []string{"name", "key"}, &types)
+	}, []string{"name", "key"}, &_types)
 	if err != nil {
-		return dto.InternalServerError(c, "Failed to prepare pagination", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mendapatkan data",
+			En: "Failed to get data",
+		}, nil)
 	}
 
-	rows := make([]map[string]any, 0, len(types))
-	for _, row := range types {
+	rows := make([]map[string]any, 0, len(_types))
+	for _, row := range _types {
 		_type := row.Map()
 		_type["category_icon"] = row.Category.Icon
 		_type["category_name"] = row.Category.Name
 		rows = append(rows, _type)
 	}
 
-	return dto.OK(c, "Success get types", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Tipe berhasil ditemukan",
+		En: "Type found",
+	}, fiber.Map{
 		"rows":       rows,
 		"pagination": pagination.Meta(),
 	})
@@ -93,7 +120,10 @@ func TypeEdit(c *fiber.Ctx) error {
 	id := c.Params("id")
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak ada hak akses",
+			En: "Unauthorized",
+		}, nil)
 	}
 
 	var body struct {
@@ -101,14 +131,20 @@ func TypeEdit(c *fiber.Ctx) error {
 		Name       string `json:"name" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Gagal mendapatkan request body",
+			En: "Failed to get request body",
+		}, nil)
 	}
 
 	var existing model.ProductType
 	if err := variable.Db.
 		First(&existing, "id = ?", id).
 		Error; err != nil {
-		return dto.NotFound(c, "Type not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "Tipe tidak ditemukan",
+			En: "Type not found",
+		}, nil)
 	}
 
 	key := generateKeyFromName(body.Name)
@@ -120,7 +156,10 @@ func TypeEdit(c *fiber.Ctx) error {
 			Where("`key` = ? AND id != ?", key, id).
 			First(&dup).
 			Error; err == nil {
-			return dto.BadRequest(c, "Type with this name already exists", nil)
+			return dto.BadRequest(c, types.Language{
+				Id: "Tipe dengan nama ini sudah ada",
+				En: "Type with this name already exists",
+			}, nil)
 		}
 	}
 
@@ -134,12 +173,18 @@ func TypeEdit(c *fiber.Ctx) error {
 	if err := variable.Db.
 		Save(&existing).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to update type", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal memperbarui tipe",
+			En: "Failed to update type",
+		}, nil)
 	}
 
 	RegenerateItemKeysByAttribute("type", existing.ID)
 
-	return dto.OK(c, "Type updated", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Tipe berhasil diperbarui",
+		En: "Type updated successfully",
+	}, fiber.Map{
 		"type": existing.Map(),
 	})
 }
@@ -150,10 +195,16 @@ func TypeRemove(c *fiber.Ctx) error {
 	if err := variable.Db.
 		Delete(&model.ProductType{}, "id = ?", id).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to delete type", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menghapus tipe",
+			En: "Failed to delete type",
+		}, nil)
 	}
 
-	return dto.OK(c, "Type deleted", nil)
+	return dto.OK(c, types.Language{
+		Id: "Tipe berhasil dihapus",
+		En: "Type deleted successfully",
+	}, nil)
 }
 
 func TypeBulkRemove(c *fiber.Ctx) error {
@@ -161,16 +212,25 @@ func TypeBulkRemove(c *fiber.Ctx) error {
 		IDs []uint `json:"ids" validate:"required,min=1"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Gagal mendapatkan request body",
+			En: "Failed to get request body",
+		}, nil)
 	}
 
 	if err := variable.Db.
 		Delete(&model.ProductType{}, "id IN ?", body.IDs).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to bulk delete types", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menghapus tipe",
+			En: "Failed to delete type",
+		}, nil)
 	}
 
-	return dto.OK(c, fmt.Sprintf("Success delete %d types", len(body.IDs)), nil)
+	return dto.OK(c, types.Language{
+		Id: "Tipe berhasil dihapus",
+		En: "Type deleted successfully",
+	}, nil)
 }
 
 func TypeSetActive(c *fiber.Ctx) error {
@@ -180,17 +240,26 @@ func TypeSetActive(c *fiber.Ctx) error {
 	if err := variable.Db.
 		First(&existing, "id = ?", id).
 		Error; err != nil {
-		return dto.NotFound(c, "Type not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "Tipe tidak ditemukan",
+			En: "Type not found",
+		}, nil)
 	}
 
 	existing.IsActive = !existing.IsActive
 	if err := variable.Db.
 		Save(&existing).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to toggle type status", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal memperbarui tipe",
+			En: "Failed to update type",
+		}, nil)
 	}
 
-	return dto.OK(c, "Type status updated", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Tipe berhasil diperbarui",
+		En: "Type updated successfully",
+	}, fiber.Map{
 		"type": existing.Map(),
 	})
 }

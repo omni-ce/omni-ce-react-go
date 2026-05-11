@@ -7,6 +7,7 @@ import (
 	company "react-go/core/modules/company/model"
 	product "react-go/core/modules/product/model"
 	model "react-go/core/modules/warehouse/model"
+	"react-go/core/types"
 	"react-go/core/variable"
 	"strconv"
 	"strings"
@@ -20,7 +21,10 @@ import (
 func ProductCreate(c *fiber.Ctx) error {
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terotorisasi",
+			En: "Unauthorized",
+		}, nil)
 	}
 
 	var body struct {
@@ -29,16 +33,25 @@ func ProductCreate(c *fiber.Ctx) error {
 		Qty                 int    `json:"qty"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Gagal memvalidasi request body",
+			En: "Failed to validate request body",
+		}, err.Error())
 	}
 
 	warehouseLocationId, err := strconv.Atoi(body.WarehouseLocationID)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid warehouse location ID", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Gagal memvalidasi warehouse location ID",
+			En: "Failed to validate warehouse location ID",
+		}, nil)
 	}
 	productId, err := strconv.Atoi(body.ProductID)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid product ID", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Gagal memvalidasi product ID",
+			En: "Failed to validate product ID",
+		}, nil)
 	}
 
 	product := model.WarehouseProduct{
@@ -55,12 +68,21 @@ func ProductCreate(c *fiber.Ctx) error {
 		Error; err != nil {
 		message := err.Error()
 		if strings.Contains(message, "UNIQUE constraint") {
-			return dto.BadRequest(c, "Product already exists in this location", nil)
+			return dto.BadRequest(c, types.Language{
+				Id: "Produk sudah ada di lokasi ini",
+				En: "Product already exists in this location",
+			}, nil)
 		}
-		return dto.InternalServerError(c, "Failed to create warehouse product", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal membuat warehouse product",
+			En: "Failed to create warehouse product",
+		}, nil)
 	}
 
-	return dto.Created(c, "Warehouse product created", fiber.Map{
+	return dto.Created(c, types.Language{
+		Id: "Produk berhasil dibuat",
+		En: "Product created successfully!",
+	}, fiber.Map{
 		"product": product.Map(),
 	})
 }
@@ -71,7 +93,10 @@ func ProductPaginate(c *fiber.Ctx) error {
 		return query.Preload("WarehouseLocation").Preload("Product")
 	}, []string{}, &warehouseProducts)
 	if err != nil {
-		return dto.InternalServerError(c, "Failed to prepare pagination", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mempersiapkan paginasi",
+			En: "Failed to prepare pagination",
+		}, nil)
 	}
 
 	warehouseLocationIds := make([]uint, 0, len(warehouseProducts))
@@ -100,7 +125,10 @@ func ProductPaginate(c *fiber.Ctx) error {
 		Where("id IN (?)", branchIds).
 		Find(&branches).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to find company branches", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menemukan company branch",
+			En: "Failed to find company branches",
+		}, nil)
 	}
 	entityIds := make([]uint, 0)
 	for _, row := range branches {
@@ -113,7 +141,10 @@ func ProductPaginate(c *fiber.Ctx) error {
 		Where("id IN (?)", entityIds).
 		Find(&entities).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to find company entities", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menemukan company entity",
+			En: "Failed to find company entities",
+		}, nil)
 	}
 
 	productCategoryIds := make([]uint, 0, len(products))
@@ -252,7 +283,10 @@ func ProductPaginate(c *fiber.Ctx) error {
 		result = append(result, p)
 	}
 
-	return dto.OK(c, "Success get warehouse products", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Berhasil mendapatkan data warehouse product",
+		En: "Success get warehouse products",
+	}, fiber.Map{
 		"rows":       result,
 		"pagination": pagination.Meta(),
 	})
@@ -264,7 +298,10 @@ func ProductEdit(c *fiber.Ctx) error {
 
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terotorisasi",
+			En: "Unauthorized",
+		}, nil)
 	}
 
 	var body struct {
@@ -273,23 +310,35 @@ func ProductEdit(c *fiber.Ctx) error {
 		Qty                 int    `json:"qty"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Gagal memvalidasi request body",
+			En: "Failed to validate request body",
+		}, err.Error())
 	}
 
 	warehouseLocationId, err := strconv.Atoi(body.WarehouseLocationID)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid warehouse location ID", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Gagal memvalidasi warehouse location ID",
+			En: "Failed to validate warehouse location ID",
+		}, nil)
 	}
 	productId, err := strconv.Atoi(body.ProductID)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid product ID", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Gagal memvalidasi product ID",
+			En: "Failed to validate product ID",
+		}, nil)
 	}
 
 	var existing model.WarehouseProduct
 	if err := variable.Db.
 		First(&existing, id).
 		Error; err != nil {
-		return dto.NotFound(c, "Warehouse product not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "Warehouse product tidak ditemukan",
+			En: "Warehouse product not found",
+		}, nil)
 	}
 
 	updates := map[string]any{
@@ -308,10 +357,16 @@ func ProductEdit(c *fiber.Ctx) error {
 		Model(&existing).
 		Updates(updates).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to update warehouse product", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mengupdate warehouse product",
+			En: "Failed to update warehouse product",
+		}, nil)
 	}
 
-	return dto.OK(c, "Success update warehouse product", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Berhasil mengupdate warehouse product",
+		En: "Success update warehouse product",
+	}, fiber.Map{
 		"product": existing.Map(),
 	})
 }
@@ -323,10 +378,16 @@ func ProductRemove(c *fiber.Ctx) error {
 	if err := variable.Db.
 		Delete(&model.WarehouseProduct{}, id).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to delete warehouse product", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menghapus warehouse product",
+			En: "Failed to delete warehouse product",
+		}, nil)
 	}
 
-	return dto.OK(c, "Success delete warehouse product", nil)
+	return dto.OK(c, types.Language{
+		Id: "Berhasil menghapus warehouse product",
+		En: "Success delete warehouse product",
+	}, nil)
 }
 
 func ProductBulkRemove(c *fiber.Ctx) error {
@@ -334,16 +395,25 @@ func ProductBulkRemove(c *fiber.Ctx) error {
 		IDs []uint `json:"ids" validate:"required,min=1"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Gagal memvalidasi request body",
+			En: "Failed to validate request body",
+		}, err.Error())
 	}
 
 	if err := variable.Db.
 		Delete(&model.WarehouseProduct{}, "id IN ?", body.IDs).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to bulk delete warehouse products", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menghapus warehouse product",
+			En: "Failed to delete warehouse product",
+		}, nil)
 	}
 
-	return dto.OK(c, "Success bulk delete warehouse products", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Berhasil menghapus warehouse product",
+		En: "Success delete warehouse product",
+	}, fiber.Map{
 		"deleted_count": len(body.IDs),
 	})
 }
@@ -356,7 +426,10 @@ func ProductSetActive(c *fiber.Ctx) error {
 	if err := variable.Db.
 		First(&existing, id).
 		Error; err != nil {
-		return dto.NotFound(c, "Warehouse product not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "Warehouse product tidak ditemukan",
+			En: "Warehouse product not found",
+		}, nil)
 	}
 
 	newStatus := !existing.IsActive
@@ -364,10 +437,16 @@ func ProductSetActive(c *fiber.Ctx) error {
 		Model(&existing).
 		Update("is_active", newStatus).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to toggle warehouse product status", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mengupdate warehouse product",
+			En: "Failed to update warehouse product",
+		}, nil)
 	}
 
-	return dto.OK(c, "Success toggle warehouse product status", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Berhasil mengupdate warehouse product",
+		En: "Success update warehouse product",
+	}, fiber.Map{
 		"product": existing.Map(),
 	})
 }

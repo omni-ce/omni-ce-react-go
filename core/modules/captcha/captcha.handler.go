@@ -5,6 +5,7 @@ import (
 	"react-go/core/dto"
 	"react-go/core/enigma"
 	"react-go/core/function"
+	"react-go/core/types"
 	"react-go/core/variable"
 	"strconv"
 	"strings"
@@ -20,12 +21,18 @@ func Generate(c *fiber.Ctx) error {
 
 	digitCount, ok := getDigitCountOverrideFromQuery(c)
 	if !ok {
-		return dto.BadRequest(c, "Invalid digit count", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Digit count tidak valid",
+			En: "Invalid digit count",
+		}, nil)
 	}
 
 	record, err := createCaptcha(digitCount)
 	if err != nil {
-		return dto.InternalServerError(c, "Failed to generate captcha", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal membuat captcha",
+			En: "Failed to generate captcha",
+		}, nil)
 	}
 
 	return returnGenerate(c, record.Captcha, record.ID.String())
@@ -39,11 +46,17 @@ func Validate(c *fiber.Ctx) error {
 		Captcha   string `json:"captcha"`
 	}
 	if err := c.BodyParser(&body); err != nil {
-		return dto.BadRequest(c, "Invalid request body", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Body request tidak valid",
+			En: "Invalid request body",
+		}, nil)
 	}
 
 	if body.CaptchaID == "" || body.Captcha == "" {
-		return dto.BadRequest(c, "captcha_id and captcha are required", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "captcha_id dan captcha harus diisi",
+			En: "captcha_id and captcha are required",
+		}, nil)
 	}
 
 	var record model.Captcha
@@ -51,18 +64,27 @@ func Validate(c *fiber.Ctx) error {
 		Where("id = ?", body.CaptchaID).
 		First(&record).
 		Error; err != nil {
-		return dto.BadRequest(c, "Captcha not found or expired", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Captcha tidak ditemukan atau kadaluarsa",
+			En: "Captcha not found or expired",
+		}, nil)
 	}
 
 	// Case-sensitive comparison
 	if !strings.EqualFold(strings.TrimSpace(record.Captcha), strings.TrimSpace(body.Captcha)) {
-		return dto.BadRequest(c, "Captcha is incorrect", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Captcha salah",
+			En: "Captcha is incorrect",
+		}, nil)
 	}
 
 	// Delete used captcha
 	variable.Db.Delete(&record)
 
-	return dto.NoContent(c, "Captcha validated successfully", nil)
+	return dto.NoContent(c, types.Language{
+		Id: "Captcha berhasil divalidasi",
+		En: "Captcha validated successfully",
+	}, nil)
 }
 
 func Regenerate(c *fiber.Ctx) error {
@@ -72,7 +94,10 @@ func Regenerate(c *fiber.Ctx) error {
 		LastCaptchaID string `json:"last_captcha_id"`
 	}
 	if err := c.BodyParser(&body); err != nil {
-		return dto.BadRequest(c, "Invalid request body", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Body request tidak valid",
+			En: "Invalid request body",
+		}, nil)
 	}
 
 	// Delete old captcha if provided
@@ -82,12 +107,18 @@ func Regenerate(c *fiber.Ctx) error {
 
 	digitCount, ok := getDigitCountOverrideFromQuery(c)
 	if !ok {
-		return dto.BadRequest(c, "Invalid digit count", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Digit count tidak valid",
+			En: "Invalid digit count",
+		}, nil)
 	}
 
 	record, err := createCaptcha(digitCount)
 	if err != nil {
-		return dto.InternalServerError(c, "Failed to regenerate captcha", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal membuat captcha",
+			En: "Failed to regenerate captcha",
+		}, nil)
 	}
 
 	return returnGenerate(c, record.Captcha, record.ID.String())
@@ -98,7 +129,10 @@ func Regenerate(c *fiber.Ctx) error {
 func returnGenerate(c *fiber.Ctx, captchaCode string, captchaId string) error {
 	encrypted, err := function.Encryption{}.Encode(enigma.GeneralEnigmaSchema(c.Get("Origin")), captchaCode)
 	if err != nil {
-		return dto.InternalServerError(c, "Failed to encrypt captcha", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mengenkripsi captcha",
+			En: "Failed to encrypt captcha",
+		}, nil)
 	}
 
 	// decrypted, err := function.Encryption{}.Decode(enigma.GeneralEnigmaSchema(c.Get("Origin")), encrypted)
@@ -107,7 +141,10 @@ func returnGenerate(c *fiber.Ctx, captchaCode string, captchaId string) error {
 	// }
 	// fmt.Printf("Decrypted: %s\n", decrypted)
 
-	return dto.OK(c, "Captcha regenerated successfully", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Captcha berhasil dibuat",
+		En: "Captcha regenerated successfully",
+	}, fiber.Map{
 		"captcha":    encrypted,
 		"captcha_id": captchaId,
 	})

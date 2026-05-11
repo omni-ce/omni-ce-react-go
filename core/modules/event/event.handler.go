@@ -110,7 +110,10 @@ func Stream(c *fiber.Ctx) error {
 func Dashboard(c *fiber.Ctx) error {
 	existing, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", 3)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terotorisasi",
+			En: "Unauthorized",
+		}, nil)
 	}
 	connectedUserID := existing.ID
 
@@ -123,10 +126,16 @@ func Dashboard(c *fiber.Ctx) error {
 			Find(&role.RoleUser{}).
 			Count(&exist).
 			Error; err != nil {
-			return dto.InternalServerError(c, "Failed to get roles", nil)
+			return dto.InternalServerError(c, types.Language{
+				Id: "Gagal mendapatkan role",
+				En: "Failed to get roles",
+			}, nil)
 		}
 		if exist == 0 {
-			return dto.Unauthorized(c, "Unauthorized", 4)
+			return dto.Unauthorized(c, types.Language{
+				Id: "Tidak terotorisasi",
+				En: "Unauthorized",
+			}, nil)
 		}
 	}
 

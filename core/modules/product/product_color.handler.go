@@ -5,6 +5,7 @@ import (
 	"react-go/core/dto"
 	"react-go/core/function"
 	"react-go/core/modules/product/model"
+	"react-go/core/types"
 	"react-go/core/variable"
 	"strings"
 
@@ -14,7 +15,10 @@ import (
 func ColorCreate(c *fiber.Ctx) error {
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terotorisasi",
+			En: "Unauthorized",
+		}, nil)
 	}
 
 	var body struct {
@@ -22,7 +26,10 @@ func ColorCreate(c *fiber.Ctx) error {
 		HexCode string `json:"hex_code" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Gagal mendapatkan request body",
+			En: "Failed to get request body",
+		}, nil)
 	}
 
 	key := generateKeyFromName(body.Name)
@@ -33,7 +40,10 @@ func ColorCreate(c *fiber.Ctx) error {
 		Where("`key` = ?", key).
 		First(&existing).
 		Error; err == nil {
-		return dto.BadRequest(c, "Color with this name already exists", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Nama warna sudah ada",
+			En: "Color with this name already exists",
+		}, nil)
 	}
 
 	color := model.ProductColor{
@@ -49,12 +59,21 @@ func ColorCreate(c *fiber.Ctx) error {
 		Error; err != nil {
 		message := err.Error()
 		if strings.Contains(message, "UNIQUE constraint") {
-			return dto.BadRequest(c, "Color with this name already exists", nil)
+			return dto.BadRequest(c, types.Language{
+				Id: "Nama warna sudah ada",
+				En: "Color with this name already exists",
+			}, nil)
 		}
-		return dto.InternalServerError(c, "Failed to create color", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal membuat warna",
+			En: "Failed to create color",
+		}, nil)
 	}
 
-	return dto.Created(c, "Color created", fiber.Map{
+	return dto.Created(c, types.Language{
+		Id: "Warna berhasil dibuat",
+		En: "Color created successfully",
+	}, fiber.Map{
 		"color": color.Map(),
 	})
 }
@@ -63,7 +82,10 @@ func ColorPaginate(c *fiber.Ctx) error {
 	var categories []model.ProductColor
 	pagination, err := function.Pagination(c, &model.ProductColor{}, nil, []string{"name", "key"}, &categories)
 	if err != nil {
-		return dto.InternalServerError(c, "Failed to prepare pagination", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menyiapkan paginasi",
+			En: "Failed to prepare pagination",
+		}, nil)
 	}
 
 	rows := make([]map[string]any, 0, len(categories))
@@ -71,7 +93,10 @@ func ColorPaginate(c *fiber.Ctx) error {
 		rows = append(rows, cat.Map())
 	}
 
-	return dto.OK(c, "Success get categories", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Kategori berhasil diambil",
+		En: "Categories retrieved successfully",
+	}, fiber.Map{
 		"rows":       rows,
 		"pagination": pagination.Meta(),
 	})
@@ -81,7 +106,10 @@ func ColorEdit(c *fiber.Ctx) error {
 	id := c.Params("id")
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terotorisasi",
+			En: "Unauthorized",
+		}, nil)
 	}
 
 	var body struct {
@@ -89,14 +117,20 @@ func ColorEdit(c *fiber.Ctx) error {
 		HexCode string `json:"hex_code" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Gagal mendapatkan request body",
+			En: "Failed to get request body",
+		}, nil)
 	}
 
 	var existing model.ProductColor
 	if err := variable.Db.
 		First(&existing, "id = ?", id).
 		Error; err != nil {
-		return dto.NotFound(c, "Color not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "Warna tidak ditemukan",
+			En: "Color not found",
+		}, nil)
 	}
 
 	key := generateKeyFromName(body.Name)
@@ -108,7 +142,10 @@ func ColorEdit(c *fiber.Ctx) error {
 			Where("`key` = ? AND id != ?", key, id).
 			First(&dup).
 			Error; err == nil {
-			return dto.BadRequest(c, "Color with this name already exists", nil)
+			return dto.BadRequest(c, types.Language{
+				Id: "Warna dengan nama ini sudah ada",
+				En: "Color with this name already exists",
+			}, nil)
 		}
 	}
 
@@ -120,12 +157,18 @@ func ColorEdit(c *fiber.Ctx) error {
 	if err := variable.Db.
 		Save(&existing).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to update color", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal memperbarui warna",
+			En: "Failed to update color",
+		}, nil)
 	}
 
 	RegenerateItemKeysByAttribute("color", existing.ID)
 
-	return dto.OK(c, "Color updated", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Warna berhasil diperbarui",
+		En: "Color updated successfully",
+	}, fiber.Map{
 		"color": existing.Map(),
 	})
 }
@@ -136,10 +179,16 @@ func ColorRemove(c *fiber.Ctx) error {
 	if err := variable.Db.
 		Delete(&model.ProductColor{}, "id = ?", id).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to delete color", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menghapus warna",
+			En: "Failed to delete color",
+		}, nil)
 	}
 
-	return dto.OK(c, "Color deleted", nil)
+	return dto.OK(c, types.Language{
+		Id: "Warna berhasil dihapus",
+		En: "Color deleted successfully",
+	}, nil)
 }
 
 func ColorBulkRemove(c *fiber.Ctx) error {
@@ -147,14 +196,23 @@ func ColorBulkRemove(c *fiber.Ctx) error {
 		IDs []uint `json:"ids" validate:"required,min=1"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Gagal mendapatkan request body",
+			En: "Failed to get request body",
+		}, nil)
 	}
 
 	if err := variable.Db.
 		Delete(&model.ProductColor{}, "id IN ?", body.IDs).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to bulk delete categories", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menghapus warna",
+			En: "Failed to delete color",
+		}, nil)
 	}
 
-	return dto.OK(c, fmt.Sprintf("Success delete %d categories", len(body.IDs)), nil)
+	return dto.OK(c, types.Language{
+		Id: fmt.Sprintf("Berhasil menghapus %d warna", len(body.IDs)),
+		En: fmt.Sprintf("Success delete %d colors", len(body.IDs)),
+	}, nil)
 }

@@ -5,6 +5,7 @@ import (
 	"react-go/core/function"
 	model "react-go/core/modules/role/model"
 	rule "react-go/core/modules/rule/model"
+	"react-go/core/types"
 	"react-go/core/variable"
 	"strconv"
 	"strings"
@@ -18,7 +19,10 @@ func GetAll(c *fiber.Ctx) error {
 		Order("name ASC").
 		Find(&divisions).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to fetch divisions", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mengambil division",
+			En: "Failed to fetch divisions",
+		}, nil)
 	}
 
 	roles := make([]model.Role, 0)
@@ -26,7 +30,10 @@ func GetAll(c *fiber.Ctx) error {
 		Order("name ASC").
 		Find(&roles).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to fetch roles", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mengambil role",
+			En: "Failed to fetch roles",
+		}, nil)
 	}
 
 	type RoleItem struct {
@@ -65,7 +72,10 @@ func GetAll(c *fiber.Ctx) error {
 		grouped = append(grouped, group)
 	}
 
-	return dto.OK(c, "Success", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Berhasil mengambil division dan role",
+		En: "Success retrieve divisions and roles",
+	}, fiber.Map{
 		"divisions": grouped,
 	})
 }
@@ -77,7 +87,10 @@ func Create(c *fiber.Ctx) error {
 		Description    string `json:"description"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Permintaan tidak valid",
+			En: "Invalid request body",
+		}, nil)
 	}
 
 	// Check division exists
@@ -85,7 +98,10 @@ func Create(c *fiber.Ctx) error {
 	if err := variable.Db.
 		First(&division, "id = ?", body.RoleDivisionID).
 		Error; err != nil {
-		return dto.NotFound(c, "Division not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "Division tidak ditemukan",
+			En: "Division not found",
+		}, nil)
 	}
 
 	// Check duplicate
@@ -94,7 +110,10 @@ func Create(c *fiber.Ctx) error {
 		Where("name = ?", body.Name).
 		First(&existing).
 		Error; err == nil {
-		return dto.BadRequest(c, "Role name already exists", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Nama role sudah ada",
+			En: "Role name already exists",
+		}, nil)
 	}
 
 	role := model.Role{
@@ -107,22 +126,37 @@ func Create(c *fiber.Ctx) error {
 		Error; err != nil {
 		message := err.Error()
 		if strings.Contains(message, "UNIQUE constraint") {
-			return dto.BadRequest(c, "Role name already exists", nil)
+			return dto.BadRequest(c, types.Language{
+				Id: "Nama role sudah ada",
+				En: "Role name already exists",
+			}, nil)
 		}
-		return dto.InternalServerError(c, "Failed to create role", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal membuat role",
+			En: "Failed to create role",
+		}, nil)
 	}
 
-	return dto.Created(c, "Role created", role)
+	return dto.Created(c, types.Language{
+		Id: "Role berhasil dibuat",
+		En: "Role created successfully",
+	}, role)
 }
 
 func GetPaginate(c *fiber.Ctx) error {
 	roles := make([]model.Role, 0)
 	pagination, err := function.Pagination(c, &model.Role{}, nil, []string{"name", "description"}, &roles)
 	if err != nil {
-		return dto.InternalServerError(c, "Failed to prepare pagination", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mendapatkan data",
+			En: "Failed to get data",
+		}, nil)
 	}
 
-	return dto.OK(c, "Success", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Role berhasil ditemukan",
+		En: "Role found successfully",
+	}, fiber.Map{
 		"rows":       roles,
 		"pagination": pagination.Meta(),
 	})
@@ -131,7 +165,10 @@ func GetPaginate(c *fiber.Ctx) error {
 func Update(c *fiber.Ctx) error {
 	id, err := strconv.ParseUint(c.Params("id"), 10, 64)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid ID", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "ID tidak valid",
+			En: "Invalid ID",
+		}, nil)
 	}
 
 	var body struct {
@@ -139,19 +176,28 @@ func Update(c *fiber.Ctx) error {
 		Description string `json:"description"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Permintaan tidak valid",
+			En: "Invalid request body",
+		}, nil)
 	}
 
 	var role model.Role
 	if err := variable.Db.
 		First(&role, "id = ?", id).
 		Error; err != nil {
-		return dto.NotFound(c, "Role not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "Role tidak ditemukan",
+			En: "Role not found",
+		}, nil)
 	}
 
 	// Prevent renaming protected roles
 	if (role.Name == "su" || role.Name == "user") && body.Name != role.Name {
-		return dto.BadRequest(c, "Cannot rename protected role", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Tidak dapat mengubah nama role yang dilindungi",
+			En: "Cannot rename protected role",
+		}, nil)
 	}
 
 	// Check duplicate name (excluding self)
@@ -160,7 +206,10 @@ func Update(c *fiber.Ctx) error {
 		Where("name = ? AND id != ?", body.Name, id).
 		First(&dup).
 		Error; err == nil {
-		return dto.BadRequest(c, "Role name already exists", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Nama role sudah ada",
+			En: "Role name already exists",
+		}, nil)
 	}
 
 	role.Name = body.Name
@@ -168,23 +217,35 @@ func Update(c *fiber.Ctx) error {
 	if err := variable.Db.
 		Save(&role).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to update role", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal memperbarui role",
+			En: "Failed to update role",
+		}, nil)
 	}
 
-	return dto.OK(c, "Role updated", role)
+	return dto.OK(c, types.Language{
+		Id: "Role berhasil diperbarui",
+		En: "Role updated successfully",
+	}, role)
 }
 
 func Delete(c *fiber.Ctx) error {
 	id, err := strconv.ParseUint(c.Params("id"), 10, 64)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid ID", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "ID tidak valid",
+			En: "Invalid ID",
+		}, nil)
 	}
 
 	var role model.Role
 	if err := variable.Db.
 		First(&role, "id = ?", id).
 		Error; err != nil {
-		return dto.NotFound(c, "Role not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "Role tidak ditemukan",
+			En: "Role not found",
+		}, nil)
 	}
 
 	// Cascade: delete rules for this role
@@ -195,23 +256,35 @@ func Delete(c *fiber.Ctx) error {
 	if err := variable.Db.
 		Delete(&role).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to delete role", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menghapus role",
+			En: "Failed to delete role",
+		}, nil)
 	}
 
-	return dto.OK(c, "Role deleted", nil)
+	return dto.OK(c, types.Language{
+		Id: "Role berhasil dihapus",
+		En: "Role deleted successfully",
+	}, nil)
 }
 
 func SetActive(c *fiber.Ctx) error {
 	id, err := strconv.ParseUint(c.Params("id"), 10, 64)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid ID", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "ID tidak valid",
+			En: "Invalid ID",
+		}, nil)
 	}
 
 	var role model.Role
 	if err := variable.Db.
 		First(&role, "id = ?", id).
 		Error; err != nil {
-		return dto.NotFound(c, "Role not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "Role tidak ditemukan",
+			En: "Role not found",
+		}, nil)
 	}
 
 	newStatus := !role.IsActive
@@ -219,10 +292,16 @@ func SetActive(c *fiber.Ctx) error {
 		Model(&role).
 		Update("is_active", newStatus).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to toggle role status", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mengubah status role",
+			En: "Failed to toggle role status",
+		}, nil)
 	}
 
-	return dto.OK(c, "Role status toggled", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Status role berhasil diubah",
+		En: "Role status toggled successfully",
+	}, fiber.Map{
 		"is_active": newStatus,
 	})
 }
@@ -232,7 +311,10 @@ func BulkDelete(c *fiber.Ctx) error {
 		IDs []uint64 `json:"ids" validate:"required,min=1,dive,gt=0"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Permintaan tidak valid",
+			En: "Invalid request body",
+		}, nil)
 	}
 
 	// Cascade: delete rules for these roles
@@ -243,10 +325,16 @@ func BulkDelete(c *fiber.Ctx) error {
 	if err := variable.Db.
 		Delete(&model.Role{}, "id IN ?", body.IDs).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to bulk delete roles", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menghapus role",
+			En: "Failed to delete role",
+		}, nil)
 	}
 
-	return dto.OK(c, "Success bulk delete roles", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Role berhasil dihapus",
+		En: "Role deleted successfully",
+	}, fiber.Map{
 		"deleted_count": len(body.IDs),
 	})
 }

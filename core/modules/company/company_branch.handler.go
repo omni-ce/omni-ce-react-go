@@ -5,6 +5,7 @@ import (
 	"react-go/core/function"
 	"react-go/core/function/location"
 	"react-go/core/modules/company/model"
+	"react-go/core/types"
 	"react-go/core/variable"
 	"strconv"
 	"strings"
@@ -17,7 +18,10 @@ import (
 func BranchCreate(c *fiber.Ctx) error {
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terautentikasi",
+			En: "Unauthorized",
+		}, nil)
 	}
 
 	var body struct {
@@ -34,17 +38,26 @@ func BranchCreate(c *fiber.Ctx) error {
 		} `json:"map" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Body request tidak valid",
+			En: "Invalid request body",
+		}, nil)
 	}
 
 	entityID, err := strconv.Atoi(body.EntityID)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid entity ID", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Entity tidak valid",
+			En: "Invalid entity ID",
+		}, nil)
 	}
 
 	picID, err := uuid.Parse(body.PicID)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid PIC ID", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "PIC tidak valid",
+			En: "Invalid PIC ID",
+		}, nil)
 	}
 
 	branch := model.CompanyBranch{
@@ -67,12 +80,21 @@ func BranchCreate(c *fiber.Ctx) error {
 		Error; err != nil {
 		message := err.Error()
 		if strings.Contains(message, "UNIQUE constraint") {
-			return dto.BadRequest(c, "Company branch already exists", nil)
+			return dto.BadRequest(c, types.Language{
+				Id: "Cabang perusahaan sudah ada",
+				En: "Company branch already exists",
+			}, nil)
 		}
-		return dto.InternalServerError(c, "Failed to create company branch", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal membuat cabang perusahaan",
+			En: "Failed to create company branch",
+		}, nil)
 	}
 
-	return dto.Created(c, "Company branch created", fiber.Map{
+	return dto.Created(c, types.Language{
+		Id: "Cabang perusahaan berhasil dibuat",
+		En: "Company branch created successfully",
+	}, fiber.Map{
 		"branch": branch.Map(),
 	})
 }
@@ -83,7 +105,10 @@ func BranchPaginate(c *fiber.Ctx) error {
 		return db.Preload("Entity").Preload("Pic")
 	}, []string{"name", "code", "address"}, &branches)
 	if err != nil {
-		return dto.InternalServerError(c, "Failed to prepare pagination", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal memuat data cabang perusahaan",
+			En: "Failed to load company branches",
+		}, nil)
 	}
 
 	address_codes := make([]string, 0)
@@ -96,9 +121,15 @@ func BranchPaginate(c *fiber.Ctx) error {
 		fullAddress, err, isBadRequest := location.GetFull(address_code)
 		if err != nil {
 			if isBadRequest {
-				return dto.BadRequest(c, err.Error(), nil)
+				return dto.BadRequest(c, types.Language{
+					Id: "Format kode alamat tidak valid",
+					En: "Invalid address code format",
+				}, nil)
 			}
-			return dto.InternalServerError(c, err.Error(), nil)
+			return dto.InternalServerError(c, types.Language{
+				Id: "Gagal mengambil data alamat",
+				En: "Failed to get address data",
+			}, nil)
 		}
 		addresses[address_code] = fullAddress
 	}
@@ -119,7 +150,10 @@ func BranchPaginate(c *fiber.Ctx) error {
 		rows = append(rows, branch)
 	}
 
-	return dto.OK(c, "Success get branches", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Cabang perusahaan berhasil diambil",
+		En: "Company branches retrieved successfully",
+	}, fiber.Map{
 		"rows":       rows,
 		"pagination": pagination.Meta(),
 	})
@@ -129,7 +163,10 @@ func BranchEdit(c *fiber.Ctx) error {
 	id := c.Params("id")
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terautentikasi",
+			En: "Unauthorized",
+		}, nil)
 	}
 
 	var body struct {
@@ -146,14 +183,20 @@ func BranchEdit(c *fiber.Ctx) error {
 		} `json:"map"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Body request tidak valid",
+			En: "Invalid request body",
+		}, nil)
 	}
 
 	var branch model.CompanyBranch
 	if err := variable.Db.
 		First(&branch, "id = ?", id).
 		Error; err != nil {
-		return dto.NotFound(c, "Branch not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "Cabang perusahaan tidak ditemukan",
+			En: "Company branch not found",
+		}, nil)
 	}
 
 	updates := map[string]any{
@@ -163,14 +206,20 @@ func BranchEdit(c *fiber.Ctx) error {
 	if body.EntityID != "" {
 		entityID, err := strconv.Atoi(body.EntityID)
 		if err != nil {
-			return dto.BadRequest(c, "Invalid entity ID", nil)
+			return dto.BadRequest(c, types.Language{
+				Id: "Entity tidak valid",
+				En: "Invalid entity ID",
+			}, nil)
 		}
 		updates["entity_id"] = uint(entityID)
 	}
 	if body.PicID != "" {
 		picID, err := uuid.Parse(body.PicID)
 		if err != nil {
-			return dto.BadRequest(c, "Invalid PIC ID", nil)
+			return dto.BadRequest(c, types.Language{
+				Id: "PIC tidak valid",
+				En: "Invalid PIC ID",
+			}, nil)
 		}
 		updates["pic_id"] = picID
 	}
@@ -198,10 +247,16 @@ func BranchEdit(c *fiber.Ctx) error {
 		Model(&branch).
 		Updates(updates).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to update branch", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal memperbarui cabang perusahaan",
+			En: "Failed to update company branch",
+		}, nil)
 	}
 
-	return dto.OK(c, "Success update branch", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Cabang perusahaan berhasil diperbarui",
+		En: "Company branch updated successfully",
+	}, fiber.Map{
 		"branch": branch.Map(),
 	})
 }
@@ -212,10 +267,16 @@ func BranchRemove(c *fiber.Ctx) error {
 	if err := variable.Db.
 		Delete(&model.CompanyBranch{}, "id = ?", id).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to delete branch", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menghapus cabang perusahaan",
+			En: "Failed to delete company branch",
+		}, nil)
 	}
 
-	return dto.OK(c, "Success delete branch", nil)
+	return dto.OK(c, types.Language{
+		Id: "Cabang perusahaan berhasil dihapus",
+		En: "Company branch deleted successfully",
+	}, nil)
 }
 
 func BranchBulkRemove(c *fiber.Ctx) error {
@@ -223,16 +284,25 @@ func BranchBulkRemove(c *fiber.Ctx) error {
 		IDs []uint `json:"ids" validate:"required,min=1"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Body request tidak valid",
+			En: "Invalid request body",
+		}, nil)
 	}
 
 	if err := variable.Db.
 		Delete(&model.CompanyBranch{}, "id IN ?", body.IDs).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to bulk delete branches", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menghapus cabang perusahaan",
+			En: "Failed to delete company branch",
+		}, nil)
 	}
 
-	return dto.OK(c, "Success bulk delete branches", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Cabang perusahaan berhasil dihapus",
+		En: "Company branch deleted successfully",
+	}, fiber.Map{
 		"deleted_count": len(body.IDs),
 	})
 }
@@ -241,14 +311,20 @@ func BranchSetActive(c *fiber.Ctx) error {
 	id := c.Params("id")
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terautentikasi",
+			En: "Unauthorized",
+		}, nil)
 	}
 
 	var branch model.CompanyBranch
 	if err := variable.Db.
 		First(&branch, "id = ?", id).
 		Error; err != nil {
-		return dto.NotFound(c, "Branch not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "Cabang perusahaan tidak ditemukan",
+			En: "Company branch not found",
+		}, nil)
 	}
 
 	newStatus := !branch.IsActive
@@ -258,10 +334,16 @@ func BranchSetActive(c *fiber.Ctx) error {
 			"is_active":  newStatus,
 			"updated_by": currentUser.ID,
 		}).Error; err != nil {
-		return dto.InternalServerError(c, "Failed to toggle branch status", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mengubah status cabang perusahaan",
+			En: "Failed to change company branch status",
+		}, nil)
 	}
 
-	return dto.OK(c, "Success toggle branch status", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Cabang perusahaan berhasil diubah",
+		En: "Company branch updated successfully",
+	}, fiber.Map{
 		"branch": branch.Map(),
 	})
 }

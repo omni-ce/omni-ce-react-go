@@ -6,6 +6,7 @@ import (
 	"react-go/core/dto"
 	"react-go/core/function"
 	model "react-go/core/modules/setting/model"
+	"react-go/core/types"
 	"react-go/core/variable"
 	"strings"
 
@@ -17,7 +18,10 @@ func All(c *fiber.Ctx) error {
 	if err := variable.Db.
 		Find(&settings).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to get settings", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mendapatkan pengaturan",
+			En: "Failed to get settings",
+		}, nil)
 	}
 
 	result := make(map[string]string)
@@ -25,7 +29,10 @@ func All(c *fiber.Ctx) error {
 		result[s.Key] = s.Value
 	}
 
-	return dto.OK(c, "Settings retrieved successfully!", result)
+	return dto.OK(c, types.Language{
+		Id: "Pengaturan berhasil didapatkan",
+		En: "Settings retrieved successfully!",
+	}, result)
 }
 
 func Set(c *fiber.Ctx) error {
@@ -36,7 +43,10 @@ func Set(c *fiber.Ctx) error {
 	if !isMultipart {
 		var bodies map[string]string
 		if err := c.BodyParser(&bodies); err != nil {
-			return dto.BadRequest(c, "Invalid request body", nil)
+			return dto.BadRequest(c, types.Language{
+				Id: "Body request tidak valid",
+				En: "Invalid request body",
+			}, nil)
 		}
 
 		for key, value := range bodies {
@@ -45,7 +55,10 @@ func Set(c *fiber.Ctx) error {
 				Where("key = ?", key).
 				First(&s).
 				Error; err != nil {
-				return dto.NotFound(c, fmt.Sprintf("Setting not found: %s", key), nil)
+				return dto.NotFound(c, types.Language{
+					Id: "Pengaturan tidak ditemukan",
+					En: "Setting not found",
+				}, nil)
 			}
 			last_value := s.Value
 			// fmt.Printf("Key: %s | Last Value: %s | Value: %s\n", key, last_value, fmt.Sprintf("%x", md5.Sum([]byte(value))))
@@ -53,7 +66,10 @@ func Set(c *fiber.Ctx) error {
 			if key == "auth_password" {
 				last_password := c.Get("X-Last-Password")
 				if last_password != "" && fmt.Sprintf("%x", md5.Sum([]byte(last_password))) != last_value {
-					return dto.BadRequest(c, "Current password is incorrect", nil)
+					return dto.BadRequest(c, types.Language{
+						Id: "Password saat ini salah",
+						En: "Current password is incorrect",
+					}, nil)
 				}
 				value = fmt.Sprintf("%x", md5.Sum([]byte(value)))
 			}
@@ -62,13 +78,19 @@ func Set(c *fiber.Ctx) error {
 			variable.Db.Save(&s)
 		}
 
-		return dto.OK(c, "Setting updated successfully!", nil)
+		return dto.OK(c, types.Language{
+			Id: "Pengaturan berhasil diperbarui",
+			En: "Setting updated successfully!",
+		}, nil)
 	}
 
 	// multipart/form-data
 	form, err := c.MultipartForm()
 	if err != nil {
-		return dto.BadRequest(c, "Invalid multipart form", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Multipart form tidak valid",
+			En: "Invalid multipart form",
+		}, nil)
 	}
 
 	// Handle file uploads
@@ -85,13 +107,19 @@ func Set(c *fiber.Ctx) error {
 				Where("key = ?", fieldname).
 				First(&s).
 				Error; err != nil {
-				return dto.NotFound(c, fmt.Sprintf("Setting not found: %s", fieldname), nil)
+				return dto.NotFound(c, types.Language{
+					Id: "Pengaturan tidak ditemukan",
+					En: "Setting not found",
+				}, nil)
 			}
 
 			filename := file.Filename
 			dst := uploadsPath + "/" + filename
 			if err := c.SaveFile(file, dst); err != nil {
-				return dto.InternalServerError(c, "Failed to save file", nil)
+				return dto.InternalServerError(c, types.Language{
+					Id: "Gagal menyimpan file",
+					En: "Failed to save file",
+				}, nil)
 			}
 
 			s.Value = filename
@@ -112,7 +140,10 @@ func Set(c *fiber.Ctx) error {
 				Where("key = ?", key).
 				First(&s).
 				Error; err != nil {
-				return dto.NotFound(c, fmt.Sprintf("Setting not found: %s", key), nil)
+				return dto.NotFound(c, types.Language{
+					Id: "Pengaturan tidak ditemukan",
+					En: "Setting not found",
+				}, nil)
 			}
 
 			if key == "auth_password" {
@@ -124,14 +155,20 @@ func Set(c *fiber.Ctx) error {
 		}
 	}
 
-	return dto.OK(c, "Setting updated successfully!", nil)
+	return dto.OK(c, types.Language{
+		Id: "Pengaturan berhasil diperbarui",
+		En: "Setting updated successfully!",
+	}, nil)
 }
 
 func ToggleMaintenance(c *fiber.Ctx) error {
 	// Only su can toggle maintenance
 	claims, ok := c.Locals("claims").(*function.JwtClaims)
 	if !ok || claims.Role != "su" {
-		return dto.Forbidden(c, "Only super users can toggle maintenance mode", nil)
+		return dto.Forbidden(c, types.Language{
+			Id: "Hanya super admin yang dapat mengubah mode maintenance",
+			En: "Only super users can toggle maintenance mode",
+		}, nil)
 	}
 
 	var s model.Setting
@@ -151,7 +188,10 @@ func ToggleMaintenance(c *fiber.Ctx) error {
 	}
 	variable.Db.Save(&s)
 
-	return dto.OK(c, "Maintenance mode updated", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Maintenance mode berhasil diubah",
+		En: "Maintenance mode updated successfully!",
+	}, fiber.Map{
 		"maintenance_mode": s.Value == "true",
 	})
 }

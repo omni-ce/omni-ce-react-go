@@ -5,6 +5,7 @@ import (
 
 	"react-go/core/dto"
 	"react-go/core/function"
+	"react-go/core/types"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -35,7 +36,12 @@ func validateBearerToken(authHeader string) (*function.JwtClaims, string) {
 func UseToken(c *fiber.Ctx) error {
 	claims, errMsg := validateBearerToken(c.Get("Authorization"))
 	if errMsg != "" {
-		return dto.Unauthorized(c, errMsg, nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terautentikasi",
+			En: "Unauthorized",
+		}, fiber.Map{
+			"error": errMsg,
+		})
 	}
 	c.Locals(string(ClaimsContextKey), claims)
 	return c.Next()
@@ -44,11 +50,19 @@ func UseToken(c *fiber.Ctx) error {
 func UseQueryToken(c *fiber.Ctx) error {
 	token := c.Query("token")
 	if token == "" {
-		return dto.Unauthorized(c, "Missing token", 1)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Token tidak ada",
+			En: "Missing token",
+		}, nil)
 	}
 	claims, errMsg := validateBearerToken("Bearer " + token)
 	if errMsg != "" {
-		return dto.Unauthorized(c, errMsg, 2)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Token tidak valid atau kadaluarsa",
+			En: "Invalid or expired token",
+		}, fiber.Map{
+			"error": errMsg,
+		})
 	}
 	c.Locals(string(ClaimsContextKey), claims)
 	return c.Next()

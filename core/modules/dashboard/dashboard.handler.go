@@ -5,6 +5,7 @@ import (
 	"react-go/core/dto"
 	"react-go/core/function"
 	model "react-go/core/modules/dashboard/model"
+	"react-go/core/types"
 	"react-go/core/variable"
 	"strconv"
 	"strings"
@@ -13,7 +14,10 @@ import (
 )
 
 func ListFunctions(c *fiber.Ctx) error {
-	return dto.OK(c, "Functions retrieved successfully", RegisterFunctions)
+	return dto.OK(c, types.Language{
+		Id: "Berhasil mendapatkan fungsi",
+		En: "Functions retrieved successfully",
+	}, RegisterFunctions)
 }
 
 type DashboardStats struct {
@@ -27,10 +31,6 @@ type DashboardStats struct {
 
 // ─── Widget CRUD ────────────────────────────────────────────────────
 
-func WidgetFunctions(c *fiber.Ctx) error {
-	return dto.OK(c, "Widget deleted successfully", nil)
-}
-
 func WidgetCreate(c *fiber.Ctx) error {
 	var body struct {
 		RoleID      uint           `json:"role_id" validate:"required"`
@@ -41,7 +41,10 @@ func WidgetCreate(c *fiber.Ctx) error {
 		Description string         `json:"description" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Body request tidak valid",
+			En: "Invalid request body",
+		}, nil)
 	}
 
 	if body.Col["mobile"] == 0 {
@@ -63,13 +66,19 @@ func WidgetCreate(c *fiber.Ctx) error {
 		Where("role_id = ? AND type = ? AND function_key = ?", body.RoleID, body.Type, body.FunctionKey).
 		First(&existing).
 		Error; err == nil {
-		return dto.BadRequest(c, "Widget with this function_key and key already exists for this role", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Widget dengan function_key dan key ini sudah ada untuk role ini",
+			En: "Widget with this function_key and key already exists for this role",
+		}, nil)
 	}
 
 	// json stringified
 	colJSON, err := json.Marshal(body.Col)
 	if err != nil {
-		return dto.InternalServerError(c, "Failed to marshal col", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mem-marshal col",
+			En: "Failed to marshal col",
+		}, nil)
 	}
 
 	widget := model.DashboardWidget{
@@ -85,23 +94,38 @@ func WidgetCreate(c *fiber.Ctx) error {
 		Error; err != nil {
 		message := err.Error()
 		if strings.Contains(message, "UNIQUE constraint") {
-			return dto.BadRequest(c, "Widget with this function_key and key already exists for this role", nil)
+			return dto.BadRequest(c, types.Language{
+				Id: "Widget dengan function_key dan key ini sudah ada untuk role ini",
+				En: "Widget with this function_key and key already exists for this role",
+			}, nil)
 		}
-		return dto.InternalServerError(c, "Failed to create widget", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal membuat widget",
+			En: "Failed to create widget",
+		}, nil)
 	}
 
-	return dto.Created(c, "Widget created successfully", widget)
+	return dto.Created(c, types.Language{
+		Id: "Widget berhasil dibuat",
+		En: "Widget created successfully",
+	}, widget)
 }
 
 func WidgetList(c *fiber.Ctx) error {
 	roleIDStr := c.Query("role_id")
 	if roleIDStr == "" {
-		return dto.BadRequest(c, "role_id query parameter is required", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "role_id query parameter tidak ada",
+			En: "role_id query parameter is required",
+		}, nil)
 	}
 
 	roleID, err := strconv.ParseUint(roleIDStr, 10, 64)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid role_id", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "role_id tidak valid",
+			En: "Invalid role_id",
+		}, nil)
 	}
 
 	widgets := make([]model.DashboardWidget, 0)
@@ -110,14 +134,20 @@ func WidgetList(c *fiber.Ctx) error {
 		Order("function_key ASC").
 		Find(&widgets).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to get widgets", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mengambil data widget",
+			En: "Failed to get widgets",
+		}, nil)
 	}
 
 	rows := make([]map[string]interface{}, 0)
 	for _, widget := range widgets {
 		var col map[string]int
 		if err := json.Unmarshal([]byte(widget.Col), &col); err != nil {
-			return dto.InternalServerError(c, "Failed to unmarshal col", nil)
+			return dto.InternalServerError(c, types.Language{
+				Id: "Gagal mem-marshal col",
+				En: "Failed to unmarshal col",
+			}, nil)
 		}
 		rows = append(rows, map[string]interface{}{
 			"id":           widget.ID,
@@ -129,13 +159,19 @@ func WidgetList(c *fiber.Ctx) error {
 		})
 	}
 
-	return dto.OK(c, "Widgets retrieved successfully", rows)
+	return dto.OK(c, types.Language{
+		Id: "Widget berhasil diambil",
+		En: "Widgets retrieved successfully",
+	}, rows)
 }
 
 func WidgetEdit(c *fiber.Ctx) error {
 	id := c.Params("id")
 	if id == "" {
-		return dto.BadRequest(c, "ID is required", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "ID tidak ada",
+			En: "ID is required",
+		}, nil)
 	}
 
 	var body struct {
@@ -144,7 +180,10 @@ func WidgetEdit(c *fiber.Ctx) error {
 		Description *string         `json:"description" validate:"omitempty"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Body request tidak valid",
+			En: "Invalid request body",
+		}, nil)
 	}
 
 	var widget model.DashboardWidget
@@ -152,7 +191,10 @@ func WidgetEdit(c *fiber.Ctx) error {
 		Where("id = ?", id).
 		First(&widget).
 		Error; err != nil {
-		return dto.NotFound(c, "Widget not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "Widget tidak ditemukan",
+			En: "Widget not found",
+		}, nil)
 	}
 
 	updates := map[string]interface{}{}
@@ -172,7 +214,10 @@ func WidgetEdit(c *fiber.Ctx) error {
 		}
 		colJSON, err := json.Marshal(col)
 		if err != nil {
-			return dto.InternalServerError(c, "Failed to marshal col", nil)
+			return dto.InternalServerError(c, types.Language{
+				Id: "Gagal mem-marshal col",
+				En: "Failed to marshal col",
+			}, nil)
 		}
 		updates["col"] = string(colJSON)
 	}
@@ -184,26 +229,38 @@ func WidgetEdit(c *fiber.Ctx) error {
 	}
 
 	if len(updates) == 0 {
-		return dto.BadRequest(c, "No fields to update", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Tidak ada field yang diupdate",
+			En: "No fields to update",
+		}, nil)
 	}
 
 	if err := variable.Db.
 		Model(&widget).
 		Updates(updates).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to update widget", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mengupdate widget",
+			En: "Failed to update widget",
+		}, nil)
 	}
 
 	// Reload
 	variable.Db.Where("id = ?", id).First(&widget)
 
-	return dto.OK(c, "Widget updated successfully", widget)
+	return dto.OK(c, types.Language{
+		Id: "Widget berhasil diupdate",
+		En: "Widget updated successfully",
+	}, widget)
 }
 
 func WidgetRemove(c *fiber.Ctx) error {
 	id := c.Params("id")
 	if id == "" {
-		return dto.BadRequest(c, "ID is required", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "ID tidak ada",
+			En: "ID is required",
+		}, nil)
 	}
 
 	var widget model.DashboardWidget
@@ -211,14 +268,23 @@ func WidgetRemove(c *fiber.Ctx) error {
 		Where("id = ?", id).
 		First(&widget).
 		Error; err != nil {
-		return dto.NotFound(c, "Widget not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "Widget tidak ditemukan",
+			En: "Widget not found",
+		}, nil)
 	}
 
 	if err := variable.Db.
 		Delete(&widget).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to delete widget", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menghapus widget",
+			En: "Failed to delete widget",
+		}, nil)
 	}
 
-	return dto.OK(c, "Widget deleted successfully", nil)
+	return dto.OK(c, types.Language{
+		Id: "Widget berhasil dihapus",
+		En: "Widget deleted successfully",
+	}, nil)
 }

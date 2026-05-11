@@ -3,6 +3,7 @@ package middlewares
 import (
 	"context"
 	"react-go/core/dto"
+	"react-go/core/types"
 	"react-go/core/variable"
 	"time"
 
@@ -37,7 +38,10 @@ func UseApiKey(c *fiber.Ctx) error {
 			c.SetUserContext(ctx)
 			return c.Next()
 		}
-		return dto.Unauthorized(c, "API key is required", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "API key dibutuhkan",
+			En: "API key is required",
+		}, nil)
 	}
 
 	// Look up the key
@@ -47,15 +51,24 @@ func UseApiKey(c *fiber.Ctx) error {
 		Where("key = ?", key).
 		First(&entry).
 		Error; err != nil {
-		return dto.Unauthorized(c, "Invalid API key", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "API key tidak valid",
+			En: "Invalid API key",
+		}, nil)
 	}
 
 	if !entry.IsActive {
-		return dto.Forbidden(c, "API key is disabled", nil)
+		return dto.Forbidden(c, types.Language{
+			Id: "API key tidak aktif",
+			En: "API key is disabled",
+		}, nil)
 	}
 
 	if entry.ExpiresAt != nil && entry.ExpiresAt.Before(time.Now()) {
-		return dto.Forbidden(c, "API key has expired", nil)
+		return dto.Forbidden(c, types.Language{
+			Id: "API key telah kadaluarsa",
+			En: "API key has expired",
+		}, nil)
 	}
 
 	// Update last_used timestamp

@@ -5,6 +5,7 @@ import (
 	"react-go/core/dto"
 	"react-go/core/function"
 	"react-go/core/modules/product/model"
+	"react-go/core/types"
 	"react-go/core/variable"
 	"strconv"
 	"strings"
@@ -17,7 +18,10 @@ import (
 func ItemCreate(c *fiber.Ctx) error {
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terotorisasi",
+			En: "Unauthorized",
+		}, nil)
 	}
 
 	var body struct {
@@ -33,29 +37,47 @@ func ItemCreate(c *fiber.Ctx) error {
 	}
 
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Gagal mendapatkan request body",
+			En: "Failed to get request body",
+		}, nil)
 	}
 
 	// Convert IDs
 	categoryID, err := strconv.Atoi(body.CategoryID)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid category ID", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "ID kategori tidak valid",
+			En: "Invalid category ID",
+		}, nil)
 	}
 	typeID, err := strconv.Atoi(body.TypeID)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid type ID", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "ID tipe tidak valid",
+			En: "Invalid type ID",
+		}, nil)
 	}
 	brandID, err := strconv.Atoi(body.BrandID)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid brand ID", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "ID brand tidak valid",
+			En: "Invalid brand ID",
+		}, nil)
 	}
 	variantID, err := strconv.Atoi(body.VariantID)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid variant ID", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "ID varian tidak valid",
+			En: "Invalid variant ID",
+		}, nil)
 	}
 	conditionID, err := strconv.Atoi(body.ConditionID)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid condition ID", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "ID kondisi tidak valid",
+			En: "Invalid condition ID",
+		}, nil)
 	}
 
 	names := make([]string, 0)
@@ -64,35 +86,50 @@ func ItemCreate(c *fiber.Ctx) error {
 	if err := variable.Db.
 		First(&category, "id = ?", body.CategoryID).
 		Error; err != nil {
-		return dto.NotFound(c, "Category not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "Kategori tidak ditemukan",
+			En: "Category not found",
+		}, nil)
 	}
 	names = append(names, category.Name)
 	var _type model.ProductType
 	if err := variable.Db.
 		First(&_type, "id = ?", body.TypeID).
 		Error; err != nil {
-		return dto.NotFound(c, "Type not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "Tipe tidak ditemukan",
+			En: "Type not found",
+		}, nil)
 	}
 	names = append(names, _type.Name)
 	var brand model.ProductBrand
 	if err := variable.Db.
 		First(&brand, "id = ?", body.BrandID).
 		Error; err != nil {
-		return dto.NotFound(c, "Brand not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "Brand tidak ditemukan",
+			En: "Brand not found",
+		}, nil)
 	}
 	names = append(names, brand.Name)
 	var variant model.ProductVariant
 	if err := variable.Db.
 		First(&variant, "id = ?", body.VariantID).
 		Error; err != nil {
-		return dto.NotFound(c, "Variant not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "Varian tidak ditemukan",
+			En: "Variant not found",
+		}, nil)
 	}
 	names = append(names, variant.Name)
 	var condition model.ProductCondition
 	if err := variable.Db.
 		First(&condition, "id = ?", body.ConditionID).
 		Error; err != nil {
-		return dto.NotFound(c, "Condition not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "Kondisi tidak ditemukan",
+			En: "Condition not found",
+		}, nil)
 	}
 	names = append(names, condition.Name)
 
@@ -105,7 +142,10 @@ func ItemCreate(c *fiber.Ctx) error {
 			if err := variable.Db.
 				First(&memory, "id = ?", body.MemoryID).
 				Error; err != nil {
-				return dto.NotFound(c, "Memory not found", nil)
+				return dto.NotFound(c, types.Language{
+					Id: "Memori tidak ditemukan",
+					En: "Memory not found",
+				}, nil)
 			}
 			names = append(names, fmt.Sprintf("%d GB / %d GB", memory.Ram, memory.InternalStorage))
 		}
@@ -119,7 +159,10 @@ func ItemCreate(c *fiber.Ctx) error {
 			if err := variable.Db.
 				First(&color, "id = ?", body.ColorID).
 				Error; err != nil {
-				return dto.NotFound(c, "Color not found", nil)
+				return dto.NotFound(c, types.Language{
+					Id: "Warna tidak ditemukan",
+					En: "Color not found",
+				}, nil)
 			}
 			names = append(names, color.Name)
 		}
@@ -134,7 +177,10 @@ func ItemCreate(c *fiber.Ctx) error {
 		Where("sku = ?", body.SKU).
 		First(&existing).
 		Error; err == nil {
-		return dto.BadRequest(c, "Item with this SKU already exists", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Item dengan SKU ini sudah ada",
+			En: "Item with this SKU already exists",
+		}, nil)
 	}
 
 	item := model.ProductItem{
@@ -157,12 +203,21 @@ func ItemCreate(c *fiber.Ctx) error {
 		Error; err != nil {
 		message := err.Error()
 		if strings.Contains(message, "UNIQUE constraint") {
-			return dto.BadRequest(c, "Product item already exists", nil)
+			return dto.BadRequest(c, types.Language{
+				Id: "Item dengan SKU ini sudah ada",
+				En: "Item with this SKU already exists",
+			}, nil)
 		}
-		return dto.InternalServerError(c, "Failed to create product item", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal membuat item produk",
+			En: "Failed to create product item",
+		}, nil)
 	}
 
-	return dto.Created(c, "Product item created", fiber.Map{
+	return dto.Created(c, types.Language{
+		Id: "Item produk berhasil dibuat",
+		En: "Product item created successfully",
+	}, fiber.Map{
 		"item": item.Map(),
 	})
 }
@@ -218,7 +273,10 @@ func ItemPaginate(c *fiber.Ctx) error {
 	pagination, err := function.PaginationScoped(c, query, &model.ProductItem{}, []string{}, &items)
 
 	if err != nil {
-		return dto.InternalServerError(c, "Failed to prepare pagination", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mempersiapkan pagination",
+			En: "Failed to prepare pagination",
+		}, nil)
 	}
 
 	rows := make([]map[string]any, 0, len(items))
@@ -252,7 +310,10 @@ func ItemPaginate(c *fiber.Ctx) error {
 		})
 	}
 
-	return dto.OK(c, "Success get product items", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Data berhasil diambil",
+		En: "Data retrieved successfully",
+	}, fiber.Map{
 		"rows":       rows,
 		"pagination": pagination.Meta(),
 	})
@@ -262,7 +323,10 @@ func ItemEdit(c *fiber.Ctx) error {
 	id := c.Params("id")
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak ada hak akses",
+			En: "Unauthorized",
+		}, nil)
 	}
 
 	var body struct {
@@ -279,14 +343,20 @@ func ItemEdit(c *fiber.Ctx) error {
 	}
 
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Body permintaan tidak valid",
+			En: "Invalid request body",
+		}, nil)
 	}
 
 	var existing model.ProductItem
 	if err := variable.Db.
 		First(&existing, "id = ?", id).
 		Error; err != nil {
-		return dto.NotFound(c, "Product item not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "Item tidak ditemukan",
+			En: "Item not found",
+		}, nil)
 	}
 
 	// Check duplicate SKU if changed
@@ -296,29 +366,44 @@ func ItemEdit(c *fiber.Ctx) error {
 			Where("sku = ? AND id != ?", body.SKU, id).
 			First(&dup).
 			Error; err == nil {
-			return dto.BadRequest(c, "Item with this SKU already exists", nil)
+			return dto.BadRequest(c, types.Language{
+				Id: "Item dengan SKU ini sudah ada",
+				En: "Item with this SKU already exists",
+			}, nil)
 		}
 	}
 
 	// Update fields
 	catID, err := strconv.Atoi(body.CategoryID)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid category ID", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "ID kategori tidak valid",
+			En: "Invalid category ID",
+		}, nil)
 	}
 	existing.CategoryID = uint(catID)
 	typeID, err := strconv.Atoi(body.TypeID)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid type ID", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "ID tipe tidak valid",
+			En: "Invalid type ID",
+		}, nil)
 	}
 	existing.TypeID = uint(typeID)
 	brID, err := strconv.Atoi(body.BrandID)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid brand ID", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "ID brand tidak valid",
+			En: "Invalid brand ID",
+		}, nil)
 	}
 	existing.BrandID = uint(brID)
 	varID, err := strconv.Atoi(body.VariantID)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid variant ID", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "ID variant tidak valid",
+			En: "Invalid variant ID",
+		}, nil)
 	}
 	existing.VariantID = uint(varID)
 
@@ -341,7 +426,10 @@ func ItemEdit(c *fiber.Ctx) error {
 
 	condID, err := strconv.Atoi(body.ConditionID)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid condition ID", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "ID kondisi tidak valid",
+			En: "Invalid condition ID",
+		}, nil)
 	}
 	existing.ConditionID = uint(condID)
 
@@ -402,10 +490,16 @@ func ItemEdit(c *fiber.Ctx) error {
 	if err := variable.Db.
 		Save(&existing).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to update product item", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mengupdate item",
+			En: "Failed to update product item",
+		}, nil)
 	}
 
-	return dto.OK(c, "Product item updated", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Item berhasil diupdate",
+		En: "Item updated successfully",
+	}, fiber.Map{
 		"item": existing.Map(),
 	})
 }
@@ -416,10 +510,16 @@ func ItemRemove(c *fiber.Ctx) error {
 	if err := variable.Db.
 		Delete(&model.ProductItem{}, "id = ?", id).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to delete product item", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menghapus item",
+			En: "Failed to delete product item",
+		}, nil)
 	}
 
-	return dto.OK(c, "Product item deleted", nil)
+	return dto.OK(c, types.Language{
+		Id: "Item berhasil dihapus",
+		En: "Item deleted successfully",
+	}, nil)
 }
 
 func ItemBulkRemove(c *fiber.Ctx) error {
@@ -427,14 +527,23 @@ func ItemBulkRemove(c *fiber.Ctx) error {
 		IDs []uint `json:"ids" validate:"required,min=1"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Gagal mendapatkan request body",
+			En: "Failed to get request body",
+		}, nil)
 	}
 
 	if err := variable.Db.
 		Delete(&model.ProductItem{}, "id IN ?", body.IDs).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to bulk delete product items", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menghapus item",
+			En: "Failed to delete product item",
+		}, nil)
 	}
 
-	return dto.OK(c, fmt.Sprintf("Success delete %d product items", len(body.IDs)), nil)
+	return dto.OK(c, types.Language{
+		Id: fmt.Sprintf("Berhasil menghapus %d item", len(body.IDs)),
+		En: fmt.Sprintf("Success delete %d product items", len(body.IDs)),
+	}, nil)
 }

@@ -5,6 +5,7 @@ import (
 	"react-go/core/function"
 	"react-go/core/function/location"
 	"react-go/core/modules/company/model"
+	"react-go/core/types"
 	"react-go/core/variable"
 	"strings"
 
@@ -14,7 +15,10 @@ import (
 func EntityCreate(c *fiber.Ctx) error {
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terautentikasi",
+			En: "Unauthorized",
+		}, nil)
 	}
 
 	var body struct {
@@ -27,7 +31,10 @@ func EntityCreate(c *fiber.Ctx) error {
 		AddressCode string `json:"address_code" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Body permintaan tidak valid",
+			En: "Invalid request body",
+		}, nil)
 	}
 
 	entity := model.CompanyEntity{
@@ -48,12 +55,21 @@ func EntityCreate(c *fiber.Ctx) error {
 		Error; err != nil {
 		message := err.Error()
 		if strings.Contains(message, "UNIQUE constraint") {
-			return dto.BadRequest(c, "Company entity already exists", nil)
+			return dto.BadRequest(c, types.Language{
+				Id: "Entity perusahaan sudah ada",
+				En: "Company entity already exists",
+			}, nil)
 		}
-		return dto.InternalServerError(c, "Failed to create company entity", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal membuat entity perusahaan",
+			En: "Failed to create company entity",
+		}, nil)
 	}
 
-	return dto.Created(c, "Company entity created", fiber.Map{
+	return dto.Created(c, types.Language{
+		Id: "Entity perusahaan berhasil dibuat",
+		En: "Company entity created successfully",
+	}, fiber.Map{
 		"entity": entity.Map(),
 	})
 }
@@ -62,7 +78,10 @@ func EntityPaginate(c *fiber.Ctx) error {
 	entities := make([]model.CompanyEntity, 0)
 	pagination, err := function.Pagination(c, &model.CompanyEntity{}, nil, []string{"name", "npwp_code", "address"}, &entities)
 	if err != nil {
-		return dto.InternalServerError(c, "Failed to prepare pagination", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal membuat paginasi",
+			En: "Failed to prepare pagination",
+		}, nil)
 	}
 	address_codes := make([]string, 0)
 	for _, entity := range entities {
@@ -74,9 +93,15 @@ func EntityPaginate(c *fiber.Ctx) error {
 		fullAddress, err, isBadRequest := location.GetFull(address_code)
 		if err != nil {
 			if isBadRequest {
-				return dto.BadRequest(c, err.Error(), nil)
+				return dto.BadRequest(c, types.Language{
+					Id: "Code alamat tidak valid",
+					En: "Invalid address code",
+				}, nil)
 			}
-			return dto.InternalServerError(c, err.Error(), nil)
+			return dto.InternalServerError(c, types.Language{
+				Id: "Gagal mendapatkan alamat",
+				En: "Failed to get address",
+			}, nil)
 		}
 		addresses[address_code] = fullAddress
 	}
@@ -88,7 +113,10 @@ func EntityPaginate(c *fiber.Ctx) error {
 		rows = append(rows, data)
 	}
 
-	return dto.OK(c, "Success get entities", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Entity perusahaan berhasil diambil",
+		En: "Company entity retrieved successfully",
+	}, fiber.Map{
 		"rows":       rows,
 		"pagination": pagination.Meta(),
 	})
@@ -98,7 +126,10 @@ func EntityEdit(c *fiber.Ctx) error {
 	id := c.Params("id")
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terautentikasi",
+			En: "Unauthorized",
+		}, nil)
 	}
 
 	var body struct {
@@ -111,14 +142,20 @@ func EntityEdit(c *fiber.Ctx) error {
 		AddressCode string `json:"address_code"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Body permintaan tidak valid",
+			En: "Invalid request body",
+		}, nil)
 	}
 
 	var entity model.CompanyEntity
 	if err := variable.Db.
 		First(&entity, "id = ?", id).
 		Error; err != nil {
-		return dto.NotFound(c, "Entity not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "Entity tidak ditemukan",
+			En: "Entity not found",
+		}, nil)
 	}
 
 	updates := map[string]any{
@@ -151,10 +188,16 @@ func EntityEdit(c *fiber.Ctx) error {
 		Model(&entity).
 		Updates(updates).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to update entity", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal memperbarui entity",
+			En: "Failed to update entity",
+		}, nil)
 	}
 
-	return dto.OK(c, "Success update entity", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Entity berhasil diperbarui",
+		En: "Entity updated successfully",
+	}, fiber.Map{
 		"entity": entity.Map(),
 	})
 }
@@ -165,10 +208,16 @@ func EntityRemove(c *fiber.Ctx) error {
 	if err := variable.Db.
 		Delete(&model.CompanyEntity{}, "id = ?", id).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to delete entity", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menghapus entity",
+			En: "Failed to delete entity",
+		}, nil)
 	}
 
-	return dto.OK(c, "Success delete entity", nil)
+	return dto.OK(c, types.Language{
+		Id: "Entity berhasil dihapus",
+		En: "Entity deleted successfully",
+	}, nil)
 }
 
 func EntityBulkRemove(c *fiber.Ctx) error {
@@ -176,16 +225,25 @@ func EntityBulkRemove(c *fiber.Ctx) error {
 		IDs []uint `json:"ids" validate:"required,min=1"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Body permintaan tidak valid",
+			En: "Invalid request body",
+		}, nil)
 	}
 
 	if err := variable.Db.
 		Delete(&model.CompanyEntity{}, "id IN ?", body.IDs).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to bulk delete entities", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menghapus entity",
+			En: "Failed to delete entity",
+		}, nil)
 	}
 
-	return dto.OK(c, "Success bulk delete entities", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Entity berhasil dihapus",
+		En: "Entity deleted successfully",
+	}, fiber.Map{
 		"deleted_count": len(body.IDs),
 	})
 }
@@ -194,14 +252,20 @@ func EntitySetActive(c *fiber.Ctx) error {
 	id := c.Params("id")
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terautentikasi",
+			En: "Unauthorized",
+		}, nil)
 	}
 
 	var entity model.CompanyEntity
 	if err := variable.Db.
 		First(&entity, "id = ?", id).
 		Error; err != nil {
-		return dto.NotFound(c, "Entity not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "Entity tidak ditemukan",
+			En: "Entity not found",
+		}, nil)
 	}
 
 	newStatus := !entity.IsActive
@@ -211,10 +275,16 @@ func EntitySetActive(c *fiber.Ctx) error {
 			"is_active":  newStatus,
 			"updated_by": currentUser.ID,
 		}).Error; err != nil {
-		return dto.InternalServerError(c, "Failed to toggle entity status", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mengubah status entity",
+			En: "Failed to toggle entity status",
+		}, nil)
 	}
 
-	return dto.OK(c, "Success toggle entity status", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Entity berhasil diubah",
+		En: "Entity updated successfully",
+	}, fiber.Map{
 		"entity": entity.Map(),
 	})
 }

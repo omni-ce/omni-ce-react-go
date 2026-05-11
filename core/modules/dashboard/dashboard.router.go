@@ -9,7 +9,6 @@ func ProtectedRoute(api fiber.Router) {
 	api.Get("/functions", ListFunctions)
 
 	// CRUD Widget
-	api.Post("/widget/functions", WidgetFunctions)
 	api.Post("/widget/create", WidgetCreate)
 	api.Get("/widget/list", WidgetList)
 	api.Put("/widget/edit/:id", WidgetEdit)

@@ -12,8 +12,8 @@ const (
 )
 
 type Language struct {
-	En string `json:"en"`
 	Id string `json:"id"`
+	En string `json:"en"`
 }
 
 // Scan implements the sql.Scanner interface for GORM JSON columns

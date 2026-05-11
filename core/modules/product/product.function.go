@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"react-go/core/dto"
 	"react-go/core/modules/product/model"
+	"react-go/core/types"
 	"react-go/core/variable"
 	"regexp"
 	"strings"
@@ -13,7 +14,10 @@ import (
 )
 
 func HelloWorld(c *fiber.Ctx) error {
-	return dto.OK(c, "Hello World!", nil)
+	return dto.OK(c, types.Language{
+		Id: "Halo dunia!",
+		En: "Hello world!",
+	}, nil)
 }
 
 func generateKeyFromName(inputs ...string) string {

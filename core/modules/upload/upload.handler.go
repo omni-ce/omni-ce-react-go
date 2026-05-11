@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"react-go/core/dto"
+	"react-go/core/types"
 	"react-go/core/variable"
 	"strings"
 	"time"
@@ -45,10 +46,16 @@ func Bucket(c *fiber.Ctx) error {
 
 	path, err := uploader(c, bucketName)
 	if err != nil {
-		return dto.BadRequest(c, "Failed to upload file", err.Error())
+		return dto.BadRequest(c, types.Language{
+			Id: "Gagal mengunggah file",
+			En: "Failed to upload file",
+		}, err.Error())
 	}
 
-	return dto.OK(c, "Success upload file", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "File berhasil diunggah",
+		En: "File uploaded successfully",
+	}, fiber.Map{
 		"path": path,
 	})
 }

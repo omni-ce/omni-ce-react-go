@@ -5,6 +5,7 @@ import (
 	"react-go/core/dto"
 	"react-go/core/function"
 	"react-go/core/modules/product/model"
+	"react-go/core/types"
 	"react-go/core/variable"
 	"strconv"
 	"strings"
@@ -15,7 +16,10 @@ import (
 func MemoryCreate(c *fiber.Ctx) error {
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terautentikasi",
+			En: "Unauthorized",
+		}, nil)
 	}
 
 	var body struct {
@@ -23,16 +27,25 @@ func MemoryCreate(c *fiber.Ctx) error {
 		InternalStorage string `json:"internal_storage" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Gagal mendapatkan request body",
+			En: "Failed to get request body",
+		}, nil)
 	}
 
 	ramInt, err := strconv.Atoi(body.Ram)
 	if err != nil {
-		return dto.BadRequest(c, "RAM must be an integer", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "RAM harus berupa angka",
+			En: "RAM must be an integer",
+		}, nil)
 	}
 	internalStorageInt, err := strconv.Atoi(body.InternalStorage)
 	if err != nil {
-		return dto.BadRequest(c, "Internal Storage must be an integer", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Internal Storage harus berupa angka",
+			En: "Internal Storage must be an integer",
+		}, nil)
 	}
 
 	key := generateKeyFromName(body.Ram, body.InternalStorage)
@@ -43,7 +56,10 @@ func MemoryCreate(c *fiber.Ctx) error {
 		Where("`key` = ?", key).
 		First(&existing).
 		Error; err == nil {
-		return dto.BadRequest(c, "Memory with this name already exists", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Memory dengan nama ini sudah ada",
+			En: "Memory with this name already exists",
+		}, nil)
 	}
 
 	memory := model.ProductMemory{
@@ -59,12 +75,21 @@ func MemoryCreate(c *fiber.Ctx) error {
 		Error; err != nil {
 		message := err.Error()
 		if strings.Contains(message, "UNIQUE constraint") {
-			return dto.BadRequest(c, "Memory with this name already exists", nil)
+			return dto.BadRequest(c, types.Language{
+				Id: "Memory dengan nama ini sudah ada",
+				En: "Memory with this name already exists",
+			}, nil)
 		}
-		return dto.InternalServerError(c, "Failed to create memory", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal membuat memory",
+			En: "Failed to create memory",
+		}, nil)
 	}
 
-	return dto.Created(c, "Memory created", fiber.Map{
+	return dto.Created(c, types.Language{
+		Id: "Memory berhasil dibuat",
+		En: "Memory created successfully",
+	}, fiber.Map{
 		"memory": memory.Map(),
 	})
 }
@@ -73,7 +98,10 @@ func MemoryPaginate(c *fiber.Ctx) error {
 	var memories []model.ProductMemory
 	pagination, err := function.Pagination(c, &model.ProductMemory{}, nil, []string{"name", "key"}, &memories)
 	if err != nil {
-		return dto.InternalServerError(c, "Failed to prepare pagination", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mempersiapkan pagination",
+			En: "Failed to prepare pagination",
+		}, nil)
 	}
 
 	rows := make([]map[string]any, 0, len(memories))
@@ -81,7 +109,10 @@ func MemoryPaginate(c *fiber.Ctx) error {
 		rows = append(rows, cat.Map())
 	}
 
-	return dto.OK(c, "Success get memories", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Berhasil mendapatkan memory",
+		En: "Success get memories",
+	}, fiber.Map{
 		"rows":       rows,
 		"pagination": pagination.Meta(),
 	})
@@ -91,7 +122,10 @@ func MemoryEdit(c *fiber.Ctx) error {
 	id := c.Params("id")
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terautentikasi",
+			En: "Unauthorized",
+		}, nil)
 	}
 
 	var body struct {
@@ -99,23 +133,35 @@ func MemoryEdit(c *fiber.Ctx) error {
 		InternalStorage string `json:"internal_storage" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Gagal mendapatkan request body",
+			En: "Failed to get request body",
+		}, nil)
 	}
 
 	ramInt, err := strconv.Atoi(body.Ram)
 	if err != nil {
-		return dto.BadRequest(c, "RAM must be an integer", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "RAM harus berupa angka",
+			En: "RAM must be an integer",
+		}, nil)
 	}
 	internalStorageInt, err := strconv.Atoi(body.InternalStorage)
 	if err != nil {
-		return dto.BadRequest(c, "Internal Storage must be an integer", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Internal Storage harus berupa angka",
+			En: "Internal Storage must be an integer",
+		}, nil)
 	}
 
 	var existing model.ProductMemory
 	if err := variable.Db.
 		First(&existing, "id = ?", id).
 		Error; err != nil {
-		return dto.NotFound(c, "Memory not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "Memory tidak ditemukan",
+			En: "Memory not found",
+		}, nil)
 	}
 
 	key := generateKeyFromName(body.Ram, body.InternalStorage)
@@ -127,7 +173,10 @@ func MemoryEdit(c *fiber.Ctx) error {
 			Where("`key` = ? AND id != ?", key, id).
 			First(&dup).
 			Error; err == nil {
-			return dto.BadRequest(c, "Memory with this name already exists", nil)
+			return dto.BadRequest(c, types.Language{
+				Id: "Memory dengan nama ini sudah ada",
+				En: "Memory with this name already exists",
+			}, nil)
 		}
 	}
 
@@ -139,12 +188,18 @@ func MemoryEdit(c *fiber.Ctx) error {
 	if err := variable.Db.
 		Save(&existing).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to update memory", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal memperbarui memory",
+			En: "Failed to update memory",
+		}, nil)
 	}
 
 	RegenerateItemKeysByAttribute("memory", existing.ID)
 
-	return dto.OK(c, "Memory updated", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Memory berhasil diperbarui",
+		En: "Memory updated successfully",
+	}, fiber.Map{
 		"memory": existing.Map(),
 	})
 }
@@ -155,10 +210,16 @@ func MemoryRemove(c *fiber.Ctx) error {
 	if err := variable.Db.
 		Delete(&model.ProductMemory{}, "id = ?", id).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to delete memory", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menghapus memory",
+			En: "Failed to delete memory",
+		}, nil)
 	}
 
-	return dto.OK(c, "Memory deleted", nil)
+	return dto.OK(c, types.Language{
+		Id: "Memory berhasil dihapus",
+		En: "Memory deleted successfully",
+	}, nil)
 }
 
 func MemoryBulkRemove(c *fiber.Ctx) error {
@@ -166,14 +227,23 @@ func MemoryBulkRemove(c *fiber.Ctx) error {
 		IDs []uint `json:"ids" validate:"required,min=1"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Gagal mendapatkan request body",
+			En: "Failed to get request body",
+		}, nil)
 	}
 
 	if err := variable.Db.
 		Delete(&model.ProductMemory{}, "id IN ?", body.IDs).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to bulk delete memories", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menghapus memory",
+			En: "Failed to delete memory",
+		}, nil)
 	}
 
-	return dto.OK(c, fmt.Sprintf("Success delete %d memories", len(body.IDs)), nil)
+	return dto.OK(c, types.Language{
+		Id: fmt.Sprintf("Berhasil menghapus %d memory", len(body.IDs)),
+		En: fmt.Sprintf("Success delete %d memories", len(body.IDs)),
+	}, nil)
 }

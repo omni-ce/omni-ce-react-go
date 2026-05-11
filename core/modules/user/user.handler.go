@@ -23,7 +23,10 @@ import (
 func ChangePassword(c *fiber.Ctx) error {
 	existing, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terotorisasi",
+			En: "Unauthorized",
+		}, nil)
 	}
 
 	var body struct {
@@ -31,19 +34,28 @@ func ChangePassword(c *fiber.Ctx) error {
 		Password         string `json:"password" validate:"required,min=8,max=50"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Body permintaan tidak valid",
+			En: "Invalid request body",
+		}, nil)
 	}
 
 	// check if password == previous password
 	if !hash.ValidatePassword(body.PreviousPassword, existing.Password) {
-		return dto.BadRequest(c, "Password and previous password must be different", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Password dan previous password harus berbeda",
+			En: "Password and previous password must be different",
+		}, nil)
 	}
 
 	if err := variable.Db.
 		Model(&existing).
 		Update("password", hash.Password(body.Password)).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to update user", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal memperbarui user",
+			En: "Failed to update user",
+		}, nil)
 	}
 
 	// Send notification to user about password change
@@ -53,7 +65,10 @@ func ChangePassword(c *fiber.Ctx) error {
 		Message: types.Language{Id: "Administrator telah mengubah kata sandi akun Anda.", En: "An administrator has changed your account password."},
 	})
 
-	return dto.OK(c, "Success update user", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Berhasil memperbarui user",
+		En: "Success update user",
+	}, fiber.Map{
 		"user": existing.Map(),
 	})
 }
@@ -63,10 +78,16 @@ func Create(c *fiber.Ctx) error {
 	// Only SU can create users
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terotorisasi",
+			En: "Unauthorized",
+		}, nil)
 	}
 	if currentUser.Role != model.UserRoleAdmin {
-		return dto.Forbidden(c, "Only super admin can create users", nil)
+		return dto.Forbidden(c, types.Language{
+			Id: "Hanya super admin yang bisa membuat user",
+			En: "Only super admin can create users",
+		}, nil)
 	}
 
 	var body struct {
@@ -81,7 +102,10 @@ func Create(c *fiber.Ctx) error {
 		} `json:"roles" validate:"required,min=1"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Gagal mendapatkan request body",
+			En: "Failed to get request body",
+		}, nil)
 	}
 
 	roleIds := make([]string, 0)
@@ -94,10 +118,16 @@ func Create(c *fiber.Ctx) error {
 		Where("id IN ?", roleIds).
 		Find(&roles).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to fetch roles", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mendapatkan role",
+			En: "Failed to get role",
+		}, nil)
 	}
 	if len(roles) != len(roleIds) {
-		return dto.BadRequest(c, "Invalid role ids", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Role tidak valid",
+			En: "Invalid role",
+		}, nil)
 	}
 
 	// Check duplicate username
@@ -106,7 +136,10 @@ func Create(c *fiber.Ctx) error {
 		Where("username = ?", body.Username).
 		First(&existing).
 		Error; err == nil {
-		return dto.BadRequest(c, "Username already exists", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Username sudah ada",
+			En: "Username already exists",
+		}, nil)
 	}
 
 	user := model.User{
@@ -140,12 +173,21 @@ func Create(c *fiber.Ctx) error {
 	if errTx != nil {
 		message := err.Error()
 		if strings.Contains(message, "UNIQUE constraint") {
-			return dto.BadRequest(c, "User with that username already exists", nil)
+			return dto.BadRequest(c, types.Language{
+				Id: "Username sudah ada",
+				En: "Username already exists",
+			}, nil)
 		}
-		return dto.InternalServerError(c, "Failed to create user", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal membuat user",
+			En: "Failed to create user",
+		}, nil)
 	}
 
-	return dto.Created(c, "User created", fiber.Map{
+	return dto.Created(c, types.Language{
+		Id: "User berhasil dibuat",
+		En: "User created successfully",
+	}, fiber.Map{
 		"user": user.Map(),
 	})
 }
@@ -156,7 +198,10 @@ func Paginate(c *fiber.Ctx) error {
 		return query.Where("role = ?", model.UserRoleClient)
 	}, []string{"name", "username", "role"}, &users)
 	if err != nil {
-		return dto.InternalServerError(c, "Failed to prepare pagination", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mempersiapkan pagination",
+			En: "Failed to prepare pagination",
+		}, nil)
 	}
 
 	userIds := make([]string, 0, len(users))
@@ -169,7 +214,10 @@ func Paginate(c *fiber.Ctx) error {
 		Where("user_id IN ?", userIds).
 		Find(&roleUsers).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to fetch role users", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mendapatkan role users",
+			En: "Failed to get role users",
+		}, nil)
 	}
 
 	roleIds := make([]uint, 0)
@@ -183,7 +231,10 @@ func Paginate(c *fiber.Ctx) error {
 			Where("id IN ?", roleIds).
 			Find(&roles).
 			Error; err != nil {
-			return dto.InternalServerError(c, "Failed to fetch roles", nil)
+			return dto.InternalServerError(c, types.Language{
+				Id: "Gagal mendapatkan role",
+				En: "Failed to get roles",
+			}, nil)
 		}
 	}
 
@@ -193,7 +244,10 @@ func Paginate(c *fiber.Ctx) error {
 			Where("id IN ?", roleIds).
 			Find(&divisions).
 			Error; err != nil {
-			return dto.InternalServerError(c, "Failed to fetch divisions", nil)
+			return dto.InternalServerError(c, types.Language{
+				Id: "Gagal mendapatkan divisi",
+				En: "Failed to get divisions",
+			}, nil)
 		}
 	}
 
@@ -226,7 +280,10 @@ func Paginate(c *fiber.Ctx) error {
 		result = append(result, user)
 	}
 
-	return dto.OK(c, "Success get users", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Berhasil mendapatkan user",
+		En: "Success get users",
+	}, fiber.Map{
 		"rows":       result,
 		"pagination": pagination.Meta(),
 	})
@@ -236,7 +293,10 @@ func Edit(c *fiber.Ctx) error {
 	idParam := c.Params("id")
 	id, err := uuid.Parse(idParam)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid user id", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "ID user tidak valid",
+			En: "Invalid user id",
+		}, nil)
 	}
 
 	var body struct {
@@ -250,7 +310,10 @@ func Edit(c *fiber.Ctx) error {
 		} `json:"roles"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Request body tidak valid",
+			En: "Invalid request body",
+		}, nil)
 	}
 
 	// Handle avatar upload
@@ -261,7 +324,10 @@ func Edit(c *fiber.Ctx) error {
 		cleanPath := strings.TrimPrefix(newAvatar, "/upload")
 		fsPath := filepath.Join(variable.UploadsPath, cleanPath)
 		if _, err := os.Stat(fsPath); os.IsNotExist(err) {
-			return dto.BadRequest(c, "Avatar file not found on server", nil)
+			return dto.BadRequest(c, types.Language{
+				Id: "File avatar tidak ditemukan di server",
+				En: "Avatar file not found on server",
+			}, nil)
 		}
 	} else if newAvatar == "delete" {
 		newAvatar = ""
@@ -278,17 +344,26 @@ func Edit(c *fiber.Ctx) error {
 		Where("id IN ?", roleIds).
 		Find(&roles).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to fetch roles", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mendapatkan role",
+			En: "Failed to get roles",
+		}, nil)
 	}
 	if len(roles) != len(roleIds) {
-		return dto.BadRequest(c, "Invalid role ids", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "ID role tidak valid",
+			En: "Invalid role ids",
+		}, nil)
 	}
 
 	var existing model.User
 	if err := variable.Db.
 		First(&existing, "id = ?", id.String()).
 		Error; err != nil {
-		return dto.NotFound(c, "User not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "User tidak ditemukan",
+			En: "User not found",
+		}, nil)
 	}
 
 	updates := map[string]any{}
@@ -306,7 +381,10 @@ func Edit(c *fiber.Ctx) error {
 			Where("username = ? AND id != ?", username, id.String()).
 			First(&dup).
 			Error; err == nil {
-			return dto.BadRequest(c, "Username already exists", nil)
+			return dto.BadRequest(c, types.Language{
+				Id: "Username sudah ada",
+				En: "Username already exists",
+			}, nil)
 		}
 		updates["username"] = username
 	}
@@ -321,7 +399,10 @@ func Edit(c *fiber.Ctx) error {
 	}
 
 	if len(updates) == 0 && len(body.Roles) == 0 {
-		return dto.BadRequest(c, "No data to update", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Tidak ada data untuk diupdate",
+			En: "No data to update",
+		}, nil)
 	}
 
 	errTx := variable.Db.Transaction(func(tx *gorm.DB) error {
@@ -354,14 +435,23 @@ func Edit(c *fiber.Ctx) error {
 	if errTx != nil {
 		message := err.Error()
 		if strings.Contains(message, "UNIQUE constraint") {
-			return dto.BadRequest(c, "User with that username already exists", nil)
+			return dto.BadRequest(c, types.Language{
+				Id: "User dengan username tersebut sudah ada",
+				En: "User with that username already exists",
+			}, nil)
 		}
-		return dto.InternalServerError(c, "Failed to update user", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal memperbarui user",
+			En: "Failed to update user",
+		}, nil)
 	}
 	if err := variable.Db.
 		First(&existing, "id = ?", id.String()).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to fetch updated user", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mendapatkan user yang diperbarui",
+			En: "Failed to fetch updated user",
+		}, nil)
 	}
 
 	// Send notification to edited user
@@ -373,7 +463,10 @@ func Edit(c *fiber.Ctx) error {
 
 	sse.SendEventToUser(id.String(), "update-user", true)
 
-	return dto.OK(c, "Success update user", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "User berhasil diperbarui",
+		En: "User updated successfully",
+	}, fiber.Map{
 		"user": existing.Map(),
 	})
 }
@@ -382,47 +475,74 @@ func Remove(c *fiber.Ctx) error {
 	idParam := c.Params("id")
 	id, err := uuid.Parse(idParam)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid user id", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "ID user tidak valid",
+			En: "Invalid user id",
+		}, nil)
 	}
 
 	// Only SU can delete users
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terotentikasi",
+			En: "Unauthorized",
+		}, nil)
 	}
 	if currentUser.Role != model.UserRoleAdmin {
-		return dto.Forbidden(c, "Only super admin can delete users", nil)
+		return dto.Forbidden(c, types.Language{
+			Id: "Hanya super admin yang bisa menghapus user",
+			En: "Only super admin can delete users",
+		}, nil)
 	}
 
 	// Prevent self-deletion
 	if currentUser.ID.String() == id.String() {
-		return dto.BadRequest(c, "Cannot delete yourself", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Tidak bisa menghapus diri sendiri",
+			En: "Cannot delete yourself",
+		}, nil)
 	}
 
 	if err = variable.Db.
 		Delete(&model.User{}, "id = ?", id.String()).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to delete user", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menghapus user",
+			En: "Failed to delete user",
+		}, nil)
 	}
 
-	return dto.OK(c, "Success delete user", nil)
+	return dto.OK(c, types.Language{
+		Id: "User berhasil dihapus",
+		En: "User deleted successfully",
+	}, nil)
 }
 
 func BulkRemove(c *fiber.Ctx) error {
 	// Only SU can bulk delete users
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terotentikasi",
+			En: "Unauthorized",
+		}, nil)
 	}
 	if currentUser.Role != model.UserRoleAdmin {
-		return dto.Forbidden(c, "Only super admin can bulk delete users", nil)
+		return dto.Forbidden(c, types.Language{
+			Id: "Hanya super admin yang bisa menghapus user",
+			En: "Only super admin can delete users",
+		}, nil)
 	}
 
 	var body struct {
 		IDs []string `json:"ids" validate:"required,min=1,dive,gt=0"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Gagal memvalidasi request body",
+			En: "Failed to validate request body",
+		}, err.Error())
 	}
 
 	// Filter out self
@@ -447,16 +567,25 @@ func BulkRemove(c *fiber.Ctx) error {
 	}
 
 	if len(validIDs) == 0 {
-		return dto.BadRequest(c, "No valid users to delete", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Tidak ada user yang valid untuk dihapus",
+			En: "No valid users to delete",
+		}, nil)
 	}
 
 	if err := variable.Db.
 		Delete(&model.User{}, "id IN ?", validIDs).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to bulk delete users", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menghapus user",
+			En: "Failed to delete user",
+		}, nil)
 	}
 
-	return dto.OK(c, "Success bulk delete users", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "User berhasil dihapus",
+		En: "User deleted successfully",
+	}, fiber.Map{
 		"deleted_count": len(validIDs),
 	})
 }
@@ -465,28 +594,43 @@ func SetActive(c *fiber.Ctx) error {
 	idParam := c.Params("id")
 	id, err := uuid.Parse(idParam)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid user id", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "ID user tidak valid",
+			En: "Invalid user id",
+		}, nil)
 	}
 
 	// Only SU can toggle active status
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terotentikasi",
+			En: "Unauthorized",
+		}, nil)
 	}
 	if currentUser.Role != model.UserRoleAdmin {
-		return dto.Forbidden(c, "Only super admin can toggle user status", nil)
+		return dto.Forbidden(c, types.Language{
+			Id: "Hanya super admin yang bisa mengaktifkan/menonaktifkan user",
+			En: "Only super admin can activate/deactivate users",
+		}, nil)
 	}
 
 	var existing model.User
 	if err := variable.Db.
 		First(&existing, "id = ?", id.String()).
 		Error; err != nil {
-		return dto.NotFound(c, "User not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "User tidak ditemukan",
+			En: "User not found",
+		}, nil)
 	}
 
 	// Prevent deactivating self
 	if existing.ID == currentUser.ID {
-		return dto.BadRequest(c, "Cannot deactivate yourself", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Tidak bisa menonaktifkan diri sendiri",
+			En: "Cannot deactivate yourself",
+		}, nil)
 	}
 
 	newStatus := !existing.IsActive
@@ -494,10 +638,16 @@ func SetActive(c *fiber.Ctx) error {
 		Model(&existing).
 		Update("is_active", newStatus).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to toggle user status", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mengaktifkan/menonaktifkan user",
+			En: "Failed to activate/deactivate user",
+		}, nil)
 	}
 
-	return dto.OK(c, "Success toggle user status", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "User berhasil diaktifkan/dinonaktifkan",
+		En: "User activated/deactivated successfully",
+	}, fiber.Map{
 		"user": existing.Map(),
 	})
 }
@@ -508,14 +658,20 @@ func ChangePasswordFromUser(c *fiber.Ctx) error {
 	idParam := c.Params("id")
 	id, err := uuid.Parse(idParam)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid user id", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "ID user tidak valid",
+			En: "Invalid user id",
+		}, nil)
 	}
 
 	var body struct {
 		Password string `json:"password" validate:"required,min=8,max=50"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Gagal memvalidasi request body",
+			En: "Failed to validate request body",
+		}, err.Error())
 	}
 
 	var current_user model.User
@@ -523,19 +679,28 @@ func ChangePasswordFromUser(c *fiber.Ctx) error {
 		Where("id = ?", id.String()).
 		First(&current_user).
 		Error; err != nil {
-		return dto.Unauthorized(c, "Invalid user id", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "ID user tidak valid",
+			En: "Invalid user id",
+		}, nil)
 	}
 
 	// check if password == previous password
 	if !hash.ValidatePassword(body.Password, current_user.Password) {
-		return dto.BadRequest(c, "Password and previous password must be different", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Password dan password sebelumnya harus berbeda",
+			En: "Password and previous password must be different",
+		}, nil)
 	}
 
 	if err := variable.Db.
 		Model(&current_user).
 		Update("password", hash.Password(body.Password)).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to update user password", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mengubah kata sandi user",
+			En: "Failed to update user password",
+		}, nil)
 	}
 
 	// Send notification to user about password change
@@ -545,7 +710,10 @@ func ChangePasswordFromUser(c *fiber.Ctx) error {
 		Message: types.Language{Id: "Administrator telah mengubah kata sandi akun Anda.", En: "An administrator has changed your account password."},
 	})
 
-	return dto.OK(c, "Success update user", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "User berhasil diubah",
+		En: "User updated successfully",
+	}, fiber.Map{
 		"user": current_user.Map(),
 	})
 }
@@ -554,23 +722,35 @@ func RoleSwitch(c *fiber.Ctx) error {
 	idParam := c.Params("id")
 	id, err := uuid.Parse(idParam)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid user id", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "ID user tidak valid",
+			En: "Invalid user id",
+		}, nil)
 	}
 
 	// Only SU can switch roles
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terotentikasi",
+			En: "Unauthorized",
+		}, nil)
 	}
 	if currentUser.Role != model.UserRoleAdmin {
-		return dto.Forbidden(c, "Only super admin can switch user roles", nil)
+		return dto.Forbidden(c, types.Language{
+			Id: "Hanya super admin yang bisa mengubah peran user",
+			En: "Only super admin can switch user roles",
+		}, nil)
 	}
 
 	var existing model.User
 	if err := variable.Db.
 		First(&existing, "id = ?", id.String()).
 		Error; err != nil {
-		return dto.NotFound(c, "User not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "User tidak ditemukan",
+			En: "User not found",
+		}, nil)
 	}
 
 	newRole := model.UserRoleClient
@@ -582,7 +762,10 @@ func RoleSwitch(c *fiber.Ctx) error {
 		Model(&existing).
 		Update("role", newRole).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to switch role", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mengubah peran user",
+			En: "Failed to switch role",
+		}, nil)
 	}
 
 	// Send notification to user about role change
@@ -592,7 +775,10 @@ func RoleSwitch(c *fiber.Ctx) error {
 		Message: types.Language{Id: "Administrator telah mengubah peran Anda menjadi " + newRole + ".", En: "An administrator has changed your role to " + newRole + "."},
 	})
 
-	return dto.OK(c, "Success switch role", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Role berhasil diubah",
+		En: "Role updated successfully",
+	}, fiber.Map{
 		"user": existing.Map(),
 	})
 }
@@ -600,7 +786,10 @@ func RoleSwitch(c *fiber.Ctx) error {
 func UpdateProfile(c *fiber.Ctx) error {
 	existing, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terotentikasi",
+			En: "Unauthorized",
+		}, nil)
 	}
 
 	var body struct {
@@ -611,7 +800,10 @@ func UpdateProfile(c *fiber.Ctx) error {
 		Address     string `json:"address"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Gagal memvalidasi request body",
+			En: "Failed to validate request body",
+		}, err.Error())
 	}
 
 	updates := map[string]any{}
@@ -629,7 +821,10 @@ func UpdateProfile(c *fiber.Ctx) error {
 				Where("username = ?", username).
 				First(&check_user).
 				Error; err == nil {
-				return dto.BadRequest(c, "Username already exists", nil)
+				return dto.BadRequest(c, types.Language{
+					Id: "Username sudah ada",
+					En: "Username already exists",
+				}, nil)
 			}
 			updates["username"] = username
 		}
@@ -652,7 +847,10 @@ func UpdateProfile(c *fiber.Ctx) error {
 		cleanPath := strings.TrimPrefix(newAvatar, "/upload")
 		fsPath := filepath.Join(variable.UploadsPath, cleanPath)
 		if _, err := os.Stat(fsPath); os.IsNotExist(err) {
-			return dto.BadRequest(c, "Avatar file not found on server", nil)
+			return dto.BadRequest(c, types.Language{
+				Id: "File avatar tidak ditemukan di server",
+				En: "Avatar file not found on server",
+			}, nil)
 		}
 		updates["avatar"] = newAvatar
 	} else if newAvatar == "delete" {
@@ -660,7 +858,10 @@ func UpdateProfile(c *fiber.Ctx) error {
 	}
 
 	if len(updates) == 0 {
-		return dto.OK(c, "No changes", fiber.Map{
+		return dto.OK(c, types.Language{
+			Id: "Tidak ada perubahan",
+			En: "No changes",
+		}, fiber.Map{
 			"user": existing.Map(),
 		})
 	}
@@ -669,10 +870,16 @@ func UpdateProfile(c *fiber.Ctx) error {
 		Model(&existing).
 		Updates(updates).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to update user profile", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal memperbarui profil user",
+			En: "Failed to update user profile",
+		}, nil)
 	}
 
-	return dto.OK(c, "Success update profile", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Profile berhasil diperbarui",
+		En: "Profile updated successfully",
+	}, fiber.Map{
 		"user": existing.Map(),
 	})
 }

@@ -4,6 +4,7 @@ import (
 	"react-go/core/dto"
 	"react-go/core/function"
 	model "react-go/core/modules/notification/model"
+	"react-go/core/types"
 	"react-go/core/variable"
 	"strconv"
 	"time"
@@ -17,13 +18,19 @@ import (
 func NextData(c *fiber.Ctx) error {
 	claims, ok := c.Locals("claims").(*function.JwtClaims)
 	if !ok {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak ada hak akses",
+			En: "Unauthorized",
+		}, nil)
 	}
 	userID := claims.ID
 
 	cursorID, err := strconv.ParseUint(c.Params("id"), 10, 64)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid ID", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "ID tidak valid",
+			En: "Invalid ID",
+		}, nil)
 	}
 
 	var notifications []model.Notification
@@ -32,10 +39,16 @@ func NextData(c *fiber.Ctx) error {
 		query = query.Where("id < ?", cursorID)
 	}
 	if err := query.Find(&notifications).Error; err != nil {
-		return dto.InternalServerError(c, "Failed to fetch notifications", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mengambil data notifikasi",
+			En: "Failed to fetch notifications",
+		}, nil)
 	}
 
-	return dto.OK(c, "Success", notifications)
+	return dto.OK(c, types.Language{
+		Id: "Data notifikasi berhasil diambil",
+		En: "Notifications retrieved successfully",
+	}, notifications)
 }
 
 // MarkRead marks multiple notifications as read.
@@ -43,7 +56,10 @@ func NextData(c *fiber.Ctx) error {
 func MarkRead(c *fiber.Ctx) error {
 	claims, ok := c.Locals("claims").(*function.JwtClaims)
 	if !ok {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak ada hak akses",
+			En: "Unauthorized",
+		}, nil)
 	}
 	userID := claims.ID
 
@@ -51,7 +67,10 @@ func MarkRead(c *fiber.Ctx) error {
 		IDs []uint `json:"ids" validate:"required,dive,min=1"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Permintaan tidak valid",
+			En: "Invalid request",
+		}, nil)
 	}
 
 	now := time.Now()
@@ -62,10 +81,16 @@ func MarkRead(c *fiber.Ctx) error {
 			"is_read": true,
 			"read_at": now,
 		}).Error; err != nil {
-		return dto.InternalServerError(c, "Failed to mark as read", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menandai notifikasi sebagai sudah dibaca",
+			En: "Failed to mark notifications as read",
+		}, nil)
 	}
 
-	return dto.OK(c, "Marked as read", nil)
+	return dto.OK(c, types.Language{
+		Id: "Notifikasi berhasil ditandai sebagai sudah dibaca",
+		En: "Notifications marked as read successfully",
+	}, nil)
 }
 
 // ToggleRead toggles the read status of a single notification.
@@ -73,7 +98,10 @@ func MarkRead(c *fiber.Ctx) error {
 func ToggleRead(c *fiber.Ctx) error {
 	claims, ok := c.Locals("claims").(*function.JwtClaims)
 	if !ok {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak ada hak akses",
+			En: "Unauthorized",
+		}, nil)
 	}
 	userID := claims.ID
 
@@ -81,7 +109,10 @@ func ToggleRead(c *fiber.Ctx) error {
 		ID uint `json:"id" validate:"required,dive,min=1"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Permintaan tidak valid",
+			En: "Invalid request",
+		}, nil)
 	}
 
 	var notif model.Notification
@@ -89,7 +120,10 @@ func ToggleRead(c *fiber.Ctx) error {
 		Where("id = ? AND user_id = ?", body.ID, userID).
 		First(&notif).
 		Error; err != nil {
-		return dto.NotFound(c, "Notification not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "Notifikasi tidak ditemukan",
+			En: "Notification not found",
+		}, nil)
 	}
 
 	newIsRead := !notif.IsRead
@@ -106,10 +140,16 @@ func ToggleRead(c *fiber.Ctx) error {
 		Model(&notif).
 		Updates(updates).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to toggle read", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menandai notifikasi sebagai sudah dibaca",
+			En: "Failed to mark notifications as read",
+		}, nil)
 	}
 
-	return dto.OK(c, "Toggled", map[string]interface{}{
+	return dto.OK(c, types.Language{
+		Id: "Notifikasi berhasil ditandai sebagai sudah dibaca",
+		En: "Notifications marked as read successfully",
+	}, map[string]interface{}{
 		"id":      notif.ID,
 		"is_read": newIsRead,
 	})
@@ -120,13 +160,19 @@ func ToggleRead(c *fiber.Ctx) error {
 func Delete(c *fiber.Ctx) error {
 	claims, ok := c.Locals("claims").(*function.JwtClaims)
 	if !ok {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak ada hak akses",
+			En: "Unauthorized",
+		}, nil)
 	}
 	userID := claims.ID
 
 	id, err := strconv.ParseUint(c.Params("id"), 10, 64)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid ID", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "ID tidak valid",
+			En: "Invalid ID",
+		}, nil)
 	}
 
 	now := time.Now()
@@ -136,13 +182,22 @@ func Delete(c *fiber.Ctx) error {
 		Where("id = ? AND user_id = ?", id, userID).
 		Updates(&model.Notification{DeletedAt: &now})
 	if result.Error != nil {
-		return dto.InternalServerError(c, "Failed to delete", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menghapus notifikasi",
+			En: "Failed to delete notification",
+		}, nil)
 	}
 	if result.RowsAffected == 0 {
-		return dto.NotFound(c, "Notification not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "Notifikasi tidak ditemukan",
+			En: "Notification not found",
+		}, nil)
 	}
 
-	return dto.OK(c, "Deleted", nil)
+	return dto.OK(c, types.Language{
+		Id: "Notifikasi berhasil dihapus",
+		En: "Notification deleted successfully",
+	}, nil)
 }
 
 // ClearAll removes all notifications for the current user.
@@ -150,11 +205,17 @@ func Delete(c *fiber.Ctx) error {
 func ClearAll(c *fiber.Ctx) error {
 	claims, ok := c.Locals("claims").(*function.JwtClaims)
 	if !ok {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak ada hak akses",
+			En: "Unauthorized",
+		}, nil)
 	}
 	userID, err := uuid.Parse(claims.ID)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid user ID", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "ID tidak valid",
+			En: "Invalid user ID",
+		}, nil)
 	}
 
 	now := time.Now()
@@ -164,8 +225,14 @@ func ClearAll(c *fiber.Ctx) error {
 		Where("user_id = ?", userID).
 		Updates(&model.Notification{DeletedAt: &now}).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to clear all", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menghapus semua notifikasi",
+			En: "Failed to clear all notifications",
+		}, nil)
 	}
 
-	return dto.OK(c, "All cleared", nil)
+	return dto.OK(c, types.Language{
+		Id: "Semua notifikasi berhasil dihapus",
+		En: "All notifications cleared successfully",
+	}, nil)
 }

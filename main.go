@@ -12,6 +12,7 @@ import (
 	"react-go/core/dto"
 	"react-go/core/modules"
 	"react-go/core/sse"
+	"react-go/core/types"
 	"react-go/core/variable"
 	"strings"
 
@@ -129,7 +130,10 @@ func main() {
 
 	// Global error handler for API
 	app.Use(func(c *fiber.Ctx) error {
-		return dto.NotFound(c, "endpoint not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "Endpoint tidak ditemukan",
+			En: "Endpoint not found",
+		}, nil)
 	})
 
 	port := os.Getenv("PORT")

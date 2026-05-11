@@ -5,6 +5,7 @@ import (
 	"react-go/core/dto"
 	"react-go/core/function"
 	"react-go/core/modules/product/model"
+	"react-go/core/types"
 	"react-go/core/variable"
 	"strings"
 
@@ -14,7 +15,10 @@ import (
 func ConditionCreate(c *fiber.Ctx) error {
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terautentikasi",
+			En: "Unauthorized",
+		}, nil)
 	}
 
 	var body struct {
@@ -22,7 +26,10 @@ func ConditionCreate(c *fiber.Ctx) error {
 		Description string `json:"description"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Body request tidak valid",
+			En: "Invalid request body",
+		}, nil)
 	}
 
 	key := generateKeyFromName(body.Name)
@@ -33,7 +40,10 @@ func ConditionCreate(c *fiber.Ctx) error {
 		Where("`key` = ?", key).
 		First(&existing).
 		Error; err == nil {
-		return dto.BadRequest(c, "Condition with this name already exists", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Kondisi sudah ada",
+			En: "Condition with this name already exists",
+		}, nil)
 	}
 
 	condition := model.ProductCondition{
@@ -49,12 +59,21 @@ func ConditionCreate(c *fiber.Ctx) error {
 		Error; err != nil {
 		message := err.Error()
 		if strings.Contains(message, "UNIQUE constraint") {
-			return dto.BadRequest(c, "Condition with this name already exists", nil)
+			return dto.BadRequest(c, types.Language{
+				Id: "Kondisi sudah ada",
+				En: "Condition with this name already exists",
+			}, nil)
 		}
-		return dto.InternalServerError(c, "Failed to create condition", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal membuat kondisi",
+			En: "Failed to create condition",
+		}, nil)
 	}
 
-	return dto.Created(c, "Condition created", fiber.Map{
+	return dto.Created(c, types.Language{
+		Id: "Kondisi berhasil dibuat",
+		En: "Condition created successfully",
+	}, fiber.Map{
 		"condition": condition.Map(),
 	})
 }
@@ -63,7 +82,10 @@ func ConditionPaginate(c *fiber.Ctx) error {
 	var categories []model.ProductCondition
 	pagination, err := function.Pagination(c, &model.ProductCondition{}, nil, []string{"name", "key"}, &categories)
 	if err != nil {
-		return dto.InternalServerError(c, "Failed to prepare pagination", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal memuat halaman",
+			En: "Failed to load page",
+		}, nil)
 	}
 
 	rows := make([]map[string]any, 0, len(categories))
@@ -71,7 +93,10 @@ func ConditionPaginate(c *fiber.Ctx) error {
 		rows = append(rows, cat.Map())
 	}
 
-	return dto.OK(c, "Success get categories", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Kategori berhasil diambil",
+		En: "Categories retrieved successfully",
+	}, fiber.Map{
 		"rows":       rows,
 		"pagination": pagination.Meta(),
 	})
@@ -81,7 +106,10 @@ func ConditionEdit(c *fiber.Ctx) error {
 	id := c.Params("id")
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terautentikasi",
+			En: "Unauthorized",
+		}, nil)
 	}
 
 	var body struct {
@@ -89,14 +117,20 @@ func ConditionEdit(c *fiber.Ctx) error {
 		Description string `json:"description"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Permintaan tidak valid",
+			En: "Invalid request body",
+		}, nil)
 	}
 
 	var existing model.ProductCondition
 	if err := variable.Db.
 		First(&existing, "id = ?", id).
 		Error; err != nil {
-		return dto.NotFound(c, "Condition not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "Kondisi tidak ditemukan",
+			En: "Condition not found",
+		}, nil)
 	}
 
 	key := generateKeyFromName(body.Name)
@@ -108,7 +142,10 @@ func ConditionEdit(c *fiber.Ctx) error {
 			Where("`key` = ? AND id != ?", key, id).
 			First(&dup).
 			Error; err == nil {
-			return dto.BadRequest(c, "Condition with this name already exists", nil)
+			return dto.BadRequest(c, types.Language{
+				Id: "Kondisi sudah ada",
+				En: "Condition with this name already exists",
+			}, nil)
 		}
 	}
 
@@ -120,12 +157,18 @@ func ConditionEdit(c *fiber.Ctx) error {
 	if err := variable.Db.
 		Save(&existing).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to update condition", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal memperbarui kondisi",
+			En: "Failed to update condition",
+		}, nil)
 	}
 
 	RegenerateItemKeysByAttribute("condition", existing.ID)
 
-	return dto.OK(c, "Condition updated", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Kondisi berhasil diperbarui",
+		En: "Condition updated successfully",
+	}, fiber.Map{
 		"condition": existing.Map(),
 	})
 }
@@ -136,10 +179,16 @@ func ConditionRemove(c *fiber.Ctx) error {
 	if err := variable.Db.
 		Delete(&model.ProductCondition{}, "id = ?", id).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to delete condition", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menghapus kondisi",
+			En: "Failed to delete condition",
+		}, nil)
 	}
 
-	return dto.OK(c, "Condition deleted", nil)
+	return dto.OK(c, types.Language{
+		Id: "Kondisi berhasil dihapus",
+		En: "Condition deleted successfully",
+	}, nil)
 }
 
 func ConditionBulkRemove(c *fiber.Ctx) error {
@@ -147,14 +196,23 @@ func ConditionBulkRemove(c *fiber.Ctx) error {
 		IDs []uint `json:"ids" validate:"required,min=1"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Permintaan tidak valid",
+			En: "Invalid request body",
+		}, nil)
 	}
 
 	if err := variable.Db.
 		Delete(&model.ProductCondition{}, "id IN ?", body.IDs).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to bulk delete categories", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menghapus kategori",
+			En: "Failed to delete categories",
+		}, nil)
 	}
 
-	return dto.OK(c, fmt.Sprintf("Success delete %d categories", len(body.IDs)), nil)
+	return dto.OK(c, types.Language{
+		Id: fmt.Sprintf("Berhasil menghapus %d kategori", len(body.IDs)),
+		En: fmt.Sprintf("Success delete %d categories", len(body.IDs)),
+	}, nil)
 }

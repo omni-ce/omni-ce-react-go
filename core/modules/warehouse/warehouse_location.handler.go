@@ -6,6 +6,7 @@ import (
 	company "react-go/core/modules/company/model"
 	user "react-go/core/modules/user/model"
 	model "react-go/core/modules/warehouse/model"
+	"react-go/core/types"
 	"react-go/core/variable"
 	"strconv"
 	"strings"
@@ -20,7 +21,10 @@ import (
 func LocationCreate(c *fiber.Ctx) error {
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terotentikasi",
+			En: "Unauthorized",
+		}, nil)
 	}
 
 	var body struct {
@@ -33,17 +37,26 @@ func LocationCreate(c *fiber.Ctx) error {
 		} `json:"map" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Gagal memvalidasi request body",
+			En: "Failed to validate request body",
+		}, err.Error())
 	}
 
 	branchId, err := strconv.Atoi(body.BranchID)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid branch ID", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "ID cabang tidak valid",
+			En: "Invalid branch ID",
+		}, nil)
 	}
 
 	picId, err := uuid.Parse(body.PicID)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid PIC ID", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "ID PIC tidak valid",
+			En: "Invalid PIC ID",
+		}, nil)
 	}
 
 	location := model.WarehouseLocation{
@@ -62,12 +75,21 @@ func LocationCreate(c *fiber.Ctx) error {
 		Error; err != nil {
 		message := err.Error()
 		if strings.Contains(message, "UNIQUE constraint") {
-			return dto.BadRequest(c, "Location with that name already exists", nil)
+			return dto.BadRequest(c, types.Language{
+				Id: "Lokasi dengan nama ini sudah ada",
+				En: "Location with that name already exists",
+			}, nil)
 		}
-		return dto.InternalServerError(c, "Failed to create location", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal membuat lokasi",
+			En: "Failed to create location",
+		}, nil)
 	}
 
-	return dto.Created(c, "Location created", fiber.Map{
+	return dto.Created(c, types.Language{
+		Id: "Lokasi berhasil dibuat",
+		En: "Location created successfully",
+	}, fiber.Map{
 		"location": location.Map(),
 	})
 }
@@ -78,7 +100,10 @@ func LocationPaginate(c *fiber.Ctx) error {
 		return query.Preload("Branch").Preload("Pic")
 	}, []string{"name"}, &locations)
 	if err != nil {
-		return dto.InternalServerError(c, "Failed to prepare pagination", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal memvalidasi pagination",
+			En: "Failed to validate pagination",
+		}, nil)
 	}
 
 	branchIds := make([]uint, 0, len(locations))
@@ -138,7 +163,10 @@ func LocationPaginate(c *fiber.Ctx) error {
 		result = append(result, loc)
 	}
 
-	return dto.OK(c, "Success get locations", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Lokasi berhasil didapatkan",
+		En: "Location retrieved successfully!",
+	}, fiber.Map{
 		"rows":       result,
 		"pagination": pagination.Meta(),
 	})
@@ -150,7 +178,10 @@ func LocationEdit(c *fiber.Ctx) error {
 
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terotentikasi",
+			En: "Unauthorized",
+		}, nil)
 	}
 
 	var body struct {
@@ -163,14 +194,20 @@ func LocationEdit(c *fiber.Ctx) error {
 		} `json:"map" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Gagal memvalidasi request body",
+			En: "Failed to validate request body",
+		}, err.Error())
 	}
 
 	var existing model.WarehouseLocation
 	if err := variable.Db.
 		First(&existing, id).
 		Error; err != nil {
-		return dto.NotFound(c, "Location not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "Lokasi tidak ditemukan",
+			En: "Location not found",
+		}, nil)
 	}
 
 	updates := map[string]any{
@@ -200,10 +237,16 @@ func LocationEdit(c *fiber.Ctx) error {
 		Model(&existing).
 		Updates(updates).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to update location", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mengupdate lokasi",
+			En: "Failed to update location",
+		}, nil)
 	}
 
-	return dto.OK(c, "Success update location", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Lokasi berhasil diupdate",
+		En: "Location updated successfully!",
+	}, fiber.Map{
 		"location": existing.Map(),
 	})
 }
@@ -215,10 +258,16 @@ func LocationRemove(c *fiber.Ctx) error {
 	if err := variable.Db.
 		Delete(&model.WarehouseLocation{}, id).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to delete location", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menghapus lokasi",
+			En: "Failed to delete location",
+		}, nil)
 	}
 
-	return dto.OK(c, "Success delete location", nil)
+	return dto.OK(c, types.Language{
+		Id: "Lokasi berhasil dihapus",
+		En: "Location deleted successfully!",
+	}, nil)
 }
 
 func LocationBulkRemove(c *fiber.Ctx) error {
@@ -226,16 +275,25 @@ func LocationBulkRemove(c *fiber.Ctx) error {
 		IDs []uint `json:"ids" validate:"required,min=1"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Gagal memvalidasi request body",
+			En: "Failed to validate request body",
+		}, err.Error())
 	}
 
 	if err := variable.Db.
 		Delete(&model.WarehouseLocation{}, "id IN ?", body.IDs).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to bulk delete locations", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menghapus lokasi",
+			En: "Failed to delete location",
+		}, nil)
 	}
 
-	return dto.OK(c, "Success bulk delete locations", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Lokasi berhasil dihapus",
+		En: "Location deleted successfully!",
+	}, fiber.Map{
 		"deleted_count": len(body.IDs),
 	})
 }
@@ -248,7 +306,10 @@ func LocationSetActive(c *fiber.Ctx) error {
 	if err := variable.Db.
 		First(&existing, id).
 		Error; err != nil {
-		return dto.NotFound(c, "Location not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "Lokasi tidak ditemukan",
+			En: "Location not found",
+		}, nil)
 	}
 
 	newStatus := !existing.IsActive
@@ -256,10 +317,16 @@ func LocationSetActive(c *fiber.Ctx) error {
 		Model(&existing).
 		Update("is_active", newStatus).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to toggle location status", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mengupdate lokasi",
+			En: "Failed to update location",
+		}, nil)
 	}
 
-	return dto.OK(c, "Success toggle location status", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Lokasi berhasil diupdate",
+		En: "Location updated successfully!",
+	}, fiber.Map{
 		"location": existing.Map(),
 	})
 }

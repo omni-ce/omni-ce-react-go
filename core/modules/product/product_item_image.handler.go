@@ -4,6 +4,7 @@ import (
 	"react-go/core/dto"
 	"react-go/core/function"
 	"react-go/core/modules/product/model"
+	"react-go/core/types"
 	"react-go/core/variable"
 	"strconv"
 	"strings"
@@ -18,19 +19,28 @@ func ItemImageSet(c *fiber.Ctx) error {
 
 	currentUser, err := function.JwtGetUser(c)
 	if err != nil {
-		return dto.Unauthorized(c, "Unauthorized", nil)
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak ada hak akses",
+			En: "Unauthorized",
+		}, nil)
 	}
 
 	var body struct {
 		Url string `json:"url" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
-		return dto.BadRequest(c, err.Error(), nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "Body request tidak valid",
+			En: "Invalid request body",
+		}, nil)
 	}
 
 	itemIdInt, err := strconv.Atoi(itemId)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid item id", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "ID item tidak valid",
+			En: "Invalid item ID",
+		}, nil)
 	}
 
 	err = variable.Db.Transaction(func(tx *gorm.DB) error {
@@ -52,12 +62,21 @@ func ItemImageSet(c *fiber.Ctx) error {
 	if err != nil {
 		message := err.Error()
 		if strings.Contains(message, "UNIQUE constraint") {
-			return dto.BadRequest(c, "Image with this url already exists", nil)
+			return dto.BadRequest(c, types.Language{
+				Id: "Image with this url already exists",
+				En: "Image with this url already exists",
+			}, nil)
 		}
-		return dto.InternalServerError(c, "Failed to update images", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mengubah gambar",
+			En: "Failed to update images",
+		}, nil)
 	}
 
-	return dto.OK(c, "Images updated successfully", nil)
+	return dto.OK(c, types.Language{
+		Id: "Gambar berhasil diubah",
+		En: "Images updated successfully",
+	}, nil)
 }
 
 func ItemImageList(c *fiber.Ctx) error {
@@ -69,7 +88,10 @@ func ItemImageList(c *fiber.Ctx) error {
 		Order("is_primary DESC, uploaded_at ASC").
 		Find(&images).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to get images", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mengambil gambar",
+			En: "Failed to get images",
+		}, nil)
 	}
 
 	rows := make([]map[string]any, 0, len(images))
@@ -77,7 +99,10 @@ func ItemImageList(c *fiber.Ctx) error {
 		rows = append(rows, img.Map())
 	}
 
-	return dto.OK(c, "Success get images", fiber.Map{
+	return dto.OK(c, types.Language{
+		Id: "Gambar berhasil diambil",
+		En: "Images retrieved successfully",
+	}, fiber.Map{
 		"rows": rows,
 	})
 }
@@ -87,30 +112,45 @@ func ItemImageRemove(c *fiber.Ctx) error {
 
 	idUUID, err := uuid.Parse(id)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid image id", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "ID gambar tidak valid",
+			En: "Invalid image ID",
+		}, nil)
 	}
 
 	if err := variable.Db.
 		Delete(&model.ProductItemImage{}, "id = ?", idUUID).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to delete image", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menghapus gambar",
+			En: "Failed to delete image",
+		}, nil)
 	}
 
-	return dto.OK(c, "Image deleted", nil)
+	return dto.OK(c, types.Language{
+		Id: "Gambar berhasil dihapus",
+		En: "Image deleted successfully",
+	}, nil)
 }
 
 func ItemImageSetPrimary(c *fiber.Ctx) error {
 	id := c.Params("id")
 	idUUID, err := uuid.Parse(id)
 	if err != nil {
-		return dto.BadRequest(c, "Invalid image id", nil)
+		return dto.BadRequest(c, types.Language{
+			Id: "ID gambar tidak valid",
+			En: "Invalid image ID",
+		}, nil)
 	}
 
 	var target model.ProductItemImage
 	if err := variable.Db.
 		First(&target, "id = ?", idUUID).
 		Error; err != nil {
-		return dto.NotFound(c, "Image not found", nil)
+		return dto.NotFound(c, types.Language{
+			Id: "Gambar tidak ditemukan",
+			En: "Image not found",
+		}, nil)
 	}
 
 	err = variable.Db.Transaction(func(tx *gorm.DB) error {
@@ -127,8 +167,14 @@ func ItemImageSetPrimary(c *fiber.Ctx) error {
 		return nil
 	})
 	if err != nil {
-		return dto.InternalServerError(c, "Failed to set primary image", nil)
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mengatur gambar utama",
+			En: "Failed to set primary image",
+		}, nil)
 	}
 
-	return dto.OK(c, "Primary image updated", nil)
+	return dto.OK(c, types.Language{
+		Id: "Gambar utama berhasil diatur",
+		En: "Primary image set successfully",
+	}, nil)
 }
