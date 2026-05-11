@@ -172,7 +172,6 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
         module="warehouse/product"
         fields={fields as PaginationField[]}
         popupWidth="80%"
-        popupHeight="90%"
         ruleKey={ruleKey}
         useIsActive
       />
