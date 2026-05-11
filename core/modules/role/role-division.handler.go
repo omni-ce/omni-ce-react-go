@@ -7,6 +7,7 @@ import (
 	rule "react-go/core/modules/rule/model"
 	"react-go/core/variable"
 	"strconv"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -36,6 +37,10 @@ func DivisionCreate(c *fiber.Ctx) error {
 	if err := variable.Db.
 		Create(&division).
 		Error; err != nil {
+		message := err.Error()
+		if strings.Contains(message, "UNIQUE constraint") {
+			return dto.BadRequest(c, "Division name already exists", nil)
+		}
 		return dto.InternalServerError(c, "Failed to create division", nil)
 	}
 

@@ -35,7 +35,10 @@ func Create(c *fiber.Ctx) error {
 
 	// Check duplicate key within same category
 	var existing model.MasterData
-	if err := variable.Db.Where("category = ? AND key = ?", body.Category, body.Key).First(&existing).Error; err == nil {
+	if err := variable.Db.
+		Where("category = ? AND key = ?", body.Category, body.Key).
+		First(&existing).
+		Error; err == nil {
 		return dto.BadRequest(c, "Key already exists in this category", nil)
 	}
 
@@ -44,7 +47,9 @@ func Create(c *fiber.Ctx) error {
 		Key:      body.Key,
 		Value:    body.Value,
 	}
-	if err := variable.Db.Create(&item).Error; err != nil {
+	if err := variable.Db.
+		Create(&item).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to create master data", nil)
 	}
 
@@ -67,20 +72,27 @@ func Update(c *fiber.Ctx) error {
 	}
 
 	var item model.MasterData
-	if err := variable.Db.First(&item, "id = ?", id).Error; err != nil {
+	if err := variable.Db.
+		First(&item, "id = ?", id).
+		Error; err != nil {
 		return dto.NotFound(c, "Master data not found", nil)
 	}
 
 	// Check duplicate key within same category (excluding self)
 	var dup model.MasterData
-	if err := variable.Db.Where("category = ? AND key = ? AND id != ?", body.Category, body.Key, id).First(&dup).Error; err == nil {
+	if err := variable.Db.
+		Where("category = ? AND key = ? AND id != ?", body.Category, body.Key, id).
+		First(&dup).
+		Error; err == nil {
 		return dto.BadRequest(c, "Key already exists in this category", nil)
 	}
 
 	item.Category = body.Category
 	item.Key = body.Key
 	item.Value = body.Value
-	if err := variable.Db.Save(&item).Error; err != nil {
+	if err := variable.Db.
+		Save(&item).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to update master data", nil)
 	}
 
@@ -94,11 +106,15 @@ func Delete(c *fiber.Ctx) error {
 	}
 
 	var item model.MasterData
-	if err := variable.Db.First(&item, "id = ?", id).Error; err != nil {
+	if err := variable.Db.
+		First(&item, "id = ?", id).
+		Error; err != nil {
 		return dto.NotFound(c, "Master data not found", nil)
 	}
 
-	if err := variable.Db.Delete(&item).Error; err != nil {
+	if err := variable.Db.
+		Delete(&item).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to delete master data", nil)
 	}
 

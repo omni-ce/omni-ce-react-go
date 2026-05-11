@@ -5,13 +5,17 @@ import (
 	"react-go/core/function"
 	model "react-go/core/modules/whitelist/model"
 	"react-go/core/variable"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 func GetAll(c *fiber.Ctx) error {
 	entries := make([]model.Whitelist, 0)
-	if err := variable.Db.Order("created_at DESC").Find(&entries).Error; err != nil {
+	if err := variable.Db.
+		Order("created_at DESC").
+		Find(&entries).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to get whitelist entries", nil)
 	}
 	return dto.OK(c, "Whitelist entries retrieved successfully", entries)
@@ -36,7 +40,10 @@ func Create(c *fiber.Ctx) error {
 
 	// Check if value already exists
 	var existing model.Whitelist
-	if err := variable.Db.Where("value = ?", body.Value).First(&existing).Error; err == nil {
+	if err := variable.Db.
+		Where("value = ?", body.Value).
+		First(&existing).
+		Error; err == nil {
 		return dto.BadRequest(c, "Entry with this value already exists", nil)
 	}
 
@@ -45,7 +52,13 @@ func Create(c *fiber.Ctx) error {
 		Value: body.Value,
 		Label: body.Label,
 	}
-	if err := variable.Db.Create(&entry).Error; err != nil {
+	if err := variable.Db.
+		Create(&entry).
+		Error; err != nil {
+		message := err.Error()
+		if strings.Contains(message, "UNIQUE constraint") {
+			return dto.BadRequest(c, "Whitelist entry already exists", nil)
+		}
 		return dto.InternalServerError(c, "Failed to create whitelist entry", nil)
 	}
 
@@ -59,11 +72,16 @@ func Delete(c *fiber.Ctx) error {
 	}
 
 	var entry model.Whitelist
-	if err := variable.Db.Where("id = ?", id).First(&entry).Error; err != nil {
+	if err := variable.Db.
+		Where("id = ?", id).
+		First(&entry).
+		Error; err != nil {
 		return dto.NotFound(c, "Whitelist entry not found", nil)
 	}
 
-	if err := variable.Db.Delete(&entry).Error; err != nil {
+	if err := variable.Db.
+		Delete(&entry).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to delete whitelist entry", nil)
 	}
 

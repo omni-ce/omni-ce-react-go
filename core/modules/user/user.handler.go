@@ -90,7 +90,10 @@ func Create(c *fiber.Ctx) error {
 	}
 
 	roles := make([]role.Role, 0)
-	if err := variable.Db.Where("id IN ?", roleIds).Find(&roles).Error; err != nil {
+	if err := variable.Db.
+		Where("id IN ?", roleIds).
+		Find(&roles).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to fetch roles", nil)
 	}
 	if len(roles) != len(roleIds) {
@@ -135,6 +138,10 @@ func Create(c *fiber.Ctx) error {
 		return nil
 	})
 	if errTx != nil {
+		message := err.Error()
+		if strings.Contains(message, "UNIQUE constraint") {
+			return dto.BadRequest(c, "User with that username already exists", nil)
+		}
 		return dto.InternalServerError(c, "Failed to create user", nil)
 	}
 
@@ -158,7 +165,10 @@ func Paginate(c *fiber.Ctx) error {
 	}
 
 	roleUsers := make([]role.RoleUser, 0)
-	if err := variable.Db.Where("user_id IN ?", userIds).Find(&roleUsers).Error; err != nil {
+	if err := variable.Db.
+		Where("user_id IN ?", userIds).
+		Find(&roleUsers).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to fetch role users", nil)
 	}
 
@@ -169,14 +179,20 @@ func Paginate(c *fiber.Ctx) error {
 
 	roles := make([]role.Role, 0)
 	if len(roleIds) > 0 {
-		if err := variable.Db.Where("id IN ?", roleIds).Find(&roles).Error; err != nil {
+		if err := variable.Db.
+			Where("id IN ?", roleIds).
+			Find(&roles).
+			Error; err != nil {
 			return dto.InternalServerError(c, "Failed to fetch roles", nil)
 		}
 	}
 
 	divisions := make([]role.RoleDivision, 0)
 	if len(roleIds) > 0 {
-		if err := variable.Db.Where("id IN ?", roleIds).Find(&divisions).Error; err != nil {
+		if err := variable.Db.
+			Where("id IN ?", roleIds).
+			Find(&divisions).
+			Error; err != nil {
 			return dto.InternalServerError(c, "Failed to fetch divisions", nil)
 		}
 	}
@@ -286,7 +302,10 @@ func Edit(c *fiber.Ctx) error {
 	if username != "" && username != existing.Username {
 		// Check duplicate username
 		var dup model.User
-		if err := variable.Db.Where("username = ? AND id != ?", username, id.String()).First(&dup).Error; err == nil {
+		if err := variable.Db.
+			Where("username = ? AND id != ?", username, id.String()).
+			First(&dup).
+			Error; err == nil {
 			return dto.BadRequest(c, "Username already exists", nil)
 		}
 		updates["username"] = username
@@ -333,9 +352,15 @@ func Edit(c *fiber.Ctx) error {
 		return nil
 	})
 	if errTx != nil {
+		message := err.Error()
+		if strings.Contains(message, "UNIQUE constraint") {
+			return dto.BadRequest(c, "User with that username already exists", nil)
+		}
 		return dto.InternalServerError(c, "Failed to update user", nil)
 	}
-	if err := variable.Db.First(&existing, "id = ?", id.String()).Error; err != nil {
+	if err := variable.Db.
+		First(&existing, "id = ?", id.String()).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to fetch updated user", nil)
 	}
 

@@ -6,6 +6,7 @@ import (
 	"react-go/core/function"
 	"react-go/core/modules/product/model"
 	"react-go/core/variable"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -46,10 +47,14 @@ func BrandCreate(c *fiber.Ctx) error {
 	if err := variable.Db.
 		Create(&brand).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to create brand", nil)
+		message := err.Error()
+		if strings.Contains(message, "UNIQUE constraint") {
+			return dto.BadRequest(c, "Product brand already exists", nil)
+		}
+		return dto.InternalServerError(c, "Failed to create product brand", nil)
 	}
 
-	return dto.Created(c, "Brand created", fiber.Map{
+	return dto.Created(c, "Product brand created", fiber.Map{
 		"brand": brand.Map(),
 	})
 }

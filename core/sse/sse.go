@@ -96,7 +96,9 @@ func SendNotification(userId uuid.UUID, notif types.Notification) {
 		Title:   string(titleBytes),
 		Message: string(messageBytes),
 	}
-	if err := variable.Db.Create(&inserted).Error; err != nil {
+	if err := variable.Db.
+		Create(&inserted).
+		Error; err != nil {
 		log.Printf("❌ Failed to insert notification for user %s: %v", userId, err)
 		return
 	}

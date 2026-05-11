@@ -61,27 +61,37 @@ func ItemCreate(c *fiber.Ctx) error {
 	names := make([]string, 0)
 
 	var category model.ProductCategory
-	if err := variable.Db.First(&category, "id = ?", body.CategoryID).Error; err != nil {
+	if err := variable.Db.
+		First(&category, "id = ?", body.CategoryID).
+		Error; err != nil {
 		return dto.NotFound(c, "Category not found", nil)
 	}
 	names = append(names, category.Name)
 	var _type model.ProductType
-	if err := variable.Db.First(&_type, "id = ?", body.TypeID).Error; err != nil {
+	if err := variable.Db.
+		First(&_type, "id = ?", body.TypeID).
+		Error; err != nil {
 		return dto.NotFound(c, "Type not found", nil)
 	}
 	names = append(names, _type.Name)
 	var brand model.ProductBrand
-	if err := variable.Db.First(&brand, "id = ?", body.BrandID).Error; err != nil {
+	if err := variable.Db.
+		First(&brand, "id = ?", body.BrandID).
+		Error; err != nil {
 		return dto.NotFound(c, "Brand not found", nil)
 	}
 	names = append(names, brand.Name)
 	var variant model.ProductVariant
-	if err := variable.Db.First(&variant, "id = ?", body.VariantID).Error; err != nil {
+	if err := variable.Db.
+		First(&variant, "id = ?", body.VariantID).
+		Error; err != nil {
 		return dto.NotFound(c, "Variant not found", nil)
 	}
 	names = append(names, variant.Name)
 	var condition model.ProductCondition
-	if err := variable.Db.First(&condition, "id = ?", body.ConditionID).Error; err != nil {
+	if err := variable.Db.
+		First(&condition, "id = ?", body.ConditionID).
+		Error; err != nil {
 		return dto.NotFound(c, "Condition not found", nil)
 	}
 	names = append(names, condition.Name)
@@ -92,7 +102,9 @@ func ItemCreate(c *fiber.Ctx) error {
 			uMid := uint(mid)
 			memoryID = &uMid
 			var memory model.ProductMemory
-			if err := variable.Db.First(&memory, "id = ?", body.MemoryID).Error; err != nil {
+			if err := variable.Db.
+				First(&memory, "id = ?", body.MemoryID).
+				Error; err != nil {
 				return dto.NotFound(c, "Memory not found", nil)
 			}
 			names = append(names, fmt.Sprintf("%d GB / %d GB", memory.Ram, memory.InternalStorage))
@@ -104,7 +116,9 @@ func ItemCreate(c *fiber.Ctx) error {
 			uMid := uint(mid)
 			colorID = &uMid
 			var color model.ProductColor
-			if err := variable.Db.First(&color, "id = ?", body.ColorID).Error; err != nil {
+			if err := variable.Db.
+				First(&color, "id = ?", body.ColorID).
+				Error; err != nil {
 				return dto.NotFound(c, "Color not found", nil)
 			}
 			names = append(names, color.Name)
@@ -338,35 +352,49 @@ func ItemEdit(c *fiber.Ctx) error {
 	// Regenerate Key
 	keyNames := make([]string, 0)
 	var cat model.ProductCategory
-	if err := variable.Db.First(&cat, existing.CategoryID).Error; err == nil {
+	if err := variable.Db.
+		First(&cat, existing.CategoryID).
+		Error; err == nil {
 		keyNames = append(keyNames, cat.Name)
 	}
 	var typ model.ProductType
-	if err := variable.Db.First(&typ, existing.TypeID).Error; err == nil {
+	if err := variable.Db.
+		First(&typ, existing.TypeID).
+		Error; err == nil {
 		keyNames = append(keyNames, typ.Name)
 	}
 	var brnd model.ProductBrand
-	if err := variable.Db.First(&brnd, existing.BrandID).Error; err == nil {
+	if err := variable.Db.
+		First(&brnd, existing.BrandID).
+		Error; err == nil {
 		keyNames = append(keyNames, brnd.Name)
 	}
 	var vrnt model.ProductVariant
-	if err := variable.Db.First(&vrnt, existing.VariantID).Error; err == nil {
+	if err := variable.Db.
+		First(&vrnt, existing.VariantID).
+		Error; err == nil {
 		keyNames = append(keyNames, vrnt.Name)
 	}
 	if existing.MemoryID != nil {
 		var mem model.ProductMemory
-		if err := variable.Db.First(&mem, *existing.MemoryID).Error; err == nil {
+		if err := variable.Db.
+			First(&mem, *existing.MemoryID).
+			Error; err == nil {
 			keyNames = append(keyNames, fmt.Sprintf("%d GB / %d GB", mem.Ram, mem.InternalStorage))
 		}
 	}
 	if existing.ColorID != nil {
 		var clr model.ProductColor
-		if err := variable.Db.First(&clr, *existing.ColorID).Error; err == nil {
+		if err := variable.Db.
+			First(&clr, *existing.ColorID).
+			Error; err == nil {
 			keyNames = append(keyNames, clr.Name)
 		}
 	}
 	var con model.ProductCondition
-	if err := variable.Db.First(&con, existing.ConditionID).Error; err == nil {
+	if err := variable.Db.
+		First(&con, existing.ConditionID).
+		Error; err == nil {
 		keyNames = append(keyNames, con.Name)
 	}
 	existing.Key = generateKeyFromName(keyNames...)

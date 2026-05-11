@@ -5,6 +5,7 @@ import (
 	"react-go/core/function"
 	model "react-go/core/modules/apikey/model"
 	"react-go/core/variable"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -12,7 +13,10 @@ import (
 
 func GetAll(c *fiber.Ctx) error {
 	keys := make([]model.ApiKey, 0)
-	if err := variable.Db.Order("created_at DESC").Find(&keys).Error; err != nil {
+	if err := variable.Db.
+		Order("created_at DESC").
+		Find(&keys).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to get API keys", nil)
 	}
 	return dto.OK(c, "API keys retrieved successfully", keys)
@@ -38,7 +42,13 @@ func Create(c *fiber.Ctx) error {
 		}
 	}
 
-	if err := variable.Db.Create(&entry).Error; err != nil {
+	if err := variable.Db.
+		Create(&entry).
+		Error; err != nil {
+		message := err.Error()
+		if strings.Contains(message, "UNIQUE constraint") {
+			return dto.BadRequest(c, "API key name already exists", nil)
+		}
 		return dto.InternalServerError(c, "Failed to create API key", nil)
 	}
 
@@ -59,12 +69,17 @@ func Toggle(c *fiber.Ctx) error {
 	}
 
 	var entry model.ApiKey
-	if err := variable.Db.Where("id = ?", id).First(&entry).Error; err != nil {
+	if err := variable.Db.
+		Where("id = ?", id).
+		First(&entry).
+		Error; err != nil {
 		return dto.NotFound(c, "API key not found", nil)
 	}
 
 	entry.IsActive = body.IsActive
-	if err := variable.Db.Save(&entry).Error; err != nil {
+	if err := variable.Db.
+		Save(&entry).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to update API key", nil)
 	}
 
@@ -78,11 +93,16 @@ func Delete(c *fiber.Ctx) error {
 	}
 
 	var entry model.ApiKey
-	if err := variable.Db.Where("id = ?", id).First(&entry).Error; err != nil {
+	if err := variable.Db.
+		Where("id = ?", id).
+		First(&entry).
+		Error; err != nil {
 		return dto.NotFound(c, "API key not found", nil)
 	}
 
-	if err := variable.Db.Delete(&entry).Error; err != nil {
+	if err := variable.Db.
+		Delete(&entry).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to delete API key", nil)
 	}
 

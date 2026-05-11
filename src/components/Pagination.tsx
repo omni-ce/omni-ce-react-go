@@ -37,6 +37,7 @@ import { useLanguageStore } from "@/stores/languageStore";
 import satellite from "@/lib/satellite";
 import type { Response, WithPagination } from "@/types/response";
 import { usePermission } from "@/hooks/usePermission";
+import { toast } from "react-toastify";
 
 import type {
   DynamicFormFieldOption as PaginationFieldOption,
@@ -177,6 +178,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
   const [togglingActiveId, setTogglingActiveId] = useState<
     string | number | null
   >(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   // Per-column search state
   const [columnSearches, setColumnSearches] = useState<Record<string, string>>(
@@ -256,7 +258,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
       const msg =
         (err as { response?: { data?: { message?: string } } })?.response?.data
           ?.message ?? "Toggle failed";
-      alert(msg);
+      toast.error(msg);
     } finally {
       setTogglingActiveId(null);
     }
@@ -709,6 +711,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
     setEditingRow(null);
     setFormData(initFormData());
     setFieldErrors({});
+    setSaveError(null);
     setDialogOpen(true);
   };
 
@@ -716,6 +719,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
     setEditingRow(row);
     setFormData(initFormData(row));
     setFieldErrors({});
+    setSaveError(null);
     setDialogOpen(true);
   };
 
@@ -797,6 +801,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
   const handleSave = async () => {
     if (!isFormValid()) return;
     setIsSubmitting(true);
+    setSaveError(null);
     try {
       const payload: Record<string, unknown> = {};
       if (filteredFields) {
@@ -839,7 +844,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
       const msg =
         (err as { response?: { data?: { message?: string } } })?.response?.data
           ?.message ?? "Operation failed";
-      alert(msg);
+      setSaveError(msg);
     } finally {
       setIsSubmitting(false);
     }
@@ -864,7 +869,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
       const msg =
         (err as { response?: { data?: { message?: string } } })?.response?.data
           ?.message ?? "Delete failed";
-      alert(msg);
+      toast.error(msg);
     } finally {
       setIsSubmitting(false);
     }
@@ -910,7 +915,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
       const msg =
         (err as { response?: { data?: { message?: string } } })?.response?.data
           ?.message ?? "Bulk delete failed";
-      alert(msg);
+      toast.error(msg);
     } finally {
       setIsBulkDeleting(false);
     }
@@ -1416,6 +1421,11 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                 />
               )}
             </div>
+            {saveError && (
+              <p className="px-6 text-xs text-neon-red font-semibold animate-in fade-in slide-in-from-top-1 duration-200">
+                {saveError}
+              </p>
+            )}
             <DialogFooter>
               <Button variant="outline" onClick={() => setDialogOpen(false)}>
                 {language({ id: "Batal", en: "Cancel" })}

@@ -489,39 +489,51 @@ func ProductItems(c *fiber.Ctx) error {
 	}
 
 	categories := make([]product.ProductCategory, 0)
-	if err := variable.Db.Model(&product.ProductCategory{}).
+	if err := variable.Db.
+		Model(&product.ProductCategory{}).
 		Where("id IN (?)", categoryIds).
-		Find(&categories).Error; err != nil {
+		Find(&categories).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to find product categories", nil)
 	}
 	_types := make([]product.ProductType, 0)
-	if err := variable.Db.Model(&product.ProductType{}).
+	if err := variable.Db.
+		Model(&product.ProductType{}).
 		Where("id IN (?)", typeIds).
-		Find(&_types).Error; err != nil {
+		Find(&_types).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to find product types", nil)
 	}
 	brands := make([]product.ProductBrand, 0)
-	if err := variable.Db.Model(&product.ProductBrand{}).
+	if err := variable.Db.
+		Model(&product.ProductBrand{}).
 		Where("id IN (?)", brandIds).
-		Find(&brands).Error; err != nil {
+		Find(&brands).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to find product brands", nil)
 	}
 	variants := make([]product.ProductVariant, 0)
-	if err := variable.Db.Model(&product.ProductVariant{}).
+	if err := variable.Db.
+		Model(&product.ProductVariant{}).
 		Where("id IN (?)", variantIds).
-		Find(&variants).Error; err != nil {
+		Find(&variants).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to find product variants", nil)
 	}
 	memories := make([]product.ProductMemory, 0)
-	if err := variable.Db.Model(&product.ProductMemory{}).
+	if err := variable.Db.
+		Model(&product.ProductMemory{}).
 		Where("id IN (?)", memoryIds).
-		Find(&memories).Error; err != nil {
+		Find(&memories).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to find product memories", nil)
 	}
 	colors := make([]product.ProductColor, 0)
-	if err := variable.Db.Model(&product.ProductColor{}).
+	if err := variable.Db.
+		Model(&product.ProductColor{}).
 		Where("id IN (?)", colorIds).
-		Find(&colors).Error; err != nil {
+		Find(&colors).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to find product colors", nil)
 	}
 

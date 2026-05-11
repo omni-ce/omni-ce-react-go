@@ -7,6 +7,7 @@ import (
 	rule "react-go/core/modules/rule/model"
 	"react-go/core/variable"
 	"strconv"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -104,6 +105,10 @@ func Create(c *fiber.Ctx) error {
 	if err := variable.Db.
 		Create(&role).
 		Error; err != nil {
+		message := err.Error()
+		if strings.Contains(message, "UNIQUE constraint") {
+			return dto.BadRequest(c, "Role name already exists", nil)
+		}
 		return dto.InternalServerError(c, "Failed to create role", nil)
 	}
 

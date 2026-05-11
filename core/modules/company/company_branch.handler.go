@@ -7,6 +7,7 @@ import (
 	"react-go/core/modules/company/model"
 	"react-go/core/variable"
 	"strconv"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -61,11 +62,17 @@ func BranchCreate(c *fiber.Ctx) error {
 		UpdatedBy:   currentUser.ID,
 	}
 
-	if err := variable.Db.Create(&branch).Error; err != nil {
-		return dto.InternalServerError(c, "Failed to create branch", nil)
+	if err := variable.Db.
+		Create(&branch).
+		Error; err != nil {
+		message := err.Error()
+		if strings.Contains(message, "UNIQUE constraint") {
+			return dto.BadRequest(c, "Company branch already exists", nil)
+		}
+		return dto.InternalServerError(c, "Failed to create company branch", nil)
 	}
 
-	return dto.Created(c, "Branch created", fiber.Map{
+	return dto.Created(c, "Company branch created", fiber.Map{
 		"branch": branch.Map(),
 	})
 }
@@ -143,7 +150,9 @@ func BranchEdit(c *fiber.Ctx) error {
 	}
 
 	var branch model.CompanyBranch
-	if err := variable.Db.First(&branch, "id = ?", id).Error; err != nil {
+	if err := variable.Db.
+		First(&branch, "id = ?", id).
+		Error; err != nil {
 		return dto.NotFound(c, "Branch not found", nil)
 	}
 
@@ -185,7 +194,10 @@ func BranchEdit(c *fiber.Ctx) error {
 		updates["latitude"] = body.Map.Latitude
 	}
 
-	if err := variable.Db.Model(&branch).Updates(updates).Error; err != nil {
+	if err := variable.Db.
+		Model(&branch).
+		Updates(updates).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to update branch", nil)
 	}
 
@@ -197,7 +209,9 @@ func BranchEdit(c *fiber.Ctx) error {
 func BranchRemove(c *fiber.Ctx) error {
 	id := c.Params("id")
 
-	if err := variable.Db.Delete(&model.CompanyBranch{}, "id = ?", id).Error; err != nil {
+	if err := variable.Db.
+		Delete(&model.CompanyBranch{}, "id = ?", id).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to delete branch", nil)
 	}
 
@@ -212,7 +226,9 @@ func BranchBulkRemove(c *fiber.Ctx) error {
 		return dto.BadRequest(c, err.Error(), nil)
 	}
 
-	if err := variable.Db.Delete(&model.CompanyBranch{}, "id IN ?", body.IDs).Error; err != nil {
+	if err := variable.Db.
+		Delete(&model.CompanyBranch{}, "id IN ?", body.IDs).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to bulk delete branches", nil)
 	}
 
@@ -229,15 +245,19 @@ func BranchSetActive(c *fiber.Ctx) error {
 	}
 
 	var branch model.CompanyBranch
-	if err := variable.Db.First(&branch, "id = ?", id).Error; err != nil {
+	if err := variable.Db.
+		First(&branch, "id = ?", id).
+		Error; err != nil {
 		return dto.NotFound(c, "Branch not found", nil)
 	}
 
 	newStatus := !branch.IsActive
-	if err := variable.Db.Model(&branch).Updates(map[string]any{
-		"is_active":  newStatus,
-		"updated_by": currentUser.ID,
-	}).Error; err != nil {
+	if err := variable.Db.
+		Model(&branch).
+		Updates(map[string]any{
+			"is_active":  newStatus,
+			"updated_by": currentUser.ID,
+		}).Error; err != nil {
 		return dto.InternalServerError(c, "Failed to toggle branch status", nil)
 	}
 

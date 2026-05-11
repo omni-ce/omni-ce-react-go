@@ -7,6 +7,7 @@ import (
 	model "react-go/core/modules/rule/model"
 	"react-go/core/sse"
 	"react-go/core/variable"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -48,13 +49,16 @@ func Set(c *fiber.Ctx) error {
 			stateVal = *item.State
 		}
 		var existing model.Rule
-		err := variable.Db.
+
+		if err := variable.Db.
 			Where("role_id = ? AND key = ? AND action = ?", item.RoleID, item.Key, item.Action).
 			First(&existing).
-			Error
-		if err == nil {
+			Error; err == nil {
 			// Found, update state only
-			if err := variable.Db.Model(&existing).Update("state", stateVal).Error; err != nil {
+			if err := variable.Db.
+				Model(&existing).
+				Update("state", stateVal).
+				Error; err != nil {
 				return dto.InternalServerError(c, "Failed to update role menu state", nil)
 			}
 			existing.State = stateVal
@@ -67,7 +71,13 @@ func Set(c *fiber.Ctx) error {
 				Action: item.Action,
 				State:  stateVal,
 			}
-			if err := variable.Db.Create(&roleMenu).Error; err != nil {
+			if err := variable.Db.
+				Create(&roleMenu).
+				Error; err != nil {
+				message := err.Error()
+				if strings.Contains(message, "UNIQUE constraint") {
+					return dto.BadRequest(c, "Data Already Exists", nil)
+				}
 				return dto.InternalServerError(c, "Failed to create role menu", nil)
 			}
 			rows = append(rows, roleMenu.Map())

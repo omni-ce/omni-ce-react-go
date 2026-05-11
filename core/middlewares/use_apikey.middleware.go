@@ -42,9 +42,11 @@ func UseApiKey(c *fiber.Ctx) error {
 
 	// Look up the key
 	var entry apiKeyRow
-	if err := variable.Db.Table("api_keys").
+	if err := variable.Db.
+		Table("api_keys").
 		Where("key = ?", key).
-		First(&entry).Error; err != nil {
+		First(&entry).
+		Error; err != nil {
 		return dto.Unauthorized(c, "Invalid API key", nil)
 	}
 

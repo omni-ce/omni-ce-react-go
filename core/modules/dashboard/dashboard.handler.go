@@ -7,6 +7,7 @@ import (
 	model "react-go/core/modules/dashboard/model"
 	"react-go/core/variable"
 	"strconv"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -58,7 +59,10 @@ func WidgetCreate(c *fiber.Ctx) error {
 
 	// Check if combination already exists
 	var existing model.DashboardWidget
-	if err := variable.Db.Where("role_id = ? AND type = ? AND function_key = ?", body.RoleID, body.Type, body.FunctionKey).First(&existing).Error; err == nil {
+	if err := variable.Db.
+		Where("role_id = ? AND type = ? AND function_key = ?", body.RoleID, body.Type, body.FunctionKey).
+		First(&existing).
+		Error; err == nil {
 		return dto.BadRequest(c, "Widget with this function_key and key already exists for this role", nil)
 	}
 
@@ -76,7 +80,13 @@ func WidgetCreate(c *fiber.Ctx) error {
 		Label:       body.Label,
 		Description: body.Description,
 	}
-	if err := variable.Db.Create(&widget).Error; err != nil {
+	if err := variable.Db.
+		Create(&widget).
+		Error; err != nil {
+		message := err.Error()
+		if strings.Contains(message, "UNIQUE constraint") {
+			return dto.BadRequest(c, "Widget with this function_key and key already exists for this role", nil)
+		}
 		return dto.InternalServerError(c, "Failed to create widget", nil)
 	}
 
@@ -95,7 +105,11 @@ func WidgetList(c *fiber.Ctx) error {
 	}
 
 	widgets := make([]model.DashboardWidget, 0)
-	if err := variable.Db.Where("role_id = ?", roleID).Order("function_key ASC").Find(&widgets).Error; err != nil {
+	if err := variable.Db.
+		Where("role_id = ?", roleID).
+		Order("function_key ASC").
+		Find(&widgets).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to get widgets", nil)
 	}
 
@@ -134,7 +148,10 @@ func WidgetEdit(c *fiber.Ctx) error {
 	}
 
 	var widget model.DashboardWidget
-	if err := variable.Db.Where("id = ?", id).First(&widget).Error; err != nil {
+	if err := variable.Db.
+		Where("id = ?", id).
+		First(&widget).
+		Error; err != nil {
 		return dto.NotFound(c, "Widget not found", nil)
 	}
 
@@ -170,7 +187,10 @@ func WidgetEdit(c *fiber.Ctx) error {
 		return dto.BadRequest(c, "No fields to update", nil)
 	}
 
-	if err := variable.Db.Model(&widget).Updates(updates).Error; err != nil {
+	if err := variable.Db.
+		Model(&widget).
+		Updates(updates).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to update widget", nil)
 	}
 
@@ -187,11 +207,16 @@ func WidgetRemove(c *fiber.Ctx) error {
 	}
 
 	var widget model.DashboardWidget
-	if err := variable.Db.Where("id = ?", id).First(&widget).Error; err != nil {
+	if err := variable.Db.
+		Where("id = ?", id).
+		First(&widget).
+		Error; err != nil {
 		return dto.NotFound(c, "Widget not found", nil)
 	}
 
-	if err := variable.Db.Delete(&widget).Error; err != nil {
+	if err := variable.Db.
+		Delete(&widget).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to delete widget", nil)
 	}
 

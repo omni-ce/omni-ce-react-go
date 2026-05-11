@@ -47,7 +47,10 @@ func Validate(c *fiber.Ctx) error {
 	}
 
 	var record model.Captcha
-	if err := variable.Db.Where("id = ?", body.CaptchaID).First(&record).Error; err != nil {
+	if err := variable.Db.
+		Where("id = ?", body.CaptchaID).
+		First(&record).
+		Error; err != nil {
 		return dto.BadRequest(c, "Captcha not found or expired", nil)
 	}
 
@@ -138,7 +141,9 @@ func createCaptcha(digitCount int) (*model.Captcha, error) {
 	record := &model.Captcha{
 		Captcha: captchaText,
 	}
-	if err := variable.Db.Create(record).Error; err != nil {
+	if err := variable.Db.
+		Create(record).
+		Error; err != nil {
 		return nil, err
 	}
 	return record, nil

@@ -57,7 +57,13 @@ func LocationCreate(c *fiber.Ctx) error {
 		UpdatedBy: currentUser.ID,
 	}
 
-	if err := variable.Db.Create(&location).Error; err != nil {
+	if err := variable.Db.
+		Create(&location).
+		Error; err != nil {
+		message := err.Error()
+		if strings.Contains(message, "UNIQUE constraint") {
+			return dto.BadRequest(c, "Location with that name already exists", nil)
+		}
 		return dto.InternalServerError(c, "Failed to create location", nil)
 	}
 
@@ -161,7 +167,9 @@ func LocationEdit(c *fiber.Ctx) error {
 	}
 
 	var existing model.WarehouseLocation
-	if err := variable.Db.First(&existing, id).Error; err != nil {
+	if err := variable.Db.
+		First(&existing, id).
+		Error; err != nil {
 		return dto.NotFound(c, "Location not found", nil)
 	}
 
@@ -188,7 +196,10 @@ func LocationEdit(c *fiber.Ctx) error {
 		updates["latitude"] = body.Map.Latitude
 	}
 
-	if err := variable.Db.Model(&existing).Updates(updates).Error; err != nil {
+	if err := variable.Db.
+		Model(&existing).
+		Updates(updates).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to update location", nil)
 	}
 
@@ -201,7 +212,9 @@ func LocationRemove(c *fiber.Ctx) error {
 	idParam := c.Params("id")
 	id, _ := strconv.Atoi(idParam)
 
-	if err := variable.Db.Delete(&model.WarehouseLocation{}, id).Error; err != nil {
+	if err := variable.Db.
+		Delete(&model.WarehouseLocation{}, id).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to delete location", nil)
 	}
 
@@ -216,7 +229,9 @@ func LocationBulkRemove(c *fiber.Ctx) error {
 		return dto.BadRequest(c, err.Error(), nil)
 	}
 
-	if err := variable.Db.Delete(&model.WarehouseLocation{}, "id IN ?", body.IDs).Error; err != nil {
+	if err := variable.Db.
+		Delete(&model.WarehouseLocation{}, "id IN ?", body.IDs).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to bulk delete locations", nil)
 	}
 
@@ -230,12 +245,17 @@ func LocationSetActive(c *fiber.Ctx) error {
 	id, _ := strconv.Atoi(idParam)
 
 	var existing model.WarehouseLocation
-	if err := variable.Db.First(&existing, id).Error; err != nil {
+	if err := variable.Db.
+		First(&existing, id).
+		Error; err != nil {
 		return dto.NotFound(c, "Location not found", nil)
 	}
 
 	newStatus := !existing.IsActive
-	if err := variable.Db.Model(&existing).Update("is_active", newStatus).Error; err != nil {
+	if err := variable.Db.
+		Model(&existing).
+		Update("is_active", newStatus).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to toggle location status", nil)
 	}
 

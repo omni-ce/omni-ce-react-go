@@ -6,6 +6,7 @@ import (
 	"react-go/core/function"
 	"react-go/core/modules/product/model"
 	"react-go/core/variable"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -46,7 +47,11 @@ func CategoryCreate(c *fiber.Ctx) error {
 	if err := variable.Db.
 		Create(&category).
 		Error; err != nil {
-		return dto.InternalServerError(c, "Failed to create category", nil)
+		message := err.Error()
+		if strings.Contains(message, "UNIQUE constraint") {
+			return dto.BadRequest(c, "Product category already exists", nil)
+		}
+		return dto.InternalServerError(c, "Failed to create product category", nil)
 	}
 
 	return dto.Created(c, "Category created", fiber.Map{

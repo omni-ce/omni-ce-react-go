@@ -14,7 +14,9 @@ import (
 
 func All(c *fiber.Ctx) error {
 	settings := make([]model.Setting, 0)
-	if err := variable.Db.Find(&settings).Error; err != nil {
+	if err := variable.Db.
+		Find(&settings).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to get settings", nil)
 	}
 
@@ -39,7 +41,10 @@ func Set(c *fiber.Ctx) error {
 
 		for key, value := range bodies {
 			var s model.Setting
-			if err := variable.Db.Where("key = ?", key).First(&s).Error; err != nil {
+			if err := variable.Db.
+				Where("key = ?", key).
+				First(&s).
+				Error; err != nil {
 				return dto.NotFound(c, fmt.Sprintf("Setting not found: %s", key), nil)
 			}
 			last_value := s.Value
@@ -76,7 +81,10 @@ func Set(c *fiber.Ctx) error {
 			file := files[0]
 
 			var s model.Setting
-			if err := variable.Db.Where("key = ?", fieldname).First(&s).Error; err != nil {
+			if err := variable.Db.
+				Where("key = ?", fieldname).
+				First(&s).
+				Error; err != nil {
 				return dto.NotFound(c, fmt.Sprintf("Setting not found: %s", fieldname), nil)
 			}
 
@@ -100,7 +108,10 @@ func Set(c *fiber.Ctx) error {
 			value := values[0]
 
 			var s model.Setting
-			if err := variable.Db.Where("key = ?", key).First(&s).Error; err != nil {
+			if err := variable.Db.
+				Where("key = ?", key).
+				First(&s).
+				Error; err != nil {
 				return dto.NotFound(c, fmt.Sprintf("Setting not found: %s", key), nil)
 			}
 
@@ -124,7 +135,10 @@ func ToggleMaintenance(c *fiber.Ctx) error {
 	}
 
 	var s model.Setting
-	if err := variable.Db.Where("key = ?", "maintenance_mode").First(&s).Error; err != nil {
+	if err := variable.Db.
+		Where("key = ?", "maintenance_mode").
+		First(&s).
+		Error; err != nil {
 		// Create if not exists
 		s = model.Setting{Key: "maintenance_mode", Value: "false"}
 		variable.Db.Create(&s)

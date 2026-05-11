@@ -6,6 +6,7 @@ import (
 	"react-go/core/function"
 	"react-go/core/modules/product/model"
 	"react-go/core/variable"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -46,6 +47,10 @@ func ColorCreate(c *fiber.Ctx) error {
 	if err := variable.Db.
 		Create(&color).
 		Error; err != nil {
+		message := err.Error()
+		if strings.Contains(message, "UNIQUE constraint") {
+			return dto.BadRequest(c, "Color with this name already exists", nil)
+		}
 		return dto.InternalServerError(c, "Failed to create color", nil)
 	}
 

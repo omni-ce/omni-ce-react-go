@@ -6,6 +6,7 @@ import (
 	"react-go/core/modules/product/model"
 	"react-go/core/variable"
 	"strconv"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -48,8 +49,11 @@ func ItemImageSet(c *fiber.Ctx) error {
 		}
 		return tx.Create(&newImg).Error
 	})
-
 	if err != nil {
+		message := err.Error()
+		if strings.Contains(message, "UNIQUE constraint") {
+			return dto.BadRequest(c, "Image with this url already exists", nil)
+		}
 		return dto.InternalServerError(c, "Failed to update images", nil)
 	}
 
@@ -103,7 +107,9 @@ func ItemImageSetPrimary(c *fiber.Ctx) error {
 	}
 
 	var target model.ProductItemImage
-	if err := variable.Db.First(&target, "id = ?", idUUID).Error; err != nil {
+	if err := variable.Db.
+		First(&target, "id = ?", idUUID).
+		Error; err != nil {
 		return dto.NotFound(c, "Image not found", nil)
 	}
 

@@ -9,6 +9,7 @@ import (
 	model "react-go/core/modules/warehouse/model"
 	"react-go/core/variable"
 	"strconv"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
@@ -49,7 +50,13 @@ func ProductCreate(c *fiber.Ctx) error {
 		UpdatedBy:           currentUser.ID,
 	}
 
-	if err := variable.Db.Create(&product).Error; err != nil {
+	if err := variable.Db.
+		Create(&product).
+		Error; err != nil {
+		message := err.Error()
+		if strings.Contains(message, "UNIQUE constraint") {
+			return dto.BadRequest(c, "Product already exists in this location", nil)
+		}
 		return dto.InternalServerError(c, "Failed to create warehouse product", nil)
 	}
 
@@ -279,7 +286,9 @@ func ProductEdit(c *fiber.Ctx) error {
 	}
 
 	var existing model.WarehouseProduct
-	if err := variable.Db.First(&existing, id).Error; err != nil {
+	if err := variable.Db.
+		First(&existing, id).
+		Error; err != nil {
 		return dto.NotFound(c, "Warehouse product not found", nil)
 	}
 
@@ -295,7 +304,10 @@ func ProductEdit(c *fiber.Ctx) error {
 	}
 	updates["qty"] = body.Qty
 
-	if err := variable.Db.Model(&existing).Updates(updates).Error; err != nil {
+	if err := variable.Db.
+		Model(&existing).
+		Updates(updates).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to update warehouse product", nil)
 	}
 
@@ -308,7 +320,9 @@ func ProductRemove(c *fiber.Ctx) error {
 	idParam := c.Params("id")
 	id, _ := strconv.Atoi(idParam)
 
-	if err := variable.Db.Delete(&model.WarehouseProduct{}, id).Error; err != nil {
+	if err := variable.Db.
+		Delete(&model.WarehouseProduct{}, id).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to delete warehouse product", nil)
 	}
 
@@ -323,7 +337,9 @@ func ProductBulkRemove(c *fiber.Ctx) error {
 		return dto.BadRequest(c, err.Error(), nil)
 	}
 
-	if err := variable.Db.Delete(&model.WarehouseProduct{}, "id IN ?", body.IDs).Error; err != nil {
+	if err := variable.Db.
+		Delete(&model.WarehouseProduct{}, "id IN ?", body.IDs).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to bulk delete warehouse products", nil)
 	}
 
@@ -337,12 +353,17 @@ func ProductSetActive(c *fiber.Ctx) error {
 	id, _ := strconv.Atoi(idParam)
 
 	var existing model.WarehouseProduct
-	if err := variable.Db.First(&existing, id).Error; err != nil {
+	if err := variable.Db.
+		First(&existing, id).
+		Error; err != nil {
 		return dto.NotFound(c, "Warehouse product not found", nil)
 	}
 
 	newStatus := !existing.IsActive
-	if err := variable.Db.Model(&existing).Update("is_active", newStatus).Error; err != nil {
+	if err := variable.Db.
+		Model(&existing).
+		Update("is_active", newStatus).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to toggle warehouse product status", nil)
 	}
 

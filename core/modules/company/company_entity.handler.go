@@ -6,6 +6,7 @@ import (
 	"react-go/core/function/location"
 	"react-go/core/modules/company/model"
 	"react-go/core/variable"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -42,11 +43,17 @@ func EntityCreate(c *fiber.Ctx) error {
 		UpdatedBy:   currentUser.ID,
 	}
 
-	if err := variable.Db.Create(&entity).Error; err != nil {
-		return dto.InternalServerError(c, "Failed to create entity", nil)
+	if err := variable.Db.
+		Create(&entity).
+		Error; err != nil {
+		message := err.Error()
+		if strings.Contains(message, "UNIQUE constraint") {
+			return dto.BadRequest(c, "Company entity already exists", nil)
+		}
+		return dto.InternalServerError(c, "Failed to create company entity", nil)
 	}
 
-	return dto.Created(c, "Entity created", fiber.Map{
+	return dto.Created(c, "Company entity created", fiber.Map{
 		"entity": entity.Map(),
 	})
 }
@@ -108,7 +115,9 @@ func EntityEdit(c *fiber.Ctx) error {
 	}
 
 	var entity model.CompanyEntity
-	if err := variable.Db.First(&entity, "id = ?", id).Error; err != nil {
+	if err := variable.Db.
+		First(&entity, "id = ?", id).
+		Error; err != nil {
 		return dto.NotFound(c, "Entity not found", nil)
 	}
 
@@ -138,7 +147,10 @@ func EntityEdit(c *fiber.Ctx) error {
 		updates["address_code"] = body.AddressCode
 	}
 
-	if err := variable.Db.Model(&entity).Updates(updates).Error; err != nil {
+	if err := variable.Db.
+		Model(&entity).
+		Updates(updates).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to update entity", nil)
 	}
 
@@ -150,7 +162,9 @@ func EntityEdit(c *fiber.Ctx) error {
 func EntityRemove(c *fiber.Ctx) error {
 	id := c.Params("id")
 
-	if err := variable.Db.Delete(&model.CompanyEntity{}, "id = ?", id).Error; err != nil {
+	if err := variable.Db.
+		Delete(&model.CompanyEntity{}, "id = ?", id).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to delete entity", nil)
 	}
 
@@ -165,7 +179,9 @@ func EntityBulkRemove(c *fiber.Ctx) error {
 		return dto.BadRequest(c, err.Error(), nil)
 	}
 
-	if err := variable.Db.Delete(&model.CompanyEntity{}, "id IN ?", body.IDs).Error; err != nil {
+	if err := variable.Db.
+		Delete(&model.CompanyEntity{}, "id IN ?", body.IDs).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to bulk delete entities", nil)
 	}
 
@@ -182,15 +198,19 @@ func EntitySetActive(c *fiber.Ctx) error {
 	}
 
 	var entity model.CompanyEntity
-	if err := variable.Db.First(&entity, "id = ?", id).Error; err != nil {
+	if err := variable.Db.
+		First(&entity, "id = ?", id).
+		Error; err != nil {
 		return dto.NotFound(c, "Entity not found", nil)
 	}
 
 	newStatus := !entity.IsActive
-	if err := variable.Db.Model(&entity).Updates(map[string]any{
-		"is_active":  newStatus,
-		"updated_by": currentUser.ID,
-	}).Error; err != nil {
+	if err := variable.Db.
+		Model(&entity).
+		Updates(map[string]any{
+			"is_active":  newStatus,
+			"updated_by": currentUser.ID,
+		}).Error; err != nil {
 		return dto.InternalServerError(c, "Failed to toggle entity status", nil)
 	}
 

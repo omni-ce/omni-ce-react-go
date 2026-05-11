@@ -87,7 +87,8 @@ func ToggleRead(c *fiber.Ctx) error {
 	var notif model.Notification
 	if err := variable.Db.
 		Where("id = ? AND user_id = ?", body.ID, userID).
-		First(&notif).Error; err != nil {
+		First(&notif).
+		Error; err != nil {
 		return dto.NotFound(c, "Notification not found", nil)
 	}
 
@@ -101,7 +102,10 @@ func ToggleRead(c *fiber.Ctx) error {
 		updates["read_at"] = nil
 	}
 
-	if err := variable.Db.Model(&notif).Updates(updates).Error; err != nil {
+	if err := variable.Db.
+		Model(&notif).
+		Updates(updates).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to toggle read", nil)
 	}
 
@@ -158,7 +162,8 @@ func ClearAll(c *fiber.Ctx) error {
 	if err := variable.Db.
 		Model(&model.Notification{}).
 		Where("user_id = ?", userID).
-		Updates(&model.Notification{DeletedAt: &now}).Error; err != nil {
+		Updates(&model.Notification{DeletedAt: &now}).
+		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to clear all", nil)
 	}
 

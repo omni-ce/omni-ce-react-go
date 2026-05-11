@@ -7,6 +7,7 @@ import (
 	"react-go/core/modules/product/model"
 	"react-go/core/variable"
 	"strconv"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
@@ -62,6 +63,10 @@ func VariantCreate(c *fiber.Ctx) error {
 	if err := variable.Db.
 		Create(&variant).
 		Error; err != nil {
+		message := err.Error()
+		if strings.Contains(message, "UNIQUE constraint") {
+			return dto.BadRequest(c, "Variant with this name already exists", nil)
+		}
 		return dto.InternalServerError(c, "Failed to create variant", nil)
 	}
 
