@@ -83,6 +83,7 @@ export interface PaginationColumn<T, TFilter = unknown> {
 export interface PaginationExtraAction<T> {
   icon: string;
   width?: string | number;
+  height?: string | number;
   component: ReactNode | ((row: T, onClose: () => void) => ReactNode);
 }
 
@@ -98,6 +99,7 @@ export interface PaginationProps<T, F = unknown> {
   onSelectRow?: (row: T) => void;
   dummyData?: unknown[];
   popupWidth?: string | number;
+  popupHeight?: string | number;
 }
 
 export interface PaginationHandle {
@@ -133,6 +135,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
     onSelectRow,
     dummyData,
     popupWidth,
+    popupHeight,
   }: PaginationProps<T, F>,
   ref: Ref<PaginationHandle>,
 ) {
@@ -1360,6 +1363,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
           open={dialogOpen}
           onClose={() => {}}
           width={popupWidth ? String(popupWidth) : "520px"}
+          height={popupHeight ? String(popupHeight) : "auto"}
         >
           <DialogContent onClose={() => setDialogOpen(false)}>
             <DialogHeader>
@@ -1497,6 +1501,12 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
               "number"
                 ? `${extraActions[extraActionState.actionIndex].width}px`
                 : extraActions[extraActionState.actionIndex].width) as string
+            }
+            height={
+              (typeof extraActions[extraActionState.actionIndex].height ===
+              "number"
+                ? `${extraActions[extraActionState.actionIndex].height}px`
+                : extraActions[extraActionState.actionIndex].height) as string
             }
           >
             <DialogContent onClose={() => setExtraActionState(null)}>

@@ -314,6 +314,7 @@ export default function ProductItemPage({ ruleKey }: Props) {
           {
             icon: "Io/IoIosImages",
             width: "90%",
+            height: "90%",
             component: (row, onClose) => (
               <ProductImage row={row} onClose={onClose} />
             ),

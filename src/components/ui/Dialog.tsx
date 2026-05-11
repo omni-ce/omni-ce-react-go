@@ -10,10 +10,11 @@ interface DialogProps {
   open: boolean;
   onClose: () => void;
   width?: string;
+  height?: string;
   children: React.ReactNode;
 }
 
-function Dialog({ open, onClose, width, children }: DialogProps) {
+function Dialog({ open, onClose, width, height, children }: DialogProps) {
   React.useEffect(() => {
     if (!open) return;
     const handler = (e: KeyboardEvent) => {
@@ -46,7 +47,7 @@ function Dialog({ open, onClose, width, children }: DialogProps) {
       {/* Content wrapper */}
       <div
         className="relative z-10 w-full mx-4 animate-fade-in"
-        style={{ maxWidth: width || "480px" }}
+        style={{ maxWidth: width || "480px", height: height || "auto" }}
       >
         {children}
       </div>
