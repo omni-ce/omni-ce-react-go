@@ -332,7 +332,12 @@ function DynamicSelect({
     (field as DynamicFormFieldNormal).ref,
     // eslint-disable-next-line react-hooks/exhaustive-deps
     (field as DynamicFormFieldNormal).ref
-      ? formData[(field as DynamicFormFieldNormal).ref! as string]
+      ? JSON.stringify(
+          (Array.isArray((field as DynamicFormFieldNormal).ref)
+            ? ((field as DynamicFormFieldNormal).ref as string[])
+            : [(field as DynamicFormFieldNormal).ref as string]
+          ).map((r) => formData[r]),
+        )
       : undefined,
     // eslint-disable-next-line react-hooks/exhaustive-deps
     formData[(field as DynamicFormFieldNormal).key], // Re-run if value changes externally

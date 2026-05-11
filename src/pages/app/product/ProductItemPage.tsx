@@ -81,6 +81,7 @@ export default function ProductItemPage({ ruleKey }: Props) {
             </div>
           ),
         }),
+        col: 6,
       },
       {
         key: "varian_id",
@@ -89,6 +90,7 @@ export default function ProductItemPage({ ruleKey }: Props) {
         required: true,
         ref: ["type_id", "brand_id"],
         selectOptions: "product-variants/{type_id}/{brand_id}",
+        col: 6,
       },
       {
         key: "memory_id",
