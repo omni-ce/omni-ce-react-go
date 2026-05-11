@@ -8,14 +8,15 @@ import (
 )
 
 type ProductItem struct {
-	ID         uint  `json:"id" gorm:"autoIncrement;primaryKey"`
-	CategoryID uint  `json:"category_id" gorm:"not null"`
-	TypeID     uint  `json:"type_id" gorm:"not null"`
-	BrandID    uint  `json:"brand_id" gorm:"not null"`
-	VariantID  uint  `json:"varian_id" gorm:"not null"`
-	MemoryID   *uint `json:"memory_id" gorm:"default:null"`
-	ColorID    *uint `json:"color_id" gorm:"default:null"`
-	IsActive   bool  `json:"is_active" gorm:"default:true"`
+	ID         uint   `json:"id" gorm:"autoIncrement;primaryKey"`
+	Key        string `json:"key" gorm:"type:varchar(255);uniqueIndex;not null"`
+	CategoryID uint   `json:"category_id" gorm:"not null"`
+	TypeID     uint   `json:"type_id" gorm:"not null"`
+	BrandID    uint   `json:"brand_id" gorm:"not null"`
+	VariantID  uint   `json:"varian_id" gorm:"not null"`
+	MemoryID   *uint  `json:"memory_id" gorm:"default:null"`
+	ColorID    *uint  `json:"color_id" gorm:"default:null"`
+	IsActive   bool   `json:"is_active" gorm:"default:true"`
 
 	// StockKeeping Unit
 	SKU     string `json:"sku" gorm:"type:varchar(255);uniqueIndex;not null"`

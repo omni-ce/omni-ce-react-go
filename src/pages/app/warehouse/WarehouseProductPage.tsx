@@ -135,8 +135,8 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
               />
               <span>{item.entity_name}</span>
             </div>
-            {item.branch_name}: {` `}
-            {item.warehouse_location_name}
+            {item.warehouse_location_name}: {` `}
+            {item.branch_name}
           </span>
         ),
       },

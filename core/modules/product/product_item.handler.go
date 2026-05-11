@@ -52,20 +52,56 @@ func ItemCreate(c *fiber.Ctx) error {
 	if err != nil {
 		return dto.BadRequest(c, "Invalid variant ID", nil)
 	}
-	colorID, err := strconv.Atoi(body.ColorID)
-	if err != nil {
-		return dto.BadRequest(c, "Invalid color ID", nil)
+
+	names := make([]string, 0)
+
+	var category model.ProductCategory
+	if err := variable.Db.First(&category, "id = ?", body.CategoryID).Error; err != nil {
+		return dto.NotFound(c, "Category not found", nil)
 	}
+	names = append(names, category.Name)
+	var _type model.ProductType
+	if err := variable.Db.First(&_type, "id = ?", body.TypeID).Error; err != nil {
+		return dto.NotFound(c, "Type not found", nil)
+	}
+	names = append(names, _type.Name)
+	var brand model.ProductBrand
+	if err := variable.Db.First(&brand, "id = ?", body.BrandID).Error; err != nil {
+		return dto.NotFound(c, "Brand not found", nil)
+	}
+	names = append(names, brand.Name)
+	var variant model.ProductVariant
+	if err := variable.Db.First(&variant, "id = ?", body.VariantID).Error; err != nil {
+		return dto.NotFound(c, "Variant not found", nil)
+	}
+	names = append(names, variant.Name)
 
-	ColorID := uint(colorID)
-
+	var colorID *uint
+	if body.ColorID != "" {
+		if mid, err := strconv.Atoi(body.ColorID); err == nil {
+			uMid := uint(mid)
+			colorID = &uMid
+			var color model.ProductColor
+			if err := variable.Db.First(&color, "id = ?", body.ColorID).Error; err != nil {
+				return dto.NotFound(c, "Color not found", nil)
+			}
+			names = append(names, color.Name)
+		}
+	}
 	var memoryID *uint
 	if body.MemoryID != "" {
 		if mid, err := strconv.Atoi(body.MemoryID); err == nil {
 			uMid := uint(mid)
 			memoryID = &uMid
+			var memory model.ProductMemory
+			if err := variable.Db.First(&memory, "id = ?", body.MemoryID).Error; err != nil {
+				return dto.NotFound(c, "Memory not found", nil)
+			}
+			names = append(names, fmt.Sprintf("%d GB / %d GB", memory.Ram, memory.InternalStorage))
 		}
 	}
+
+	key := generateKeyFromName(names...)
 
 	// Check duplicate SKU
 	var existing model.ProductItem
@@ -78,12 +114,13 @@ func ItemCreate(c *fiber.Ctx) error {
 	}
 
 	item := model.ProductItem{
+		Key:        key,
 		CategoryID: uint(categoryID),
 		TypeID:     uint(typeID),
 		BrandID:    uint(brandID),
 		VariantID:  uint(variantID),
 		MemoryID:   memoryID,
-		ColorID:    &ColorID,
+		ColorID:    colorID,
 		SKU:        body.SKU,
 		SkuIMEI:    body.SkuIMEI,
 		CreatedBy:  currentUser.ID,
