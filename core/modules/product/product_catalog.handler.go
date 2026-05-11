@@ -94,21 +94,21 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 	}
 
 	// 4. Get filtered Variant IDs from ProductItem
-	itemDb := variable.Db.Model(&model.ProductItem{}).Where("is_active = ?", true)
+	itemDb := variable.Db.Model(&model.ProductItem{}).Where("product_items.is_active = ?", true)
 	if body.CategoryID != 0 {
-		itemDb = itemDb.Where("category_id = ?", body.CategoryID)
+		itemDb = itemDb.Where("product_items.category_id = ?", body.CategoryID)
 	}
 	if body.TypeID != 0 {
-		itemDb = itemDb.Where("type_id = ?", body.TypeID)
+		itemDb = itemDb.Where("product_items.type_id = ?", body.TypeID)
 	}
 	if body.BrandID != 0 {
-		itemDb = itemDb.Where("brand_id = ?", body.BrandID)
+		itemDb = itemDb.Where("product_items.brand_id = ?", body.BrandID)
 	}
 	if body.Search != "" {
 		itemDb = itemDb.Joins("Variant").Where("`Variant`.name LIKE ?", "%"+body.Search+"%")
 	}
 	if len(body.IDs) > 0 {
-		itemDb = itemDb.Where("variant_id NOT IN ?", body.IDs)
+		itemDb = itemDb.Where("product_items.variant_id NOT IN ?", body.IDs)
 	}
 
 	// Pagination on Variants
@@ -121,9 +121,9 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 	offset := (body.Page - 1) * body.Limit
 
 	variantIDs := make([]uint, 0)
-	if err := itemDb.Distinct("variant_id").
+	if err := itemDb.Distinct("product_items.variant_id").
 		Limit(body.Limit).Offset(offset).
-		Pluck("variant_id", &variantIDs).
+		Pluck("product_items.variant_id", &variantIDs).
 		Error; err != nil {
 		return dto.InternalServerError(c, "Failed to get variant IDs", nil)
 	}
