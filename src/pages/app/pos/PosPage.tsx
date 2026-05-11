@@ -23,17 +23,9 @@ import {
   dummyOrders,
 } from "@/dummy";
 import type { CatalogRow, CatalogProductItem } from "@/stores/posStore";
+import { formatRupiah } from "@/utils/convert";
 
 // ─── Helper ──────────────────────────────────────────────────────────────────
-
-const formatRupiah = (amount: number) => {
-  return new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
-};
 
 const statusConfig: Partial<
   Record<

@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/Badge";
 import { ProductImage } from "@/pages/app/product/action";
 import { IconComponent } from "@/components/ui/IconSelector";
 import Image from "@/components/Image";
+import { formatRupiah } from "@/utils/convert";
 
 interface Props {
   ruleKey?: string;
@@ -151,8 +152,7 @@ export default function ProductItemPage({ ruleKey }: Props) {
       {
         key: "category_name",
         header: language({ id: "Kategori", en: "Category" }),
-        sort: true,
-        search: true,
+        options: "product-categories",
         render: (item) => {
           let category_name = item.category_name;
           try {
@@ -251,12 +251,18 @@ export default function ProductItemPage({ ruleKey }: Props) {
       {
         key: "qty",
         header: language({ id: "Stok", en: "Stock" }),
-        render: (item) => <span className="max-w-xs truncate block">0</span>,
+        render: (item) => (
+          <span className="max-w-xs truncate block">{item.qty}</span>
+        ),
       },
       {
         key: "price",
         header: language({ id: "Harga Beli", en: "Buy Price" }),
-        render: (item) => <span className="max-w-xs truncate block">0</span>,
+        render: (item) => (
+          <span className="max-w-xs truncate block">
+            {formatRupiah(item.buy_price)}
+          </span>
+        ),
       },
       {
         key: "is_active",

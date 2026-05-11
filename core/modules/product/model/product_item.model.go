@@ -22,8 +22,7 @@ type ProductItem struct {
 	SkuIMEI string `json:"sku_imei" gorm:"type:varchar(255);default:null"`
 
 	// Value
-	Qty   float64 `json:"qty" gorm:"default:0;not null"`
-	Price float64 `json:"price" gorm:"default:0;not null"`
+	BuyPrice float64 `json:"buy_price" gorm:"default:0;not null"`
 
 	// relations
 	Category ProductCategory `json:"category" gorm:"foreignKey:CategoryID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`

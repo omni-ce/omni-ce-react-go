@@ -84,7 +84,7 @@ export interface ProductItem {
   color_name?: string;
   color_hex?: string;
   qty: number;
-  price: number;
+  buy_price: number;
   is_active: boolean;
 }
 
@@ -102,6 +102,6 @@ export interface ProductItemOption {
     color?: string;
     color_hex?: string;
     qty: number;
-    price: number;
+    buy_price: number;
   };
 }

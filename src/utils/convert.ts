@@ -49,3 +49,12 @@ export const toPascalCase = (str: string): string => {
 export const booleanOnNullable = (value: boolean | null) => {
   return value === null || value === true ? true : false;
 };
+
+export const formatRupiah = (amount: number) => {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount);
+};

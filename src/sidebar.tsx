@@ -154,6 +154,28 @@ const sidebarLinks: ISidebarLink[] = [
   },
 
   {
+    label: { id: "Toko", en: "Store" },
+    path: "store",
+    icon: "Fa6/FaStore",
+    children: [
+      {
+        label: { id: "Entitas", en: "Entity" },
+        path: "entity",
+        element: <WarehouseLocationPage ruleKey="store/entity" />,
+        strict: true,
+        icon: "Hi2/HiOutlineBuildingStorefront",
+      },
+      {
+        label: { id: "Produk", en: "Product" },
+        path: "product",
+        element: <WarehouseProductPage ruleKey="store/product" />,
+        strict: true,
+        icon: "Hi/HiCube",
+      },
+    ],
+  },
+
+  {
     label: { id: "POS", en: "POS" },
     path: "pos",
     element: <PosPage ruleKey="pos" />,

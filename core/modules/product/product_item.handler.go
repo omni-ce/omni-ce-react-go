@@ -157,21 +157,27 @@ func ItemPaginate(c *fiber.Ctx) error {
 
 	rows := make([]map[string]any, 0, len(items))
 	for _, row := range items {
-		item := row.Map()
-		// Inject relationship names for FE display
-		item["category_name"] = row.Category.Name
-		item["category_icon"] = row.Category.Icon
-		item["type_name"] = row.Type.Name
-		item["brand_name"] = row.Brand.Name
-		item["brand_logo"] = row.Brand.Logo
-		item["varian_name"] = row.Variant.Name
+		memory_name := ""
 		if row.MemoryID != nil {
-			item["memory_name"] = fmt.Sprintf("%d GB / %d GB", row.Memory.Ram, row.Memory.InternalStorage)
+			memory_name = fmt.Sprintf("%d GB / %d GB", row.Memory.Ram, row.Memory.InternalStorage)
 		}
-		item["color_name"] = row.Color.Name
-		item["color_hex"] = row.Color.HexCode
-
-		rows = append(rows, item)
+		rows = append(rows, map[string]any{
+			"id":            row.ID,
+			"sku":           row.SKU,
+			"sku_imei":      row.SkuIMEI,
+			"buy_price":     row.BuyPrice,
+			"qty":           0,
+			"color_name":    row.Color.Name,
+			"color_hex":     row.Color.HexCode,
+			"memory_name":   memory_name,
+			"varian_name":   row.Variant.Name,
+			"brand_name":    row.Brand.Name,
+			"brand_logo":    row.Brand.Logo,
+			"type_name":     row.Type.Name,
+			"is_active":     row.IsActive,
+			"category_name": row.Category.Name,
+			"category_icon": row.Category.Icon,
+		})
 	}
 
 	return dto.OK(c, "Success get product items", fiber.Map{

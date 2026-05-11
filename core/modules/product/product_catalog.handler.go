@@ -191,8 +191,8 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 				"color_hex":   colorHex,
 				"color_name":  colorName,
 				"memory_name": memoryName,
-				"price":       it.Price,
-				"qty":         it.Qty,
+				"price":       0,
+				"qty":         0,
 			})
 		}
 
