@@ -179,7 +179,7 @@ export default function PosPage({ ruleKey }: Props) {
         {/* Order Cards */}
         <div
           ref={orderScrollRef}
-          className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide"
+          className="flex gap-3 overflow-x-auto pb-4 custom-scrollbar-h"
         >
           {filteredOrders.map((order) => {
             const status = statusConfig[order.status as OrderStatus];
