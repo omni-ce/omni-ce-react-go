@@ -763,6 +763,39 @@ func WarehouseLocations(c *fiber.Ctx) error {
 	for _, row := range locations {
 		branchIds = append(branchIds, row.BranchID)
 	}
+	roleIds := make([]uint, 0)
+	for _, row := range locations {
+		roleIds = append(roleIds, row.RoleID)
+	}
+
+	roles := make([]role.Role, 0)
+	if err := variable.Db.
+		Model(&role.Role{}).
+		Where("id IN (?)", roleIds).
+		Find(&roles).
+		Error; err != nil {
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari role",
+			En: "Failed to find role",
+		}, nil)
+	}
+
+	divisionIds := make([]uint, 0)
+	for _, row := range roles {
+		divisionIds = append(divisionIds, row.RoleDivisionID)
+	}
+
+	divisions := make([]role.RoleDivision, 0)
+	if err := variable.Db.
+		Model(&role.RoleDivision{}).
+		Where("id IN (?)", divisionIds).
+		Find(&divisions).
+		Error; err != nil {
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari division role",
+			En: "Failed to find role divisions",
+		}, nil)
+	}
 
 	branches := make([]company.CompanyBranch, 0)
 	if err := variable.Db.
@@ -809,8 +842,22 @@ func WarehouseLocations(c *fiber.Ctx) error {
 					break
 				}
 			}
+			var _role role.Role
+			for _, r := range roles {
+				if r.ID == row.RoleID {
+					_role = r
+					break
+				}
+			}
+			var division role.RoleDivision
+			for _, d := range divisions {
+				if d.ID == _role.RoleDivisionID {
+					division = d
+					break
+				}
+			}
 			rows = append(rows, types.Option{
-				Label: fmt.Sprintf("%s - %s : %s", entity.Name, branch.Name, row.Name),
+				Label: fmt.Sprintf("%s - %s : %s > %s", entity.Name, row.Name, _role.Name, division.Name),
 				Value: row.ID,
 				Meta: &map[string]any{
 					"entity_logo": entity.Logo,

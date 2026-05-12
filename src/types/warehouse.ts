@@ -4,9 +4,10 @@ export interface WarehouseLocation {
   entity_logo: string;
   branch_id: number;
   branch_name: string;
-  pic_id: number;
-  pic_name: string;
-  pic_avatar: string;
+  role_id: number;
+  role_name: string;
+  division_id: number;
+  division_name: string;
   name: string;
   map: {
     latitude: number;

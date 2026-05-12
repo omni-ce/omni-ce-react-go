@@ -85,6 +85,7 @@ export interface PaginationColumn<T, TFilter = unknown> {
 
 export interface PaginationExtraAction<T> {
   icon?: string;
+  label: string;
   width?: string | number;
   height?: string | number;
   button?: (row: T, onClose: () => void) => ReactNode | void;
@@ -307,6 +308,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                   <Button
                     variant="ghost"
                     size="icon"
+                    title={language({ id: "Ubah", en: "Edit" })}
                     onClick={() => openEdit(row)}
                   >
                     <IconComponent iconName="Hi/HiOutlinePencil" size={16} />
@@ -316,6 +318,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                   <Button
                     variant="ghost"
                     size="icon"
+                    title={language({ id: "Hapus", en: "Delete" })}
                     onClick={() => openDelete(row)}
                     className="text-neon-red hover:bg-neon-red/10"
                   >
@@ -343,6 +346,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                           <Button
                             variant="ghost"
                             size="icon"
+                            title={action.label}
                             onClick={() => {
                               if (action.button) action.button(row, reload);
                               if (action.component)

@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useLanguageStore } from "@/stores/languageStore";
 import Pagination, {
   type PaginationColumn,
@@ -19,6 +19,10 @@ interface Props {
 export default function WarehouseLocationPage({ ruleKey }: Props) {
   const paginationRef = useRef<PaginationHandle>(null);
   const { languageCode, language } = useLanguageStore();
+
+  const [dataSelected, setDataSelected] = useState<WarehouseLocation | null>(
+    null,
+  );
 
   const fields = useMemo(
     () => [
@@ -43,39 +47,11 @@ export default function WarehouseLocationPage({ ruleKey }: Props) {
         }),
       },
       {
-        key: "pic_id",
-        label: language({ id: "PIC", en: "PIC" }),
+        key: "role_id",
+        label: language({ id: "Peran", en: "Roles" }),
         type: "select",
         required: true,
-        selectOptions: "users",
-        selectFormat: (item: UserOption) => ({
-          value: item.value,
-          render: (
-            <div className="flex flex-col gap-1 py-1">
-              <div className="flex items-center gap-2">
-                <Image
-                  src={item.meta.avatar}
-                  alt="avatar"
-                  className="w-6 h-6 rounded-full"
-                />
-                <span className="font-medium">{item.label}</span>
-              </div>
-              {item.array && item.array.length > 0 && (
-                <div className="flex flex-wrap gap-1 ml-8">
-                  {item.array.map((tag) => (
-                    <Badge
-                      key={tag}
-                      variant="outline"
-                      className="text-[9px] py-0 h-4 border-dark-600 bg-dark-800 text-dark-300 px-1.5"
-                    >
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-              )}
-            </div>
-          ),
-        }),
+        selectOptions: "roles",
       },
       {
         key: "name",
@@ -115,18 +91,16 @@ export default function WarehouseLocationPage({ ruleKey }: Props) {
         ),
       },
       {
-        key: "pic_name",
-        header: language({ id: "PIC", en: "PIC" }),
+        key: "role_name",
+        header: language({ id: "Peran", en: "Role" }),
         sort: true,
         search: true,
         render: (item) => (
-          <div className="flex items-center gap-2">
-            <Image
-              src={item.pic_avatar}
-              alt="avatar"
-              className="w-6 h-6 rounded-full"
-            />
-            <span className="font-medium">{item.pic_name}</span>
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-1">
+              <Badge variant="secondary">{item.division_name}</Badge>
+              <span className="font-medium">{item.role_name}</span>
+            </div>
           </div>
         ),
       },

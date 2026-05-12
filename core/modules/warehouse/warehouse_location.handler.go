@@ -4,7 +4,7 @@ import (
 	"react-go/core/dto"
 	"react-go/core/function"
 	company "react-go/core/modules/company/model"
-	user "react-go/core/modules/user/model"
+	role "react-go/core/modules/role/model"
 	model "react-go/core/modules/warehouse/model"
 	"react-go/core/types"
 	"react-go/core/variable"
@@ -12,7 +12,6 @@ import (
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -29,7 +28,7 @@ func LocationCreate(c *fiber.Ctx) error {
 
 	var body struct {
 		BranchID string `json:"branch_id" validate:"required"`
-		PicID    string `json:"pic_id" validate:"required"`
+		RoleID   string `json:"role_id" validate:"required"`
 		Name     string `json:"name" validate:"required"`
 		Map      struct {
 			Longitude float64 `json:"longitude"`
@@ -48,17 +47,17 @@ func LocationCreate(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	picId, err := uuid.Parse(body.PicID)
+	roleID, err := strconv.Atoi(body.RoleID)
 	if err != nil {
 		return dto.BadRequest(c, types.Language{
-			Id: "ID PIC tidak valid",
-			En: "Invalid PIC ID",
+			Id: "ID Role tidak valid",
+			En: "Invalid Role ID",
 		}, nil)
 	}
 
 	location := model.WarehouseLocation{
 		BranchID:  uint(branchId),
-		PicID:     picId,
+		RoleID:    uint(roleID),
 		Name:      strings.TrimSpace(body.Name),
 		Longitude: body.Map.Longitude,
 		Latitude:  body.Map.Latitude,
@@ -94,7 +93,7 @@ func LocationCreate(c *fiber.Ctx) error {
 func LocationPaginate(c *fiber.Ctx) error {
 	locations := make([]model.WarehouseLocation, 0)
 	pagination, err := function.Pagination(c, &model.WarehouseLocation{}, func(query *gorm.DB) *gorm.DB {
-		return query.Preload("Branch").Preload("Pic")
+		return query.Preload("Branch").Preload("Role")
 	}, []string{"name"}, &locations)
 	if err != nil {
 		return dto.InternalServerError(c, types.Language{
@@ -107,15 +106,27 @@ func LocationPaginate(c *fiber.Ctx) error {
 	for _, location := range locations {
 		branchIds = append(branchIds, location.BranchID)
 	}
-	picIds := make([]uuid.UUID, 0, len(locations))
+	roleIds := make([]uint, 0, len(locations))
 	for _, location := range locations {
-		picIds = append(picIds, location.PicID)
+		roleIds = append(roleIds, location.RoleID)
 	}
 
 	branches := make([]company.CompanyBranch, 0)
-	pics := make([]user.User, 0)
-	variable.Db.Where("id IN ?", branchIds).Find(&branches)
-	variable.Db.Where("id IN ?", picIds).Find(&pics)
+	roles := make([]role.Role, 0)
+	if len(branchIds) > 0 {
+		variable.Db.Where("id IN ?", branchIds).Find(&branches)
+	}
+	if len(roleIds) > 0 {
+		variable.Db.Where("id IN ?", roleIds).Find(&roles)
+	}
+	divisionIds := make([]uint, 0)
+	for _, role := range roles {
+		divisionIds = append(divisionIds, role.RoleDivisionID)
+	}
+	divisions := make([]role.RoleDivision, 0)
+	if len(divisionIds) > 0 {
+		variable.Db.Where("id IN ?", divisionIds).Find(&divisions)
+	}
 
 	entityIds := make([]uint, 0)
 	for _, v := range branches {
@@ -141,18 +152,29 @@ func LocationPaginate(c *fiber.Ctx) error {
 				break
 			}
 		}
-		var pic user.User
-		for _, row := range pics {
-			if row.ID == locations[i].PicID {
-				pic = row
+		var _role role.Role
+		for _, row := range roles {
+			if row.ID == locations[i].RoleID {
+				_role = row
 				break
 			}
 		}
+		var division role.RoleDivision
+		for _, row := range divisions {
+			if row.ID == _role.RoleDivisionID {
+				division = row
+				break
+			}
+		}
+		loc["entity_id"] = entity.ID
 		loc["entity_name"] = entity.Name
 		loc["entity_logo"] = entity.Logo
+		loc["branch_id"] = branch.ID
 		loc["branch_name"] = branch.Name
-		loc["pic_name"] = pic.Name
-		loc["pic_avatar"] = pic.Avatar
+		loc["role_id"] = _role.ID
+		loc["role_name"] = _role.Name
+		loc["division_id"] = division.ID
+		loc["division_name"] = division.Name
 		loc["map"] = map[string]any{
 			"latitude":  locations[i].Latitude,
 			"longitude": locations[i].Longitude,
@@ -183,7 +205,7 @@ func LocationEdit(c *fiber.Ctx) error {
 
 	var body struct {
 		BranchID string `json:"branch_id"`
-		PicID    string `json:"pic_id"`
+		RoleID   string `json:"role_id"`
 		Name     string `json:"name"`
 		Map      struct {
 			Longitude float64 `json:"longitude"`
@@ -212,9 +234,9 @@ func LocationEdit(c *fiber.Ctx) error {
 		branchId, _ := strconv.Atoi(body.BranchID)
 		updates["branch_id"] = uint(branchId)
 	}
-	if body.PicID != "" {
-		picId, _ := uuid.Parse(body.PicID)
-		updates["pic_id"] = picId
+	if body.RoleID != "" {
+		roleId, _ := strconv.Atoi(body.RoleID)
+		updates["role_id"] = uint(roleId)
 	}
 	name := strings.TrimSpace(body.Name)
 	if name != "" {

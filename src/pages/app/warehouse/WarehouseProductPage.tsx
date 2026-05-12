@@ -230,6 +230,7 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
         extraActions={[
           {
             icon: "Ai/AiOutlineProduct",
+            label: language({ id: "Produk", en: "Product" }),
             button: (row) => {
               alert(JSON.stringify(row));
             },
