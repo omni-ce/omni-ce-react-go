@@ -127,7 +127,7 @@ export default function UserPage({ ruleKey }: Props) {
               src={user.avatar ?? BlankUser}
               fromAsset={!user.avatar}
               alt={user.name}
-              fallback={user.name?.charAt(0)?.toUpperCase()}
+              fallback={user.name.charAt(0).toUpperCase()}
             />
             <span className="font-medium">{user.name}</span>
           </div>
@@ -151,7 +151,7 @@ export default function UserPage({ ruleKey }: Props) {
         header: language({ id: "Role", en: "Role" }),
         render: (user) => (
           <div className="flex flex-wrap items-center gap-2">
-            {user.roles?.map((role) => (
+            {user.roles.map((role) => (
               <Badge key={role.role_id} variant={"secondary"}>
                 {role.division_name} &gt; {role.role_name}
               </Badge>

@@ -174,7 +174,7 @@ export default function DocPage() {
           </button>
           {hasChildren && isExpanded && (
             <div className="space-y-0.5">
-              {renderNavItems(item.section!, level + 1)}
+              {renderNavItems(item.section ?? [], level + 1)}
             </div>
           )}
         </div>

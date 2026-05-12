@@ -89,7 +89,7 @@ export interface PaginationExtraAction<T> {
   label: Record<LanguageCode, string>;
   width?: string | number;
   height?: string | number;
-  button?: (row: T, onClose: () => void) => ReactNode | void;
+  button?: (row: T, onClose: () => void) => ReactNode;
   component?: ReactNode | ((row: T, onClose: () => void) => ReactNode);
 }
 
@@ -219,7 +219,6 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
 
   const safeCurrentPage = Math.min(currentPage, totalPages);
   const filteredFields = useMemo(() => {
-    if (!fields) return undefined;
     return fields.filter((field) => {
       const f = field as DynamicFormFieldNormal;
       if (!f.rule) return true;
@@ -231,7 +230,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
       return true;
     });
   }, [fields, perm]) as PaginationField[];
-  const hasCrud = Boolean(filteredFields && filteredFields.length > 0);
+  const hasCrud = filteredFields.length > 0;
 
   // ─── Row helpers ──────────────────────────────────────────────────
 
@@ -511,7 +510,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                 let label = item.label;
                 try {
                   if (label.startsWith("{")) {
-                    label = language(JSON.parse(label));
+                    label = language(JSON.parse(label) as Record<LanguageCode, string>);
                   }
                 } catch (e) {
                   // fallback to raw label
@@ -642,13 +641,13 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
         );
         const data = response.data.data;
 
-        setRows(data.rows ?? []);
-        setTotal(data.pagination.total ?? 0);
-        setTotalPages(Math.max(1, data.pagination.total_pages ?? 1));
+        setRows(data.rows);
+        setTotal(data.pagination.total);
+        setTotalPages(Math.max(1, data.pagination.total_pages));
 
         if (
-          page > (data.pagination.total_pages ?? 1) &&
-          (data.pagination.total_pages ?? 1) > 0
+          page > data.pagination.total_pages &&
+          data.pagination.total_pages > 0
         ) {
           setCurrentPage(data.pagination.total_pages);
         }
@@ -706,13 +705,15 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
       const flatFields = flattenFields(filteredFields);
       for (const field of flatFields) {
         if (row && typeof row === "object" && row !== null) {
-          const val = (row as Record<string, unknown>)[field.key!];
+          const key = field.key;
+          if (!key) continue;
+          const val = (row as Record<string, unknown>)[key];
           if (field.type === "array") {
-            data[field.key] = Array.isArray(val) ? val : [];
+            data[key] = Array.isArray(val) ? val : [];
           } else if (typeof val === "object" && val !== null) {
-            data[field.key!] = val;
+            data[key] = val;
           } else {
-            data[field.key!] = (typeof val === "string" || typeof val === "number") ? String(val) : "";
+            data[key] = (typeof val === "string" || typeof val === "number") ? String(val) : "";
           }
         } else {
           if (field.type === "array") {
@@ -735,7 +736,9 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
           ) {
             data[field.key] = (field as DynamicFormFieldNormal).booleanDefault;
           } else {
-            data[field.key!] = "";
+          if (field.key) {
+            data[field.key] = "";
+          }
           }
         }
       }
@@ -777,7 +780,6 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
   };
 
   const isFormValid = useCallback(() => {
-    if (!filteredFields) return false;
     const flatFields = flattenFields(filteredFields);
     for (const field of flatFields) {
       const isCreate = !editingRow;
@@ -794,7 +796,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
           const stringified = arr.map((item) => {
             const relevantData: Record<string, unknown> = {};
             for (const key of childKeys) {
-              relevantData[key!] = item[key!];
+              if (key) relevantData[key] = item[key];
             }
             return JSON.stringify(relevantData);
           });
@@ -804,7 +806,9 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
         if (field.children) {
           for (const item of arr) {
             for (const child of field.children) {
-              const val = item[child.key!] ?? "";
+              const key = child.key;
+              if (!key) continue;
+              const val = item[key] ?? "";
               if (
                 (child as DynamicFormFieldNormal).required &&
                 !(typeof val === "string" || typeof val === "number" ? String(val) : "").trim()
@@ -820,17 +824,17 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
         if (typeof val === "string") {
           if (
             (field as DynamicFormFieldNormal).minLength &&
-            val.length < (field as DynamicFormFieldNormal).minLength!
+            val.length < ((field as DynamicFormFieldNormal).minLength ?? 0)
           )
             return false;
           if (
             (field as DynamicFormFieldNormal).maxLength &&
-            val.length > (field as DynamicFormFieldNormal).maxLength!
+            val.length > ((field as DynamicFormFieldNormal).maxLength ?? 0)
           )
             return false;
         }
       }
-      if (fieldErrors[field.key!]) return false;
+      if (field.key && fieldErrors[field.key]) return false;
     }
     return true;
   }, [filteredFields, formData, fieldErrors, editingRow]);
@@ -841,7 +845,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
     setSaveError(null);
     try {
       const payload: Record<string, unknown> = {};
-      if (filteredFields) {
+      if (true) {
         const flatFields = flattenFields(filteredFields);
         for (const field of flatFields) {
           const isCreate = !editingRow;
@@ -882,7 +886,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
       );
     } catch (err) {
       const error = err as AxiosError<{ message: Record<LanguageKey, string> }>;
-      setSaveError(error.response?.data.message);
+      setSaveError(error.response?.data.message ?? null);
     } finally {
       setIsSubmitting(false);
     }
@@ -953,7 +957,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
       );
     } catch (err: unknown) {
       const msg =
-        (err as { response?: { data?: { message?: string } } })?.response?.data
+        (err as { response?: { data?: { message?: string } } }).response?.data
           ?.message ?? "Bulk delete failed";
       toast.error(msg);
     } finally {
@@ -1118,11 +1122,10 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                           }
                           setCurrentPage(1);
                         }}
-                        className={`${
-                          column.strict
-                            ? `inline-flex items-center gap-2 ${getStrictHeaderButtonClassName(column.align)}`
-                            : `flex w-full items-center gap-2 ${getHeaderButtonClassName(column.align)}`
-                        }`.trim()}
+                        className={(column.strict
+                          ? `inline-flex items-center gap-2 ${getStrictHeaderButtonClassName(column.align)}`
+                          : `flex w-full items-center gap-2 ${getHeaderButtonClassName(column.align)}`
+                        ).trim()}
                       >
                         <span>{column.header}</span>
                         <span className="text-dark-400">
@@ -1243,12 +1246,9 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                                   const item = format ? format(opt) : opt;
                                   let label = item.label;
                                   try {
-                                    if (
-                                      label &&
-                                      String(label).startsWith("{")
-                                    ) {
+                                    if (label && label.startsWith("{")) {
                                       label = language(
-                                        JSON.parse(String(label)),
+                                        JSON.parse(label) as Record<LanguageCode, string>,
                                       );
                                     }
                                   } catch (e) {
@@ -1296,7 +1296,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                       : String(idx);
 
                   const isSelected = (() => {
-                    if (dataSelected === undefined || dataSelected === null)
+                    if (dataSelected === undefined)
                       return false;
                     const rowId = getRowId(row);
                     if (Array.isArray(dataSelected)) {
@@ -1440,7 +1440,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
       </Card>
 
       {/* ─── Add / Edit Dialog ──────────────────────────────────────── */}
-      {hasCrud && filteredFields && (
+      {hasCrud && (
         <Dialog
           open={dialogOpen}
           onClose={() => {
@@ -1467,8 +1467,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                 popupHeight ? "flex-1" : "max-h-[60vh]",
               )}
             >
-              {filteredFields && filteredFields.length > 0 && (
-                <DynamicForm
+              <DynamicForm
                   fields={filteredFields}
                   formData={formData}
                   onChange={(key, val) =>
@@ -1480,7 +1479,6 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                     setFieldErrors((prev) => ({ ...prev, [key]: err }))
                   }
                 />
-              )}
             </div>
             {saveError && (
               <p className="px-6 text-xs text-neon-red font-semibold animate-in fade-in slide-in-from-top-1 duration-200">
@@ -1599,7 +1597,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
 
       {/* ─── Extra Action Dialog ─────────────────────────────── */}
       {extraActionState !== null &&
-        extraActions?.[extraActionState.actionIndex] && (
+        extraActions[extraActionState.actionIndex] && (
           <Dialog
             open={true}
             onClose={() => {
@@ -1638,7 +1636,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                 "function"
                   ? (
                       extraActions[extraActionState.actionIndex]
-                        .component as Function
+                        .component as (row: T, onClose: () => void) => ReactNode
                     )(extraActionState.row, () => setExtraActionState(null))
                   : typeof extraActions[extraActionState.actionIndex]
                         .component === "object" &&

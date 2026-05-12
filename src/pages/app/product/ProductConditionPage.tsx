@@ -45,7 +45,7 @@ export default function ProductConditionPage({ ruleKey }: Props) {
           let name = item.name;
           try {
             if (name.startsWith("{")) {
-              const obj = JSON.parse(name);
+              const obj = JSON.parse(name) as Record<LanguageCode, string>;
               name = language(obj);
             }
           } catch (e) {

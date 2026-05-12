@@ -99,7 +99,7 @@ export const useNotificationStore = create<NotificationState>()((set, get) => ({
           ? notifications[notifications.length - 1].id
           : 0;
       const resp = await notificationService.nextData(lastId);
-      const newNotifs = resp.data.data || [];
+      const newNotifs = resp.data.data;
       set((state) => ({
         notifications: [...state.notifications, ...newNotifs],
         hasMore: newNotifs.length >= 10,

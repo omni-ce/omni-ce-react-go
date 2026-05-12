@@ -76,8 +76,7 @@ export default function NotificationPage({}: Props) {
         });
       }
 
-      if (!acc[key]) acc[key] = [];
-      acc[key].push(notification);
+      (acc[key] ??= []).push(notification);
       return acc;
     },
     {},

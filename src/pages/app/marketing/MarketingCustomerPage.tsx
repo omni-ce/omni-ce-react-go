@@ -150,8 +150,7 @@ export default function MarketingCustomerPage({ ruleKey }: Props) {
               <span className="font-bold text-foreground text-sm">
                 {item.name}
               </span>
-              {item.gender && (
-                <IconComponent
+              <IconComponent
                   iconName={
                     item.gender === Gender.Male
                       ? "Pi/PiGenderMaleBold"
@@ -164,7 +163,6 @@ export default function MarketingCustomerPage({ ruleKey }: Props) {
                       : "text-pink-400",
                   )}
                 />
-              )}
             </div>
             {item.dob && (
               <div className="flex items-center gap-1 text-[11px] text-dark-400 font-medium">
@@ -298,7 +296,7 @@ export default function MarketingCustomerPage({ ruleKey }: Props) {
 
   return (
     <GuardLayout
-      ruleKey={ruleKey}
+      ruleKey={ruleKey ?? ""}
       title={{
         id: "Pelanggan Pemasaran",
         en: "Marketing Customer",

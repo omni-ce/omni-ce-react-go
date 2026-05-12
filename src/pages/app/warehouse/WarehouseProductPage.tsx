@@ -14,6 +14,7 @@ import type { ProductItemOption } from "@/types/product";
 import GuardLayout from "@/components/GuardLayout";
 import Image from "@/components/Image";
 import HistoryPage from "@/pages/app/warehouse/history";
+import type { LanguageKey } from "@/types/world";
 
 interface Props {
   ruleKey: string;
@@ -40,7 +41,7 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
           render: (
             <div className="flex items-center gap-2">
               <Image
-                src={item.meta?.entity_logo}
+                src={item.meta.entity_logo}
                 alt="logo"
                 className="w-6 h-6 rounded-full"
               />
@@ -59,7 +60,10 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
           let category_name = item.meta.category;
           try {
             if (category_name.startsWith("{")) {
-              const obj = JSON.parse(category_name);
+              const obj = JSON.parse(category_name) as Record<
+                LanguageKey,
+                string
+              >;
               category_name = language(obj);
             }
           } catch (e) {
@@ -68,7 +72,7 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
           let type_name = item.meta.type;
           try {
             if (type_name.startsWith("{")) {
-              const obj = JSON.parse(type_name);
+              const obj = JSON.parse(type_name) as Record<LanguageKey, string>;
               type_name = language(obj);
             }
           } catch (e) {
@@ -169,11 +173,14 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
           let typeName = item.product_type_name;
           try {
             if (categoryName.startsWith("{")) {
-              const obj = JSON.parse(categoryName);
+              const obj = JSON.parse(categoryName) as Record<
+                LanguageKey,
+                string
+              >;
               categoryName = language(obj);
             }
             if (typeName.startsWith("{")) {
-              const obj = JSON.parse(typeName);
+              const obj = JSON.parse(typeName) as Record<LanguageKey, string>;
               typeName = language(obj);
             }
           } catch (e) {

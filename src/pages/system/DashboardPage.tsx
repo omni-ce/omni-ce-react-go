@@ -4,6 +4,7 @@ import { IconComponent } from "@/components/ui/IconSelector";
 import {
   dashboardService,
   type DashboardWidget,
+  type DashboardWidgetCol,
 } from "@/services/dashboard.service";
 import type { Option } from "@/types/option";
 import { lgMap, mdMap, spanMap, xlMap } from "@/responsive";
@@ -119,7 +120,7 @@ export default function DashboardPage({}: DashboardPageProps) {
     const handleLiveWidget = (data: {
       widgets: { id: string; data: unknown }[];
     }) => {
-      const widgetsList = data?.widgets || [];
+      const widgetsList = data.widgets;
       const newWidgetData: Record<string, unknown> = {};
       for (const w of widgetsList) {
         newWidgetData[w.id] = w.data;
@@ -146,16 +147,16 @@ export default function DashboardPage({}: DashboardPageProps) {
       dashboardService
         .getRoles()
         .then((res) => {
-          setRoles(res.data || []);
+          setRoles(res.data);
         })
-        .catch((err) => console.error("Failed to fetch roles:", err))
+        .catch((err: unknown) => console.error("Failed to fetch roles:", err))
         .finally(() => setLoadingRoles(false));
       dashboardService
         .getFunctions()
         .then((data) => {
           setFunctionsData(data.data);
         })
-        .catch((err) =>
+        .catch((err: unknown) =>
           console.error("Failed to fetch dashboard functions:", err),
         );
     }
@@ -232,7 +233,7 @@ export default function DashboardPage({}: DashboardPageProps) {
     if (!roleId || roleId === "" || roleId === "-") return;
     dashboardService
       .getWidgets(roleId)
-      .then((res) => setRoleWidgets(res.data || []))
+      .then((res) => setRoleWidgets(res.data))
       .catch(() => setRoleWidgets([]));
   }, []);
 
@@ -256,12 +257,7 @@ export default function DashboardPage({}: DashboardPageProps) {
     const w = widgets.find((w) => w.key === selectedWidgetKey);
     if (!w || !selectedRole) return;
     try {
-      const colData = (addFormData.col as {
-        mobile: number;
-        tablet: number;
-        laptop: number;
-        desktop: number;
-      }) || { mobile: 12, tablet: 6, laptop: 4, desktop: 3 };
+      const colData = addFormData.col as DashboardWidgetCol;
       await dashboardService.createWidget({
         role_id: Number(selectedRole),
         function_key: selectedFunctionKey,
@@ -287,10 +283,10 @@ export default function DashboardPage({}: DashboardPageProps) {
     setEditingWidget(w);
     setFormType(w.type);
     setFormColObj({
-      mobile: w.col?.mobile || 12,
-      tablet: w.col?.tablet || 6,
-      laptop: w.col?.laptop || 4,
-      desktop: w.col?.desktop || 3,
+      mobile: w.col.mobile,
+      tablet: w.col.tablet,
+      laptop: w.col.laptop,
+      desktop: w.col.desktop,
     });
     setFormLabel(w.label);
     setFormDesc(w.description);
@@ -369,7 +365,7 @@ export default function DashboardPage({}: DashboardPageProps) {
                   },
                   ...roles
                     .sort((a, b) =>
-                      a.label!.localeCompare(b.label!, undefined, {
+                      (a.label ?? "").localeCompare(b.label ?? "", undefined, {
                         numeric: true,
                         sensitivity: "base",
                       }),
@@ -827,10 +823,10 @@ export default function DashboardPage({}: DashboardPageProps) {
           {roleWidgets.map((rw) => {
             const widgetDef = widgets.find((w) => w.key === rw.function_key);
 
-            const m = rw.col?.mobile || 12;
-            const t = rw.col?.tablet || 6;
-            const l = rw.col?.laptop || 4;
-            const d = rw.col?.desktop || 3;
+            const m = rw.col.mobile;
+            const t = rw.col.tablet;
+            const l = rw.col.laptop;
+            const d = rw.col.desktop;
 
             const colClass = `${spanMap[m] || "col-span-12"} ${mdMap[t] || "md:col-span-6"} ${lgMap[l] || "lg:col-span-4"} ${xlMap[d] || "xl:col-span-3"}`;
 
@@ -1069,13 +1065,7 @@ export default function DashboardPage({}: DashboardPageProps) {
             ) : addStep === 2 ? (
               <div className="grid grid-cols-2 gap-3 max-h-100 overflow-y-auto p-1 animate-fade-in">
                 {(() => {
-                  const selectedWidget = widgets.find(
-                    (w) => w.key === selectedWidgetKey,
-                  );
-                  const funcs =
-                    selectedWidget && functionsData[selectedWidget.key]
-                      ? functionsData[selectedWidget.key]
-                      : [];
+                  const funcs = functionsData[selectedWidgetKey] ?? [];
                   if (funcs.length === 0) {
                     return (
                       <div className="col-span-2 text-center py-8 text-dark-400">

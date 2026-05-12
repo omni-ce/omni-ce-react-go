@@ -33,7 +33,7 @@ export default function WarehouseLocationPage({ ruleKey }: Props) {
           render: (
             <div className="flex items-center gap-2">
               <Image
-                src={item.meta?.entity_logo}
+                src={item.meta.entity_logo}
                 alt="logo"
                 className="w-6 h-6 rounded-full"
               />
@@ -109,7 +109,7 @@ export default function WarehouseLocationPage({ ruleKey }: Props) {
           let name = item.name;
           try {
             if (name.startsWith("{")) {
-              const obj = JSON.parse(name);
+              const obj = JSON.parse(name) as Record<LanguageCode, string>;
               name = language(obj);
             }
           } catch (e) {

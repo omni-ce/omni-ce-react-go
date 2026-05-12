@@ -26,6 +26,11 @@ import MapPicker, { type MapCoordinates } from "@/components/ui/MapPicker";
 import Image from "@/components/Image";
 import { cn } from "@/lib/utils";
 
+const ensureString = (val: unknown): string => {
+  if (typeof val === "string" || typeof val === "number") return String(val);
+  return "";
+};
+
 export interface DynamicFormFieldOption<T = unknown> {
   value: string | number;
   label?: string;
@@ -940,20 +945,20 @@ function ArrayField({
                   />
                 ) : child.type === "address" ? (
                   <DynamicAddress
-                    value={String((item[child.key] as string | number) ?? "")}
+                    value={ensureString(item[child.key])}
                     onChange={(val) => handleChildChange(index, child.key, val)}
                   />
                 ) : child.type === "file" ? (
                   <DynamicFile
                     field={child}
-                    value={String((item[child.key] as string | number) ?? "")}
+                    value={ensureString(item[child.key])}
                     onChange={(val) => handleChildChange(index, child.key, val)}
                   />
                 ) : child.type === "textarea" ? (
                   <textarea
                     id={`field-${field.key}-${index}-${child.key}`}
                     className="mt-1.5 w-full px-4 py-2.5 bg-dark-900 border border-dark-600 rounded-lg text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500 focus:ring-1 focus:ring-accent-500/30 transition-all text-sm disabled:opacity-50 min-h-20 resize-y"
-                    value={String((item[child.key] as string | number) ?? "")}
+                    value={ensureString(item[child.key])}
                     onChange={(e) =>
                       handleChildChange(index, child.key, e.target.value)
                     }
@@ -1659,20 +1664,20 @@ function DynamicFieldRenderer({
         />
       ) : field.type === "address" ? (
         <DynamicAddress
-          value={String((formData[field.key] as string | number) ?? "")}
+          value={ensureString(formData[field.key])}
           onChange={(val) => onChange(field.key, val)}
         />
       ) : field.type === "file" ? (
         <DynamicFile
           field={field}
-          value={String((formData[field.key] as string | number) ?? "")}
+          value={ensureString(formData[field.key])}
           onChange={(val) => onChange(field.key, val)}
         />
       ) : field.type === "textarea" ? (
         <textarea
           id={`field-${field.key}`}
           className="mt-1.5 w-full px-4 py-2.5 bg-dark-900 border border-dark-600 rounded-lg text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500 focus:ring-1 focus:ring-accent-500/30 transition-all text-sm disabled:opacity-50 min-h-20 resize-y"
-          value={String((formData[field.key] as string | number) ?? "")}
+          value={ensureString(formData[field.key])}
           onChange={(e) => onChange(field.key, e.target.value)}
           onBlur={(e) => handleBlur(e.target.value)}
           minLength={field.minLength}
@@ -1689,7 +1694,7 @@ function DynamicFieldRenderer({
           }}
           initialValue={
             editingRow && typeof editingRow === "object"
-              ? String(((editingRow as Record<string, unknown>)[field.key] as string | number) ?? "")
+              ? ensureString((editingRow as Record<string, unknown>)[field.key])
               : ""
           }
         />
@@ -1698,7 +1703,7 @@ function DynamicFieldRenderer({
           id={`field-${field.key}`}
           type="text"
           className="mt-1.5"
-          value={String((formData[field.key] as string | number) ?? "")}
+          value={ensureString(formData[field.key])}
           onChange={(e) => {
             const val = e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, "");
             onChange(field.key, val);
@@ -1709,12 +1714,12 @@ function DynamicFieldRenderer({
       ) : field.type === "password" ? (
         <DynamicPassword
           field={field}
-          value={String((formData[field.key] as string | number) ?? "")}
+          value={ensureString(formData[field.key])}
           onChange={(val) => onChange(field.key, val)}
         />
       ) : field.type === "camera" ? (
         <CameraSelector
-          value={String((formData[field.key] as string | number) ?? "")}
+          value={ensureString(formData[field.key])}
           onChange={(val) => {
             if (val instanceof Blob) {
               onChange(field.key, URL.createObjectURL(val));
@@ -1725,30 +1730,30 @@ function DynamicFieldRenderer({
         />
       ) : field.type === "captcha" ? (
         <Captcha
-          value={String((formData[field.key] as string | number) ?? "")}
+          value={ensureString(formData[field.key])}
           onChange={(val) => onChange(field.key, val)}
           security={field.captchaSecurity}
           length={field.captchaLength}
         />
       ) : field.type === "color" ? (
         <ColorPickerSelector
-          value={String((formData[field.key] as string | number) ?? "")}
+          value={ensureString(formData[field.key])}
           onChange={(val) => onChange(field.key, val)}
         />
       ) : field.type === "country" ? (
         <CountrySelector
           label={field.label}
-          value={String((formData[field.key] as string | number) ?? "")}
+          value={ensureString(formData[field.key])}
           onChange={(val) => onChange(field.key, val)}
         />
       ) : field.type === "icon" ? (
         <IconSelector
-          value={String((formData[field.key] as string | number) ?? "")}
+          value={ensureString(formData[field.key])}
           onChange={(val) => onChange(field.key, val)}
         />
       ) : field.type === "phone" ? (
         <PhoneNumber
-          value={String((formData[field.key] as string | number) ?? "")}
+          value={ensureString(formData[field.key])}
           onChange={(val) => onChange(field.key, val)}
           phoneDefaultCountry={
             (field as DynamicFormFieldNormal).phoneDefaultCountry
@@ -1759,7 +1764,7 @@ function DynamicFieldRenderer({
           maxLength={(field as DynamicFormFieldNormal).maxLength}
           error={errors[field.key] || undefined}
           disabled={disabled}
-          onBlur={() => handleBlur(String((formData[field.key] as string | number) ?? ""))}
+          onBlur={() => handleBlur(ensureString(formData[field.key]))}
         />
       ) : field.type === "price" ? (
         <div className="relative mt-1.5 flex items-center">
@@ -1776,7 +1781,7 @@ function DynamicFieldRenderer({
               (field as DynamicFormFieldNormal).pricePrefix ? "pl-10" : "",
             )}
             value={(() => {
-              const val = String((formData[field.key] as string | number) ?? "");
+              const val = ensureString(formData[field.key]);
               if (val === "") return "";
               const num = Number(val);
               if (isNaN(num)) return val;
@@ -1812,7 +1817,7 @@ function DynamicFieldRenderer({
             id={`field-${field.key}`}
             type="date"
             className="w-full pl-12 pr-4 py-2.5 bg-dark-900 border border-dark-600 rounded-lg text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500 focus:ring-1 focus:ring-accent-500/30 transition-all text-sm disabled:opacity-50"
-            value={String((formData[field.key] as string | number) ?? "")}
+            value={ensureString(formData[field.key])}
             onChange={(e) => onChange(field.key, e.target.value)}
             disabled={disabled}
           />
@@ -1861,13 +1866,13 @@ function DynamicFieldRenderer({
         <div className="space-y-2 mt-1.5">
           {SUPPORTED_LANGUAGES.map((langCode) => {
             const langInfo = languages[langCode as LanguageKey];
-            const Flag = langInfo ? flags[langInfo.flag] : null;
+            const Flag = flags[langInfo.flag];
 
             let valObj: Record<string, string> = {};
             try {
               const rawVal = formData[field.key];
               if (typeof rawVal === "string" && rawVal.startsWith("{")) {
-                valObj = JSON.parse(rawVal);
+                valObj = JSON.parse(rawVal) as Record<string, string>;
               } else if (typeof rawVal === "object" && rawVal !== null) {
                 valObj = rawVal as Record<string, string>;
               }
@@ -1908,7 +1913,7 @@ function DynamicFieldRenderer({
             className={
               (field as DynamicFormFieldNormal).numberSuffix ? "pr-12" : ""
             }
-            value={String((formData[field.key] as string | number) ?? "")}
+            value={ensureString(formData[field.key])}
             onChange={(e) => {
               let val = e.target.value;
               const maxLength = (field as DynamicFormFieldNormal).maxLength;

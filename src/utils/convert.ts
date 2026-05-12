@@ -32,7 +32,7 @@ export const formatBytes = (bytes: number): string => {
   const sizes = ["B", "KB", "MB", "GB", "TB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-  return `${(bytes / Math.pow(k, i)).toFixed(2)} ${sizes[i]}`;
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
 };
 
 export const toZeroPadding = (num: number) => {
@@ -47,7 +47,7 @@ export const toPascalCase = (str: string): string => {
 };
 
 export const booleanOnNullable = (value: boolean | null) => {
-  return value === null || value === true ? true : false;
+  return value === null || value;
 };
 
 export const formatRupiah = (amount: number) => {

@@ -1,5 +1,5 @@
 import { useMemo, useRef } from "react";
-import { useLanguageStore } from "@/stores/languageStore";
+import { useLanguageStore, type LanguageCode } from "@/stores/languageStore";
 import Pagination, {
   type PaginationColumn,
   type PaginationField,
@@ -37,7 +37,10 @@ export default function ProductItemPage({ ruleKey }: Props) {
           let category = "";
           try {
             if (category_name.startsWith("{")) {
-              const obj = JSON.parse(category_name);
+              const obj = JSON.parse(category_name) as Record<
+                LanguageCode,
+                string
+              >;
               category = language(obj);
             }
           } catch (e) {
@@ -48,7 +51,7 @@ export default function ProductItemPage({ ruleKey }: Props) {
             label: category || category_name,
             render: (
               <div className="flex items-center gap-2">
-                <IconComponent iconName={item.meta?.icon} className="text-lg" />
+                <IconComponent iconName={item.meta.icon} className="text-lg" />
                 <span>{category}</span>
               </div>
             ),
@@ -73,7 +76,7 @@ export default function ProductItemPage({ ruleKey }: Props) {
           value: item.value,
           render: (
             <div className="flex items-center gap-2">
-              <Image src={item.meta?.logo} alt="logo" className="w-6 h-6" />
+              <Image src={item.meta.logo} alt="logo" className="w-6 h-6" />
               <span>{item.label}</span>
             </div>
           ),
@@ -149,7 +152,7 @@ export default function ProductItemPage({ ruleKey }: Props) {
           let category_name = item.category_name;
           try {
             if (category_name.startsWith("{")) {
-              const obj = JSON.parse(category_name);
+              const obj = JSON.parse(category_name) as Record<LanguageCode, string>;
               category_name = language(obj);
             }
           } catch (e) {
@@ -175,7 +178,7 @@ export default function ProductItemPage({ ruleKey }: Props) {
           let name = item.type_name;
           try {
             if (name.startsWith("{")) {
-              const obj = JSON.parse(name);
+              const obj = JSON.parse(name) as Record<LanguageCode, string>;
               name = language(obj);
             }
           } catch (e) {
@@ -247,7 +250,10 @@ export default function ProductItemPage({ ruleKey }: Props) {
           let condition_name = item.condition_name;
           try {
             if (condition_name.startsWith("{")) {
-              const obj = JSON.parse(condition_name);
+              const obj = JSON.parse(condition_name) as Record<
+                LanguageCode,
+                string
+              >;
               condition_name = language(obj);
             }
           } catch (e) {
@@ -319,7 +325,7 @@ export default function ProductItemPage({ ruleKey }: Props) {
           let category_name = item.category_name;
           try {
             if (category_name.startsWith("{")) {
-              const obj = JSON.parse(category_name);
+              const obj = JSON.parse(category_name) as Record<LanguageCode, string>;
               category_name = language(obj);
             }
           } catch (e) {

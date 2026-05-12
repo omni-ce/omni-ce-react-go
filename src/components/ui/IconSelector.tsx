@@ -60,7 +60,7 @@ export const options: IOption[] = [
 
 // Helper function to load icon library
 async function loadIconLibrary(key: string) {
-  if (loadedLibraries[key]) return loadedLibraries[key];
+  if (key in loadedLibraries) return loadedLibraries[key];
   const lib = options.find((l) => l.key === key);
   if (!lib) return null;
   const library = (await lib.lib()) as Record<string, IconType>;
@@ -90,7 +90,7 @@ export const IconComponent = ({ iconName, ...props }: IconComponentProps) => {
     const [provider, code] = parts;
     loadIconLibrary(provider)
       .then((library) => {
-        if (library && code && library[code]) {
+        if (library && code && code in library) {
           setIconSelected(() => library[code]);
         }
         setIsLoading(false);
@@ -176,7 +176,7 @@ export default function IconSelector({
   }, [isOpen]);
 
   useEffect(() => {
-    if (selectedLibrary && !loadedIcons[selectedLibrary]) {
+    if (selectedLibrary && !(selectedLibrary in loadedIcons)) {
       setIsLoadingLibrary(true);
       loadIconLibrary(selectedLibrary)
         .then((library) => {
@@ -190,7 +190,7 @@ export default function IconSelector({
   }, [selectedLibrary, loadedIcons]);
 
   const filteredIcons = useMemo(() => {
-    if (!selectedLibrary || !loadedIcons[selectedLibrary]) return [];
+    if (!selectedLibrary || !(selectedLibrary in loadedIcons)) return [];
     const library = loadedIcons[selectedLibrary];
     const results: { key: string; name: string; component: IconType }[] = [];
     Object.keys(library).forEach((iconKey) => {

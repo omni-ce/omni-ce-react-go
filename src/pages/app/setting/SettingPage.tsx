@@ -48,7 +48,7 @@ export default function SettingPage({}: Props) {
     }
   }, [user]);
 
-  const handleUpdateProfile = async (e: React.FormEvent) => {
+  const handleUpdateProfile = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isUpdatingProfile) return;
 
@@ -163,7 +163,7 @@ export default function SettingPage({}: Props) {
     }
   };
 
-  const handleChangePassword = async (e: React.FormEvent) => {
+  const handleChangePassword = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isSaving) return;
     if (newPassword !== confirmPassword) {

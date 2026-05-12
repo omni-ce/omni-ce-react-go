@@ -121,10 +121,10 @@ export const usePosStore = create<PosState>((set) => ({
   setActiveBrandId: (id) => set({ activeBrandId: id }),
   setCatalogData: (data) =>
     set({
-      categories: data.categories || [],
-      types: data.types || [],
-      brands: data.brands || [],
-      catalogItems: data.rows || [],
+      categories: data.categories,
+      types: data.types,
+      brands: data.brands,
+      catalogItems: data.rows,
     }),
 
   addToCart: (menuItem) =>

@@ -27,11 +27,10 @@ export const useLanguageStore = create<LanguageState>()(
           const nextIndex = (currentIndex + 1) % SUPPORTED_LANGUAGES.length;
           return { languageCode: SUPPORTED_LANGUAGES[nextIndex] };
         }),
-      language: (textMap) =>
-        textMap[get().languageCode] ?? textMap[SUPPORTED_LANGUAGES[0]], // default to first language
+      language: (textMap) => textMap[get().languageCode],
     }),
     {
-      name: "ketring-language",
+      name: "app-language",
     },
   ),
 );

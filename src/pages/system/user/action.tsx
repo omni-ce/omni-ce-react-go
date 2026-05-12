@@ -45,7 +45,7 @@ export const ChangePassword = ({ row, onClose }: ChangePasswordProps) => {
           password: formData.password,
         },
       );
-      if (res.data?.status === 200 || res.status === 200) {
+      if (res.data.status === 200 || res.status === 200) {
         toast.success(
           language({
             id: "Password berhasil diubah",
@@ -54,15 +54,17 @@ export const ChangePassword = ({ row, onClose }: ChangePasswordProps) => {
         );
         onClose();
       } else {
-        setErrorMsg(language(res.data?.message));
+        setErrorMsg(language(res.data.message));
       }
     } catch (e) {
       const error = e as AxiosError<{
-        message: string;
+        message: Record<LanguageKey, string>;
         status: number;
       }>;
       setErrorMsg(
-        error?.response?.data?.message ?? "Failed to change password",
+        error.response?.data
+          ? language(error.response.data.message)
+          : "Failed to change password",
       );
     } finally {
       setLoading(false);

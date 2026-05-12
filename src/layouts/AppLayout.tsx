@@ -188,7 +188,7 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
   const canSwitchRole = useMemo(() => {
     if (!user) return false;
     if (user.role === "su") return true;
-    if (user.roles && user.roles.length > 1) return true;
+    if (user.roles.length > 1) return true;
     return false;
   }, [user]);
   const displayRole = useMemo(() => {
@@ -196,11 +196,11 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
     if (user.role === "su") return "Super Admin";
     if (user.role === "user" || user.role === "client") {
       if (role_selected) {
-        const found = user.roles?.find(
+        const found = user.roles.find(
           (r) => r.role_id === role_selected.role_id,
         );
         if (found) return found.role_name;
-        if (user.roles && user.roles.length > 0) return user.roles[0].role_name;
+        if (user.roles.length > 0) return user.roles[0].role_name;
         return "No Role";
       }
       return "No Role Selected";
@@ -211,7 +211,7 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
     if (!user) return "";
     if (user.role === "su") return "All Divisions";
     if (role_selected) {
-      const found = user.roles?.find(
+      const found = user.roles.find(
         (r) => r.division_id === role_selected.division_id,
       );
       if (found) return found.division_name;
@@ -332,7 +332,7 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
           r.role_id === roleId &&
           r.key === fullPath &&
           r.action === "read" &&
-          r.state === true,
+          r.state,
       );
     }
 

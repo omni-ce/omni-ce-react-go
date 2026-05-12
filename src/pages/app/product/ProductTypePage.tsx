@@ -37,7 +37,7 @@ export default function ProductTypePage({ ruleKey }: Props) {
           let category = "";
           try {
             if (category_name.startsWith("{")) {
-              const obj = JSON.parse(category_name);
+              const obj = JSON.parse(category_name) as Record<LanguageCode, string>;
               category = language(obj);
             }
           } catch (e) {
@@ -47,7 +47,7 @@ export default function ProductTypePage({ ruleKey }: Props) {
             value: item.value,
             render: (
               <div className="flex items-center gap-2">
-                <IconComponent iconName={item.meta?.icon} className="text-lg" />
+                <IconComponent iconName={item.meta.icon} className="text-lg" />
                 <span>{category}</span>
               </div>
             ),
@@ -70,7 +70,7 @@ export default function ProductTypePage({ ruleKey }: Props) {
           let category_name = item.category_name;
           try {
             if (category_name.startsWith("{")) {
-              const obj = JSON.parse(category_name);
+              const obj = JSON.parse(category_name) as Record<LanguageCode, string>;
               category_name = language(obj);
             }
           } catch (e) {
@@ -96,7 +96,7 @@ export default function ProductTypePage({ ruleKey }: Props) {
           let name = item.name;
           try {
             if (name.startsWith("{")) {
-              const obj = JSON.parse(name);
+              const obj = JSON.parse(name) as Record<LanguageCode, string>;
               name = language(obj);
             }
           } catch (e) {

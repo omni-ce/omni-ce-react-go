@@ -11,7 +11,8 @@ import { CacheFirst, NetworkOnly } from "workbox-strategies";
 declare let self: ServiceWorkerGlobalScope;
 
 self.addEventListener("message", (event) => {
-  if (event.data ?? event.data.type === "SKIP_WAITING") self.skipWaiting();
+  if (event.data && (event.data as { type: string }).type === "SKIP_WAITING")
+    self.skipWaiting();
 });
 
 // self.__WB_MANIFEST is the default injection point
@@ -128,10 +129,10 @@ self.addEventListener("push", (event) => {
 
     const title = data.title ?? "Notifikasi Baru";
     const options: NotificationOptions = {
-      body: data?.body ?? "Anda punya pesan baru",
-      icon: data?.icon ?? "/favicon.svg", // Make sure this file exists
-      badge: data?.icon ?? "/favicon.svg", // Make sure this file exists
-      data: data?.url ?? "/",
+      body: data.body ?? "Anda punya pesan baru",
+      icon: data.icon ?? "/favicon.svg", // Make sure this file exists
+      badge: data.icon ?? "/favicon.svg", // Make sure this file exists
+      data: data.url ?? "/",
       // Add more options for better notifications
       // vibrate: [100, 50, 100],
       // timestamp: Date.now(),
@@ -140,7 +141,7 @@ self.addEventListener("push", (event) => {
 
     // Make sure we have permission before showing notification
     event.waitUntil(
-      self.registration.showNotification(title, options).catch((error) => {
+      self.registration.showNotification(title, options).catch((error: unknown) => {
         console.error("Error showing notification:", error);
         // Check if we have permission
         if (Notification.permission !== "granted") {
@@ -161,7 +162,7 @@ self.addEventListener("notificationclick", (event) => {
   event.notification.close();
 
   // Get the URL from notification data
-  const url = event.notification.data ?? "/";
+  const url = (event.notification.data as string | undefined) ?? "/";
 
   // Handle navigation
   event.waitUntil(
@@ -174,7 +175,7 @@ self.addEventListener("notificationclick", (event) => {
       .then((clientList: readonly WindowClient[]) => {
         // Check if there is already a window/tab open with the target URL
         for (const client of clientList) {
-          const urlObj = new URL(url.toString(), self.location.origin);
+          const urlObj = new URL(url, self.location.origin);
           if (client.url.includes(urlObj.pathname) && "focus" in client) {
             // If we find it, just focus it
             return client.focus();
@@ -182,7 +183,7 @@ self.addEventListener("notificationclick", (event) => {
         }
 
         // If not found, open a new window/tab
-        return self.clients.openWindow(url.toString());
+        return self.clients.openWindow(url);
       }),
   );
 });
