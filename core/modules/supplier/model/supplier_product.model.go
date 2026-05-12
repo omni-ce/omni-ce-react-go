@@ -11,8 +11,8 @@ type SupplierProduct struct {
 	IsActive   bool `json:"is_active" gorm:"default:true"`
 
 	// relations
-	Supplier SupplierEntity      `json:"supplier" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	Product  product.ProductItem `json:"product" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Supplier SupplierEntity      `json:"supplier" gorm:"foreignKey:SupplierID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Product  product.ProductItem `json:"product" gorm:"foreignKey:ProductID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 func (s *SupplierProduct) Map() map[string]any {
