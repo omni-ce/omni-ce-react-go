@@ -343,9 +343,6 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
 
                     return (
                       <div key={`ea-${idx}`} className="contents">
-                        {/* {!(action.icon as string) &&
-                          action.button &&
-                          action.button(row, reload)} */}
                         {action.icon && (
                           <Button
                             variant="ghost"

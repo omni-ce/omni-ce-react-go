@@ -126,6 +126,7 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
         header: language({ id: "Lokasi Gudang", en: "Warehouse Location" }),
         sort: true,
         search: true,
+        onlySuperAdmin: true,
         render: (item) => (
           <div className="flex flex-col gap-1.5 py-1">
             <div className="flex items-center gap-2">
