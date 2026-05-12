@@ -23,7 +23,7 @@ export default function App() {
   return (
     <Fragment>
       <RouterProvider router={routers} />
-      {use_offline_app && <PWABadge />}
+      {(use_offline_app as unknown as boolean) && <PWABadge />}
     </Fragment>
   );
 }

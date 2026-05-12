@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from "react";
-import { useLanguageStore } from "@/stores/languageStore";
+import { useLanguageStore, type LanguageCode } from "@/stores/languageStore";
 import Pagination, {
   type PaginationColumn,
   type PaginationField,

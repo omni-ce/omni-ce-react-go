@@ -15,12 +15,14 @@ function PWABadge() {
   } = useRegisterSW({
     onRegisteredSW(swUrl, r) {
       if (period <= 0) return;
-      if (r.active?.state === "activated") {
-        registerPeriodicSync(period, swUrl, r);
-      } else if (r.installing) {
-        r.installing.addEventListener("statechange", (e) => {
+      const registration = r as unknown as ServiceWorkerRegistration;
+      if (registration.active?.state === "activated") {
+        registerPeriodicSync(period, swUrl, registration);
+      } else if (registration.installing) {
+        registration.installing.addEventListener("statechange", (e) => {
           const sw = e.target as ServiceWorker;
-          if (sw.state === "activated") registerPeriodicSync(period, swUrl, r);
+          if (sw.state === "activated")
+            registerPeriodicSync(period, swUrl, registration);
         });
       }
     },

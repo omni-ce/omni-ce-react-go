@@ -1650,7 +1650,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                           onClose: () => setExtraActionState(null),
                         },
                       )
-                    : extraActions[extraActionState.actionIndex].component}
+                    : (extraActions[extraActionState.actionIndex].component as ReactNode)}
               </div>
             </DialogContent>
           </Dialog>

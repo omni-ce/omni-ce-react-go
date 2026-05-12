@@ -1,5 +1,5 @@
 import { useMemo, useRef } from "react";
-import { useLanguageStore } from "@/stores/languageStore";
+import { useLanguageStore, type LanguageCode } from "@/stores/languageStore";
 import Pagination, {
   type PaginationColumn,
   type PaginationField,
@@ -37,7 +37,10 @@ export default function ProductTypePage({ ruleKey }: Props) {
           let category = "";
           try {
             if (category_name.startsWith("{")) {
-              const obj = JSON.parse(category_name) as Record<LanguageCode, string>;
+              const obj = JSON.parse(category_name) as Record<
+                LanguageCode,
+                string
+              >;
               category = language(obj);
             }
           } catch (e) {
@@ -70,7 +73,10 @@ export default function ProductTypePage({ ruleKey }: Props) {
           let category_name = item.category_name;
           try {
             if (category_name.startsWith("{")) {
-              const obj = JSON.parse(category_name) as Record<LanguageCode, string>;
+              const obj = JSON.parse(category_name) as Record<
+                LanguageCode,
+                string
+              >;
               category_name = language(obj);
             }
           } catch (e) {
