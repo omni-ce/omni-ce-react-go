@@ -146,11 +146,6 @@ export interface DynamicFormFieldNormal<T = unknown> {
   placeholder?: string;
 }
 
-export interface WeightValue {
-  amount: string;
-  unit: string;
-}
-
 interface DynamicFormFieldChildren {
   key?: never;
   type?: never;
@@ -956,10 +951,7 @@ function ArrayField({
           </button>
           <div className="grid grid-cols-12 gap-4 mt-2">
             {field.children?.map((child) => (
-              <div
-                key={child.key}
-                className={getColClass(child)}
-              >
+              <div key={child.key} className={getColClass(child)}>
                 <Label
                   htmlFor={`field-${field.key}-${index}-${child.key}`}
                   required={(child as DynamicFormFieldNormal).required}
@@ -1177,17 +1169,11 @@ function DynamicWeight({
 }: {
   field: DynamicFormField;
   formData: Record<string, unknown>;
-  onChange: (val: WeightValue) => void;
+  onChange: (key: string, val: unknown) => void;
   disabled?: boolean;
 }) {
-  const valueRaw = field.key ? formData[field.key] : undefined;
-  const value: WeightValue =
-    typeof valueRaw === "object" && valueRaw !== null
-      ? (valueRaw as WeightValue)
-      : {
-          amount: "",
-          unit: "",
-        };
+  const amount = field.key ? (formData[field.key] as string) : "";
+  const unitId = typeof formData.unit_id === "string" ? formData.unit_id : "";
   const { language } = useLanguageStore();
 
   return (
@@ -1195,8 +1181,8 @@ function DynamicWeight({
       <Input
         type="number"
         className="flex-1"
-        value={value.amount}
-        onChange={(e) => onChange({ ...value, amount: e.target.value })}
+        value={amount}
+        onChange={(e) => field.key && onChange(field.key, e.target.value)}
         disabled={disabled}
         placeholder={language({ id: "Berat", en: "Weight" })}
       />
@@ -1205,12 +1191,28 @@ function DynamicWeight({
           field={
             {
               ...field,
-              key: "unit",
+              key: "unit_id",
               label: "",
+              selectOptions: "units",
+              selectFormat: (item: {
+                value: string | number;
+                label: string;
+                meta?: { short_name?: string };
+              }) => ({
+                value: item.value,
+                render: (
+                  <div className="flex items-center gap-2">
+                    <span>{item.label}</span>
+                    <span className="text-xs text-muted-foreground">
+                      ({item.meta?.short_name})
+                    </span>
+                  </div>
+                ),
+              }),
             } as DynamicFormField
           }
-          formData={{ unit: value.unit }}
-          onChange={(unit) => onChange({ ...value, unit })}
+          formData={{ unit_id: unitId }}
+          onChange={(val) => onChange("unit_id", val)}
         />
       </div>
     </div>
@@ -1918,7 +1920,7 @@ function DynamicFieldRenderer({
         <DynamicWeight
           field={field}
           formData={formData}
-          onChange={(val) => onChange(field.key, val)}
+          onChange={onChange}
           disabled={disabled}
         />
       ) : field.type === "camera" ? (
