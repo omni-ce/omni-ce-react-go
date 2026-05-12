@@ -1,6 +1,7 @@
 package model
 
 import (
+	user "react-go/core/modules/user/model"
 	"react-go/core/types"
 	"time"
 
@@ -20,7 +21,10 @@ type ProductItemImage struct {
 
 	// SLA: create & update by user
 	UploadedAt time.Time `json:"uploaded_at" gorm:"autoCreateTime"`
-	UploadedBy uuid.UUID `json:"uploaded_by" gorm:"not null"`
+	UploadedBy uuid.UUID `json:"uploaded_by" gorm:"type:char(36);not null"`
+
+	// relations
+	Uploaded user.User `json:"uploaded" gorm:"foreignKey:UploadedBy;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 func (s *ProductItemImage) BeforeCreate(tx *gorm.DB) error {

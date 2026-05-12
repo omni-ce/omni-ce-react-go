@@ -2,6 +2,7 @@ package model
 
 import (
 	"log"
+	"os/user"
 	"react-go/core/function/hash"
 	"react-go/core/types"
 	"time"
@@ -26,7 +27,16 @@ type User struct {
 	PhoneNumber string    `json:"phone_number"`
 	Email       string    `json:"email"`
 	IsActive    bool      `json:"is_active" gorm:"not null;default:true"`
-	CreatedAt   time.Time `json:"created_at" gorm:"autoCreateTime"`
+
+	// SLA: create & update by user
+	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
+	CreatedBy uuid.UUID `json:"created_by" gorm:"type:char(36);not null"`
+	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime"`
+	UpdatedBy uuid.UUID `json:"updated_by" gorm:"type:char(36);not null"`
+
+	// relations
+	Created user.User `json:"created" gorm:"foreignKey:CreatedBy;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Updated user.User `json:"updated" gorm:"foreignKey:UpdatedBy;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 func (s *User) BeforeCreate(tx *gorm.DB) error {

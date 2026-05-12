@@ -2,18 +2,29 @@ package model
 
 import (
 	"log"
+	user "react-go/core/modules/user/model"
 	"react-go/core/types"
 	"time"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type RoleDivision struct {
-	ID          uint      `json:"id" gorm:"autoIncrement;primaryKey"`
-	Name        string    `json:"name" gorm:"type:varchar(50);uniqueIndex;not null"`
-	Description string    `json:"description" gorm:"type:varchar(255)"`
-	IsActive    bool      `json:"is_active" gorm:"type:boolean;default:true"`
-	CreatedAt   time.Time `json:"created_at" gorm:"autoCreateTime"`
+	ID          uint   `json:"id" gorm:"autoIncrement;primaryKey"`
+	Name        string `json:"name" gorm:"type:varchar(50);uniqueIndex;not null"`
+	Description string `json:"description" gorm:"type:varchar(255)"`
+	IsActive    bool   `json:"is_active" gorm:"type:boolean;default:true"`
+
+	// SLA: create & update by user
+	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
+	CreatedBy uuid.UUID `json:"created_by" gorm:"type:char(36);not null"`
+	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime"`
+	UpdatedBy uuid.UUID `json:"updated_by" gorm:"type:char(36);not null"`
+
+	// relations
+	Created user.User `json:"created" gorm:"foreignKey:CreatedBy;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Updated user.User `json:"updated" gorm:"foreignKey:UpdatedBy;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 func (s *RoleDivision) Option() types.Option {

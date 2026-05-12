@@ -66,6 +66,7 @@ func SeedAll(db *gorm.DB) {
 	role.RoleDivision{}.Seed(db)
 	role.Role{}.Seed(db)
 	rule.Rule{}.Seed(db)
+	master_data.Unit{}.Seed(db)
 
 	// Custom
 }

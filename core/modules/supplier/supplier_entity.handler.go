@@ -63,7 +63,7 @@ func EntityCreate(c *fiber.Ctx) error {
 func EntityPaginate(c *fiber.Ctx) error {
 	entities := make([]model.SupplierEntity, 0)
 	pagination, err := function.Pagination(c, &model.SupplierEntity{}, func(db *gorm.DB) *gorm.DB {
-		return db.Preload("CreatedBy").Preload("UpdatedBy")
+		return db.Preload("Created").Preload("Updated")
 	}, []string{"name", "address", "phone", "email"}, &entities)
 	if err != nil {
 		return dto.InternalServerError(c, types.Language{

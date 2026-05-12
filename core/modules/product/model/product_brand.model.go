@@ -4,6 +4,8 @@ import (
 	"react-go/core/types"
 	"time"
 
+	user "react-go/core/modules/user/model"
+
 	"github.com/google/uuid"
 )
 
@@ -16,9 +18,13 @@ type ProductBrand struct {
 
 	// SLA: create & update by user
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
-	CreatedBy uuid.UUID `json:"created_by" gorm:"not null"`
+	CreatedBy uuid.UUID `json:"created_by" gorm:"type:char(36);not null"`
 	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime"`
-	UpdatedBy uuid.UUID `json:"updated_by" gorm:"not null"`
+	UpdatedBy uuid.UUID `json:"updated_by" gorm:"type:char(36);not null"`
+
+	// relations
+	Created user.User `json:"created" gorm:"foreignKey:CreatedBy;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Updated user.User `json:"updated" gorm:"foreignKey:UpdatedBy;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 func (s *ProductBrand) Map() map[string]any {

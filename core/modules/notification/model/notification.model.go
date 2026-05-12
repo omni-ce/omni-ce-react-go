@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
-	userModel "react-go/core/modules/user/model"
+	user "react-go/core/modules/user/model"
 
 	"github.com/google/uuid"
 )
@@ -18,19 +18,29 @@ const (
 )
 
 type Notification struct {
-	ID        uint       `json:"id" gorm:"autoIncrement;primaryKey"`
-	UserID    uuid.UUID  `json:"user_id" gorm:"type:char(36);not null"`
-	Type      string     `json:"type" gorm:"type:varchar(20)"`
-	Title     string     `json:"title" gorm:"type:text"`
-	Message   string     `json:"message" gorm:"type:text"`
-	Link      string     `json:"link,omitempty" gorm:"type:varchar(255);default:null"`     // new tab
-	Navigate  string     `json:"navigate,omitempty" gorm:"type:varchar(255);default:null"` // react router
-	IsRead    bool       `json:"is_read" gorm:"type:boolean;default:false"`
-	CreatedAt time.Time  `json:"created_at" gorm:"autoCreateTime"`
-	ReadAt    *time.Time `json:"read_at" gorm:"default:null"`
-	DeletedAt *time.Time `json:"-" gorm:"index;column:deleted_at;null"`
+	ID     uint      `json:"id" gorm:"autoIncrement;primaryKey"`
+	UserID uuid.UUID `json:"user_id" gorm:"type:char(36);not null"`
+
+	Type     string     `json:"type" gorm:"type:varchar(20)"`
+	Title    string     `json:"title" gorm:"type:text"`
+	Message  string     `json:"message" gorm:"type:text"`
+	Link     string     `json:"link,omitempty" gorm:"type:varchar(255);default:null"`     // new tab
+	Navigate string     `json:"navigate,omitempty" gorm:"type:varchar(255);default:null"` // react router
+	IsRead   bool       `json:"is_read" gorm:"type:boolean;default:false"`
+	ReadAt   *time.Time `json:"read_at" gorm:"default:null"`
+
 	// relations
-	User userModel.User `json:"user" gorm:"foreignKey:UserID;references:ID;onDelete:CASCADE"`
+	User user.User `json:"user" gorm:"foreignKey:UserID;references:ID;onDelete:CASCADE"`
+
+	// SLA: create & update by user
+	CreatedAt time.Time  `json:"created_at" gorm:"autoCreateTime"`
+	CreatedBy uuid.UUID  `json:"created_by" gorm:"type:char(36);not null"`
+	DeletedAt *time.Time `json:"-" gorm:"index;column:deleted_at;null"`
+	DeletedBy *uuid.UUID `json:"deleted_by" gorm:"type:char(36);not null"`
+
+	// relations
+	Created user.User `json:"created" gorm:"foreignKey:CreatedBy;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Deleted user.User `json:"deleted" gorm:"foreignKey:DeletedBy;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 func (s *Notification) Map() map[string]any {

@@ -1,6 +1,7 @@
 package model
 
 import (
+	user "react-go/core/modules/user/model"
 	"react-go/core/types"
 	"time"
 
@@ -8,19 +9,25 @@ import (
 )
 
 type CompanyEntity struct {
-	ID          uint      `json:"id" gorm:"autoIncrement;primaryKey"`
-	Logo        string    `json:"logo" gorm:"type:varchar(255);not null"`
-	Name        string    `json:"name" gorm:"type:varchar(255);not null"`
-	NpwpCode    string    `json:"npwp_code" gorm:"type:varchar(255);not null"`
-	IsTaxPayer  bool      `json:"is_taxpayer" gorm:"type:boolean;not null"`
-	NpwpAlias   string    `json:"npwp_alias" gorm:"type:varchar(255);not null"`
-	Address     string    `json:"address" gorm:"type:text;not null"`
-	AddressCode string    `json:"address_code" gorm:"type:varchar(255);not null"`
-	IsActive    bool      `json:"is_active" gorm:"type:boolean;not null"`
-	CreatedAt   time.Time `json:"created_at" gorm:"autoCreateTime"`
-	CreatedBy   uuid.UUID `json:"created_by" gorm:"type:char(36);not null"`
-	UpdatedAt   time.Time `json:"updated_at" gorm:"autoUpdateTime"`
-	UpdatedBy   uuid.UUID `json:"updated_by" gorm:"type:char(36);not null"`
+	ID          uint   `json:"id" gorm:"autoIncrement;primaryKey"`
+	Logo        string `json:"logo" gorm:"type:varchar(255);not null"`
+	Name        string `json:"name" gorm:"type:varchar(255);not null"`
+	NpwpCode    string `json:"npwp_code" gorm:"type:varchar(255);not null"`
+	IsTaxPayer  bool   `json:"is_taxpayer" gorm:"type:boolean;not null"`
+	NpwpAlias   string `json:"npwp_alias" gorm:"type:varchar(255);not null"`
+	Address     string `json:"address" gorm:"type:text;not null"`
+	AddressCode string `json:"address_code" gorm:"type:varchar(255);not null"`
+	IsActive    bool   `json:"is_active" gorm:"type:boolean;not null"`
+
+	// SLA: create & update by user
+	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
+	CreatedBy uuid.UUID `json:"created_by" gorm:"type:char(36);not null"`
+	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime"`
+	UpdatedBy uuid.UUID `json:"updated_by" gorm:"type:char(36);not null"`
+
+	// relations
+	Created user.User `json:"created" gorm:"foreignKey:CreatedBy;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Updated user.User `json:"updated" gorm:"foreignKey:UpdatedBy;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 func (s *CompanyEntity) Map() map[string]any {

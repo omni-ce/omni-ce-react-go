@@ -1,6 +1,7 @@
 package model
 
 import (
+	user "react-go/core/modules/user/model"
 	"react-go/core/types"
 	"time"
 
@@ -8,20 +9,25 @@ import (
 )
 
 type ProductType struct {
-	ID         uint   `json:"id" gorm:"autoIncrement;primaryKey"`
-	CategoryID uint   `json:"category_id" gorm:"not null"`
-	Key        string `json:"key" gorm:"type:varchar(255);uniqueIndex;not null"`
-	Name       string `json:"name" gorm:"type:varchar(255);not null"`
-	IsActive   bool   `json:"is_active" gorm:"default:true"`
+	ID         uint `json:"id" gorm:"autoIncrement;primaryKey"`
+	CategoryID uint `json:"category_id" gorm:"not null"`
+
+	Key      string `json:"key" gorm:"type:varchar(255);uniqueIndex;not null"`
+	Name     string `json:"name" gorm:"type:varchar(255);not null"`
+	IsActive bool   `json:"is_active" gorm:"default:true"`
 
 	// relations
-	Category ProductCategory `json:"category" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Category ProductCategory `json:"category" gorm:"foreignKey:CategoryID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 
 	// SLA: create & update by user
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
-	CreatedBy uuid.UUID `json:"created_by" gorm:"not null"`
+	CreatedBy uuid.UUID `json:"created_by" gorm:"type:char(36);not null"`
 	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime"`
-	UpdatedBy uuid.UUID `json:"updated_by" gorm:"not null"`
+	UpdatedBy uuid.UUID `json:"updated_by" gorm:"type:char(36);not null"`
+
+	// relations
+	Created user.User `json:"created" gorm:"foreignKey:CreatedBy;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Updated user.User `json:"updated" gorm:"foreignKey:UpdatedBy;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 func (s *ProductType) Map() map[string]any {

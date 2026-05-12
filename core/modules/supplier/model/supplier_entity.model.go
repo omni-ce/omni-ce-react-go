@@ -20,19 +20,19 @@ type SupplierEntity struct {
 	Latitude  float64 `json:"latitude" gorm:"type:float;not null"`
 	IsActive  bool    `json:"is_active" gorm:"default:true"`
 
-	// relations
-	Created user.User `json:"created" gorm:"foreignKey:CreatedBy;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	Updated user.User `json:"updated" gorm:"foreignKey:UpdatedBy;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-
 	// SLA: create & update by user
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
-	CreatedBy uuid.UUID `json:"created_by" gorm:"not null"`
+	CreatedBy uuid.UUID `json:"created_by" gorm:"type:char(36);not null"`
 	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime"`
-	UpdatedBy uuid.UUID `json:"updated_by" gorm:"not null"`
+	UpdatedBy uuid.UUID `json:"updated_by" gorm:"type:char(36);not null"`
+
+	// relations
+	Created user.User `json:"created" gorm:"foreignKey:CreatedBy;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Updated user.User `json:"updated" gorm:"foreignKey:UpdatedBy;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 func (s *SupplierEntity) Map() map[string]any {
-	return map[string]any{
+	res := map[string]any{
 		"id":         s.ID,
 		"name":       s.Name,
 		"address":    s.Address,
@@ -46,6 +46,15 @@ func (s *SupplierEntity) Map() map[string]any {
 		"updated_at": s.UpdatedAt,
 		"updated_by": s.UpdatedBy,
 	}
+
+	if s.Created.ID != [16]byte{} {
+		res["created"] = s.Created.Map()
+	}
+	if s.Updated.ID != [16]byte{} {
+		res["updated"] = s.Updated.Map()
+	}
+
+	return res
 }
 
 func (SupplierEntity) Seed(db *gorm.DB) {

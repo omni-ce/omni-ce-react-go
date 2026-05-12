@@ -9,11 +9,13 @@ import (
 )
 
 type Rule struct {
-	ID     uint   `json:"id" gorm:"autoIncrement;primaryKey"`
-	RoleID uint   `json:"role_id" gorm:"type:bigint;not null;uniqueIndex:idx_role_menu_key_role_action"`
+	ID     uint `json:"id" gorm:"autoIncrement;primaryKey"`
+	RoleID uint `json:"role_id" gorm:"type:bigint;not null;uniqueIndex:idx_role_menu_key_role_action"`
+
 	Key    string `json:"key" gorm:"uniqueIndex:idx_role_menu_key_role_action"`
 	Action string `json:"action" gorm:"uniqueIndex:idx_role_menu_key_role_action"` // create, read, update, delete, set
 	State  bool   `json:"state" gorm:"default:false"`
+
 	// relations
 	Role role.Role `json:"role" gorm:"foreignKey:RoleID;references:ID;constraint:OnDelete:CASCADE"`
 }

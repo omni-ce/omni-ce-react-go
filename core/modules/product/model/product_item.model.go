@@ -5,23 +5,25 @@ import (
 	"time"
 
 	master_data "react-go/core/modules/master_data/model"
+	user "react-go/core/modules/user/model"
 
 	"github.com/google/uuid"
 )
 
 type ProductItem struct {
-	ID           uint    `json:"id" gorm:"autoIncrement;primaryKey"`
-	Key          string  `json:"key" gorm:"type:varchar(255);uniqueIndex;not null"`
-	CategoryID   uint    `json:"category_id" gorm:"not null"`
-	TypeID       uint    `json:"type_id" gorm:"not null"`
-	BrandID      uint    `json:"brand_id" gorm:"not null"`
-	VariantID    uint    `json:"varian_id" gorm:"not null"`
-	MemoryID     *uint   `json:"memory_id" gorm:"default:null"`
-	ColorID      *uint   `json:"color_id" gorm:"default:null"`
-	ConditionID  uint    `json:"condition_id" gorm:"not null"`
-	Weight       float64 `json:"weight" gorm:"not null"`
-	WeightUnitID uint    `json:"weight_unit_id" gorm:"not null"`
-	IsActive     bool    `json:"is_active" gorm:"default:true"`
+	ID           uint  `json:"id" gorm:"autoIncrement;primaryKey"`
+	CategoryID   uint  `json:"category_id" gorm:"not null"`
+	TypeID       uint  `json:"type_id" gorm:"not null"`
+	BrandID      uint  `json:"brand_id" gorm:"not null"`
+	VariantID    uint  `json:"varian_id" gorm:"not null"`
+	MemoryID     *uint `json:"memory_id" gorm:"default:null"`
+	ColorID      *uint `json:"color_id" gorm:"default:null"`
+	ConditionID  uint  `json:"condition_id" gorm:"not null"`
+	WeightUnitID uint  `json:"weight_unit_id" gorm:"not null"`
+
+	Key      string  `json:"key" gorm:"type:varchar(255);uniqueIndex;not null"`
+	Weight   float64 `json:"weight" gorm:"not null"`
+	IsActive bool    `json:"is_active" gorm:"default:true"`
 
 	// StockKeeping Unit
 	SKU string `json:"sku" gorm:"type:varchar(255);uniqueIndex;not null"`
@@ -38,9 +40,13 @@ type ProductItem struct {
 
 	// SLA: create & update by user
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
-	CreatedBy uuid.UUID `json:"created_by" gorm:"not null"`
+	CreatedBy uuid.UUID `json:"created_by" gorm:"type:char(36);not null"`
 	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime"`
-	UpdatedBy uuid.UUID `json:"updated_by" gorm:"not null"`
+	UpdatedBy uuid.UUID `json:"updated_by" gorm:"type:char(36);not null"`
+
+	// relations
+	Created user.User `json:"created" gorm:"foreignKey:CreatedBy;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Updated user.User `json:"updated" gorm:"foreignKey:UpdatedBy;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 func (s *ProductItem) Map() map[string]any {
