@@ -42,3 +42,10 @@ tsconfig.node.tsbuildinfo
 
 react-go
 main
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

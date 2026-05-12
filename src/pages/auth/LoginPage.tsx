@@ -5,7 +5,6 @@ import { useLanguageStore } from "@/stores/languageStore";
 import AppIconSvg from "@/assets/react_go.svg";
 import { useRuleStore } from "@/stores/ruleStore";
 import { IconComponent } from "@/components/ui/IconSelector";
-import Image from "@/components/Image";
 import DynamicForm, { type DynamicFormField } from "@/components/DynamicForm";
 
 export default function LoginPage() {
