@@ -20,10 +20,6 @@ export default function WarehouseLocationPage({ ruleKey }: Props) {
   const paginationRef = useRef<PaginationHandle>(null);
   const { languageCode, language } = useLanguageStore();
 
-  const [dataSelected, setDataSelected] = useState<WarehouseLocation | null>(
-    null,
-  );
-
   const fields = useMemo(
     () => [
       {

@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useLanguageStore } from "@/stores/languageStore";
 import Pagination, {
   type PaginationColumn,
@@ -21,6 +21,10 @@ interface Props {
 export default function WarehouseProductPage({ ruleKey }: Props) {
   const paginationRef = useRef<PaginationHandle>(null);
   const { languageCode, language } = useLanguageStore();
+
+  const [dataSelected, setDataSelected] = useState<WarehouseProduct | null>(
+    null,
+  );
 
   const fields = useMemo(
     () => [
@@ -123,19 +127,34 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
         sort: true,
         search: true,
         render: (item) => (
-          <span className="font-medium flex flex-col">
+          <div className="flex flex-col gap-1.5 py-1">
             <div className="flex items-center gap-2">
               <Image
                 src={item.entity_logo}
                 alt="logo"
-                className="w-6 h-6 rounded-full"
+                className="w-6 h-6 rounded-full shrink-0 border border-dark-600/40"
               />
-              <span>{item.entity_name}</span>
+              <span className="font-bold text-foreground text-sm truncate">
+                {item.entity_name}
+              </span>
             </div>
-            {item.warehouse_location_name}: {` `}
-            <Badge variant="secondary">{item.division_name}</Badge>
-            <span className="font-medium">{item.role_name}</span>
-          </span>
+            <div className="flex flex-col gap-1 ml-8">
+              <span className="text-xs text-dark-100 font-semibold truncate">
+                {item.warehouse_location_name}
+              </span>
+              <div className="flex items-center gap-1.5">
+                <Badge
+                  variant="outline"
+                  className="text-[10px] py-0 h-4 border-dark-600 bg-dark-800 text-dark-300"
+                >
+                  {item.division_name}
+                </Badge>
+                <span className="text-[11px] text-dark-400">
+                  {item.role_name}
+                </span>
+              </div>
+            </div>
+          </div>
         ),
       },
       {
@@ -228,12 +247,13 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
         module="warehouse/product"
         fields={fields as PaginationField[]}
         popupWidth="80%"
+        dataSelected={dataSelected?.id}
         extraActions={[
           {
             icon: "Ai/AiOutlineProduct",
             label: language({ id: "Produk", en: "Product" }),
             button: (row) => {
-              alert(JSON.stringify(row));
+              setDataSelected(row);
             },
           },
         ]}

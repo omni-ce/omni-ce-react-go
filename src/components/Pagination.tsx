@@ -99,6 +99,7 @@ export interface PaginationProps<T, F = unknown> {
   fields?: PaginationField<F>[];
   useIsActive?: boolean;
   extraActions?: PaginationExtraAction<T>[];
+  dataSelected?: string | number | string[] | number[] | (string | number)[];
   ruleKey?: string;
   dataDeleteName?: (row: T) => string;
   onSelectRow?: (row: T) => void;
@@ -341,7 +342,9 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
 
                     return (
                       <div key={`ea-${idx}`} className="contents">
-                        {!action.icon && action.button && action.button(row, reload)}
+                        {!action.icon &&
+                          action.button &&
+                          action.button(row, reload)}
                         {action.icon && (
                           <Button
                             variant="ghost"
