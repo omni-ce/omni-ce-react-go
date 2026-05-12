@@ -9,7 +9,8 @@
     "build": "tsc -b && vite build",
     "build:go": "go build -o react-go main.go",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "yarn playwright test"
   },
   "dependencies": {
     "@fingerprintjs/fingerprintjs": "^5.2.0",
