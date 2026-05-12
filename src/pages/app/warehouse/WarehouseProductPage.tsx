@@ -19,17 +19,6 @@ import GuardLayout from "@/components/GuardLayout";
 import Image from "@/components/Image";
 import { dummyProductHistory } from "@/dummy";
 
-interface ProductHistory {
-  id: number;
-  type: string;
-  qty: number;
-  date: string;
-  reference: string;
-  notes: string;
-  user: string;
-  status: string;
-}
-
 interface Props {
   ruleKey: string;
 }
@@ -41,17 +30,9 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
   const [dataSelected, setDataSelected] = useState<WarehouseProduct | null>(
     null,
   );
+  const [historyFilter, setHistoryFilter] = useState<"IN" | "OUT">("IN");
 
-  const dummyWarehouseProductHistory = useMemo(() => dummyProductHistory, []);
-
-  const inHistory = useMemo(
-    () => dummyWarehouseProductHistory.filter((h) => h.type === "IN"),
-    [dummyWarehouseProductHistory],
-  );
-  const outHistory = useMemo(
-    () => dummyWarehouseProductHistory.filter((h) => h.type === "OUT"),
-    [dummyWarehouseProductHistory],
-  );
+  const dummyHistory = useMemo(() => dummyProductHistory, []);
 
   const fields = useMemo(
     () => [
@@ -297,31 +278,31 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
             <CardTitle>
               {language({
                 id: "Detail & Riwayat Produk",
-                en: "Product Detail & History",
+                en: "Product Details & History",
               })}
             </CardTitle>
             <p className="text-xs text-dark-400 mt-1">
               {language({
                 id: "Informasi lengkap dan histori pergerakan barang di gudang",
-                en: "Complete information and movement history of items in the warehouse",
+                en: "Complete information and history of item movements in the warehouse",
               })}
             </p>
           </CardHeader>
           <CardContent>
             {/* Header info */}
-            <div className="flex flex-col gap-8">
-              <div className="flex flex-col sm:flex-row items-center justify-between p-5 bg-dark-800 rounded-3xl border border-dark-600/40 gap-4 shadow-sm">
-                <div className="flex items-center gap-5 w-full sm:w-auto">
-                  <div className="w-14 h-14 rounded-2xl bg-accent-500/10 flex items-center justify-center text-accent-500 shrink-0 shadow-lg shadow-accent-500/5">
-                    <IconComponent iconName="Hi/HiOutlineCube" size={32} />
+            <div className="flex flex-col gap-6">
+              <div className="flex flex-col sm:flex-row items-center justify-between p-4 bg-dark-800 rounded-2xl border border-dark-600/40 gap-4">
+                <div className="flex items-center gap-4 w-full sm:w-auto">
+                  <div className="w-12 h-12 rounded-2xl bg-accent-500/10 flex items-center justify-center text-accent-500 shrink-0 shadow-lg shadow-accent-500/10">
+                    <IconComponent iconName="Hi/HiOutlineCube" size={28} />
                   </div>
                   <div className="flex flex-col min-w-0">
-                    <span className="text-lg font-bold text-foreground truncate">
+                    <span className="text-base font-bold text-foreground truncate">
                       {dataSelected.product_name}
                     </span>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-xs text-dark-400 font-medium bg-dark-700/50 px-2 py-0.5 rounded-lg border border-dark-600/30">
-                        {dataSelected.product_sku}
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-xs text-dark-400 font-medium">
+                        SKU: {dataSelected.product_sku}
                       </span>
                       <div className="w-1 h-1 rounded-full bg-dark-600" />
                       <span className="text-xs text-dark-400 font-medium">
@@ -330,13 +311,13 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-8 w-full sm:w-auto justify-between sm:justify-end border-t sm:border-t-0 border-dark-600/20 pt-5 sm:pt-0">
+                <div className="flex items-center gap-6 w-full sm:w-auto justify-between sm:justify-end border-t sm:border-t-0 border-dark-600/20 pt-4 sm:pt-0">
                   <div className="text-center sm:text-right">
-                    <span className="text-[10px] font-bold text-dark-500 uppercase tracking-widest block mb-1">
+                    <span className="text-[10px] font-semibold text-dark-400 uppercase tracking-wider block mb-0.5">
                       {language({ id: "Stok Saat Ini", en: "Current Stock" })}
                     </span>
-                    <div className="flex items-baseline gap-1.5 justify-center sm:justify-end">
-                      <span className="text-3xl font-black text-accent-500 tabular-nums">
+                    <div className="flex items-baseline gap-1 justify-center sm:justify-end">
+                      <span className="text-2xl font-black text-accent-500">
                         120
                       </span>
                       <span className="text-xs font-bold text-dark-400">
@@ -347,106 +328,161 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
                 </div>
               </div>
 
-              {/* Actions buttons */}
+              {/* History List */}
               <div className="flex flex-col gap-4">
-                <div className="flex items-center gap-3 px-1">
-                  <Button className="flex-1 sm:flex-none h-12 px-8 rounded-2xl bg-neon-green/10 hover:bg-neon-green/20 text-neon-green border-none shadow-none font-bold gap-3 group transition-all">
-                    <div className="w-7 h-7 rounded-xl bg-neon-green/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <IconComponent iconName="Hi/HiOutlinePlus" size={18} />
-                    </div>
-                    {language({ id: "Barang Masuk", en: "Item In" })}
-                  </Button>
-                  <Button className="flex-1 sm:flex-none h-12 px-8 rounded-2xl bg-neon-red/10 hover:bg-neon-red/20 text-neon-red border-none shadow-none font-bold gap-3 group transition-all">
-                    <div className="w-7 h-7 rounded-xl bg-neon-red/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <IconComponent iconName="Hi/HiOutlineMinus" size={18} />
-                    </div>
-                    {language({ id: "Barang Keluar", en: "Item Out" })}
-                  </Button>
-                </div>
-
-                <div className="flex flex-col gap-6 pt-4 border-t border-dark-600/20">
-                  <h4 className="text-xs font-bold text-dark-300 uppercase tracking-[0.2em] px-1">
+                <div className="flex items-center justify-between px-1">
+                  <h4 className="text-xs font-bold text-dark-300 uppercase tracking-widest">
                     {language({
                       id: "Riwayat Pergerakan Barang",
-                      en: "Product Movement History",
+                      en: "Item Movement History",
                     })}
                   </h4>
-
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {/* IN Column */}
-                    <div className="flex flex-col gap-4">
-                      <div className="flex items-center justify-between px-2 py-1 bg-dark-800/30 rounded-xl">
-                        <span className="text-[11px] font-black text-neon-green uppercase tracking-widest flex items-center gap-2">
-                          <div className="w-2 h-2 rounded-full bg-neon-green shadow-[0_0_8px_rgba(0,202,114,0.5)]" />
-                          {language({ id: "Masuk", en: "IN" })}
-                        </span>
-                        <Badge
-                          variant="outline"
-                          className="text-[10px] h-5 border-dark-700 bg-dark-900 text-dark-500 font-bold"
-                        >
-                          {inHistory.length}{" "}
-                          {language({ id: "Data", en: "Records" })}
-                        </Badge>
-                      </div>
-                      <div className="flex flex-col gap-4 max-h-[450px] overflow-y-auto pr-3 custom-scrollbar">
-                        {inHistory.length === 0 ? (
-                          <div className="py-10 text-center border-2 border-dashed border-dark-600/20 rounded-3xl">
-                            <span className="text-xs text-dark-500 font-medium">
-                              {language({
-                                id: "Belum ada data masuk",
-                                en: "No incoming data yet",
-                              })}
-                            </span>
-                          </div>
-                        ) : (
-                          inHistory.map((h) => (
-                            <HistoryCard
-                              key={h.id}
-                              history={h}
-                              language={language}
-                            />
-                          ))
-                        )}
-                      </div>
-                    </div>
-
-                    {/* OUT Column */}
-                    <div className="flex flex-col gap-4">
-                      <div className="flex items-center justify-between px-2 py-1 bg-dark-800/30 rounded-xl">
-                        <span className="text-[11px] font-black text-neon-red uppercase tracking-widest flex items-center gap-2">
-                          <div className="w-2 h-2 rounded-full bg-neon-red shadow-[0_0_8px_rgba(228,66,88,0.5)]" />
-                          {language({ id: "Keluar", en: "OUT" })}
-                        </span>
-                        <Badge
-                          variant="outline"
-                          className="text-[10px] h-5 border-dark-700 bg-dark-900 text-dark-500 font-bold"
-                        >
-                          {outHistory.length}{" "}
-                          {language({ id: "Data", en: "Records" })}
-                        </Badge>
-                      </div>
-                      <div className="flex flex-col gap-4 max-h-[450px] overflow-y-auto pr-3 custom-scrollbar">
-                        {outHistory.length === 0 ? (
-                          <div className="py-10 text-center border-2 border-dashed border-dark-600/20 rounded-3xl">
-                            <span className="text-xs text-dark-500 font-medium">
-                              {language({
-                                id: "Belum ada data keluar",
-                                en: "No outgoing data yet",
-                              })}
-                            </span>
-                          </div>
-                        ) : (
-                          outHistory.map((h) => (
-                            <HistoryCard
-                              key={h.id}
-                              history={h}
-                              language={language}
-                            />
-                          ))
-                        )}
-                      </div>
-                    </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant={historyFilter === "IN" ? "default" : "outline"}
+                      size="sm"
+                      className="h-7 text-xs px-3"
+                      onClick={() => setHistoryFilter("IN")}
+                    >
+                      {language({ id: "Barang Masuk", en: "Incoming Items" })}
+                    </Button>
+                    <Button
+                      variant={historyFilter === "OUT" ? "default" : "outline"}
+                      size="sm"
+                      className="h-7 text-xs px-3"
+                      onClick={() => setHistoryFilter("OUT")}
+                    >
+                      {language({ id: "Barang Keluar", en: "Outgoing Items" })}
+                    </Button>
                   </div>
+                </div>
+
+                <div className="max-h-[400px] overflow-y-auto custom-scrollbar pr-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {dummyHistory
+                    .filter((h) => h.type === historyFilter)
+                    .map((h) => (
+                      <div
+                        key={h.id}
+                        className="p-4 bg-dark-800/40 rounded-2xl border border-dark-600/30 hover:border-accent-500/30 hover:bg-dark-800/60 transition-all group relative overflow-hidden"
+                      >
+                        <div
+                          className={cn(
+                            "absolute top-0 left-0 w-1 h-full",
+                            h.type === "IN" ? "bg-neon-green" : "bg-neon-red",
+                          )}
+                        />
+
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex items-center gap-3">
+                            <div
+                              className={cn(
+                                "w-10 h-10 rounded-xl flex items-center justify-center shadow-inner",
+                                h.type === "IN"
+                                  ? "bg-neon-green/10 text-neon-green"
+                                  : "bg-neon-red/10 text-neon-red",
+                              )}
+                            >
+                              <IconComponent
+                                iconName={
+                                  h.type === "IN"
+                                    ? "Hi/HiOutlineArrowDownLeft"
+                                    : "Hi/HiOutlineArrowUpRight"
+                                }
+                                size={20}
+                              />
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="text-sm font-bold text-foreground">
+                                {h.type === "IN"
+                                  ? language({
+                                      id: "Barang Masuk",
+                                      en: "Item In",
+                                    })
+                                  : language({
+                                      id: "Barang Keluar",
+                                      en: "Item Out",
+                                    })}
+                              </span>
+                              <div className="flex items-center gap-1.5 mt-0.5">
+                                <IconComponent
+                                  iconName="Hi/HiOutlineCalendar"
+                                  size={12}
+                                  className="text-dark-500"
+                                />
+                                <span className="text-[10px] text-dark-400 font-medium">
+                                  {h.date}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <span
+                              className={cn(
+                                "text-lg font-black tracking-tighter",
+                                h.type === "IN"
+                                  ? "text-neon-green"
+                                  : "text-neon-red",
+                              )}
+                            >
+                              {h.type === "IN" ? "+" : "-"}
+                              {h.qty}
+                            </span>
+                            <span className="text-[10px] font-bold text-dark-500 block">
+                              {language({ id: "Unit", en: "Unit" })}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="space-y-3 mt-4 pt-4 border-t border-dark-600/20">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-1.5">
+                              <IconComponent
+                                iconName="Hi/HiOutlineDocumentText"
+                                size={12}
+                                className="text-dark-500"
+                              />
+                              <span className="text-[11px] text-dark-400">
+                                {language({
+                                  id: "No. Referensi:",
+                                  en: "Reference No:",
+                                })}
+                              </span>
+                            </div>
+                            <span className="text-[11px] font-bold text-foreground bg-dark-700 px-2 py-0.5 rounded-md border border-dark-600/50">
+                              {h.reference}
+                            </span>
+                          </div>
+
+                          <div className="p-2.5 bg-dark-900/50 rounded-lg border border-dark-600/10">
+                            <p className="text-[11px] text-dark-300 leading-relaxed italic">
+                              "{h.notes}"
+                            </p>
+                          </div>
+
+                          <div className="flex items-center justify-between pt-1">
+                            <div className="flex items-center gap-2">
+                              <div className="w-6 h-6 rounded-lg bg-dark-700 flex items-center justify-center text-[10px] text-accent-500 font-black shadow-sm">
+                                {h.user[0]}
+                              </div>
+                              <div className="flex flex-col">
+                                <span className="text-[10px] text-dark-300 font-bold leading-none">
+                                  {h.user}
+                                </span>
+                                <span className="text-[8px] text-dark-500 uppercase tracking-tighter">
+                                  {language({ id: "Operator", en: "Operator" })}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-1.5 bg-neon-green/5 px-2 py-0.5 rounded-full border border-neon-green/10">
+                              <div className="w-1.5 h-1.5 rounded-full bg-neon-green animate-pulse" />
+                              <span className="text-[9px] font-bold text-neon-green uppercase tracking-wider">
+                                {h.status}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                 </div>
               </div>
             </div>
@@ -454,104 +490,5 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
         </Card>
       )}
     </GuardLayout>
-  );
-}
-
-function HistoryCard({
-  history: h,
-  language,
-}: {
-  history: ProductHistory;
-  language: (key: { id: string; en: string }) => string;
-}) {
-  return (
-    <div className="p-4 bg-dark-800/40 rounded-2xl border border-dark-600/30 hover:border-accent-500/30 hover:bg-dark-800/60 transition-all group relative overflow-hidden">
-      <div
-        className={cn(
-          "absolute top-0 left-0 w-1 h-full",
-          h.type === "IN" ? "bg-neon-green" : "bg-neon-red",
-        )}
-      />
-
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3 min-w-0">
-          <div
-            className={cn(
-              "w-10 h-10 rounded-xl flex items-center justify-center shadow-inner shrink-0",
-              h.type === "IN"
-                ? "bg-neon-green/10 text-neon-green"
-                : "bg-neon-red/10 text-neon-red",
-            )}
-          >
-            <IconComponent
-              iconName={
-                h.type === "IN"
-                  ? "Hi/HiOutlineArrowDownLeft"
-                  : "Hi/HiOutlineArrowUpRight"
-              }
-              size={20}
-            />
-          </div>
-          <div className="flex flex-col min-w-0">
-            <span className="text-[14px] font-black text-foreground tracking-tight truncate">
-              {h.reference}
-            </span>
-            <div className="flex items-center gap-1.5 mt-0.5">
-              <IconComponent
-                iconName="Hi/HiOutlineCalendar"
-                size={12}
-                className="text-dark-500"
-              />
-              <span className="text-[10px] text-dark-400 font-bold tabular-nums">
-                {h.date}
-              </span>
-            </div>
-          </div>
-        </div>
-        <div className="text-right shrink-0">
-          <div
-            className={cn(
-              "text-lg font-black tracking-tighter leading-none",
-              h.type === "IN" ? "text-neon-green" : "text-neon-red",
-            )}
-          >
-            {h.type === "IN" ? "+" : "-"}
-            {h.qty}
-          </div>
-          <span className="text-[9px] font-bold text-dark-500 uppercase tracking-widest mt-1 block">
-            Unit
-          </span>
-        </div>
-      </div>
-
-      <div className="mt-4 pt-3 border-t border-dark-600/10">
-        <div className="flex items-start justify-between gap-4">
-          <p className="text-[11px] text-dark-300 leading-relaxed italic line-clamp-1 opacity-80">
-            "{h.notes}"
-          </p>
-        </div>
-        <div className="flex items-center justify-between mt-2.5">
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded-md bg-dark-700 flex items-center justify-center text-[9px] text-accent-500 font-black border border-dark-600/30">
-              {h.user[0]}
-            </div>
-            <span className="text-[10px] text-dark-400 font-bold">
-              {h.user}
-            </span>
-          </div>
-          <div className="flex items-center gap-1.5 bg-dark-900/50 px-2 py-0.5 rounded-lg border border-dark-600/20">
-            <div
-              className={cn(
-                "w-1 h-1 rounded-full",
-                h.type === "IN" ? "bg-neon-green" : "bg-neon-red",
-              )}
-            />
-            <span className="text-[9px] font-black text-dark-400 uppercase tracking-tighter">
-              {h.status}
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
   );
 }
