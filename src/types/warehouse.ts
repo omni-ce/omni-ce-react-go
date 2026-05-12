@@ -43,3 +43,13 @@ export interface WarehouseProduct {
   qty: number;
   is_active: boolean;
 }
+
+export interface WarehouseHistory {
+  id: number;
+  type: "IN" | "OUT";
+  qty: number;
+  date: string;
+  reference: string;
+  notes: string;
+  user: string;
+}

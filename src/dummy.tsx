@@ -1,4 +1,5 @@
 import type { MenuItem, OrderCard } from "@/stores/posStore";
+import type { WarehouseHistory } from "@/types/warehouse";
 
 export const MONTHS = [
   "Jan",
@@ -423,7 +424,7 @@ export const dummyMenuItems: MenuItem[] = [
   },
 ];
 
-export const dummyProductHistory = [
+export const dummyProductHistory: WarehouseHistory[] = [
   {
     id: 1,
     type: "IN",
