@@ -20,6 +20,10 @@ import ProductColorPage from "@/pages/app/product/ProductColorPage";
 import ProductConditionPage from "@/pages/app/product/ProductConditionPage";
 import ProductItemPage from "@/pages/app/product/ProductItemPage";
 
+// Supplier
+import SupplierEntityPage from "@/pages/app/supplier/SupplierEntityPage";
+import SupplierProductPage from "@/pages/app/supplier/SupplierProductPage";
+
 // Warehouse
 import WarehouseLocationPage from "@/pages/app/warehouse/WarehouseLocationPage";
 import WarehouseProductPage from "@/pages/app/warehouse/WarehouseProductPage";
@@ -136,6 +140,28 @@ const sidebarLinks: ISidebarLink[] = [
         element: <ProductItemPage ruleKey="product/item" />,
         strict: true,
         icon: "Hi/HiTemplate",
+      },
+    ],
+  },
+
+  {
+    label: { id: "Supplier", en: "Supplier" },
+    path: "supplier",
+    icon: "Fa6/FaTruckArrowRight",
+    children: [
+      {
+        label: { id: "Entitas", en: "Entity" },
+        path: "entity",
+        element: <SupplierEntityPage ruleKey="supplier/entity" />,
+        strict: true,
+        icon: "Tb/TbBuildingStore",
+      },
+      {
+        label: { id: "Produk", en: "Product" },
+        path: "product",
+        element: <SupplierProductPage ruleKey="supplier/product" />,
+        strict: true,
+        icon: "Hi/HiCube",
       },
     ],
   },
