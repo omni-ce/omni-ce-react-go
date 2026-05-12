@@ -16,7 +16,6 @@ import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { SearchableSelect } from "@/components/ui/SearchableSelect";
 import { Button } from "@/components/ui/Button";
-import { Label } from "@/components/ui/Label";
 import { Switch } from "@/components/ui/Switch";
 import {
   Table,
@@ -34,9 +33,10 @@ import {
   DialogFooter,
 } from "@/components/ui/Dialog";
 import { useLanguageStore } from "@/stores/languageStore";
+import { useAuthStore } from "@/stores/authStore";
+import { usePermission } from "@/hooks/usePermission";
 import satellite from "@/lib/satellite";
 import type { Response, WithPagination } from "@/types/response";
-import { usePermission } from "@/hooks/usePermission";
 import { toast } from "react-toastify";
 
 import type {
@@ -79,6 +79,7 @@ export interface PaginationColumn<T, TFilter = unknown> {
   headerClassName?: string;
   cellClassName?: string;
   rule?: RuleType;
+  onlySuperAdmin?: boolean;
   selectFormat?: (row: TFilter) => { label: string; value: string | number };
   render: (row: T, index: number, helpers: PaginationHelpers<T>) => ReactNode;
 }
@@ -148,6 +149,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
 ) {
   const perm = usePermission(ruleKey);
   const { language } = useLanguageStore();
+  const { user } = useAuthStore();
   const [rows, setRows] = useState<T[]>([]);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -275,7 +277,13 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
 
   // Build merged columns (auto action column + user columns)
   const mergedColumns = useMemo<PaginationColumn<T>[]>(() => {
-    if (!hasCrud || !filteredFields) return columns;
+    const isSuperAdmin = user?.role === "su";
+    const baseColumns = columns.filter((col) => {
+      if (col.onlySuperAdmin) return isSuperAdmin;
+      return true;
+    });
+
+    if (!hasCrud || !filteredFields) return baseColumns;
 
     // Check if we need the action column at all
     const showToggle = useIsActive && perm.canSet;
@@ -403,6 +411,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
 
     // Filter user columns based on rules
     const filteredColumns = columns.filter((col) => {
+      if (col.onlySuperAdmin && !isSuperAdmin) return false;
       if (!col.rule) return true;
       if (col.rule === "create") return perm.canCreate;
       if (col.rule === "read") return perm.canRead;
@@ -423,6 +432,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
     togglingActiveId,
     perm,
     extraActions,
+    user,
   ]);
 
   // Derive searchable field keys from columns with search: true

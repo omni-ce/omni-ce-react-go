@@ -13,6 +13,7 @@ import type {
 import type { ProductItemOption } from "@/types/product";
 import Image from "@/components/Image";
 import GuardLayout from "@/components/GuardLayout";
+import { Card, CardHeader, CardTitle } from "@/components/ui/Card";
 
 interface Props {
   ruleKey: string;
@@ -254,12 +255,40 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
             icon: "Ai/AiOutlineProduct",
             label: language({ id: "Produk", en: "Product" }),
             button: (row) => {
-              setDataSelected(row);
+              setDataSelected((state) => {
+                if (row.id === state?.id) return null;
+                return row;
+              });
             },
           },
         ]}
         useIsActive
       />
+
+      {/* new card here */}
+      {dataSelected && (
+        <Card className="mt-4">
+          <CardHeader>
+            <CardTitle>Produk Gudang</CardTitle>
+            <CardDescription>
+              Kelola semua produk yang ada di gudang
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-foreground text-sm truncate">
+                {dataSelected.product_name}
+              </span>
+              <Badge
+                variant="outline"
+                className="text-[10px] py-0 h-4 border-dark-600 bg-dark-800 text-dark-300 shrink-0"
+              >
+                {dataSelected.product_sku}
+              </Badge>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </GuardLayout>
   );
 }
