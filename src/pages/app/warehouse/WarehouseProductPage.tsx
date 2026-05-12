@@ -32,6 +32,8 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
     null,
   );
   const [historyFilter, setHistoryFilter] = useState<"IN" | "OUT">("IN");
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
 
   const dummyHistory = useMemo(() => dummyProductHistory, []);
 
@@ -335,6 +337,9 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
                   <div className="flex items-center gap-2 bg-dark-900 rounded-lg p-1 border border-dark-600/50 w-full sm:w-auto">
                     <Input
                       type="date"
+                      value={startDate}
+                      max={endDate || new Date().toISOString().split("T")[0]}
+                      onChange={(e) => setStartDate(e.target.value)}
                       className="bg-transparent border-none text-xs text-dark-200 outline-none h-8 w-full sm:w-[130px] px-2 py-0 focus:ring-0"
                     />
                     <span className="text-dark-500 text-xs px-1">
@@ -342,9 +347,25 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
                     </span>
                     <Input
                       type="date"
+                      value={endDate}
+                      min={startDate || undefined}
+                      max={new Date().toISOString().split("T")[0]}
+                      onChange={(e) => setEndDate(e.target.value)}
                       className="bg-transparent border-none text-xs text-dark-200 outline-none h-8 w-full sm:w-[130px] px-2 py-0 focus:ring-0"
                     />
                   </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-dark-400 hover:text-accent-500 hover:bg-accent-500/10 shrink-0"
+                    onClick={() => {
+                      setStartDate("");
+                      setEndDate("");
+                    }}
+                    title={language({ id: "Atur Ulang", en: "Reset" })}
+                  >
+                    <IconComponent iconName="Hi/HiOutlineRefresh" size={16} />
+                  </Button>
                 </div>
                 <div className="flex items-center gap-2 w-full sm:w-auto">
                   <Button
