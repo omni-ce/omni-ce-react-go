@@ -111,7 +111,7 @@ export default function DocPage() {
   }, [sections]);
 
   const currentIndex = flatItems.findIndex((item) => item.id === activeId);
-  const currentItem = flatItems[currentIndex];
+  const currentItem = flatItems.find((item) => item.id === activeId);
   const prevItem = currentIndex > 0 ? flatItems[currentIndex - 1] : null;
   const nextItem =
     currentIndex < flatItems.length - 1 ? flatItems[currentIndex + 1] : null;

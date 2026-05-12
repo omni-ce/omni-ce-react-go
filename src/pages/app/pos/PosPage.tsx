@@ -150,13 +150,11 @@ export default function PosPage({ ruleKey }: Props) {
     ref: React.RefObject<HTMLDivElement>,
     direction: "left" | "right",
   ) => {
-    if (ref.current) {
-      const scrollAmount = 400;
-      ref.current.scrollBy({
-        left: direction === "left" ? -scrollAmount : scrollAmount,
-        behavior: "smooth",
-      });
-    }
+    const scrollAmount = 400;
+    ref.current.scrollBy({
+      left: direction === "left" ? -scrollAmount : scrollAmount,
+      behavior: "smooth",
+    });
   };
 
   const counts = useMemo(
@@ -368,7 +366,7 @@ export default function PosPage({ ruleKey }: Props) {
                   <span>
                     {(() => {
                       try {
-                        return language(JSON.parse(cat.name));
+                        return language(JSON.parse(cat.name) as Record<"id" | "en", string>);
                       } catch {
                         return cat.name;
                       }
@@ -394,7 +392,7 @@ export default function PosPage({ ruleKey }: Props) {
                     <span>
                       {(() => {
                         try {
-                          return language(JSON.parse(type.name));
+                          return language(JSON.parse(type.name) as Record<"id" | "en", string>);
                         } catch {
                           return type.name;
                         }
@@ -459,7 +457,7 @@ export default function PosPage({ ruleKey }: Props) {
                 <span className="text-[10px] font-medium text-dark-400 uppercase tracking-wider">
                   {(() => {
                     try {
-                      return language(JSON.parse(item.category_name));
+                      return language(JSON.parse(item.category_name) as Record<"id" | "en", string>);
                     } catch {
                       return item.category_name;
                     }
@@ -474,7 +472,7 @@ export default function PosPage({ ruleKey }: Props) {
                   {item.brand_name} •{" "}
                   {(() => {
                     try {
-                      return language(JSON.parse(item.type_name));
+                      return language(JSON.parse(item.type_name) as Record<"id" | "en", string>);
                     } catch {
                       return item.type_name;
                     }
@@ -706,7 +704,7 @@ export default function PosPage({ ruleKey }: Props) {
                 {(() => {
                   try {
                     return language(
-                      JSON.parse(selectedVariant?.category_name ?? "{}"),
+                      JSON.parse(selectedVariant?.category_name ?? "{}") as Record<"id" | "en", string>
                     );
                   } catch {
                     return selectedVariant?.category_name;
@@ -718,7 +716,7 @@ export default function PosPage({ ruleKey }: Props) {
                 {(() => {
                   try {
                     return language(
-                      JSON.parse(selectedVariant?.type_name ?? "{}"),
+                      JSON.parse(selectedVariant?.type_name ?? "{}") as Record<"id" | "en", string>
                     );
                   } catch {
                     return selectedVariant?.type_name;

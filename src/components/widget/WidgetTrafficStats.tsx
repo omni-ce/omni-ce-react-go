@@ -34,7 +34,7 @@ function MiniSparkline({
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      chartRef.current?.chart?.reflow();
+      chartRef.current?.chart.reflow();
     }, 200);
     return () => clearTimeout(timer);
   }, []);

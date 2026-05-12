@@ -23,7 +23,7 @@ export default function LanguageSelector({ className = "" }: Props) {
 
   const currentCountry = getCountryForLanguage(languageCode);
 
-  if (SUPPORTED_LANGUAGES.length <= 2) {
+  if ((SUPPORTED_LANGUAGES.length as number) <= 2) {
     return (
       <button
         onClick={toggleLanguage}

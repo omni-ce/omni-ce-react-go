@@ -6,13 +6,18 @@ import HighchartsReact from "highcharts-react-official";
 
 // Initialize Highcharts modules (handle both ESM default and CJS)
 const HighchartsMore =
-  // @ts-ignore
-  (HighchartsMoreModule as unknown).default ?? HighchartsMoreModule;
+  (HighchartsMoreModule as { default?: typeof HighchartsMoreModule }).default ??
+  HighchartsMoreModule;
 const HighchartsSolidGauge =
-  // @ts-ignore
-  (HighchartsSolidGaugeModule as unknown).default ?? HighchartsSolidGaugeModule;
+  (
+    HighchartsSolidGaugeModule as {
+      default?: typeof HighchartsSolidGaugeModule;
+    }
+  ).default ?? HighchartsSolidGaugeModule;
+// @ts-ignore
 if (typeof HighchartsMore === "function") HighchartsMore(Highcharts);
 if (typeof HighchartsSolidGauge === "function")
+  // @ts-ignore
   HighchartsSolidGauge(Highcharts);
 
 interface WidgetGaugeChartProps {
@@ -46,7 +51,7 @@ export default function WidgetGaugeChart({
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      chartRef.current?.chart?.reflow();
+      chartRef.current?.chart.reflow();
     }, 200);
     return () => clearTimeout(timer);
   }, []);

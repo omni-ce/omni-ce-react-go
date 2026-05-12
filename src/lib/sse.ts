@@ -28,9 +28,9 @@ class Sse {
     this.es = new EventSource(this.full_url);
     this.es.onmessage = (event) => {
       try {
-        const payload = JSON.parse(event.data);
+        const payload = JSON.parse(event.data as string) as { event: string; data: unknown };
         const { event: eventName, data } = payload;
-        if (eventName && this.listeners[eventName]) {
+        if (eventName && eventName in this.listeners) {
           this.listeners[eventName].forEach((cb) => cb(data));
         }
       } catch (e) {
@@ -39,13 +39,13 @@ class Sse {
     };
   }
   on<T>(event: string, callback: Callback<T>) {
-    if (!this.listeners[event]) {
+    if (!(event in this.listeners)) {
       this.listeners[event] = [];
     }
     this.listeners[event].push(callback as Callback<unknown>);
   }
   off<T>(event: string, callback?: Callback<T>) {
-    if (!this.listeners[event]) return;
+    if (!(event in this.listeners)) return;
     if (callback) {
       this.listeners[event] = this.listeners[event].filter(
         (cb) => cb !== callback,
@@ -54,8 +54,8 @@ class Sse {
       delete this.listeners[event];
     }
   }
-  emit<T>(event: string, data?: T, opt?: SseEmitOption) {
-    if (!opt?.method || opt?.method === ("GET" as unknown as Method)) {
+  emit(event: string, data?: unknown, opt?: SseEmitOption) {
+    if (!opt?.method || opt.method === ("GET" as unknown as Method)) {
       console.error("Method must be POST");
       return;
     }
@@ -67,7 +67,7 @@ class Sse {
     }
 
     fetch(this.full_url, {
-      method: opt?.method || "POST",
+      method: opt.method,
       headers,
       body: JSON.stringify({
         event,
@@ -92,5 +92,7 @@ export const getSseClient = (url: string, opt?: SseOption): Sse => {
   if (!urls.has(url)) {
     urls.set(url, new Sse(url, opt));
   }
-  return urls.get(url)!;
+  const client = urls.get(url);
+  if (!client) throw new Error("SSE Client not found");
+  return client;
 };

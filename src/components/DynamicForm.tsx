@@ -222,7 +222,7 @@ function DynamicSelect({
             hasAllRefs = false;
             break;
           }
-          endpoint = endpoint.replace(`{${r}}`, String(val));
+          endpoint = endpoint.replace(`{${r}}`, val);
         }
 
         if (!hasAllRefs) {
@@ -240,7 +240,7 @@ function DynamicSelect({
     satellite
       .get<Response<Option[]>>(`/api/option/${endpoint}`)
       .then((res) => {
-        const data = res.data.data || [];
+        const data = res.data.data;
         const format = (field as DynamicFormFieldNormal).selectFormat;
         const mapped = data.map((d) => {
           if (format) {
@@ -356,7 +356,7 @@ function DynamicSelect({
       let label = opt.label;
       if (typeof label === "string" && label.startsWith("{")) {
         try {
-          label = language(JSON.parse(label));
+          label = language(JSON.parse(label) as Record<LanguageKey.ID | LanguageKey.EN, string>);
         } catch (e) {
           // fallback
         }
@@ -440,13 +440,13 @@ function DynamicAddress({
       setHasFetchedProvince(true);
       setIsLoadingProvince(true);
       satellite
-        .get("/api/address/provinces")
+        .get<Response<DynamicFormFieldOption[]>>("/api/address/provinces")
         .then((response) => {
-          if (response.data.status === 200 && response.data.data) {
+          if (response.data.status === 200) {
             setProvinceOptions(response.data.data);
           }
         })
-        .catch((error) => console.error("Failed to fetch provinces:", error))
+        .catch((error: unknown) => console.error("Failed to fetch provinces:", error))
         .finally(() => setIsLoadingProvince(false));
     }
   };
@@ -454,39 +454,39 @@ function DynamicAddress({
   const fetchRegencies = (provinceCode: string) => {
     setIsLoadingRegency(true);
     satellite
-      .get(`/api/address/regencies/${provinceCode}`)
+      .get<Response<DynamicFormFieldOption[]>>(`/api/address/regencies/${provinceCode}`)
       .then((response) => {
-        if (response.data.status === 200 && response.data.data) {
+        if (response.data.status === 200) {
           setRegencyOptions(response.data.data);
         }
       })
-      .catch((error) => console.error("Failed to fetch regencies:", error))
+      .catch((error: unknown) => console.error("Failed to fetch regencies:", error))
       .finally(() => setIsLoadingRegency(false));
   };
 
   const fetchDistricts = (regencyCode: string) => {
     setIsLoadingDistrict(true);
     satellite
-      .get(`/api/address/districts/${regencyCode}`)
+      .get<Response<DynamicFormFieldOption[]>>(`/api/address/districts/${regencyCode}`)
       .then((response) => {
-        if (response.data.status === 200 && response.data.data) {
+        if (response.data.status === 200) {
           setDistrictOptions(response.data.data);
         }
       })
-      .catch((error) => console.error("Failed to fetch districts:", error))
+      .catch((error: unknown) => console.error("Failed to fetch districts:", error))
       .finally(() => setIsLoadingDistrict(false));
   };
 
   const fetchVillages = (districtCode: string) => {
     setIsLoadingVillage(true);
     satellite
-      .get(`/api/address/villages/${districtCode}`)
+      .get<Response<DynamicFormFieldOption[]>>(`/api/address/villages/${districtCode}`)
       .then((response) => {
-        if (response.data.status === 200 && response.data.data) {
+        if (response.data.status === 200) {
           setVillageOptions(response.data.data);
         }
       })
-      .catch((error) => console.error("Failed to fetch villages:", error))
+      .catch((error: unknown) => console.error("Failed to fetch villages:", error))
       .finally(() => setIsLoadingVillage(false));
   };
 
@@ -607,12 +607,10 @@ function DynamicFile({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (
-      (field as DynamicFormFieldNormal).fileMaxSize &&
-      file.size > (field as DynamicFormFieldNormal).fileMaxSize!
-    ) {
+    const fileMaxSize = (field as DynamicFormFieldNormal).fileMaxSize;
+    if (fileMaxSize && file.size > fileMaxSize) {
       setErrorMsg(
-        `Ukuran file melebihi batas ${(((field as DynamicFormFieldNormal).fileMaxSize! / (1024 * 1024))).toFixed(2)} MB`,
+        `Ukuran file melebihi batas ${(fileMaxSize / (1024 * 1024)).toFixed(2)} MB`,
       );
       e.target.value = "";
       return;
@@ -646,7 +644,7 @@ function DynamicFile({
     formData.append("file", file);
 
     satellite
-      .post(
+      .post<Response<{ path: string }>>(
         `/api/upload/${(field as DynamicFormFieldNormal).fileTarget}`,
         formData,
         {
@@ -662,11 +660,11 @@ function DynamicFile({
         },
       )
       .then((res) => {
-        if (res.data.status === 200 && res.data.data?.path) {
+        if (res.data.status === 200 && res.data.data.path) {
           onChange(res.data.data.path);
         }
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         console.error("Upload failed", err);
         setErrorMsg("Gagal mengunggah file. Silakan coba lagi.");
       })
@@ -796,7 +794,7 @@ function DynamicFile({
           (field as DynamicFormFieldNormal).fileMaxSize && (
             <span className="text-[10px] text-dark-400">
               Max:{" "}
-              {formatFileSize((field as DynamicFormFieldNormal).fileMaxSize!)}
+              {formatFileSize((field as DynamicFormFieldNormal).fileMaxSize ?? 0)}
             </span>
           )}
       </div>
@@ -810,7 +808,7 @@ function DynamicFile({
       : template === "company"
         ? BlankCompany
         : BlankUser;
-    const isValue = value !== undefined && value !== null && value !== "";
+    const isValue = value !== "";
 
     return (
       <div className="mt-1.5 flex flex-row items-center gap-6 p-4 rounded-xl border border-dark-600 bg-dark-800">
@@ -841,7 +839,7 @@ function DynamicFile({
   }
 
   if (template === "product") {
-    const isValue = value !== undefined && value !== null && value !== "";
+    const isValue = value !== "";
     return (
       <div className="mt-1.5 flex flex-col gap-4">
         {isValue && (
@@ -972,7 +970,7 @@ function ArrayField({
                     type={child.type}
                     className="mt-1.5"
                     value={String(
-                      (item[(child as DynamicFormFieldNormal).key] as string | number | boolean) ?? "",
+                      (item[(child as DynamicFormFieldNormal).key] as string | number | boolean | undefined) ?? "",
                     )}
                     onChange={(e) =>
                       handleChildChange(
@@ -1049,9 +1047,9 @@ function DebouncedInput({
           value,
         })
         .then((res) => {
-          const data = res.data?.data;
+          const data = res.data.data;
 
-          if (data?.available === false) {
+          if (!data.available) {
             setMsg({ text: data.message, isError: true });
             onError((field as DynamicFormFieldNormal).key, res.data.message);
           } else {
@@ -1227,7 +1225,7 @@ function DynamicCol({
   value,
   onChange,
 }: {
-  value: ColValue;
+  value?: ColValue;
   onChange: (val: ColValue) => void;
 }) {
   const { language } = useLanguageStore();
@@ -1426,7 +1424,7 @@ function DynamicGeolocationField({
   const { language } = useLanguageStore();
 
   const handleGetLocation = () => {
-    if (!navigator.geolocation) {
+    if (!("geolocation" in navigator)) {
       alert("Geolocation is not supported by your browser");
       return;
     }
@@ -1641,7 +1639,7 @@ function DynamicFieldRenderer({
       {field.type === "col" ? (
         <DynamicCol
           value={
-            (formData[field.key] as ColValue) || {
+            (formData[field.key] as ColValue | undefined) ?? {
               mobile: 12,
               tablet: 6,
               laptop: 4,
@@ -1653,7 +1651,7 @@ function DynamicFieldRenderer({
       ) : field.type === "array" ? (
         <ArrayField
           field={field}
-          value={(formData[field.key] as Record<string, unknown>[]) || []}
+          value={(formData[field.key] as Record<string, unknown>[] | undefined) ?? []}
           onChange={(newVal) => onChange(field.key, newVal)}
         />
       ) : field.type === "select" ? (
@@ -1690,7 +1688,7 @@ function DynamicFieldRenderer({
           formData={formData as Record<string, string>}
           onChange={(val) => onChange(field.key, val)}
           onError={(key, err) => {
-            if (onError) onError(key, err!);
+            if (onError) onError(key, err ?? "");
           }}
           initialValue={
             editingRow && typeof editingRow === "object"
@@ -1883,13 +1881,7 @@ function DynamicFieldRenderer({
             return (
               <div key={langCode} className="relative flex items-center">
                 <div className="absolute left-3 z-10 flex items-center justify-center w-5 h-4 overflow-hidden rounded-sm border border-dark-600">
-                  {Flag ? (
-                    <Flag className="w-full h-full object-cover" />
-                  ) : (
-                    <span className="text-[8px] uppercase font-bold text-dark-400">
-                      {langCode}
-                    </span>
-                  )}
+                  <Flag className="w-full h-full object-cover" />
                 </div>
                 <Input
                   className="pl-11"

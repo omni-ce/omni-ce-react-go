@@ -14,7 +14,11 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: globals.browser,
       parserOptions: {
-        project: ["./tsconfig.json", "./tsconfig.app.json", "./tsconfig.node.json"],
+        project: [
+          "./tsconfig.json",
+          "./tsconfig.app.json",
+          "./tsconfig.node.json",
+        ],
         tsconfigRootDir: import.meta.dirname,
       },
     },
@@ -46,11 +50,11 @@ export default defineConfig([
       "@typescript-eslint/restrict-template-expressions": [
         "error",
         {
-          "allowNumber": true,
-          "allowBoolean": true,
-          "allowAny": false,
-          "allowNullish": true
-        }
+          allowNumber: true,
+          allowBoolean: true,
+          allowAny: false,
+          allowNullish: true,
+        },
       ],
     },
   },

@@ -1,4 +1,4 @@
-import { Fragment, useState, type FormEvent } from "react";
+import { Fragment, useState } from "react";
 import { useAuthStore } from "@/stores/authStore";
 import { Link, useNavigate } from "react-router";
 import { useLanguageStore } from "@/stores/languageStore";
@@ -20,7 +20,7 @@ export default function LoginPage() {
   const { login } = useAuthStore();
   const { setRules } = useRuleStore();
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     setError(null);
     setIsLoading(true);
@@ -28,7 +28,7 @@ export default function LoginPage() {
     try {
       const response = await login(username, password);
       if (response.success) {
-        setRules(response.rules || []);
+        setRules(response.rules ?? []);
         navigate("/select-role", { replace: true });
       } else {
         setError({

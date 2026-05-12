@@ -96,7 +96,7 @@ export default function CompanyEntityPage({ ruleKey }: Props) {
               src={user.logo ? user.logo : BlankCompany}
               fromAsset={user.logo ? false : true}
               alt={user.name}
-              fallback={user.name?.charAt(0)?.toUpperCase()}
+              fallback={user.name.charAt(0).toUpperCase()}
             />
             <span className="font-medium">{user.name}</span>
           </div>

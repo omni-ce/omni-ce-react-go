@@ -27,7 +27,7 @@ export default function CameraSelector({
 
   const loadCameraDevices = async () => {
     try {
-      if (!navigator.mediaDevices?.enumerateDevices) return;
+      if (!("mediaDevices" in navigator) || !("enumerateDevices" in navigator.mediaDevices)) return;
       const devices = await navigator.mediaDevices.enumerateDevices();
       const videoDevices = devices.filter(
         (device: MediaDeviceInfo) => device.kind === "videoinput",
@@ -68,9 +68,7 @@ export default function CameraSelector({
         });
       }
 
-      if (!stream) {
-        throw new Error("Failed to get camera stream");
-      }
+
 
       streamRef.current = stream;
       setShowCamera(true);

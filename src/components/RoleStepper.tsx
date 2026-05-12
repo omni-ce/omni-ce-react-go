@@ -37,11 +37,11 @@ export default function RoleStepper({
     satellite
       .get<Response<Option[]>>("/api/option/divisions")
       .then((res) => {
-        const data = res.data.data || [];
+        const data = res.data.data;
         setDivisions(
           data.map((d) => ({
             value: String(d.value),
-            label: d.label!,
+            label: d.label ?? "",
           })),
         );
       })
@@ -62,11 +62,11 @@ export default function RoleStepper({
     satellite
       .get<Response<Option[]>>(`/api/option/roles/${divisionId}`)
       .then((res) => {
-        const data = res.data.data || [];
+        const data = res.data.data;
         setRoles(
           data.map((d) => ({
             value: String(d.value),
-            label: d.label!,
+            label: d.label ?? "",
           })),
         );
       })

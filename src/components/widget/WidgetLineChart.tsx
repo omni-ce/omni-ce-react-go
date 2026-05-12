@@ -30,7 +30,7 @@ export default function WidgetLineChart({
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      chartRef.current?.chart?.reflow();
+      chartRef.current?.chart.reflow();
     }, 200);
     return () => clearTimeout(timer);
   }, []);
@@ -94,7 +94,7 @@ export default function WidgetLineChart({
       name: s.name,
       data: s.data,
       color: s.color ?? "#6366f1",
-      dashStyle: (s.dashStyle as Highcharts.DashStyleValue) || "Solid",
+      dashStyle: (s.dashStyle as Highcharts.DashStyleValue | undefined) ?? "Solid",
     })),
   };
 

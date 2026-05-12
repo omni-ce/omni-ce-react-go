@@ -31,7 +31,7 @@ satellite.interceptors.request.use(
 satellite.interceptors.response.use(
   (response) => {
     // header: x-new-token
-    const newToken = response.headers["x-new-token"]; // like refresh token
+    const newToken = response.headers["x-new-token"] as string | undefined; // like refresh token
     if (newToken) {
       localStorage.setItem("token", newToken);
     }

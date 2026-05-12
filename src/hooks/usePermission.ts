@@ -54,7 +54,7 @@ export function usePermission(ruleKey?: string): Permission {
           r.role_id === roleId &&
           r.key === ruleKey &&
           r.action === action &&
-          r.state === true,
+          r.state,
       );
 
     return {

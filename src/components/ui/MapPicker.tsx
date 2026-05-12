@@ -109,7 +109,7 @@ export default function MapPicker({
       const response = await fetch(
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}`,
       );
-      const data = await response.json();
+      const data = (await response.json()) as Result[];
       setSearchResults(data);
     } catch (error) {
       console.error("Search failed:", error);

@@ -1,7 +1,7 @@
 import { countries } from "@/world";
 import { useLanguageStore } from "@/stores/languageStore";
 import * as flags from "country-flag-icons/react/3x2";
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo, type ElementType } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 import { IconComponent } from "./IconSelector";
@@ -41,7 +41,7 @@ export default function PhoneNumber({
       return (
         countries.find(
           (c) =>
-            String(c.language_key) === phoneDefaultCountry ||
+            (c.language_key as unknown as string) === phoneDefaultCountry ||
             c.code === phoneDefaultCountry,
         )?.code ?? "ID"
       );
@@ -224,9 +224,10 @@ export default function PhoneNumber({
                       const Flag = (
                         flags as unknown as Record<
                           string,
-                          React.ComponentType<{ className?: string }>
+                          | React.ComponentType<{ className?: string }>
+                          | undefined
                         >
-                      )[country.flag];
+                      )[country.flag] as ElementType;
                       return (
                         <button
                           key={country.code}
@@ -239,11 +240,9 @@ export default function PhoneNumber({
                               : "text-foreground",
                           )}
                         >
-                          {Flag && (
-                            <div className="h-3.5 w-5 shrink-0 overflow-hidden rounded-sm shadow-sm">
-                              <Flag className="h-full w-full object-cover" />
-                            </div>
-                          )}
+                          <div className="h-3.5 w-5 shrink-0 overflow-hidden rounded-sm shadow-sm">
+                            <Flag className="h-full w-full object-cover" />
+                          </div>
                           <span className="flex-1 truncate">
                             {country.name}
                           </span>

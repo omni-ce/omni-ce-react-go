@@ -266,7 +266,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
       );
     } catch (err: unknown) {
       const msg =
-        (err as { response?: { data?: { message?: string } } })?.response?.data
+        (err as { response?: { data?: { message?: string } } }).response?.data
           ?.message ?? "Toggle failed";
       toast.error(msg);
     } finally {
@@ -282,7 +282,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
       return true;
     });
 
-    if (!hasCrud || !filteredFields) return baseColumns;
+    if (!hasCrud || filteredFields.length === 0) return baseColumns;
 
     // Check if we need the action column at all
     const showToggle = useIsActive && perm.canSet;
@@ -292,7 +292,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
       showToggle ||
       showEdit ||
       showDelete ||
-      (extraActions && extraActions.length > 0);
+      extraActions.length > 0;
 
     const result: PaginationColumn<T>[] = [];
 
@@ -335,7 +335,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                   </Button>
                 )}
               </div>
-              {extraActions && extraActions.length > 0 && (
+              {extraActions.length > 0 && (
                 <div className="flex flex-wrap justify-center gap-1 max-w-30">
                   {extraActions.map((action, idx) => {
                     const reload = () =>
@@ -416,7 +416,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
       if (col.rule === "read") return perm.canRead;
       if (col.rule === "update") return perm.canUpdate;
       if (col.rule === "delete") return perm.canDelete;
-      if (col.rule === "set") return perm.canSet;
+      return perm.canSet;
       return true;
     });
 
@@ -494,7 +494,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
         satellite
           .get<Response<F[]>>(`/api/option/${endpoint}`)
           .then((res) => {
-            const data = res.data.data || [];
+            const data = res.data.data;
             const format = col.selectFormat;
             setDynamicOptions((prev) => ({
               ...prev,
@@ -700,11 +700,11 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
 
   const initFormData = useCallback(
     (row?: T) => {
-      if (!filteredFields) return {};
+      if (filteredFields.length === 0) return {};
       const data: Record<string, unknown> = {};
       const flatFields = flattenFields(filteredFields);
       for (const field of flatFields) {
-        if (row && typeof row === "object" && row !== null) {
+        if (row !== undefined && typeof row === "object" && row !== null) {
           const key = field.key;
           if (!key) continue;
           const val = (row as Record<string, unknown>)[key];
@@ -845,24 +845,22 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
     setSaveError(null);
     try {
       const payload: Record<string, unknown> = {};
-      if (true) {
-        const flatFields = flattenFields(filteredFields);
-        for (const field of flatFields) {
-          const isCreate = !editingRow;
-          if (field.only === "create" && !isCreate) continue;
-          if (field.only === "update" && isCreate) continue;
+      const flatFields = flattenFields(filteredFields);
+      for (const field of flatFields) {
+        const isCreate = !editingRow;
+        if (field.only === "create" && !isCreate) continue;
+        if (field.only === "update" && isCreate) continue;
 
-          if (field.type === "array") {
-            payload[field.key] = formData[field.key] ?? [];
-          } else {
-            payload[(field as DynamicFormFieldNormal).key] =
-              typeof formData[(field as DynamicFormFieldNormal).key] ===
-              "string"
-                ? (
-                    formData[(field as DynamicFormFieldNormal).key] as string
-                  ).trim()
-                : formData[(field as DynamicFormFieldNormal).key];
-          }
+        if (field.type === "array") {
+          payload[field.key] = formData[field.key] ?? [];
+        } else {
+          payload[(field as DynamicFormFieldNormal).key] =
+            typeof formData[(field as DynamicFormFieldNormal).key] ===
+            "string"
+              ? (
+                  formData[(field as DynamicFormFieldNormal).key] as string
+                ).trim()
+              : formData[(field as DynamicFormFieldNormal).key];
         }
       }
 
@@ -911,7 +909,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
       );
     } catch (err: unknown) {
       const msg =
-        (err as { response?: { data?: { message?: string } } })?.response?.data
+        (err as { response?: { data?: { message?: string } } }).response?.data
           ?.message ?? "Delete failed";
       toast.error(msg);
     } finally {
@@ -1246,7 +1244,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                                   const item = format ? format(opt) : opt;
                                   let label = item.label;
                                   try {
-                                    if (label && label.startsWith("{")) {
+                                    if (label.startsWith("{")) {
                                       label = language(
                                         JSON.parse(label) as Record<LanguageCode, string>,
                                       );

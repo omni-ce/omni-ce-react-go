@@ -48,7 +48,7 @@ export default function SettingPage({}: Props) {
     }
   }, [user]);
 
-  const handleUpdateProfile = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleUpdateProfile = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     if (isUpdatingProfile) return;
 
@@ -72,7 +72,7 @@ export default function SettingPage({}: Props) {
       useAuthStore.getState().validateToken(true);
     } catch (err: unknown) {
       const msg =
-        (err as { response?: { data?: { message?: string } } })?.response?.data
+        (err as { response?: { data?: { message?: string } } }).response?.data
           ?.message ??
         language({
           id: "Gagal memperbarui profil.",
@@ -163,7 +163,7 @@ export default function SettingPage({}: Props) {
     }
   };
 
-  const handleChangePassword = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleChangePassword = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     if (isSaving) return;
     if (newPassword !== confirmPassword) {
@@ -191,7 +191,7 @@ export default function SettingPage({}: Props) {
       setConfirmPassword("");
     } catch (err: unknown) {
       const msg =
-        (err as { response?: { data?: { message?: string } } })?.response?.data
+        (err as { response?: { data?: { message?: string } } }).response?.data
           ?.message ??
         language({
           id: "Gagal mengubah password.",

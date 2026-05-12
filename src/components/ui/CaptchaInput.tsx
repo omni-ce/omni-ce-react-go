@@ -117,7 +117,7 @@ export default function CaptchaInput({
       setUserInput("");
 
       try {
-        const lengthNum = Number(length);
+        const lengthNum = length;
         const lengthValid =
           typeof lengthNum === "number" &&
           Number.isFinite(lengthNum) &&
@@ -143,20 +143,18 @@ export default function CaptchaInput({
           >(`/api/captcha/generate${previewQuery}`);
         }
         if (response.status !== 200) {
-          language(response.data?.message);
+          language(response.data.message as Record<"id" | "en", string>);
         }
-        const data = response.data?.data;
+        const data = response.data.data;
 
         const captchaCode = data.captcha;
         const decrypted = encryption.decode(
           GeneralEnigmaSchema(window.location.origin),
           captchaCode,
         );
-        if (data) {
-          setCaptchaId(data.captcha_id);
-          setCaptchaText(decrypted);
-          drawCaptcha(decrypted);
-        }
+        setCaptchaId(data.captcha_id);
+        setCaptchaText(decrypted);
+        drawCaptcha(decrypted);
       } catch {
         setError("Failed to load captcha");
       } finally {
@@ -206,7 +204,7 @@ export default function CaptchaInput({
             message: string;
           }>;
           const msg =
-            error.response?.data?.message ?? "Captcha verification failed";
+            error.response?.data.message ?? "Captcha verification failed";
           setError(messageWrong || msg);
           fetchCaptcha(captchaId, { preserveError: true });
           return false;

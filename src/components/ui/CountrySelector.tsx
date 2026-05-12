@@ -104,7 +104,6 @@ export default function CountrySelector({
       >
         {selectedCountry ? (
           <div className="flex items-center gap-2">
-            {flags[selectedCountry.flag] && (
               <div className="h-4 w-6 overflow-hidden rounded-sm shadow-sm">
                 {(() => {
                   const FlagComponent = flags[selectedCountry.flag];
@@ -113,7 +112,6 @@ export default function CountrySelector({
                   );
                 })()}
               </div>
-            )}
             <span className="text-sm text-foreground">
               {selectedCountry.name}
             </span>

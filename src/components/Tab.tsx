@@ -28,7 +28,7 @@ export default function Tabs({ tabs, useRule }: Props) {
         r.role_id === roleId &&
         r.key === tab.key &&
         r.action === "read" &&
-        r.state === true
+        r.state
     );
   });
 
