@@ -19,6 +19,7 @@ import (
 	company "react-go/core/modules/company/model"
 	master_data "react-go/core/modules/master_data/model"
 	product "react-go/core/modules/product/model"
+	supplier "react-go/core/modules/supplier/model"
 	warehouse "react-go/core/modules/warehouse/model"
 
 	"gorm.io/gorm"
@@ -52,6 +53,8 @@ func Models() []interface{} {
 		&product.ProductCondition{},
 		&product.ProductItem{},
 		&product.ProductItemImage{},
+		&supplier.SupplierEntity{},
+		&supplier.SupplierProduct{},
 		&warehouse.WarehouseLocation{},
 		&warehouse.WarehouseProduct{},
 	}

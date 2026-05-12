@@ -4,6 +4,8 @@ import (
 	"log"
 	"time"
 
+	user "react-go/core/modules/user/model"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -16,6 +18,11 @@ type SupplierEntity struct {
 	Email     string  `json:"email" gorm:"type:varchar(128);not null"`
 	Longitude float64 `json:"longitude" gorm:"type:float;not null"`
 	Latitude  float64 `json:"latitude" gorm:"type:float;not null"`
+	IsActive  bool    `json:"is_active" gorm:"default:true"`
+
+	// relations
+	Created user.User `json:"created" gorm:"foreignKey:CreatedBy;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Updated user.User `json:"updated" gorm:"foreignKey:UpdatedBy;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 
 	// SLA: create & update by user
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
@@ -33,6 +40,7 @@ func (s *SupplierEntity) Map() map[string]any {
 		"email":      s.Email,
 		"longitude":  s.Longitude,
 		"latitude":   s.Latitude,
+		"is_active":  s.IsActive,
 		"created_at": s.CreatedAt,
 		"created_by": s.CreatedBy,
 		"updated_at": s.UpdatedAt,

@@ -18,6 +18,7 @@ import (
 	"react-go/core/modules/role"
 	"react-go/core/modules/rule"
 	"react-go/core/modules/setting"
+	"react-go/core/modules/supplier"
 	"react-go/core/modules/upload"
 	"react-go/core/modules/user"
 	"react-go/core/modules/warehouse"
@@ -102,6 +103,9 @@ func SetupRoutes(app *fiber.App, api fiber.Router) {
 	// Product
 	product.PublicRoute(api.Group("/product"))
 	product.ProtectedRoute(api.Group("/product", middlewares.UseToken))
+
+	// Supplier
+	supplier.ProtectedRoute(api.Group("/supplier", middlewares.UseToken))
 
 	// Warehouse
 	warehouse.ProtectedRoute(api.Group("/warehouse", middlewares.UseToken))
