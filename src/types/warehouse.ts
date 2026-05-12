@@ -28,6 +28,10 @@ export interface WarehouseProduct {
   entity_name: string;
   entity_logo: string;
   branch_name: string;
+  role_id: number;
+  role_name: string;
+  division_id: number;
+  division_name: string;
   warehouse_location_id: number;
   warehouse_location_name: string;
   product_id: number;

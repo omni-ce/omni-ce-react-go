@@ -6,6 +6,7 @@ import (
 	"react-go/core/function"
 	company "react-go/core/modules/company/model"
 	product "react-go/core/modules/product/model"
+	role "react-go/core/modules/role/model"
 	model "react-go/core/modules/warehouse/model"
 	"react-go/core/types"
 	"react-go/core/variable"
@@ -144,6 +145,39 @@ func ProductPaginate(c *fiber.Ctx) error {
 		}, nil)
 	}
 
+	roleIds := []uint{}
+	for _, row := range warehouseLocations {
+		roleIds = append(roleIds, row.RoleID)
+	}
+
+	roles := make([]role.Role, 0)
+	if err := variable.Db.
+		Model(&role.Role{}).
+		Where("id IN (?)", roleIds).
+		Find(&roles).
+		Error; err != nil {
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menemukan role",
+			En: "Failed to find roles",
+		}, nil)
+	}
+	divisionIds := []uint{}
+	for _, row := range roles {
+		divisionIds = append(divisionIds, row.RoleDivisionID)
+	}
+
+	divisions := make([]role.RoleDivision, 0)
+	if err := variable.Db.
+		Model(&role.RoleDivision{}).
+		Where("id IN (?)", divisionIds).
+		Find(&divisions).
+		Error; err != nil {
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal menemukan role division",
+			En: "Failed to find role divisions",
+		}, nil)
+	}
+
 	productCategoryIds := make([]uint, 0, len(products))
 	for _, product := range products {
 		productCategoryIds = append(productCategoryIds, product.CategoryID)
@@ -261,9 +295,28 @@ func ProductPaginate(c *fiber.Ctx) error {
 			}
 		}
 
+		var _role role.Role
+		for _, r := range roles {
+			if r.ID == warehouse_location.RoleID {
+				_role = r
+				break
+			}
+		}
+		var role_division role.RoleDivision
+		for _, rd := range divisions {
+			if rd.ID == _role.RoleDivisionID {
+				role_division = rd
+				break
+			}
+		}
+
 		p["entity_name"] = entity.Name
 		p["entity_logo"] = entity.Logo
 		p["branch_name"] = branch.Name
+		p["role_id"] = _role.ID
+		p["role_name"] = _role.Name
+		p["division_id"] = role_division.ID
+		p["division_name"] = role_division.Name
 		p["warehouse_location_name"] = warehouse_location.Name
 		p["product_sku"] = product_item.SKU
 		p["product_brand_logo"] = product_brand.Logo

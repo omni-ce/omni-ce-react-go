@@ -133,7 +133,8 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
               <span>{item.entity_name}</span>
             </div>
             {item.warehouse_location_name}: {` `}
-            {item.branch_name}
+            <Badge variant="secondary">{item.division_name}</Badge>
+            <span className="font-medium">{item.role_name}</span>
           </span>
         ),
       },
