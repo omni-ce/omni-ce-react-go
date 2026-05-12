@@ -23,6 +23,7 @@ import ProductItemPage from "@/pages/app/product/ProductItemPage";
 // Warehouse
 import WarehouseLocationPage from "@/pages/app/warehouse/WarehouseLocationPage";
 import WarehouseProductPage from "@/pages/app/warehouse/WarehouseProductPage";
+import WarehouseHistoryPage from "@/pages/app/warehouse/WarehouseHistoryPage";
 
 // Pos
 import PosPage from "@/pages/app/pos/PosPage";
@@ -157,6 +158,13 @@ const sidebarLinks: ISidebarLink[] = [
         element: <WarehouseProductPage ruleKey="warehouse/product" />,
         strict: true,
         icon: "Hi/HiCube",
+      },
+      {
+        label: { id: "Riwayat", en: "History" },
+        path: "history",
+        element: <WarehouseHistoryPage ruleKey="warehouse/history" />,
+        strict: true,
+        icon: "Md/MdOutlineHistory",
       },
     ],
   },
