@@ -16,6 +16,7 @@ import { IconComponent } from "@/components/ui/IconSelector";
 import Image from "@/components/Image";
 import { formatRupiah } from "@/utils/convert";
 import GuardLayout from "@/components/GuardLayout";
+import type { UnitOption } from "@/types/master_data";
 
 interface Props {
   ruleKey: string;
@@ -111,6 +112,24 @@ export default function ProductItemPage({ ruleKey }: Props) {
         type: "select",
         required: true,
         selectOptions: "product-conditions",
+      },
+      {
+        key: "unit_id",
+        label: language({ id: "Satuan", en: "Unit" }),
+        type: "select",
+        required: true,
+        selectOptions: "units",
+        selectFormat: (item: UnitOption) => ({
+          value: item.value,
+          render: (
+            <div className="flex items-center gap-2">
+              <span>{item.label}</span>
+              <span className="text-xs text-muted-foreground">
+                ({item.meta.short_name})
+              </span>
+            </div>
+          ),
+        }),
       },
       {
         label: language({ id: "SKU", en: "SKU" }),

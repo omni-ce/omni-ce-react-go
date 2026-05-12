@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	company "react-go/core/modules/company/model"
+	master_data "react-go/core/modules/master_data/model"
 	product "react-go/core/modules/product/model"
 	role "react-go/core/modules/role/model"
 	user "react-go/core/modules/user/model"
@@ -15,6 +16,33 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 )
+
+func Units(c *fiber.Ctx) error {
+	units := make([]master_data.Unit, 0)
+	if err := variable.Db.
+		Model(&master_data.Unit{}).
+		Find(&units).
+		Error; err != nil {
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari unit",
+			En: "Failed to find units",
+		}, nil)
+	}
+
+	rows := make([]types.Option, 0)
+	for _, row := range units {
+		unit := row.Option()
+		unit.Meta = &map[string]any{
+			"short_name": row.ShortName,
+		}
+		rows = append(rows, unit)
+	}
+
+	return dto.OK(c, types.Language{
+		Id: "Unit berhasil diambil",
+		En: "Unit retrieved successfully",
+	}, rows)
+}
 
 func Divisions(c *fiber.Ctx) error {
 	divisions := make([]role.RoleDivision, 0)

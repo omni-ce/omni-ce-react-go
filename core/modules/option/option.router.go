@@ -6,6 +6,10 @@ func PublicRoute(api fiber.Router) {
 }
 
 func ProtectedRoute(api fiber.Router) {
+	// Master Data
+	api.Get("/units", Units)
+
+	// Rule
 	api.Get("/divisions", Divisions)
 	api.Get("/roles", Roles)
 	api.Get("/roles/:id", RolesOnDivision)
