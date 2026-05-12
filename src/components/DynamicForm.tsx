@@ -1180,7 +1180,7 @@ function DynamicWeight({
   onChange: (val: WeightValue) => void;
   disabled?: boolean;
 }) {
-  const valueRaw = formData[field.key!];
+  const valueRaw = field.key ? formData[field.key] : undefined;
   const value: WeightValue =
     typeof valueRaw === "object" && valueRaw !== null
       ? (valueRaw as WeightValue)
