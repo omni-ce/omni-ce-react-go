@@ -821,6 +821,14 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
         const val = formData[(field as DynamicFormFieldNormal).key] ?? "";
         if ((field as DynamicFormFieldNormal).required && !(typeof val === "string" || typeof val === "number" ? String(val) : "").trim())
           return false;
+          
+        if (field.type === "weight" && (field as DynamicFormFieldNormal).required) {
+          const unitKey = `${(field as DynamicFormFieldNormal).key}_unit_id`;
+          const unitVal = formData[unitKey] ?? "";
+          if (!(typeof unitVal === "string" || typeof unitVal === "number" ? String(unitVal) : "").trim())
+            return false;
+        }
+        
         if (typeof val === "string") {
           if (
             (field as DynamicFormFieldNormal).minLength &&
@@ -854,13 +862,16 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
         if (field.type === "array") {
           payload[field.key] = formData[field.key] ?? [];
         } else {
-          payload[(field as DynamicFormFieldNormal).key] =
-            typeof formData[(field as DynamicFormFieldNormal).key] ===
-            "string"
-              ? (
-                  formData[(field as DynamicFormFieldNormal).key] as string
-                ).trim()
-              : formData[(field as DynamicFormFieldNormal).key];
+          const fieldKey = (field as DynamicFormFieldNormal).key;
+          payload[fieldKey] =
+            typeof formData[fieldKey] === "string"
+              ? (formData[fieldKey]).trim()
+              : formData[fieldKey];
+              
+          if (field.type === "weight") {
+            const unitKey = `${fieldKey}_unit_id`;
+            payload[unitKey] = formData[unitKey];
+          }
         }
       }
 
