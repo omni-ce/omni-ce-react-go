@@ -1173,7 +1173,10 @@ function DynamicWeight({
   disabled?: boolean;
 }) {
   const amount = field.key ? (formData[field.key] as string) : "";
-  const unitId = typeof formData.unit_id === "string" ? formData.unit_id : "";
+  const unitId =
+    typeof formData[`${field.key}_unit_id`] === "string"
+      ? formData[`${field.key}_unit_id`]
+      : "";
   const { language } = useLanguageStore();
 
   return (
@@ -1191,7 +1194,7 @@ function DynamicWeight({
           field={
             {
               ...field,
-              key: "unit_id",
+              key: `${field.key}_unit_id`,
               label: "",
               selectOptions: "units",
               selectFormat: (item: {
@@ -1211,8 +1214,8 @@ function DynamicWeight({
               }),
             } as DynamicFormField
           }
-          formData={{ unit_id: unitId }}
-          onChange={(val) => onChange("unit_id", val)}
+          formData={{ [`${field.key}_unit_id`]: unitId }}
+          onChange={(val) => onChange(`${field.key}_unit_id`, val)}
         />
       </div>
     </div>
