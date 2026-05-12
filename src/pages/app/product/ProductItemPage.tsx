@@ -118,18 +118,6 @@ export default function ProductItemPage({ ruleKey }: Props) {
         label: language({ id: "Berat", en: "Weight" }),
         type: "weight",
         required: true,
-        selectOptions: "units",
-        selectFormat: (item: UnitOption) => ({
-          value: item.value,
-          render: (
-            <div className="flex items-center gap-2">
-              <span>{item.label}</span>
-              <span className="text-xs text-muted-foreground">
-                ({item.meta.short_name})
-              </span>
-            </div>
-          ),
-        }),
       },
       {
         label: language({ id: "SKU", en: "SKU" }),
