@@ -422,3 +422,46 @@ export const dummyMenuItems: MenuItem[] = [
     emoji: "👛",
   },
 ];
+
+export const dummyProductHistory = [
+  {
+    id: 1,
+    type: "IN",
+    qty: 50,
+    date: "2024-05-10 10:00",
+    reference: "PO-2024-001",
+    notes: "Barang datang dari Supplier A",
+    user: "Admin",
+    status: "Completed",
+  },
+  {
+    id: 2,
+    type: "OUT",
+    qty: 10,
+    date: "2024-05-11 14:30",
+    reference: "SO-2024-012",
+    notes: "Penjualan ke Pelanggan X",
+    user: "Staff",
+    status: "Completed",
+  },
+  {
+    id: 3,
+    type: "IN",
+    qty: 20,
+    date: "2024-05-12 09:15",
+    reference: "RET-2024-005",
+    notes: "Retur barang rusak",
+    user: "Admin",
+    status: "Completed",
+  },
+  {
+    id: 4,
+    type: "OUT",
+    qty: 5,
+    date: "2024-05-13 11:45",
+    reference: "ADJ-2024-002",
+    notes: "Penyesuaian stok opname",
+    user: "Manager",
+    status: "Completed",
+  },
+];
