@@ -14,6 +14,7 @@ import type { ProductItemOption } from "@/types/product";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { IconComponent } from "@/components/ui/IconSelector";
 import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 import { cn } from "@/lib/utils";
 import GuardLayout from "@/components/GuardLayout";
 import Image from "@/components/Image";
@@ -325,6 +326,49 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
                       </span>
                     </div>
                   </div>
+                </div>
+              </div>
+
+              {/* Actions & Filters */}
+              <div className="flex flex-col sm:flex-row items-center justify-between bg-dark-800/30 p-3 rounded-2xl border border-dark-600/30 gap-3">
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <div className="flex items-center gap-2 bg-dark-900 rounded-lg p-1 border border-dark-600/50 w-full sm:w-auto">
+                    <Input
+                      type="date"
+                      className="bg-transparent border-none text-xs text-dark-200 outline-none h-8 w-full sm:w-[130px] px-2 py-0 focus:ring-0"
+                    />
+                    <span className="text-dark-500 text-xs px-1">
+                      {language({ id: "ke", en: "to" })}
+                    </span>
+                    <Input
+                      type="date"
+                      className="bg-transparent border-none text-xs text-dark-200 outline-none h-8 w-full sm:w-[130px] px-2 py-0 focus:ring-0"
+                    />
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <Button
+                    variant="outline"
+                    className="h-9 text-xs border-neon-green/30 text-neon-green hover:bg-neon-green/10 hover:border-neon-green/50 flex-1 sm:flex-none"
+                  >
+                    <IconComponent
+                      iconName="Hi/HiOutlinePlus"
+                      size={14}
+                      className="mr-1.5"
+                    />
+                    {language({ id: "Barang Masuk", en: "Item In" })}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="h-9 text-xs border-neon-red/30 text-neon-red hover:bg-neon-red/10 hover:border-neon-red/50 flex-1 sm:flex-none"
+                  >
+                    <IconComponent
+                      iconName="Hi/HiOutlineMinus"
+                      size={14}
+                      className="mr-1.5"
+                    />
+                    {language({ id: "Barang Keluar", en: "Item Out" })}
+                  </Button>
                 </div>
               </div>
 
