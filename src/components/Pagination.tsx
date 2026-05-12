@@ -136,6 +136,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
     fields = [],
     useIsActive = true,
     extraActions = [],
+    dataSelected,
     ruleKey,
     dataDeleteName,
     onSelectRow,
@@ -342,9 +343,9 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
 
                     return (
                       <div key={`ea-${idx}`} className="contents">
-                        {!action.icon &&
+                        {/* {!(action.icon as string) &&
                           action.button &&
-                          action.button(row, reload)}
+                          action.button(row, reload)} */}
                         {action.icon && (
                           <Button
                             variant="ghost"
@@ -1289,8 +1290,27 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                       ? String((row as { id?: string | number }).id ?? idx)
                       : String(idx);
 
+                  const isSelected = (() => {
+                    if (dataSelected === undefined || dataSelected === null)
+                      return false;
+                    const rowId = getRowId(row);
+                    if (Array.isArray(dataSelected)) {
+                      return dataSelected.some(
+                        (id) => String(id) === String(rowId),
+                      );
+                    }
+                    return String(dataSelected) === String(rowId);
+                  })();
+
                   return (
-                    <TableRow key={key}>
+                    <TableRow
+                      key={key}
+                      className={
+                        isSelected
+                          ? "bg-accent-500/10 hover:bg-accent-500/15"
+                          : ""
+                      }
+                    >
                       {mergedColumns.map((column) => (
                         <TableCell
                           key={`${key}-${column.key}`}
