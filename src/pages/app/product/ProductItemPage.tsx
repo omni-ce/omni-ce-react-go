@@ -275,6 +275,15 @@ export default function ProductItemPage({ ruleKey }: Props) {
         },
       },
       {
+        key: "weight",
+        header: language({ id: "Berat", en: "Weight" }),
+        render: (item) => (
+          <span className="max-w-xs truncate block">
+            {item.weight} {item.weight_unit_name}
+          </span>
+        ),
+      },
+      {
         key: "qty",
         header: language({ id: "Stok", en: "Stock" }),
         render: (item) => (

@@ -92,6 +92,9 @@ export interface ProductItem {
   condition_id: number;
   condition_name: string;
   qty: number;
+  weight: number;
+  weight_unit_id: number;
+  weight_unit_name: string;
   buy_price: number;
   is_active: boolean;
 }
