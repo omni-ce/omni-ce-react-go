@@ -4,283 +4,283 @@ import { LanguageKey, type Language, type Country } from "@/types/world";
 export const languages: Record<LanguageKey, Language> = {
   [LanguageKey.EN]: {
     name: "English",
-    flag: "US" as keyof typeof flags,
+    flag: "US",
   },
   [LanguageKey.ID]: {
     name: "Indonesian",
-    flag: "ID" as keyof typeof flags,
+    flag: "ID",
   },
   [LanguageKey.MS]: {
     name: "Malay",
-    flag: "MY" as keyof typeof flags,
+    flag: "MY",
   },
   [LanguageKey.TH]: {
     name: "Thai",
-    flag: "TH" as keyof typeof flags,
+    flag: "TH",
   },
   [LanguageKey.FIL]: {
     name: "Filipino",
-    flag: "PH" as keyof typeof flags,
+    flag: "PH",
   },
   [LanguageKey.VI]: {
     name: "Vietnamese",
-    flag: "VN" as keyof typeof flags,
+    flag: "VN",
   },
   [LanguageKey.ZH]: {
     name: "Chinese",
-    flag: "CN" as keyof typeof flags,
+    flag: "CN",
   },
   [LanguageKey.JA]: {
     name: "Japanese",
-    flag: "JP" as keyof typeof flags,
+    flag: "JP",
   },
   [LanguageKey.KO]: {
     name: "Korean",
-    flag: "KR" as keyof typeof flags,
+    flag: "KR",
   },
   [LanguageKey.HI]: {
     name: "Hindi",
-    flag: "IN" as keyof typeof flags,
+    flag: "IN",
   },
   [LanguageKey.FR]: {
     name: "French",
-    flag: "FR" as keyof typeof flags,
+    flag: "FR",
   },
   [LanguageKey.DE]: {
     name: "German",
-    flag: "DE" as keyof typeof flags,
+    flag: "DE",
   },
   [LanguageKey.IT]: {
     name: "Italian",
-    flag: "IT" as keyof typeof flags,
+    flag: "IT",
   },
   [LanguageKey.ES]: {
     name: "Spanish",
-    flag: "ES" as keyof typeof flags,
+    flag: "ES",
   },
   [LanguageKey.PT]: {
     name: "Portuguese",
-    flag: "PT" as keyof typeof flags,
+    flag: "PT",
   },
   [LanguageKey.NL]: {
     name: "Dutch",
-    flag: "NL" as keyof typeof flags,
+    flag: "NL",
   },
   [LanguageKey.RU]: {
     name: "Russian",
-    flag: "RU" as keyof typeof flags,
+    flag: "RU",
   },
   [LanguageKey.AR]: {
     name: "Arabic",
-    flag: "SA" as keyof typeof flags,
+    flag: "SA",
   },
   [LanguageKey.TR]: {
     name: "Turkish",
-    flag: "TR" as keyof typeof flags,
+    flag: "TR",
   },
   [LanguageKey.PL]: {
     name: "Polish",
-    flag: "PL" as keyof typeof flags,
+    flag: "PL",
   },
   [LanguageKey.SV]: {
     name: "Swedish",
-    flag: "SE" as keyof typeof flags,
+    flag: "SE",
   },
   [LanguageKey.NO]: {
     name: "Norwegian",
-    flag: "NO" as keyof typeof flags,
+    flag: "NO",
   },
   [LanguageKey.DA]: {
     name: "Danish",
-    flag: "DK" as keyof typeof flags,
+    flag: "DK",
   },
   [LanguageKey.FI]: {
     name: "Finnish",
-    flag: "FI" as keyof typeof flags,
+    flag: "FI",
   },
   [LanguageKey.EL]: {
     name: "Greek",
-    flag: "GR" as keyof typeof flags,
+    flag: "GR",
   },
   [LanguageKey.CS]: {
     name: "Czech",
-    flag: "CZ" as keyof typeof flags,
+    flag: "CZ",
   },
   [LanguageKey.HU]: {
     name: "Hungarian",
-    flag: "HU" as keyof typeof flags,
+    flag: "HU",
   },
   [LanguageKey.RO]: {
     name: "Romanian",
-    flag: "RO" as keyof typeof flags,
+    flag: "RO",
   },
   [LanguageKey.UK]: {
     name: "Ukrainian",
-    flag: "UA" as keyof typeof flags,
+    flag: "UA",
   },
   [LanguageKey.HE]: {
     name: "Hebrew",
-    flag: "IL" as keyof typeof flags,
+    flag: "IL",
   },
   [LanguageKey.UR]: {
     name: "Urdu",
-    flag: "PK" as keyof typeof flags,
+    flag: "PK",
   },
   [LanguageKey.BN]: {
     name: "Bengali",
-    flag: "BD" as keyof typeof flags,
+    flag: "BD",
   },
   [LanguageKey.SI]: {
     name: "Sinhala",
-    flag: "LK" as keyof typeof flags,
+    flag: "LK",
   },
   [LanguageKey.MY]: {
     name: "Burmese",
-    flag: "MM" as keyof typeof flags,
+    flag: "MM",
   },
   [LanguageKey.KM]: {
     name: "Khmer",
-    flag: "KH" as keyof typeof flags,
+    flag: "KH",
   },
   [LanguageKey.LO]: {
     name: "Lao",
-    flag: "LA" as keyof typeof flags,
+    flag: "LA",
   },
   [LanguageKey.NE]: {
     name: "Nepali",
-    flag: "NP" as keyof typeof flags,
+    flag: "NP",
   },
   [LanguageKey.AM]: {
     name: "Amharic",
-    flag: "ET" as keyof typeof flags,
+    flag: "ET",
   },
   [LanguageKey.SW]: {
     name: "Swahili",
-    flag: "KE" as keyof typeof flags,
+    flag: "KE",
   },
   [LanguageKey.FA]: {
     name: "Persian",
-    flag: "IR" as keyof typeof flags,
+    flag: "IR",
   },
   [LanguageKey.TA]: {
     name: "Tamil",
-    flag: "IN" as keyof typeof flags,
+    flag: "IN",
   },
   [LanguageKey.TE]: {
     name: "Telugu",
-    flag: "IN" as keyof typeof flags,
+    flag: "IN",
   },
   [LanguageKey.MR]: {
     name: "Marathi",
-    flag: "IN" as keyof typeof flags,
+    flag: "IN",
   },
   [LanguageKey.GU]: {
     name: "Gujarati",
-    flag: "IN" as keyof typeof flags,
+    flag: "IN",
   },
   [LanguageKey.PA]: {
     name: "Punjabi",
-    flag: "IN" as keyof typeof flags,
+    flag: "IN",
   },
   [LanguageKey.JV]: {
     name: "Javanese",
-    flag: "ID" as keyof typeof flags,
+    flag: "ID",
   },
   [LanguageKey.SU]: {
     name: "Sundanese",
-    flag: "ID" as keyof typeof flags,
+    flag: "ID",
   },
   [LanguageKey.UZ]: {
     name: "Uzbek",
-    flag: "UZ" as keyof typeof flags,
+    flag: "UZ",
   },
   [LanguageKey.AZ]: {
     name: "Azerbaijani",
-    flag: "AZ" as keyof typeof flags,
+    flag: "AZ",
   },
   [LanguageKey.KK]: {
     name: "Kazakh",
-    flag: "KZ" as keyof typeof flags,
+    flag: "KZ",
   },
   [LanguageKey.BG]: {
     name: "Bulgarian",
-    flag: "BG" as keyof typeof flags,
+    flag: "BG",
   },
   [LanguageKey.SR]: {
     name: "Serbian",
-    flag: "RS" as keyof typeof flags,
+    flag: "RS",
   },
   [LanguageKey.HR]: {
     name: "Croatian",
-    flag: "HR" as keyof typeof flags,
+    flag: "HR",
   },
   [LanguageKey.SK]: {
     name: "Slovak",
-    flag: "SK" as keyof typeof flags,
+    flag: "SK",
   },
   [LanguageKey.LT]: {
     name: "Lithuanian",
-    flag: "LT" as keyof typeof flags,
+    flag: "LT",
   },
   [LanguageKey.LV]: {
     name: "Latvian",
-    flag: "LV" as keyof typeof flags,
+    flag: "LV",
   },
   [LanguageKey.ET]: {
     name: "Estonian",
-    flag: "EE" as keyof typeof flags,
+    flag: "EE",
   },
   [LanguageKey.IS]: {
     name: "Icelandic",
-    flag: "IS" as keyof typeof flags,
+    flag: "IS",
   },
   [LanguageKey.GA]: {
     name: "Irish",
-    flag: "IE" as keyof typeof flags,
+    flag: "IE",
   },
   [LanguageKey.CY]: {
     name: "Welsh",
-    flag: "GB" as keyof typeof flags,
+    flag: "GB",
   },
   [LanguageKey.MT]: {
     name: "Maltese",
-    flag: "MT" as keyof typeof flags,
+    flag: "MT",
   },
   [LanguageKey.SQ]: {
     name: "Albanian",
-    flag: "AL" as keyof typeof flags,
+    flag: "AL",
   },
   [LanguageKey.MK]: {
     name: "Macedonian",
-    flag: "MK" as keyof typeof flags,
+    flag: "MK",
   },
   [LanguageKey.BS]: {
     name: "Bosnian",
-    flag: "BA" as keyof typeof flags,
+    flag: "BA",
   },
   [LanguageKey.SL]: {
     name: "Slovenian",
-    flag: "SI" as keyof typeof flags,
+    flag: "SI",
   },
   [LanguageKey.KA]: {
     name: "Georgian",
-    flag: "GE" as keyof typeof flags,
+    flag: "GE",
   },
   [LanguageKey.HY]: {
     name: "Armenian",
-    flag: "AM" as keyof typeof flags,
+    flag: "AM",
   },
   [LanguageKey.EU]: {
     name: "Basque",
-    flag: "ES" as keyof typeof flags,
+    flag: "ES",
   },
   [LanguageKey.CA]: {
     name: "Catalan",
-    flag: "ES" as keyof typeof flags,
+    flag: "ES",
   },
   [LanguageKey.GL]: {
     name: "Galician",
-    flag: "ES" as keyof typeof flags,
+    flag: "ES",
   },
 };
 export const arrayLanguages = Object.keys(languages).map((lang) => ({

@@ -143,7 +143,7 @@ export default function CaptchaInput({
           >(`/api/captcha/generate${previewQuery}`);
         }
         if (response.status !== 200) {
-          language(response.data.message as Record<"id" | "en", string>);
+          language(response.data.message);
         }
         const data = response.data.data;
 

@@ -8,7 +8,7 @@
     "dev": "vite --host",
     "build": "tsc -b && vite build",
     "build:go": "go build -o react-go main.go",
-    "lint": "eslint .",
+    "lint": "eslint . --fix",
     "preview": "vite preview",
     "test": "yarn playwright test"
   },

@@ -115,7 +115,8 @@ export type DynamicFormFieldType =
   | "geolocation"
   | "price"
   | "username"
-  | "password";
+  | "password"
+  | "weight";
 
 export interface DynamicFormFieldNormal<T = unknown> {
   key: string;
@@ -143,6 +144,11 @@ export interface DynamicFormFieldNormal<T = unknown> {
   selectFormat?: (row: T) => DynamicFormFieldOption;
   pricePrefix?: string;
   placeholder?: string;
+}
+
+export interface WeightValue {
+  amount: string;
+  unit: string;
 }
 
 interface DynamicFormFieldChildren {
@@ -254,7 +260,7 @@ function DynamicSelect({
               render: formatted.render,
             };
           }
-          const item = d as unknown as Option;
+          const item = d;
           return {
             value: String(item.value),
             label: item.label,
@@ -952,7 +958,7 @@ function ArrayField({
             {field.children?.map((child) => (
               <div
                 key={child.key}
-                className={getColClass(child as DynamicFormFieldNormal)}
+                className={getColClass(child)}
               >
                 <Label
                   htmlFor={`field-${field.key}-${index}-${child.key}`}
@@ -1159,6 +1165,54 @@ function DebouncedInput({
           {language(msg.text)}
         </span>
       )}
+    </div>
+  );
+}
+
+function DynamicWeight({
+  field,
+  formData,
+  onChange,
+  disabled,
+}: {
+  field: DynamicFormField;
+  formData: Record<string, unknown>;
+  onChange: (val: WeightValue) => void;
+  disabled?: boolean;
+}) {
+  const valueRaw = formData[field.key!];
+  const value: WeightValue =
+    typeof valueRaw === "object" && valueRaw !== null
+      ? (valueRaw as WeightValue)
+      : {
+          amount: "",
+          unit: "",
+        };
+  const { language } = useLanguageStore();
+
+  return (
+    <div className="flex items-center gap-2 mt-1.5">
+      <Input
+        type="number"
+        className="flex-1"
+        value={value.amount}
+        onChange={(e) => onChange({ ...value, amount: e.target.value })}
+        disabled={disabled}
+        placeholder={language({ id: "Berat", en: "Weight" })}
+      />
+      <div className="w-32 sm:w-40">
+        <DynamicSelect
+          field={
+            {
+              ...field,
+              key: "unit",
+              label: "",
+            } as DynamicFormField
+          }
+          formData={{ unit: value.unit }}
+          onChange={(unit) => onChange({ ...value, unit })}
+        />
+      </div>
     </div>
   );
 }
@@ -1860,6 +1914,13 @@ function DynamicFieldRenderer({
           onChange={(val) => onChange(field.key, val)}
           disabled={disabled}
         />
+      ) : field.type === "weight" ? (
+        <DynamicWeight
+          field={field}
+          formData={formData}
+          onChange={(val) => onChange(field.key, val)}
+          disabled={disabled}
+        />
       ) : field.type === "camera" ? (
         <CameraSelector
           value={ensureString(formData[field.key])}
@@ -1967,7 +2028,7 @@ function DynamicFieldRenderer({
         </div>
       ) : field.type === "map" ? (
         <DynamicMapField
-          field={field as DynamicFormFieldNormal}
+          field={field}
           value={(() => {
             console.log("formData:", formData);
             return (
@@ -1988,7 +2049,7 @@ function DynamicFieldRenderer({
         />
       ) : field.type === "geolocation" ? (
         <DynamicGeolocationField
-          field={field as DynamicFormFieldNormal}
+          field={field}
           value={
             (formData[field.key] as MapCoordinates | undefined) ??
             (formData.longitude !== undefined &&

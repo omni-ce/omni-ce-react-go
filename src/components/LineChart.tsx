@@ -75,7 +75,7 @@ export default function LineChart({
       type: "spline",
       name: s.name,
       color: s.color,
-      data: s.data as unknown as Highcharts.SeriesSplineOptions["data"],
+      data: s.data,
     })),
   };
 
