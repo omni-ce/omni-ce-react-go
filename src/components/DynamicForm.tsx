@@ -95,7 +95,6 @@ export type DynamicFormFieldType =
   | "text"
   | "email"
   | "number"
-  | "password"
   | "address"
   | "file"
   | "select"
@@ -114,7 +113,9 @@ export type DynamicFormFieldType =
   | "switch"
   | "map"
   | "geolocation"
-  | "price";
+  | "price"
+  | "username"
+  | "password";
 
 export interface DynamicFormFieldNormal<T = unknown> {
   key: string;
@@ -141,6 +142,7 @@ export interface DynamicFormFieldNormal<T = unknown> {
   booleanDefault?: boolean;
   selectFormat?: (row: T) => DynamicFormFieldOption;
   pricePrefix?: string;
+  placeholder?: string;
 }
 
 interface DynamicFormFieldChildren {
@@ -356,7 +358,12 @@ function DynamicSelect({
       let label = opt.label;
       if (typeof label === "string" && label.startsWith("{")) {
         try {
-          label = language(JSON.parse(label) as Record<LanguageKey.ID | LanguageKey.EN, string>);
+          label = language(
+            JSON.parse(label) as Record<
+              LanguageKey.ID | LanguageKey.EN,
+              string
+            >,
+          );
         } catch (e) {
           // fallback
         }
@@ -446,7 +453,9 @@ function DynamicAddress({
             setProvinceOptions(response.data.data);
           }
         })
-        .catch((error: unknown) => console.error("Failed to fetch provinces:", error))
+        .catch((error: unknown) =>
+          console.error("Failed to fetch provinces:", error),
+        )
         .finally(() => setIsLoadingProvince(false));
     }
   };
@@ -454,39 +463,51 @@ function DynamicAddress({
   const fetchRegencies = (provinceCode: string) => {
     setIsLoadingRegency(true);
     satellite
-      .get<Response<DynamicFormFieldOption[]>>(`/api/address/regencies/${provinceCode}`)
+      .get<Response<DynamicFormFieldOption[]>>(
+        `/api/address/regencies/${provinceCode}`,
+      )
       .then((response) => {
         if (response.data.status === 200) {
           setRegencyOptions(response.data.data);
         }
       })
-      .catch((error: unknown) => console.error("Failed to fetch regencies:", error))
+      .catch((error: unknown) =>
+        console.error("Failed to fetch regencies:", error),
+      )
       .finally(() => setIsLoadingRegency(false));
   };
 
   const fetchDistricts = (regencyCode: string) => {
     setIsLoadingDistrict(true);
     satellite
-      .get<Response<DynamicFormFieldOption[]>>(`/api/address/districts/${regencyCode}`)
+      .get<Response<DynamicFormFieldOption[]>>(
+        `/api/address/districts/${regencyCode}`,
+      )
       .then((response) => {
         if (response.data.status === 200) {
           setDistrictOptions(response.data.data);
         }
       })
-      .catch((error: unknown) => console.error("Failed to fetch districts:", error))
+      .catch((error: unknown) =>
+        console.error("Failed to fetch districts:", error),
+      )
       .finally(() => setIsLoadingDistrict(false));
   };
 
   const fetchVillages = (districtCode: string) => {
     setIsLoadingVillage(true);
     satellite
-      .get<Response<DynamicFormFieldOption[]>>(`/api/address/villages/${districtCode}`)
+      .get<Response<DynamicFormFieldOption[]>>(
+        `/api/address/villages/${districtCode}`,
+      )
       .then((response) => {
         if (response.data.status === 200) {
           setVillageOptions(response.data.data);
         }
       })
-      .catch((error: unknown) => console.error("Failed to fetch villages:", error))
+      .catch((error: unknown) =>
+        console.error("Failed to fetch villages:", error),
+      )
       .finally(() => setIsLoadingVillage(false));
   };
 
@@ -546,7 +567,7 @@ function DynamicAddress({
           setSelectedVillage("");
           onChange("");
         }}
-        disabled={Boolean(disabled) || (selectedProvince === "")}
+        disabled={Boolean(disabled) || selectedProvince === ""}
         loading={isLoadingRegency}
         placeholder="Pilih Kabupaten/Kota..."
       />
@@ -559,7 +580,7 @@ function DynamicAddress({
           setSelectedVillage("");
           onChange("");
         }}
-        disabled={Boolean(disabled) || (selectedRegency === "")}
+        disabled={Boolean(disabled) || selectedRegency === ""}
         loading={isLoadingDistrict}
         placeholder="Pilih Kecamatan..."
       />
@@ -571,7 +592,7 @@ function DynamicAddress({
           setSelectedVillage(val);
           onChange(val);
         }}
-        disabled={Boolean(disabled) || (selectedDistrict === "")}
+        disabled={Boolean(disabled) || selectedDistrict === ""}
         loading={isLoadingVillage}
         placeholder="Pilih Desa/Kelurahan..."
       />
@@ -775,7 +796,9 @@ function DynamicFile({
             <span className="text-sm font-medium text-foreground truncate">
               {loading
                 ? language({ id: "Mengunggah...", en: "Uploading..." })
-                : (fileName !== "" ? fileName : language({ id: "Pilih File", en: "Choose File" }))}
+                : fileName !== ""
+                  ? fileName
+                  : language({ id: "Pilih File", en: "Choose File" })}
             </span>
             {loading && (
               <div className="mt-1 w-full h-1 bg-dark-700 rounded-full overflow-hidden">
@@ -794,7 +817,9 @@ function DynamicFile({
           (field as DynamicFormFieldNormal).fileMaxSize && (
             <span className="text-[10px] text-dark-400">
               Max:{" "}
-              {formatFileSize((field as DynamicFormFieldNormal).fileMaxSize ?? 0)}
+              {formatFileSize(
+                (field as DynamicFormFieldNormal).fileMaxSize ?? 0,
+              )}
             </span>
           )}
       </div>
@@ -970,7 +995,11 @@ function ArrayField({
                     type={child.type}
                     className="mt-1.5"
                     value={String(
-                      (item[(child as DynamicFormFieldNormal).key] as string | number | boolean | undefined) ?? "",
+                      (item[(child as DynamicFormFieldNormal).key] as
+                        | string
+                        | number
+                        | boolean
+                        | undefined) ?? "",
                     )}
                     onChange={(e) =>
                       handleChildChange(
@@ -1134,6 +1163,64 @@ function DebouncedInput({
   );
 }
 
+function DynamicUsername({
+  field,
+  value,
+  onChange,
+  disabled,
+}: {
+  field: DynamicFormField;
+  value: string;
+  onChange: (val: string) => void;
+  disabled?: boolean;
+}) {
+  const { language } = useLanguageStore();
+  const f = field as DynamicFormFieldNormal;
+
+  let placeholder = f.placeholder;
+  if (!placeholder && f.key === "username") {
+    placeholder = JSON.stringify({
+      id: "Masukkan nama pengguna",
+      en: "Enter username",
+    });
+  }
+
+  if (placeholder?.startsWith("{")) {
+    try {
+      placeholder = language(
+        JSON.parse(placeholder) as Record<
+          LanguageKey.ID | LanguageKey.EN,
+          string
+        >,
+      );
+    } catch (e) {
+      // fallback
+    }
+  }
+
+  return (
+    <div className="relative mt-1.5 flex items-center">
+      <Input
+        id={`field-${field.key}`}
+        type="text"
+        className="pl-11"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        minLength={f.minLength}
+        maxLength={f.maxLength}
+        disabled={disabled}
+        placeholder={placeholder}
+      />
+      <div className="absolute left-3.5 z-10 flex items-center justify-center pointer-events-none">
+        <IconComponent
+          iconName="Ri/RiUserLine"
+          className="w-4 h-4 text-dark-400"
+        />
+      </div>
+    </div>
+  );
+}
+
 function DynamicPassword({
   field,
   value,
@@ -1145,19 +1232,50 @@ function DynamicPassword({
   onChange: (val: string) => void;
   disabled?: boolean;
 }) {
+  const { language } = useLanguageStore();
   const [show, setShow] = useState(false);
+  const f = field as DynamicFormFieldNormal;
+
+  let placeholder = f.placeholder;
+  if (!placeholder && f.type === "password") {
+    placeholder = JSON.stringify({
+      id: "Masukkan kata sandi",
+      en: "Enter password",
+    });
+  }
+
+  if (placeholder?.startsWith("{")) {
+    try {
+      placeholder = language(
+        JSON.parse(placeholder) as Record<
+          LanguageKey.ID | LanguageKey.EN,
+          string
+        >,
+      );
+    } catch (e) {
+      // fallback
+    }
+  }
+
   return (
     <div className="relative mt-1.5 flex items-center">
       <Input
         id={`field-${field.key}`}
         type={show ? "text" : "password"}
-        className="pr-10"
+        className="pl-11 pr-12"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        minLength={(field as DynamicFormFieldNormal).minLength}
-        maxLength={(field as DynamicFormFieldNormal).maxLength}
+        minLength={f.minLength}
+        maxLength={f.maxLength}
         disabled={disabled}
+        placeholder={placeholder}
       />
+      <div className="absolute left-3.5 z-10 flex items-center justify-center pointer-events-none">
+        <IconComponent
+          iconName="Ri/RiLockLine"
+          className="w-4 h-4 text-dark-400"
+        />
+      </div>
       <div className="absolute right-3 z-10 flex items-center justify-center">
         <button
           type="button"
@@ -1166,8 +1284,8 @@ function DynamicPassword({
           tabIndex={-1}
         >
           <IconComponent
-            iconName={show ? "Hi/HiOutlineEyeOff" : "Hi/HiOutlineEye"}
-            className="w-5 h-5"
+            iconName={show ? "Ri/RiEyeOffLine" : "Ri/RiEyeLine"}
+            className="w-4 h-4"
           />
         </button>
       </div>
@@ -1651,7 +1769,9 @@ function DynamicFieldRenderer({
       ) : field.type === "array" ? (
         <ArrayField
           field={field}
-          value={(formData[field.key] as Record<string, unknown>[] | undefined) ?? []}
+          value={
+            (formData[field.key] as Record<string, unknown>[] | undefined) ?? []
+          }
           onChange={(newVal) => onChange(field.key, newVal)}
         />
       ) : field.type === "select" ? (
@@ -1680,6 +1800,23 @@ function DynamicFieldRenderer({
           onBlur={(e) => handleBlur(e.target.value)}
           minLength={field.minLength}
           maxLength={field.maxLength}
+          placeholder={(() => {
+            const f = field as DynamicFormFieldNormal;
+            let p = f.placeholder;
+            if (p?.startsWith("{")) {
+              try {
+                p = language(
+                  JSON.parse(p) as Record<
+                    LanguageKey.ID | LanguageKey.EN,
+                    string
+                  >,
+                );
+              } catch (e) {
+                // fallback
+              }
+            }
+            return p;
+          })()}
           rows={(field as DynamicFormFieldNormal).textareaRows}
         />
       ) : field.debounce ? (
@@ -1709,11 +1846,19 @@ function DynamicFieldRenderer({
           minLength={field.minLength}
           maxLength={field.maxLength}
         />
+      ) : field.type === "username" ? (
+        <DynamicUsername
+          field={field}
+          value={ensureString(formData[field.key])}
+          onChange={(val) => onChange(field.key, val)}
+          disabled={disabled}
+        />
       ) : field.type === "password" ? (
         <DynamicPassword
           field={field}
           value={ensureString(formData[field.key])}
           onChange={(val) => onChange(field.key, val)}
+          disabled={disabled}
         />
       ) : field.type === "camera" ? (
         <CameraSelector
@@ -1917,6 +2062,23 @@ function DynamicFieldRenderer({
             minLength={(field as DynamicFormFieldNormal).minLength}
             maxLength={(field as DynamicFormFieldNormal).maxLength}
             disabled={disabled}
+            placeholder={(() => {
+              const f = field as DynamicFormFieldNormal;
+              let p = f.placeholder;
+              if (p?.startsWith("{")) {
+                try {
+                  p = language(
+                    JSON.parse(p) as Record<
+                      LanguageKey.ID | LanguageKey.EN,
+                      string
+                    >,
+                  );
+                } catch (e) {
+                  // fallback
+                }
+              }
+              return p;
+            })()}
             onBlur={(e) => handleBlur(e.target.value)}
             onWheel={(e) => field.type === "number" && e.currentTarget.blur()}
           />

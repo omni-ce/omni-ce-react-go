@@ -4,21 +4,37 @@ import { Link, useNavigate } from "react-router";
 import { useLanguageStore } from "@/stores/languageStore";
 import AppIconSvg from "@/assets/react_go.svg";
 import { useRuleStore } from "@/stores/ruleStore";
-import type { Rule } from "@/types/rule";
 import { IconComponent } from "@/components/ui/IconSelector";
 import Image from "@/components/Image";
+import DynamicForm, { type DynamicFormField } from "@/components/DynamicForm";
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const { language } = useLanguageStore();
 
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState<Record<string, string>>({
+    username: "",
+    password: "",
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Record<"id" | "en", string> | null>(null);
   const { login } = useAuthStore();
   const { setRules } = useRuleStore();
+
+  const fields: DynamicFormField[] = [
+    {
+      key: "username",
+      label: language({ id: "Nama pengguna", en: "Username" }),
+      type: "username",
+      required: true,
+    },
+    {
+      key: "password",
+      label: language({ id: "Kata sandi", en: "Password" }),
+      type: "password",
+      required: true,
+    },
+  ];
 
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -26,7 +42,7 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const response = await login(username, password);
+      const response = await login(formData.username, formData.password);
       if (response.success) {
         setRules(response.rules ?? []);
         navigate("/select-role", { replace: true });
@@ -90,70 +106,14 @@ export default function LoginPage() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Username */}
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                {language({ id: "Nama pengguna", en: "Username" })}
-              </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder={language({
-                    id: "Masukkan nama pengguna",
-                    en: "Enter username",
-                  })}
-                  className="w-full px-4 py-3 pl-11 bg-dark-900 border border-dark-600 rounded-lg text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500 focus:ring-1 focus:ring-accent-500/30 transition-all text-sm"
-                  required
-                />
-                <IconComponent
-                  iconName="Ri/RiUserLine"
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400"
-                />
-              </div>
-            </div>
-
-            {/* Password */}
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                {language({ id: "Kata sandi", en: "Password" })}
-              </label>
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder={language({
-                    id: "Masukkan kata sandi",
-                    en: "Enter password",
-                  })}
-                  className="w-full px-4 py-3 pl-11 pr-12 bg-dark-900 border border-dark-600 rounded-lg text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500 focus:ring-1 focus:ring-accent-500/30 transition-all text-sm"
-                  required
-                />
-                <IconComponent
-                  iconName="Ri/RiLockLine"
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-dark-400 hover:text-dark-200 transition-colors"
-                >
-                  {showPassword ? (
-                    <IconComponent
-                      iconName="Ri/RiEyeOffLine"
-                      className="w-4 h-4"
-                    />
-                  ) : (
-                    <IconComponent
-                      iconName="Ri/RiEyeLine"
-                      className="w-4 h-4"
-                    />
-                  )}
-                </button>
-              </div>
-            </div>
+            <DynamicForm
+              fields={fields}
+              formData={formData}
+              onChange={(key, val) =>
+                setFormData((prev) => ({ ...prev, [key]: val as string }))
+              }
+              disabled={isLoading}
+            />
 
             {/* Submit */}
             <button
