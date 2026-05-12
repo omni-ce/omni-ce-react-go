@@ -33,7 +33,6 @@ func ItemCreate(c *fiber.Ctx) error {
 		ColorID     string `json:"color_id" validate:"required"`
 		ConditionID string `json:"condition_id" validate:"required"`
 		SKU         string `json:"sku" validate:"required"`
-		SkuIMEI     string `json:"sku_imei"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
 		return dto.BodyBadRequest(c, err)
@@ -190,7 +189,6 @@ func ItemCreate(c *fiber.Ctx) error {
 		ColorID:     colorID,
 		ConditionID: uint(conditionID),
 		SKU:         body.SKU,
-		SkuIMEI:     body.SkuIMEI,
 		CreatedBy:   currentUser.ID,
 		UpdatedBy:   currentUser.ID,
 	}
@@ -244,7 +242,7 @@ func ItemPaginate(c *fiber.Ctx) error {
 		c.Request().URI().QueryArgs().Del("col_sku")
 
 		search := "%" + strings.ToLower(col_sku) + "%"
-		query = query.Where("(LOWER(product_items.sku) LIKE ? OR LOWER(product_items.sku_imei) LIKE ?)", search, search)
+		query = query.Where("LOWER(product_items.sku) LIKE ?", search)
 	}
 
 	// Filter Kolom Join (Harus pakai Joins agar tabel tersedia untuk Where)
@@ -281,7 +279,6 @@ func ItemPaginate(c *fiber.Ctx) error {
 			"id":             row.ID,
 			"key":            row.Key,
 			"sku":            row.SKU,
-			"sku_imei":       row.SkuIMEI,
 			"buy_price":      0,
 			"qty":            0,
 			"category_id":    row.Category.ID,
@@ -333,7 +330,6 @@ func ItemEdit(c *fiber.Ctx) error {
 		ColorID     string `json:"color_id" validate:"required"`
 		ConditionID string `json:"condition_id" validate:"required"`
 		SKU         string `json:"sku" validate:"required"`
-		SkuIMEI     string `json:"sku_imei"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
 		return dto.BodyBadRequest(c, err)
@@ -424,7 +420,6 @@ func ItemEdit(c *fiber.Ctx) error {
 	existing.ConditionID = uint(condID)
 
 	existing.SKU = body.SKU
-	existing.SkuIMEI = body.SkuIMEI
 	existing.UpdatedBy = currentUser.ID
 
 	// Regenerate Key

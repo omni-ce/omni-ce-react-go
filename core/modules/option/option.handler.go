@@ -728,7 +728,6 @@ func ProductItems(c *fiber.Ctx) error {
 			Value: row.ID,
 			Meta: &map[string]any{
 				"sku":       row.SKU,
-				"sku_imei":  row.SkuIMEI,
 				"category":  category,
 				"type":      _type,
 				"brand":     brand,

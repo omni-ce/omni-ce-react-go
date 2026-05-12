@@ -74,7 +74,6 @@ export interface ProductItem {
   id: number;
   key: string;
   sku: string;
-  sku_imei?: string;
   category_id: number;
   category_name: string;
   category_icon: string;
@@ -102,7 +101,6 @@ export interface ProductItemOption {
   value: number;
   meta: {
     sku: string;
-    sku_imei?: string;
     category: string;
     type: string;
     brand: string;

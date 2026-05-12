@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/Input";
 import { cn } from "@/lib/utils";
 import GuardLayout from "@/components/GuardLayout";
 import { dummyProductHistory } from "@/dummy";
+import { formatDateTime } from "@/utils/datetime";
 
 interface Props {
   ruleKey: string;
@@ -128,7 +129,9 @@ export default function WarehouseHistoryPage({ ruleKey }: Props) {
                     size="sm"
                     className="h-7 text-xs px-3"
                     onClick={() =>
-                      setHistoryFilter((prev) => (prev === "OUT" ? null : "OUT"))
+                      setHistoryFilter((prev) =>
+                        prev === "OUT" ? null : "OUT",
+                      )
                     }
                   >
                     {language({ id: "Barang Keluar", en: "Outgoing Items" })}
@@ -187,7 +190,7 @@ export default function WarehouseHistoryPage({ ruleKey }: Props) {
                               className="text-dark-500"
                             />
                             <span className="text-[10px] text-dark-400 font-medium">
-                              {h.date}
+                              {formatDateTime(h.date).split(", ")[0]}
                             </span>
                           </div>
                         </div>
@@ -251,9 +254,12 @@ export default function WarehouseHistoryPage({ ruleKey }: Props) {
                           </div>
                         </div>
                         <div className="flex items-center gap-1 text-dark-500">
-                          <IconComponent iconName="Hi/HiOutlineClock" size={12} />
+                          <IconComponent
+                            iconName="Hi/HiOutlineClock"
+                            size={12}
+                          />
                           <span className="text-[10px] font-bold">
-                            {h.date.split(" ")[1]}
+                            {formatDateTime(h.date)}
                           </span>
                         </div>
                       </div>

@@ -20,8 +20,7 @@ type ProductItem struct {
 	IsActive    bool   `json:"is_active" gorm:"default:true"`
 
 	// StockKeeping Unit
-	SKU     string `json:"sku" gorm:"type:varchar(255);uniqueIndex;not null"`
-	SkuIMEI string `json:"sku_imei" gorm:"type:varchar(255);default:null"`
+	SKU string `json:"sku" gorm:"type:varchar(255);uniqueIndex;not null"`
 
 	// relations
 	Category  ProductCategory  `json:"category" gorm:"foreignKey:CategoryID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
@@ -50,7 +49,6 @@ func (s *ProductItem) Map() map[string]any {
 		"color_id":     s.ColorID,
 		"condition_id": s.ConditionID,
 		"sku":          s.SKU,
-		"sku_imei":     s.SkuIMEI,
 		"is_active":    s.IsActive,
 		"created_at":   s.CreatedAt,
 		"created_by":   s.CreatedBy,

@@ -32,7 +32,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/Dialog";
-import { useLanguageStore } from "@/stores/languageStore";
+import { useLanguageStore, type LanguageCode } from "@/stores/languageStore";
 import { useAuthStore } from "@/stores/authStore";
 import { usePermission } from "@/hooks/usePermission";
 import satellite from "@/lib/satellite";
@@ -86,7 +86,7 @@ export interface PaginationColumn<T, TFilter = unknown> {
 
 export interface PaginationExtraAction<T> {
   icon?: string;
-  label: string;
+  label: Record<LanguageCode, string>;
   width?: string | number;
   height?: string | number;
   button?: (row: T, onClose: () => void) => ReactNode | void;
@@ -355,7 +355,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                           <Button
                             variant="ghost"
                             size="icon"
-                            title={action.label}
+                            title={language(action.label)}
                             onClick={() => {
                               if (action.button) action.button(row, reload);
                               if (action.component)

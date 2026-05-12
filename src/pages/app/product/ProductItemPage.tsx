@@ -119,12 +119,6 @@ export default function ProductItemPage({ ruleKey }: Props) {
             debounce: "product-sku",
             required: true,
           },
-          {
-            key: "sku_imei",
-            label: language({ id: "IMEI", en: "IMEI" }),
-            type: "text",
-            debounce: "product-imei",
-          },
         ],
       },
     ],
@@ -144,11 +138,6 @@ export default function ProductItemPage({ ruleKey }: Props) {
             <span className="font-mono text-sm font-semibold tracking-tight text-foreground">
               {item.sku}
             </span>
-            {item.sku_imei && (
-              <span className="font-mono text-[10px] uppercase">
-                IMEI: {item.sku_imei}
-              </span>
-            )}
           </div>
         ),
       },
@@ -341,6 +330,10 @@ export default function ProductItemPage({ ruleKey }: Props) {
         extraActions={[
           {
             icon: "Io/IoIosImages",
+            label: {
+              id: "Foto",
+              en: "Photo",
+            },
             width: "90%",
             height: "90%",
             component: (row, onClose) => (

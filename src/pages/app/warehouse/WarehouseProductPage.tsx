@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import GuardLayout from "@/components/GuardLayout";
 import Image from "@/components/Image";
 import { dummyProductHistory } from "@/dummy";
+import { formatDateTime } from "@/utils/datetime";
 
 interface Props {
   ruleKey: string;
@@ -263,7 +264,7 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
         extraActions={[
           {
             icon: "Ai/AiOutlineProduct",
-            label: language({ id: "Produk", en: "Product" }),
+            label: { id: "Produk", en: "Product" },
             button: (row) => {
               setDataSelected((state) => {
                 if (row.id === state?.id) return null;
@@ -439,23 +440,6 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
 
                         <div className="flex items-start justify-between mb-4">
                           <div className="flex items-center gap-3">
-                            <div
-                              className={cn(
-                                "w-10 h-10 rounded-xl flex items-center justify-center shadow-inner",
-                                h.type === "IN"
-                                  ? "bg-neon-green/10 text-neon-green"
-                                  : "bg-neon-red/10 text-neon-red",
-                              )}
-                            >
-                              <IconComponent
-                                iconName={
-                                  h.type === "IN"
-                                    ? "Hi/HiOutlineArrowDownLeft"
-                                    : "Hi/HiOutlineArrowUpRight"
-                                }
-                                size={20}
-                              />
-                            </div>
                             <div className="flex flex-col">
                               <span className="text-sm font-bold text-foreground">
                                 {h.type === "IN"
@@ -475,7 +459,7 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
                                   className="text-dark-500"
                                 />
                                 <span className="text-[10px] text-dark-400 font-medium">
-                                  {h.date}
+                                  {formatDateTime(h.date).split(", ")[0]}
                                 </span>
                               </div>
                             </div>
@@ -526,9 +510,6 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
 
                           <div className="flex items-center justify-between pt-1">
                             <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 rounded-lg bg-dark-700 flex items-center justify-center text-[10px] text-accent-500 font-black shadow-sm">
-                                {h.user[0]}
-                              </div>
                               <div className="flex flex-col">
                                 <span className="text-[10px] text-dark-300 font-bold leading-none">
                                   {h.user}
@@ -539,9 +520,12 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
                               </div>
                             </div>
                             <div className="flex items-center gap-1 text-dark-500">
-                              <IconComponent iconName="Hi/HiOutlineClock" size={12} />
+                              <IconComponent
+                                iconName="Hi/HiOutlineClock"
+                                size={12}
+                              />
                               <span className="text-[10px] font-bold">
-                                {h.date.split(" ")[1]}
+                                {formatDateTime(h.date)}
                               </span>
                             </div>
                           </div>
