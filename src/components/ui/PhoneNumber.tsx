@@ -5,6 +5,7 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 import { IconComponent } from "./IconSelector";
+import { LanguageKey } from "@/types/world";
 
 interface Props {
   value?: string;
@@ -42,10 +43,10 @@ export default function PhoneNumber({
           (c) =>
             c.language_key === phoneDefaultCountry ||
             c.code === phoneDefaultCountry,
-        )?.code || "ID"
+        )?.code ?? "ID"
       );
     }
-    return countries.find((c) => c.language_key === languageCode)?.code || "ID";
+    return countries.find((c) => c.language_key === languageCode)?.code ?? "ID";
   }, [phoneDefaultCountry, languageCode]);
 
   const [selectedCountry, setSelectedCountry] = useState(defaultCountry);
@@ -121,15 +122,12 @@ export default function PhoneNumber({
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
       // Allow click if it's inside the container (input/button)
-      if (
-        containerRef.current &&
-        containerRef.current.contains(event.target as Node)
-      ) {
+      if (containerRef.current?.contains(event.target as Node)) {
         return;
       }
       // Also close if click is outside the portal dropdown
       const portal = document.getElementById("phone-dropdown-portal");
-      if (portal && portal.contains(event.target as Node)) {
+      if (portal?.contains(event.target as Node)) {
         return;
       }
       setIsOpen(false);
@@ -206,7 +204,7 @@ export default function PhoneNumber({
                     type="text"
                     className="w-full bg-transparent border-none text-sm text-foreground focus:outline-none placeholder:text-dark-400"
                     placeholder={
-                      languageCode === "id" ? "Cari..." : "Search..."
+                      languageCode === LanguageKey.ID ? "Cari..." : "Search..."
                     }
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
@@ -217,7 +215,7 @@ export default function PhoneNumber({
                 <div className="overflow-y-auto p-1 scrollbar-hide">
                   {filteredCountries.length === 0 ? (
                     <div className="p-4 text-center text-sm text-dark-400">
-                      {languageCode === "id"
+                      {languageCode === LanguageKey.ID
                         ? "Tidak ditemukan"
                         : "No results found"}
                     </div>
@@ -278,12 +276,14 @@ export default function PhoneNumber({
             if (phoneFirstAntiZero && numericValue.startsWith("0")) {
               numericValue = numericValue.substring(1);
             }
-            const phoneCode = currentCountry?.phoneCode || "62";
+            const phoneCode = currentCountry?.phoneCode ?? "62";
             onChange(`+${phoneCode} ${numericValue}`);
           }}
           onBlur={onBlur}
           maxLength={maxLength}
-          placeholder={languageCode === "id" ? "Nomor telepon" : "Phone number"}
+          placeholder={
+            languageCode === LanguageKey.ID ? "Nomor telepon" : "Phone number"
+          }
           className={cn(
             "flex-1 px-4 py-3 bg-dark-900 border border-dark-600 rounded-xl text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30 transition-all text-sm disabled:opacity-50",
             error ? "border-neon-red/50" : "border-dark-600",

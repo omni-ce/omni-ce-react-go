@@ -111,7 +111,7 @@ export type DynamicFormFieldType =
   | "geolocation"
   | "price";
 
-export type DynamicFormFieldNormal<T = unknown> = {
+export interface DynamicFormFieldNormal<T = unknown> {
   key: string;
   type: DynamicFormFieldType;
   selectOptions?: DynamicFormFieldOption[] | string;
@@ -136,13 +136,13 @@ export type DynamicFormFieldNormal<T = unknown> = {
   booleanDefault?: boolean;
   selectFormat?: (row: T) => DynamicFormFieldOption;
   pricePrefix?: string;
-};
+}
 
-type DynamicFormFieldChildren = {
+interface DynamicFormFieldChildren {
   key?: never;
   type?: never;
   children: DynamicFormField[];
-};
+}
 
 export type DynamicFormField<T = unknown> = {
   label: string;
@@ -157,20 +157,20 @@ export type DynamicFormField<T = unknown> = {
 
 const getColClass = (field: DynamicFormField | DynamicFormFieldNormal) => {
   const m =
-    (field as DynamicFormField).colMobile ||
-    (field as DynamicFormField).col ||
+    (field as DynamicFormField).colMobile ??
+    (field as DynamicFormField).col ??
     12;
   const t =
-    (field as DynamicFormField).colTablet ||
-    (field as DynamicFormField).col ||
+    (field as DynamicFormField).colTablet ??
+    (field as DynamicFormField).col ??
     12;
   const l =
-    (field as DynamicFormField).colLaptop ||
-    (field as DynamicFormField).col ||
+    (field as DynamicFormField).colLaptop ??
+    (field as DynamicFormField).col ??
     12;
   const d =
-    (field as DynamicFormField).colDesktop ||
-    (field as DynamicFormField).col ||
+    (field as DynamicFormField).colDesktop ??
+    (field as DynamicFormField).col ??
     12;
   return `${spanMap[m] || "col-span-12"} ${mdMap[t] || "md:col-span-12"} ${
     lgMap[l] || "lg:col-span-12"
@@ -243,7 +243,7 @@ function DynamicSelect({
             return {
               ...formatted,
               value: String(formatted.value),
-              label: formatted.label || "",
+              label: formatted.label ?? "",
               render: formatted.render,
             };
           }
@@ -604,8 +604,7 @@ function DynamicFile({
 
     if (
       (field as DynamicFormFieldNormal).fileMaxSize &&
-      (file.size as number) >
-        ((field as DynamicFormFieldNormal).fileMaxSize as number)
+      file.size > ((field as DynamicFormFieldNormal).fileMaxSize as number)
     ) {
       setErrorMsg(
         `Ukuran file melebihi batas ${(((field as DynamicFormFieldNormal).fileMaxSize as number) / (1024 * 1024)).toFixed(2)} MB`,
@@ -618,7 +617,7 @@ function DynamicFile({
     if ((field as DynamicFormFieldNormal).fileType) {
       allowedTypes = (
         (field as DynamicFormFieldNormal).fileType as FileType[]
-      ).flat() as FileType[];
+      ).flat();
     }
 
     if (allowedTypes.length > 0) {
@@ -1047,7 +1046,7 @@ function DebouncedInput({
         .then((res) => {
           const data = res.data?.data;
 
-          if (data && data.available === false) {
+          if (data?.available === false) {
             setMsg({ text: data.message, isError: true });
             onError((field as DynamicFormFieldNormal).key, res.data.message);
           } else {
@@ -1612,7 +1611,7 @@ function DynamicFieldRenderer({
         <div className="grid grid-cols-12 gap-4">
           {field.children.map((child, idx) => (
             <DynamicFieldRenderer
-              key={child.key || String(idx)}
+              key={child.key ?? String(idx)}
               field={child}
               formData={formData}
               onChange={onChange}
@@ -1644,37 +1643,37 @@ function DynamicFieldRenderer({
               desktop: 3,
             }
           }
-          onChange={(val) => onChange(field.key!, val)}
+          onChange={(val) => onChange(field.key, val)}
         />
       ) : field.type === "array" ? (
         <ArrayField
           field={field}
           value={(formData[field.key] as Record<string, unknown>[]) || []}
-          onChange={(newVal) => onChange(field.key!, newVal)}
+          onChange={(newVal) => onChange(field.key, newVal)}
         />
       ) : field.type === "select" ? (
         <DynamicSelect
           field={field}
           formData={formData as Record<string, string>}
-          onChange={(val) => onChange(field.key!, val)}
+          onChange={(val) => onChange(field.key, val)}
         />
       ) : field.type === "address" ? (
         <DynamicAddress
           value={String(formData[field.key] ?? "")}
-          onChange={(val) => onChange(field.key!, val)}
+          onChange={(val) => onChange(field.key, val)}
         />
       ) : field.type === "file" ? (
         <DynamicFile
           field={field}
           value={String(formData[field.key] ?? "")}
-          onChange={(val) => onChange(field.key!, val)}
+          onChange={(val) => onChange(field.key, val)}
         />
       ) : field.type === "textarea" ? (
         <textarea
           id={`field-${field.key}`}
           className="mt-1.5 w-full px-4 py-2.5 bg-dark-900 border border-dark-600 rounded-lg text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500 focus:ring-1 focus:ring-accent-500/30 transition-all text-sm disabled:opacity-50 min-h-20 resize-y"
           value={String(formData[field.key] ?? "")}
-          onChange={(e) => onChange(field.key!, e.target.value)}
+          onChange={(e) => onChange(field.key, e.target.value)}
           onBlur={(e) => handleBlur(e.target.value)}
           minLength={field.minLength}
           maxLength={field.maxLength}
@@ -1684,9 +1683,9 @@ function DynamicFieldRenderer({
         <DebouncedInput
           field={field}
           formData={formData as Record<string, string>}
-          onChange={(val) => onChange(field.key!, val)}
+          onChange={(val) => onChange(field.key, val)}
           onError={(key, err) => {
-            if (onError) onError(key, err as string);
+            if (onError) onError(key, err!);
           }}
           initialValue={
             editingRow && typeof editingRow === "object"
@@ -1702,7 +1701,7 @@ function DynamicFieldRenderer({
           value={String(formData[field.key] ?? "")}
           onChange={(e) => {
             const val = e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, "");
-            onChange(field.key!, val);
+            onChange(field.key, val);
           }}
           minLength={field.minLength}
           maxLength={field.maxLength}
@@ -1711,46 +1710,46 @@ function DynamicFieldRenderer({
         <DynamicPassword
           field={field}
           value={String(formData[field.key] ?? "")}
-          onChange={(val) => onChange(field.key!, val)}
+          onChange={(val) => onChange(field.key, val)}
         />
       ) : field.type === "camera" ? (
         <CameraSelector
           value={String(formData[field.key] ?? "")}
           onChange={(val) => {
             if (val instanceof Blob) {
-              onChange(field.key!, URL.createObjectURL(val));
+              onChange(field.key, URL.createObjectURL(val));
             } else {
-              onChange(field.key!, val);
+              onChange(field.key, val);
             }
           }}
         />
       ) : field.type === "captcha" ? (
         <Captcha
           value={String(formData[field.key] ?? "")}
-          onChange={(val) => onChange(field.key!, val)}
+          onChange={(val) => onChange(field.key, val)}
           security={field.captchaSecurity}
           length={field.captchaLength}
         />
       ) : field.type === "color" ? (
         <ColorPickerSelector
           value={String(formData[field.key] ?? "")}
-          onChange={(val) => onChange(field.key!, val)}
+          onChange={(val) => onChange(field.key, val)}
         />
       ) : field.type === "country" ? (
         <CountrySelector
           label={field.label}
           value={String(formData[field.key] ?? "")}
-          onChange={(val) => onChange(field.key!, val)}
+          onChange={(val) => onChange(field.key, val)}
         />
       ) : field.type === "icon" ? (
         <IconSelector
           value={String(formData[field.key] ?? "")}
-          onChange={(val) => onChange(field.key!, val)}
+          onChange={(val) => onChange(field.key, val)}
         />
       ) : field.type === "phone" ? (
         <PhoneNumber
           value={String(formData[field.key] ?? "")}
-          onChange={(val) => onChange(field.key!, val)}
+          onChange={(val) => onChange(field.key, val)}
           phoneDefaultCountry={
             (field as DynamicFormFieldNormal).phoneDefaultCountry
           }
@@ -1758,9 +1757,9 @@ function DynamicFieldRenderer({
             (field as DynamicFormFieldNormal).phoneFirstAntiZero
           }
           maxLength={(field as DynamicFormFieldNormal).maxLength}
-          error={(errors[field.key] as string) || undefined}
+          error={errors[field.key] || undefined}
           disabled={disabled}
-          onBlur={() => handleBlur(String(formData[field.key!] || ""))}
+          onBlur={() => handleBlur(String(formData[field.key] ?? ""))}
         />
       ) : field.type === "price" ? (
         <div className="relative mt-1.5 flex items-center">
@@ -1786,7 +1785,7 @@ function DynamicFieldRenderer({
             onChange={(e) => {
               const rawValue = e.target.value.replace(/\./g, "");
               if (!isNaN(Number(rawValue)) || rawValue === "") {
-                onChange(field.key!, rawValue);
+                onChange(field.key, rawValue);
               }
             }}
             disabled={disabled}
@@ -1797,7 +1796,7 @@ function DynamicFieldRenderer({
         <div className="mt-2">
           <Switch
             checked={Boolean(formData[field.key])}
-            onCheckedChange={(val) => onChange(field.key!, val)}
+            onCheckedChange={(val) => onChange(field.key, val)}
             disabled={disabled}
           />
         </div>
@@ -1814,7 +1813,7 @@ function DynamicFieldRenderer({
             type="date"
             className="w-full pl-12 pr-4 py-2.5 bg-dark-900 border border-dark-600 rounded-lg text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500 focus:ring-1 focus:ring-accent-500/30 transition-all text-sm disabled:opacity-50"
             value={String(formData[field.key] ?? "")}
-            onChange={(e) => onChange(field.key!, e.target.value)}
+            onChange={(e) => onChange(field.key, e.target.value)}
             disabled={disabled}
           />
         </div>
@@ -1824,37 +1823,37 @@ function DynamicFieldRenderer({
           value={(() => {
             console.log("formData:", formData);
             return (
-              (formData[field.key!] as MapCoordinates | undefined) ||
-              (formData["longitude"] !== undefined &&
-              formData["latitude"] !== undefined &&
-              formData["longitude"] !== null &&
-              formData["latitude"] !== null
+              (formData[field.key] as MapCoordinates | undefined) ??
+              (formData.longitude !== undefined &&
+              formData.latitude !== undefined &&
+              formData.longitude !== null &&
+              formData.latitude !== null
                 ? {
-                    longitude: Number(formData["longitude"]),
-                    latitude: Number(formData["latitude"]),
+                    longitude: Number(formData.longitude),
+                    latitude: Number(formData.latitude),
                   }
                 : undefined)
             );
           })()}
-          onChange={(val) => onChange(field.key!, val)}
+          onChange={(val) => onChange(field.key, val)}
           disabled={disabled}
         />
       ) : field.type === "geolocation" ? (
         <DynamicGeolocationField
           field={field as DynamicFormFieldNormal}
           value={
-            (formData[field.key!] as MapCoordinates | undefined) ||
-            (formData["longitude"] !== undefined &&
-            formData["latitude"] !== undefined &&
-            formData["longitude"] !== null &&
-            formData["latitude"] !== null
+            (formData[field.key] as MapCoordinates | undefined) ??
+            (formData.longitude !== undefined &&
+            formData.latitude !== undefined &&
+            formData.longitude !== null &&
+            formData.latitude !== null
               ? {
-                  longitude: Number(formData["longitude"]),
-                  latitude: Number(formData["latitude"]),
+                  longitude: Number(formData.longitude),
+                  latitude: Number(formData.latitude),
                 }
               : undefined)
           }
-          onChange={(val) => onChange(field.key!, val)}
+          onChange={(val) => onChange(field.key, val)}
           disabled={disabled}
         />
       ) : field.type === "text" &&
@@ -1866,7 +1865,7 @@ function DynamicFieldRenderer({
 
             let valObj: Record<string, string> = {};
             try {
-              const rawVal = formData[field.key!];
+              const rawVal = formData[field.key];
               if (typeof rawVal === "string" && rawVal.startsWith("{")) {
                 valObj = JSON.parse(rawVal);
               } else if (typeof rawVal === "object" && rawVal !== null) {
@@ -1893,7 +1892,7 @@ function DynamicFieldRenderer({
                   value={valObj[langCode] ?? ""}
                   onChange={(e) => {
                     const newValObj = { ...valObj, [langCode]: e.target.value };
-                    onChange(field.key!, JSON.stringify(newValObj));
+                    onChange(field.key, JSON.stringify(newValObj));
                   }}
                   disabled={disabled}
                 />
@@ -1916,7 +1915,7 @@ function DynamicFieldRenderer({
               if (maxLength && val.length > maxLength) {
                 val = val.slice(0, maxLength);
               }
-              onChange(field.key!, val);
+              onChange(field.key, val);
             }}
             minLength={(field as DynamicFormFieldNormal).minLength}
             maxLength={(field as DynamicFormFieldNormal).maxLength}

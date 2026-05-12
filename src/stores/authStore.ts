@@ -22,7 +22,7 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>()((set, get) => ({
   user: null,
-  token: localStorage.getItem("token") || null,
+  token: localStorage.getItem("token") ?? null,
   isLoading: true,
   isAuthenticated: false,
   login: async (username, password) => {
@@ -57,7 +57,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     return { success: true, message: null };
   },
   setAuthenticated: (value) => set({ isAuthenticated: value }),
-  validateToken: async (retrigger: boolean = false) => {
+  validateToken: async (retrigger = false) => {
     const { token, isAuthenticated } = get();
     if (!token) {
       set({ isAuthenticated: false, isLoading: false });

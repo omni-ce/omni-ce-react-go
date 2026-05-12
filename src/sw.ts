@@ -11,7 +11,7 @@ import { CacheFirst, NetworkOnly } from "workbox-strategies";
 declare let self: ServiceWorkerGlobalScope;
 
 self.addEventListener("message", (event) => {
-  if (event.data && event.data.type === "SKIP_WAITING") self.skipWaiting();
+  if (event.data ?? event.data.type === "SKIP_WAITING") self.skipWaiting();
 });
 
 // self.__WB_MANIFEST is the default injection point
@@ -126,12 +126,12 @@ self.addEventListener("push", (event) => {
       data = { title: "Notifikasi Baru", body: rawData };
     }
 
-    const title = data.title || "Notifikasi Baru";
+    const title = data.title ?? "Notifikasi Baru";
     const options: NotificationOptions = {
-      body: data?.body || "Anda punya pesan baru",
-      icon: data?.icon || "/favicon.svg", // Make sure this file exists
-      badge: data?.icon || "/favicon.svg", // Make sure this file exists
-      data: data?.url || "/",
+      body: data?.body ?? "Anda punya pesan baru",
+      icon: data?.icon ?? "/favicon.svg", // Make sure this file exists
+      badge: data?.icon ?? "/favicon.svg", // Make sure this file exists
+      data: data?.url ?? "/",
       // Add more options for better notifications
       // vibrate: [100, 50, 100],
       // timestamp: Date.now(),
@@ -161,7 +161,7 @@ self.addEventListener("notificationclick", (event) => {
   event.notification.close();
 
   // Get the URL from notification data
-  const url = event.notification.data || "/";
+  const url = event.notification.data ?? "/";
 
   // Handle navigation
   event.waitUntil(

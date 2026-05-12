@@ -27,8 +27,7 @@ export default function CameraSelector({
 
   const loadCameraDevices = async () => {
     try {
-      if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices)
-        return;
+      if (!navigator.mediaDevices?.enumerateDevices) return;
       const devices = await navigator.mediaDevices.enumerateDevices();
       const videoDevices = devices.filter(
         (device: MediaDeviceInfo) => device.kind === "videoinput",

@@ -87,7 +87,7 @@ export const routers = createBrowserRouter([
                 const routes: RouteObject[] = [];
                 if (link.element) {
                   routes.push({
-                    path: fullPath as string,
+                    path: fullPath,
                     element: link.element,
                   });
                 }

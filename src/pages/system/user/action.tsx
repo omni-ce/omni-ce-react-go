@@ -62,7 +62,7 @@ export const ChangePassword = ({ row, onClose }: ChangePasswordProps) => {
         status: number;
       }>;
       setErrorMsg(
-        error?.response?.data?.message || "Failed to change password",
+        error?.response?.data?.message ?? "Failed to change password",
       );
     } finally {
       setLoading(false);

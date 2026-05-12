@@ -36,7 +36,7 @@ export default function CaptchaInput({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [captchaId, setCaptchaId] = useState("");
   const [captchaText, setCaptchaText] = useState("");
-  const [userInput, setUserInput] = useState(value || "");
+  const [userInput, setUserInput] = useState(value ?? "");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const { isDarkMode } = useThemeStore();
@@ -206,7 +206,7 @@ export default function CaptchaInput({
             message: string;
           }>;
           const msg =
-            error.response?.data?.message || "Captcha verification failed";
+            error.response?.data?.message ?? "Captcha verification failed";
           setError(messageWrong || msg);
           fetchCaptcha(captchaId, { preserveError: true });
           return false;
@@ -252,7 +252,7 @@ export default function CaptchaInput({
       <div className="relative">
         <input
           type="text"
-          value={value !== undefined ? value : userInput}
+          value={value ?? userInput}
           disabled={disabled}
           onChange={(e) => {
             const val = e.target.value.toUpperCase();

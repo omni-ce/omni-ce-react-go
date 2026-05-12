@@ -234,7 +234,7 @@ export default function PosPage({ ruleKey }: Props) {
           className="flex gap-3 overflow-x-auto pb-4 custom-scrollbar-h"
         >
           {filteredOrders.map((order) => {
-            const status = statusConfig[order.status as OrderStatus];
+            const status = statusConfig[order.status];
             if (!status) return null;
             return (
               <div
@@ -706,7 +706,7 @@ export default function PosPage({ ruleKey }: Props) {
                 {(() => {
                   try {
                     return language(
-                      JSON.parse(selectedVariant?.category_name || "{}"),
+                      JSON.parse(selectedVariant?.category_name ?? "{}"),
                     );
                   } catch {
                     return selectedVariant?.category_name;
@@ -718,7 +718,7 @@ export default function PosPage({ ruleKey }: Props) {
                 {(() => {
                   try {
                     return language(
-                      JSON.parse(selectedVariant?.type_name || "{}"),
+                      JSON.parse(selectedVariant?.type_name ?? "{}"),
                     );
                   } catch {
                     return selectedVariant?.type_name;

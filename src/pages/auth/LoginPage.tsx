@@ -28,7 +28,7 @@ export default function LoginPage() {
     try {
       const response = await login(username, password);
       if (response.success) {
-        setRules((response.rules as Rule[]) || []);
+        setRules(response.rules! || []);
         navigate("/select-role", { replace: true });
       } else {
         setError({
@@ -85,9 +85,7 @@ export default function LoginPage() {
 
           {error && (
             <div className="bg-neon-red/10 border border-neon-red/20 rounded-lg px-4 py-3 mb-4">
-              <p className="text-sm text-neon-red">
-                {language(error)}
-              </p>
+              <p className="text-sm text-neon-red">{language(error)}</p>
             </div>
           )}
 

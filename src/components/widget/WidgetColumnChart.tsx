@@ -103,7 +103,7 @@ export default function WidgetColumnChart({
       type: "column" as const,
       name: s.name,
       data: s.data,
-      color: s.color || "#6366f1",
+      color: s.color ?? "#6366f1",
     })),
   };
 

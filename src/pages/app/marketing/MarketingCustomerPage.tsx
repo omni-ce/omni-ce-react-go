@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/Badge";
 import type { LanguageKey } from "@/types/world";
 import { IconComponent } from "@/components/ui/IconSelector";
 import { cn } from "@/lib/utils";
-import type { Gender } from "@/types/option";
+import { Gender } from "@/types/option";
 import GuardLayout from "@/components/GuardLayout";
 
 interface Props {
@@ -153,13 +153,15 @@ export default function MarketingCustomerPage({ ruleKey }: Props) {
               {item.gender && (
                 <IconComponent
                   iconName={
-                    item.gender === "L"
+                    item.gender === Gender.Male
                       ? "Pi/PiGenderMaleBold"
                       : "Pi/PiGenderFemaleBold"
                   }
                   className={cn(
                     "w-4 h-4",
-                    item.gender === "L" ? "text-blue-400" : "text-pink-400",
+                    item.gender === Gender.Male
+                      ? "text-blue-400"
+                      : "text-pink-400",
                   )}
                 />
               )}

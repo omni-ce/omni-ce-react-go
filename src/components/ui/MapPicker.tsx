@@ -86,7 +86,7 @@ export default function MapPicker({
 
   useEffect(() => {
     if (isOpen) {
-      if (initialCoords && initialCoords.latitude && initialCoords.longitude) {
+      if (initialCoords?.latitude && initialCoords.longitude) {
         const latlng = new L.LatLng(
           initialCoords.latitude,
           initialCoords.longitude,

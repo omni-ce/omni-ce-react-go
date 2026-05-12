@@ -46,7 +46,7 @@ const Avatar = React.forwardRef<HTMLImageElement, AvatarProps>(
               size === "sm" ? "text-xs" : size === "lg" ? "text-lg" : "text-sm"
             }
           >
-            {fallback || alt?.charAt(0)?.toUpperCase() || "?"}
+            {fallback ?? alt?.charAt(0)?.toUpperCase() ?? "?"}
           </span>
         </div>
       );
@@ -57,7 +57,7 @@ const Avatar = React.forwardRef<HTMLImageElement, AvatarProps>(
         <img
           ref={ref}
           src={src}
-          alt={alt as string}
+          alt={alt}
           onError={() => setError(true)}
           className={cn(
             shape === "square" ? "rounded-none" : "rounded-full",
@@ -74,7 +74,7 @@ const Avatar = React.forwardRef<HTMLImageElement, AvatarProps>(
       <Image
         ref={ref}
         src={src}
-        alt={alt as string}
+        alt={alt!}
         onError={() => setError(true)}
         className={cn(
           shape === "square" ? "rounded-none" : "rounded-full",

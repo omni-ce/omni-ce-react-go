@@ -5,11 +5,11 @@ const HighchartsReactComponent =
   (HighchartsReact as unknown as { default?: typeof HighchartsReact })
     .default ?? HighchartsReact;
 
-type LineChartSeries = {
+interface LineChartSeries {
   name: string;
   color: string;
-  data: Array<[number, number]>;
-};
+  data: [number, number][];
+}
 
 export default function LineChart({
   data,

@@ -32,7 +32,7 @@ export default function ProductVarianPage({ ruleKey }: Props) {
         selectOptions: "product-categories",
         selectFormat: (item: ProductCategoryOption) => {
           const category_name = item.label;
-          let category: string = "";
+          let category = "";
           try {
             if (category_name.startsWith("{")) {
               const obj = JSON.parse(category_name);

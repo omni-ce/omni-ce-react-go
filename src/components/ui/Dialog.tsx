@@ -55,7 +55,7 @@ function Dialog({
       {/* Content wrapper */}
       <div
         className="relative z-10 w-full mx-4 animate-fade-in"
-        style={{ maxWidth: width || "480px", height: height || "auto" }}
+        style={{ maxWidth: width ?? "480px", height: height ?? "auto" }}
       >
         {children}
       </div>

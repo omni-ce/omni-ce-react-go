@@ -117,19 +117,19 @@ export default function WidgetAreaChart({
       type: "areaspline" as const,
       name: s.name,
       data: s.data,
-      color: s.color || "#6366f1",
+      color: s.color ?? "#6366f1",
       fillColor: {
         linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
         stops: [
           [
             0,
-            Highcharts.color(s.color || "#6366f1")
+            Highcharts.color(s.color ?? "#6366f1")
               .setOpacity(0.3)
               .get("rgba") as string,
           ],
           [
             1,
-            Highcharts.color(s.color || "#6366f1")
+            Highcharts.color(s.color ?? "#6366f1")
               .setOpacity(0.02)
               .get("rgba") as string,
           ],

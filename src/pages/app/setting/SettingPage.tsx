@@ -30,11 +30,11 @@ export default function SettingPage({}: Props) {
   const [isSaving, setIsSaving] = useState(false);
 
   // Profile states
-  const [name, setName] = useState(user?.name || "");
-  const [username, setUsername] = useState(user?.username || "");
-  const [phoneNumber, setPhoneNumber] = useState(user?.phone_number || "");
-  const [address, setAddress] = useState(user?.address || "");
-  const [avatar, setAvatar] = useState(user?.avatar || "");
+  const [name, setName] = useState(user?.name ?? "");
+  const [username, setUsername] = useState(user?.username ?? "");
+  const [phoneNumber, setPhoneNumber] = useState(user?.phone_number ?? "");
+  const [address, setAddress] = useState(user?.address ?? "");
+  const [avatar, setAvatar] = useState(user?.avatar ?? "");
   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
@@ -42,9 +42,9 @@ export default function SettingPage({}: Props) {
     if (user) {
       setName(user.name || "");
       setUsername(user.username || "");
-      setPhoneNumber(user.phone_number || "");
-      setAddress(user.address || "");
-      setAvatar(user.avatar || "");
+      setPhoneNumber(user.phone_number ?? "");
+      setAddress(user.address ?? "");
+      setAvatar(user.avatar ?? "");
     }
   }, [user]);
 

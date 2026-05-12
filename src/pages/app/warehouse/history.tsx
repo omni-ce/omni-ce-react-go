@@ -16,8 +16,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/Dialog";
-import { Label } from "@/components/ui/Label";
-import { SearchableSelect } from "@/components/ui/SearchableSelect";
+import DynamicForm, { type DynamicFormField } from "@/components/DynamicForm";
 
 interface Props {
   dataSelected: WarehouseProduct;
@@ -41,13 +40,64 @@ export default function HistoryPage({ dataSelected }: Props) {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedHistory, setSelectedHistory] =
     useState<WarehouseHistory | null>(null);
+  const [inErrors, setInErrors] = useState<Record<string, string | null>>({});
   const dummyHistory = useMemo(() => dummyProductHistory, []);
 
-  const mockSuppliers = [
-    { value: "1", label: "Supplier A" },
-    { value: "2", label: "Supplier B" },
-    { value: "3", label: "Supplier C" },
-  ];
+  const mockSuppliers = useMemo(
+    () => [
+      { value: "1", label: "Supplier A" },
+      { value: "2", label: "Supplier B" },
+      { value: "3", label: "Supplier C" },
+    ],
+    [],
+  );
+
+  const inFormFields = useMemo((): DynamicFormField[] => {
+    const fields: DynamicFormField[] = [
+      {
+        key: "fromSupplier",
+        label: language({ id: "Dari Supplier", en: "From Supplier" }),
+        type: "checkbox",
+        col: 12,
+      },
+    ];
+
+    if (inForm.fromSupplier) {
+      fields.push({
+        key: "supplierId",
+        label: language({ id: "Pilih Supplier", en: "Select Supplier" }),
+        type: "select",
+        selectOptions: mockSuppliers,
+        required: true,
+        col: 12,
+      });
+    }
+
+    fields.push(
+      {
+        key: "reference",
+        label: language({ id: "No. Referensi", en: "Reference No" }),
+        type: "text",
+        required: true,
+        col: 12,
+      },
+      {
+        key: "qty",
+        label: language({ id: "Jumlah", en: "Quantity" }),
+        type: "number",
+        required: true,
+        col: 12,
+      },
+      {
+        key: "note",
+        label: language({ id: "Catatan", en: "Notes" }),
+        type: "textarea",
+        col: 12,
+      },
+    );
+
+    return fields;
+  }, [inForm.fromSupplier, language, mockSuppliers]);
 
   return (
     <Card className="mt-4 animate-fade-in">
@@ -331,76 +381,14 @@ export default function HistoryPage({ dataSelected }: Props) {
             </DialogTitle>
           </DialogHeader>
 
-          <div className="space-y-4 py-2">
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="fromSupplier"
-                checked={inForm.fromSupplier}
-                onChange={(e) =>
-                  setInForm({ ...inForm, fromSupplier: e.target.checked })
-                }
-                className="w-4 h-4 rounded border-dark-600 bg-dark-900 text-accent-500 focus:ring-accent-500/30"
-              />
-              <Label htmlFor="fromSupplier" className="mb-0 cursor-pointer">
-                {language({ id: "Dari Supplier", en: "From Supplier" })}
-              </Label>
-            </div>
-
-            {inForm.fromSupplier && (
-              <div className="animate-fade-in">
-                <Label required>
-                  {language({ id: "Pilih Supplier", en: "Select Supplier" })}
-                </Label>
-                <SearchableSelect
-                  value={inForm.supplierId}
-                  onChange={(val) => setInForm({ ...inForm, supplierId: val })}
-                  options={mockSuppliers}
-                  placeholder={language({
-                    id: "Cari supplier...",
-                    en: "Search supplier...",
-                  })}
-                />
-              </div>
-            )}
-
-            <div>
-              <Label required>
-                {language({ id: "No. Referensi", en: "Reference No" })}
-              </Label>
-              <Input
-                value={inForm.reference}
-                onChange={(e) =>
-                  setInForm({ ...inForm, reference: e.target.value })
-                }
-                placeholder="PO-2024-XXXX"
-              />
-            </div>
-
-            <div>
-              <Label required>
-                {language({ id: "Jumlah", en: "Quantity" })}
-              </Label>
-              <Input
-                type="number"
-                value={inForm.qty}
-                onChange={(e) => setInForm({ ...inForm, qty: e.target.value })}
-                placeholder="0"
-              />
-            </div>
-
-            <div>
-              <Label>{language({ id: "Catatan", en: "Notes" })}</Label>
-              <textarea
-                className="w-full px-4 py-2.5 bg-dark-900 border border-dark-600 rounded-lg text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500 focus:ring-1 focus:ring-accent-500/30 transition-all text-sm min-h-25"
-                value={inForm.note}
-                onChange={(e) => setInForm({ ...inForm, note: e.target.value })}
-                placeholder={language({
-                  id: "Tambah catatan...",
-                  en: "Add notes...",
-                })}
-              />
-            </div>
+          <div className="py-2">
+            <DynamicForm
+              fields={inFormFields}
+              formData={inForm}
+              onChange={(key, val) => setInForm({ ...inForm, [key]: val })}
+              fieldErrors={inErrors}
+              onError={(key, err) => setInErrors({ ...inErrors, [key]: err })}
+            />
           </div>
 
           <DialogFooter>

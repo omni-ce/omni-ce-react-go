@@ -103,7 +103,7 @@ export default function DashboardPage({}: DashboardPageProps) {
   const [roles, setRoles] = useState<Option[]>([]);
   const [loadingRoles, setLoadingRoles] = useState(false);
   const [selectedRole, setSelectedRole] = useState(
-    user?.role !== "su" ? role_selected?.role_id || "" : "",
+    user?.role !== "su" ? (role_selected?.role_id ?? "") : "",
   );
 
   useEffect(() => {
@@ -135,7 +135,7 @@ export default function DashboardPage({}: DashboardPageProps) {
 
   useEffect(() => {
     if (user?.role !== "su") {
-      setSelectedRole(role_selected?.role_id || "");
+      setSelectedRole(role_selected?.role_id ?? "");
     }
   }, [user?.role, role_selected?.role_id]);
 
@@ -369,14 +369,10 @@ export default function DashboardPage({}: DashboardPageProps) {
                   },
                   ...roles
                     .sort((a, b) =>
-                      (a.label as string).localeCompare(
-                        b.label as string,
-                        undefined,
-                        {
-                          numeric: true,
-                          sensitivity: "base",
-                        },
-                      ),
+                      a.label!.localeCompare(b.label!, undefined, {
+                        numeric: true,
+                        sensitivity: "base",
+                      }),
                     )
                     .map((r) => ({
                       value: String(r.value),
@@ -1011,7 +1007,12 @@ export default function DashboardPage({}: DashboardPageProps) {
       )}
 
       {/* Add Widget Modal */}
-      <Dialog open={addModalOpen} onClose={() => {}}>
+      <Dialog
+        open={addModalOpen}
+        onClose={() => {
+          // skip ...
+        }}
+      >
         <DialogContent
           onClose={() => {
             setAddModalOpen(false);

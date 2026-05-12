@@ -14,12 +14,12 @@ type Callback<T> = (data: T) => void;
 class Sse {
   private es: EventSource | null = null;
   private listeners: Record<string, Callback<unknown>[]> = {};
-  private full_url: string = "";
-  private base_url: string = "";
+  private full_url = "";
+  private base_url = "";
 
   constructor(url: string, opt?: SseOption) {
     const queries: Record<string, string> = {
-      token: localStorage.getItem("token") || "",
+      token: localStorage.getItem("token") ?? "",
     };
     if (opt?.query) Object.assign(queries, opt.query);
     const query = new URLSearchParams(queries);

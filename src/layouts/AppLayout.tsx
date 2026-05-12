@@ -68,7 +68,7 @@ const SidebarItem = ({
   const location = useLocation();
   const { language } = useLanguageStore();
 
-  const fullPath = basePath ? `${basePath}/${link.path}` : link.path || "";
+  const fullPath = basePath ? `${basePath}/${link.path}` : (link.path ?? "");
   const toPath = `/app/${fullPath}`;
 
   // Check if current path matches this link or its children
@@ -89,7 +89,7 @@ const SidebarItem = ({
 
   // Handle nested children visibility
   const visibleChildren =
-    link.children?.filter((child) => canViewLink(child, fullPath)) || [];
+    link.children?.filter((child) => canViewLink(child, fullPath)) ?? [];
 
   // Padding based on level (indented for children)
   const plClass =
@@ -317,11 +317,11 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
   const sidebarWidth = effectiveCollapsed ? "w-[72px]" : "w-65";
 
   // Check if user has permission to view a link or its children
-  const canViewLink = (link: ISidebarLink, basePath: string = ""): boolean => {
+  const canViewLink = (link: ISidebarLink, basePath = ""): boolean => {
     // If it's a superuser, they see everything
     if (user?.role === "su") return true;
 
-    const fullPath = basePath ? `${basePath}/${link.path}` : link.path || "";
+    const fullPath = basePath ? `${basePath}/${link.path}` : (link.path ?? "");
 
     // Check if the link itself is allowed (if strict)
     let isAllowed = !link.strict;
@@ -449,7 +449,7 @@ export default function AppLayout({ sidebarLinks }: AppLayoutProps) {
             .filter((link) => canViewLink(link, ""))
             .map((link, idx) => (
               <SidebarItem
-                key={link.path || idx}
+                key={link.path ?? idx}
                 link={link}
                 basePath=""
                 effectiveCollapsed={effectiveCollapsed}

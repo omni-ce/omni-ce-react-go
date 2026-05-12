@@ -10,7 +10,7 @@ interface StepperProps {
 export default function Stepper({ currentStep, labels }: StepperProps) {
   return (
     <div className="flex items-center justify-center mb-6">
-      {Array.from({ length: (labels || []).length }, (_, i) => {
+      {Array.from({ length: (labels ?? []).length }, (_, i) => {
         const stepNum = i + 1;
         const isActive = currentStep >= stepNum;
         const isCompleted = currentStep > stepNum;
@@ -32,7 +32,7 @@ export default function Stepper({ currentStep, labels }: StepperProps) {
                   String(stepNum)
                 )}
               </div>
-              {labels && labels[i] && (
+              {labels?.[i] && (
                 <span className="text-[10px] font-medium text-dark-400 mt-1.5 whitespace-nowrap">
                   {labels[i]}
                 </span>
@@ -40,7 +40,7 @@ export default function Stepper({ currentStep, labels }: StepperProps) {
             </div>
 
             {/* Connector line */}
-            {stepNum < (labels || []).length && (
+            {stepNum < (labels ?? []).length && (
               <div
                 className={`h-0.5 w-12 mx-2 rounded transition-all ${
                   currentStep > stepNum ? "bg-accent-500" : "bg-dark-600"

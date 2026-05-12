@@ -57,14 +57,11 @@ export function SearchableSelect({
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
-      if (
-        containerRef.current &&
-        containerRef.current.contains(event.target as Node)
-      ) {
+      if (containerRef.current?.contains(event.target as Node)) {
         return;
       }
       const portal = document.getElementById("searchable-select-portal");
-      if (portal && portal.contains(event.target as Node)) {
+      if (portal?.contains(event.target as Node)) {
         return;
       }
       setIsOpen(false);
@@ -95,8 +92,8 @@ export function SearchableSelect({
     if (!search) return options;
     const lowerSearch = search.toLowerCase();
     return options.filter((opt) => {
-      const label = opt.label || "";
-      const value = opt.value || "";
+      const label = opt.label ?? "";
+      const value = opt.value ?? "";
       return (
         label.toLowerCase().includes(lowerSearch) ||
         String(value).toLowerCase().includes(lowerSearch)
@@ -129,7 +126,7 @@ export function SearchableSelect({
           {loading
             ? "Loading..."
             : selectedOption
-              ? selectedOption.render || selectedOption.label
+              ? (selectedOption.render ?? selectedOption.label)
               : placeholder}
         </span>
         {value && value !== "all" && !disabled && !loading ? (
@@ -211,7 +208,7 @@ export function SearchableSelect({
                         />
                       )}
                       <div className="flex-1 truncate">
-                        {opt.render || (
+                        {opt.render ?? (
                           <span className="font-medium">{opt.label}</span>
                         )}
                       </div>

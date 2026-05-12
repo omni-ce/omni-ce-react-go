@@ -43,14 +43,11 @@ export default function CountrySelector({
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
-      if (
-        containerRef.current &&
-        containerRef.current.contains(event.target as Node)
-      ) {
+      if (containerRef.current?.contains(event.target as Node)) {
         return;
       }
       const portal = document.getElementById("country-dropdown-portal");
-      if (portal && portal.contains(event.target as Node)) {
+      if (portal?.contains(event.target as Node)) {
         return;
       }
       setShowDropdown(false);

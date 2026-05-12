@@ -93,7 +93,7 @@ export default function WidgetLineChart({
       type: "spline" as const,
       name: s.name,
       data: s.data,
-      color: s.color || "#6366f1",
+      color: s.color ?? "#6366f1",
       dashStyle: (s.dashStyle as Highcharts.DashStyleValue) || "Solid",
     })),
   };
@@ -102,9 +102,7 @@ export default function WidgetLineChart({
     <div className="bg-dark-800 border border-dark-600/40 rounded-2xl overflow-hidden">
       <div className="px-5 py-4">
         <h3 className="text-sm font-semibold text-foreground">{title}</h3>
-        {subtitle && (
-          <p className="text-xs text-dark-400 mt-0.5">{subtitle}</p>
-        )}
+        {subtitle && <p className="text-xs text-dark-400 mt-0.5">{subtitle}</p>}
       </div>
       <div className="px-2 pb-2">
         <HighchartsReact

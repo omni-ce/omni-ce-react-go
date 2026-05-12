@@ -91,7 +91,7 @@ export const IconComponent = ({ iconName, ...props }: IconComponentProps) => {
     loadIconLibrary(provider)
       .then((library) => {
         if (library && code && library[code]) {
-          setIconSelected(() => library[code] as IconType);
+          setIconSelected(() => library[code]);
         }
         setIsLoading(false);
       })
@@ -192,8 +192,7 @@ export default function IconSelector({
   const filteredIcons = useMemo(() => {
     if (!selectedLibrary || !loadedIcons[selectedLibrary]) return [];
     const library = loadedIcons[selectedLibrary];
-    const results: Array<{ key: string; name: string; component: IconType }> =
-      [];
+    const results: { key: string; name: string; component: IconType }[] = [];
     Object.keys(library).forEach((iconKey) => {
       if (
         search === "" ||
@@ -202,7 +201,7 @@ export default function IconSelector({
         results.push({
           key: `${selectedLibrary}/${iconKey}`,
           name: iconKey,
-          component: library[iconKey] as IconType,
+          component: library[iconKey],
         });
       }
     });

@@ -22,9 +22,7 @@ export default function WidgetProgressList({
     <div className="bg-dark-800 border border-dark-600/40 rounded-2xl overflow-hidden p-5">
       <div className="mb-4">
         <h3 className="text-sm font-semibold text-foreground">{title}</h3>
-        {subtitle && (
-          <p className="text-xs text-dark-400 mt-0.5">{subtitle}</p>
-        )}
+        {subtitle && <p className="text-xs text-dark-400 mt-0.5">{subtitle}</p>}
       </div>
 
       <div className="space-y-4">
@@ -49,7 +47,7 @@ export default function WidgetProgressList({
                 style={{
                   width: `${Math.min(item.value, 100)}%`,
                   backgroundColor:
-                    item.color || defaultColors[i % defaultColors.length],
+                    item.color ?? defaultColors[i % defaultColors.length],
                 }}
               />
             </div>

@@ -68,10 +68,10 @@ export default function RolePage({ ruleKey }: Props) {
   } | null>(null);
 
   const ACTIONS = useMemo<
-    Array<{
+    {
       key: string;
       label: string;
-    }>
+    }[]
   >(
     () => [
       {
@@ -114,13 +114,13 @@ export default function RolePage({ ruleKey }: Props) {
     [languageCode, language],
   );
 
-  type MenuListItem = {
+  interface MenuListItem {
     key: string;
     label: string;
     level: number;
     isHeader?: boolean;
     extraRuleKeys?: { key: string; label: string; level: number }[];
-  };
+  }
 
   const menuList = useMemo(() => {
     const flatten = (
@@ -131,7 +131,7 @@ export default function RolePage({ ruleKey }: Props) {
       return links.flatMap((link) => {
         if (link.isHide) return [];
         const items: MenuListItem[] = [];
-        const fullPath = base ? `${base}/${link.path}` : link.path || "";
+        const fullPath = base ? `${base}/${link.path}` : (link.path ?? "");
 
         const hasStrictChildren = (l: typeof link): boolean => {
           if (l.strict) return true;
@@ -143,7 +143,7 @@ export default function RolePage({ ruleKey }: Props) {
 
         if (link.strict === true && fullPath) {
           items.push({
-            key: fullPath as string,
+            key: fullPath,
             label: language(link.label),
             level,
             extraRuleKeys: link.extraRuleKeys?.map((extra) => ({
@@ -938,7 +938,12 @@ export default function RolePage({ ruleKey }: Props) {
       )}
 
       {/* Division Dialog */}
-      <Dialog open={divDialogOpen} onClose={() => {}}>
+      <Dialog
+        open={divDialogOpen}
+        onClose={() => {
+          // skip ...
+        }}
+      >
         <DialogContent onClose={() => setDivDialogOpen(false)}>
           <DialogHeader>
             <DialogTitle>
@@ -996,7 +1001,12 @@ export default function RolePage({ ruleKey }: Props) {
       </Dialog>
 
       {/* Role Dialog */}
-      <Dialog open={roleDialogOpen} onClose={() => {}}>
+      <Dialog
+        open={roleDialogOpen}
+        onClose={() => {
+          // skip ...
+        }}
+      >
         <DialogContent onClose={() => setRoleDialogOpen(false)}>
           <DialogHeader>
             <DialogTitle>

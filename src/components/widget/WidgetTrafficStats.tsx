@@ -135,7 +135,7 @@ export default function WidgetTrafficStats({
             <div className="shrink-0">
               <MiniSparkline
                 data={stat.sparkData}
-                color={stat.color || (stat.up ? "#10b981" : "#ef4444")}
+                color={stat.color ?? (stat.up ? "#10b981" : "#ef4444")}
               />
             </div>
           </div>

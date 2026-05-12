@@ -450,7 +450,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
 
   // Has any column with search: true or options defined
   const hasColumnSearch = useMemo(() => {
-    return mergedColumns.some((col) => col.search || col.options);
+    return mergedColumns.some((col) => col.search ?? col.options);
   }, [mergedColumns]);
 
   // Fetch dynamic options on demand
@@ -523,7 +523,9 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
               }),
             }));
           })
-          .catch(() => {});
+          .catch(() => {
+            // skip ...
+          });
       }
     },
     [columnSearches, dynamicOptions, language, mergedColumns],
@@ -570,7 +572,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
           const lowerQ = q.toLowerCase();
           filtered = filtered.filter((item) => {
             return searchableFields.some((field) => {
-              const val = (item as unknown as Record<string, unknown>)[field];
+              const val = (item as Record<string, unknown>)[field];
               return val && String(val).toLowerCase().includes(lowerQ);
             });
           });
@@ -581,7 +583,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
           if (val.trim()) {
             const lowerVal = val.trim().toLowerCase();
             filtered = filtered.filter((item) => {
-              const itemVal = (item as unknown as Record<string, unknown>)[key];
+              const itemVal = (item as Record<string, unknown>)[key];
               return (
                 itemVal && String(itemVal).toLowerCase().includes(lowerVal)
               );
@@ -592,8 +594,8 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
         // Sorting
         if (sb) {
           filtered.sort((a, b) => {
-            const valA = (a as unknown as Record<string, unknown>)[sb] || "";
-            const valB = (b as unknown as Record<string, unknown>)[sb] || "";
+            const valA = (a as Record<string, unknown>)[sb] ?? "";
+            const valB = (b as Record<string, unknown>)[sb] ?? "";
             if (valA < valB) return so === "ASC" ? -1 : 1;
             if (valA > valB) return so === "ASC" ? 1 : -1;
             return 0;
@@ -630,7 +632,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
         // Add per-column search params
         for (const [key, val] of Object.entries(colSearches)) {
           if (val.trim()) {
-            params[`col_${key}` as `col_${string}`] = val.trim();
+            params[`col_${key}`] = val.trim();
           }
         }
 
@@ -704,13 +706,13 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
       const flatFields = flattenFields(filteredFields);
       for (const field of flatFields) {
         if (row && typeof row === "object" && row !== null) {
-          const val = (row as Record<string, unknown>)[field.key as string];
+          const val = (row as Record<string, unknown>)[field.key!];
           if (field.type === "array") {
             data[field.key] = Array.isArray(val) ? val : [];
           } else if (typeof val === "object" && val !== null) {
-            data[field.key as string] = val;
+            data[field.key!] = val;
           } else {
-            data[field.key as string] = val != null ? String(val) : "";
+            data[field.key!] = val != null ? String(val) : "";
           }
         } else {
           if (field.type === "array") {
@@ -726,18 +728,14 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
             const options = (field as DynamicFormFieldNormal)
               .selectOptions as PaginationFieldOption[];
             const defaultOption = options.find((opt) => opt.default === true);
-            data[field.key as string] = defaultOption
-              ? defaultOption.value
-              : "";
+            data[field.key] = defaultOption ? defaultOption.value : "";
           } else if (
             (field.type === "switch" || field.type === "checkbox") &&
             (field as DynamicFormFieldNormal).booleanDefault !== undefined
           ) {
-            data[field.key as string] = (
-              field as DynamicFormFieldNormal
-            ).booleanDefault;
+            data[field.key] = (field as DynamicFormFieldNormal).booleanDefault;
           } else {
-            data[field.key as string] = "";
+            data[field.key!] = "";
           }
         }
       }
@@ -787,7 +785,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
       if (field.only === "update" && isCreate) continue;
 
       if (field.type === "array") {
-        const arr = (formData[field.key] || []) as Record<string, unknown>[];
+        const arr = (formData[field.key] ?? []) as Record<string, unknown>[];
         if (field.required && arr.length === 0) return false;
         if (field.minLength !== undefined && arr.length < field.minLength)
           return false;
@@ -796,7 +794,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
           const stringified = arr.map((item) => {
             const relevantData: Record<string, unknown> = {};
             for (const key of childKeys) {
-              relevantData[key as string] = item[key as string];
+              relevantData[key!] = item[key!];
             }
             return JSON.stringify(relevantData);
           });
@@ -806,7 +804,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
         if (field.children) {
           for (const item of arr) {
             for (const child of field.children) {
-              const val = item[child.key as string] ?? "";
+              const val = item[child.key!] ?? "";
               if (
                 (child as DynamicFormFieldNormal).required &&
                 !String(val).trim()
@@ -822,17 +820,17 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
         if (typeof val === "string") {
           if (
             (field as DynamicFormFieldNormal).minLength &&
-            val.length < ((field as DynamicFormFieldNormal).minLength as number)
+            val.length < (field as DynamicFormFieldNormal).minLength!
           )
             return false;
           if (
             (field as DynamicFormFieldNormal).maxLength &&
-            val.length > ((field as DynamicFormFieldNormal).maxLength as number)
+            val.length > (field as DynamicFormFieldNormal).maxLength!
           )
             return false;
         }
       }
-      if (fieldErrors[field.key as string]) return false;
+      if (fieldErrors[field.key!]) return false;
     }
     return true;
   }, [filteredFields, formData, fieldErrors, editingRow]);
@@ -851,7 +849,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
           if (field.only === "update" && isCreate) continue;
 
           if (field.type === "array") {
-            payload[field.key] = formData[field.key] || [];
+            payload[field.key] = formData[field.key] ?? [];
           } else {
             payload[(field as DynamicFormFieldNormal).key] =
               typeof formData[(field as DynamicFormFieldNormal).key] ===
@@ -884,7 +882,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
       );
     } catch (err) {
       const error = err as AxiosError<{ message: Record<LanguageKey, string> }>;
-      setSaveError(error.response?.data.message as Record<LanguageKey, string>);
+      setSaveError(error.response?.data.message);
     } finally {
       setIsSubmitting(false);
     }
@@ -1240,7 +1238,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                                   value: "all",
                                   label: language({ id: "Semua", en: "All" }),
                                 },
-                                ...(colOptions || []).map((opt) => {
+                                ...(colOptions ?? []).map((opt) => {
                                   const format = column.selectFormat;
                                   const item = format ? format(opt) : opt;
                                   let label = item.label;
@@ -1445,7 +1443,9 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
       {hasCrud && filteredFields && (
         <Dialog
           open={dialogOpen}
-          onClose={() => {}}
+          onClose={() => {
+            // skip ...
+          }}
           width={popupWidth ? String(popupWidth) : "520px"}
           height={popupHeight ? String(popupHeight) : "auto"}
         >
@@ -1504,7 +1504,12 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
 
       {/* ─── Delete Confirmation Dialog ─────────────────────────────── */}
       {hasCrud && (
-        <Dialog open={deleteDialogOpen} onClose={() => {}}>
+        <Dialog
+          open={deleteDialogOpen}
+          onClose={() => {
+            // skip ...
+          }}
+        >
           <DialogContent onClose={() => setDeleteDialogOpen(false)}>
             <DialogHeader>
               <DialogTitle>
@@ -1546,7 +1551,12 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
 
       {/* ─── Bulk Delete Confirmation Dialog ──────────────────────────── */}
       {hasCrud && (
-        <Dialog open={bulkDeleteDialogOpen} onClose={() => {}}>
+        <Dialog
+          open={bulkDeleteDialogOpen}
+          onClose={() => {
+            // skip ...
+          }}
+        >
           <DialogContent onClose={() => setBulkDeleteDialogOpen(false)}>
             <DialogHeader>
               <DialogTitle>
@@ -1592,7 +1602,9 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
         extraActions?.[extraActionState.actionIndex] && (
           <Dialog
             open={true}
-            onClose={() => {}}
+            onClose={() => {
+              // skip ...
+            }}
             width={
               (typeof extraActions[extraActionState.actionIndex].width ===
               "number"

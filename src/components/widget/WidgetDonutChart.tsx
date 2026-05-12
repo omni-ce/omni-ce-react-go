@@ -82,7 +82,7 @@ export default function WidgetDonutChart({
         data: data.map((d, i) => ({
           name: d.name,
           y: d.y,
-          color: d.color || defaultColors[i % defaultColors.length],
+          color: d.color ?? defaultColors[i % defaultColors.length],
         })),
       },
     ],
@@ -105,10 +105,10 @@ export default function WidgetDonutChart({
           {/* Center label overlay */}
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
             <span className="text-xs text-dark-400">
-              {centerLabel || "Total"}
+              {centerLabel ?? "Total"}
             </span>
             <span className="text-lg font-bold text-foreground">
-              {centerValue || total.toLocaleString()}
+              {centerValue ?? total.toLocaleString()}
             </span>
           </div>
         </div>
@@ -121,7 +121,7 @@ export default function WidgetDonutChart({
                 className="w-2.5 h-2.5 rounded-full shrink-0"
                 style={{
                   backgroundColor:
-                    d.color || defaultColors[i % defaultColors.length],
+                    d.color ?? defaultColors[i % defaultColors.length],
                 }}
               />
               <div className="flex-1 min-w-0">

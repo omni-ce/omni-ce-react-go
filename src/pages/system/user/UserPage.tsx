@@ -124,8 +124,8 @@ export default function UserPage({ ruleKey }: Props) {
           <div className="flex items-center gap-3">
             <Avatar
               size="sm"
-              src={user.avatar ? user.avatar : BlankUser}
-              fromAsset={user.avatar ? false : true}
+              src={user.avatar ?? BlankUser}
+              fromAsset={!user.avatar}
               alt={user.name}
               fallback={user.name?.charAt(0)?.toUpperCase()}
             />
@@ -151,12 +151,11 @@ export default function UserPage({ ruleKey }: Props) {
         header: language({ id: "Role", en: "Role" }),
         render: (user) => (
           <div className="flex flex-wrap items-center gap-2">
-            {user.roles &&
-              user.roles.map((role) => (
-                <Badge key={role.role_id} variant={"secondary"}>
-                  {role.division_name} &gt; {role.role_name}
-                </Badge>
-              ))}
+            {user.roles?.map((role) => (
+              <Badge key={role.role_id} variant={"secondary"}>
+                {role.division_name} &gt; {role.role_name}
+              </Badge>
+            ))}
           </div>
         ),
       },
@@ -200,8 +199,12 @@ export default function UserPage({ ruleKey }: Props) {
         extraActions={[
           {
             icon: "Hi/HiOutlineKey",
+            label: {
+              id: "Ubah Password",
+              en: "Change Password",
+            },
             component: (row, onClose) => (
-              <ChangePassword row={row as User} onClose={onClose} />
+              <ChangePassword row={row} onClose={onClose} />
             ),
           },
         ]}

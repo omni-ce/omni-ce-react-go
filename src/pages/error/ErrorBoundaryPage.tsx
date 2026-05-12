@@ -24,7 +24,7 @@ function getErrorParts(err: unknown) {
     return {
       title: err.name || "Error",
       message: err.message || "Something went wrong.",
-      stack: err.stack || "",
+      stack: err.stack ?? "",
     };
   }
 

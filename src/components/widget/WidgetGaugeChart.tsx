@@ -7,10 +7,10 @@ import HighchartsReact from "highcharts-react-official";
 // Initialize Highcharts modules (handle both ESM default and CJS)
 const HighchartsMore =
   // @ts-ignore
-  (HighchartsMoreModule as unknown).default || HighchartsMoreModule;
+  (HighchartsMoreModule as unknown).default ?? HighchartsMoreModule;
 const HighchartsSolidGauge =
   // @ts-ignore
-  (HighchartsSolidGaugeModule as unknown).default || HighchartsSolidGaugeModule;
+  (HighchartsSolidGaugeModule as unknown).default ?? HighchartsSolidGaugeModule;
 if (typeof HighchartsMore === "function") HighchartsMore(Highcharts);
 if (typeof HighchartsSolidGauge === "function")
   HighchartsSolidGauge(Highcharts);
@@ -94,7 +94,7 @@ export default function WidgetGaugeChart({
           y: -25,
           borderWidth: 0,
           useHTML: true,
-          format: `<div style="text-align:center"><span style="font-size:28px;font-weight:700;color:#fff">{y}${label ? label : ""}</span></div>`,
+          format: `<div style="text-align:center"><span style="font-size:28px;font-weight:700;color:#fff">{y}${label ?? ""}</span></div>`,
         },
         rounded: true,
         innerRadius: "75%",

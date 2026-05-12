@@ -41,7 +41,7 @@ export default function RoleStepper({
         setDivisions(
           data.map((d) => ({
             value: String(d.value),
-            label: d.label as string,
+            label: d.label!,
           })),
         );
       })
@@ -66,7 +66,7 @@ export default function RoleStepper({
         setRoles(
           data.map((d) => ({
             value: String(d.value),
-            label: d.label as string,
+            label: d.label!,
           })),
         );
       })
