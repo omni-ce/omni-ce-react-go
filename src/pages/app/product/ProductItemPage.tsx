@@ -114,9 +114,9 @@ export default function ProductItemPage({ ruleKey }: Props) {
         selectOptions: "product-conditions",
       },
       {
-        key: "unit_id",
-        label: language({ id: "Satuan", en: "Unit" }),
-        type: "select",
+        key: "weight",
+        label: language({ id: "Berat", en: "Weight" }),
+        type: "weight",
         required: true,
         selectOptions: "units",
         selectFormat: (item: UnitOption) => ({
