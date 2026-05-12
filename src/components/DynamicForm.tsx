@@ -1214,6 +1214,7 @@ function DynamicWeight({
               }),
             } as DynamicFormField
           }
+          // @ts-ignore
           formData={{ [`${field.key}_unit_id`]: unitId }}
           onChange={(val) => onChange(`${field.key}_unit_id`, val)}
         />
