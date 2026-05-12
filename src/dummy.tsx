@@ -432,7 +432,6 @@ export const dummyProductHistory = [
     reference: "PO-2024-001",
     notes: "Barang datang dari Supplier A",
     user: "Admin",
-    status: "Completed",
   },
   {
     id: 2,
@@ -442,7 +441,6 @@ export const dummyProductHistory = [
     reference: "SO-2024-012",
     notes: "Penjualan ke Pelanggan X",
     user: "Staff",
-    status: "Completed",
   },
   {
     id: 3,
@@ -452,7 +450,6 @@ export const dummyProductHistory = [
     reference: "RET-2024-005",
     notes: "Retur barang rusak dari Toko B",
     user: "Admin",
-    status: "Completed",
   },
   {
     id: 4,
@@ -462,7 +459,6 @@ export const dummyProductHistory = [
     reference: "ADJ-2024-002",
     notes: "Penyesuaian stok opname bulanan",
     user: "Manager",
-    status: "Completed",
   },
   {
     id: 5,
@@ -472,7 +468,6 @@ export const dummyProductHistory = [
     reference: "PO-2024-002",
     notes: "Restock mingguan produk utama",
     user: "Staff",
-    status: "Completed",
   },
   {
     id: 6,
@@ -482,7 +477,6 @@ export const dummyProductHistory = [
     reference: "SO-2024-015",
     notes: "Pengiriman pesanan marketplace",
     user: "Staff",
-    status: "Completed",
   },
   {
     id: 7,
@@ -492,7 +486,6 @@ export const dummyProductHistory = [
     reference: "TRF-2024-001",
     notes: "Transfer internal dari Gudang Pusat",
     user: "Supervisor",
-    status: "Completed",
   },
   {
     id: 8,
@@ -502,7 +495,6 @@ export const dummyProductHistory = [
     reference: "SO-2024-020",
     notes: "Pesanan grosir Toko Jaya",
     user: "Manager",
-    status: "Completed",
   },
   {
     id: 9,
@@ -512,7 +504,6 @@ export const dummyProductHistory = [
     reference: "PO-2024-005",
     notes: "Penerimaan barang impor",
     user: "Admin",
-    status: "Completed",
   },
   {
     id: 10,
@@ -522,7 +513,6 @@ export const dummyProductHistory = [
     reference: "SO-2024-025",
     notes: "Pengambilan sampel promosi",
     user: "Staff",
-    status: "Completed",
   },
   {
     id: 11,
@@ -532,7 +522,6 @@ export const dummyProductHistory = [
     reference: "PO-2024-008",
     notes: "Barang tambahan dari Vendor C",
     user: "Admin",
-    status: "Completed",
   },
   {
     id: 12,
@@ -542,7 +531,6 @@ export const dummyProductHistory = [
     reference: "SO-2024-030",
     notes: "Distribusi ke cabang Selatan",
     user: "Supervisor",
-    status: "Completed",
   },
   {
     id: 13,
@@ -552,7 +540,6 @@ export const dummyProductHistory = [
     reference: "RET-2024-008",
     notes: "Retur salah kirim dari Customer",
     user: "Staff",
-    status: "Completed",
   },
   {
     id: 14,
@@ -562,7 +549,6 @@ export const dummyProductHistory = [
     reference: "ADJ-2024-005",
     notes: "Barang rusak ditemukan saat sortir",
     user: "Admin",
-    status: "Completed",
   },
   {
     id: 15,
@@ -572,7 +558,6 @@ export const dummyProductHistory = [
     reference: "PO-2024-010",
     notes: "Stok persiapan promo Gajian",
     user: "Manager",
-    status: "Completed",
   },
   {
     id: 16,
@@ -582,7 +567,6 @@ export const dummyProductHistory = [
     reference: "SO-2024-035",
     notes: "Pengiriman besar agen luar kota",
     user: "Staff",
-    status: "Completed",
   },
   {
     id: 17,
@@ -592,7 +576,6 @@ export const dummyProductHistory = [
     reference: "TRF-2024-005",
     notes: "Mutasi barang gudang cabang",
     user: "Supervisor",
-    status: "Completed",
   },
   {
     id: 18,
@@ -602,7 +585,6 @@ export const dummyProductHistory = [
     reference: "SO-2024-040",
     notes: "Penjualan langsung (Showroom)",
     user: "Staff",
-    status: "Completed",
   },
   {
     id: 19,
@@ -612,7 +594,6 @@ export const dummyProductHistory = [
     reference: "PO-2024-015",
     notes: "Kiriman dari Supplier B",
     user: "Admin",
-    status: "Completed",
   },
   {
     id: 20,
@@ -622,7 +603,6 @@ export const dummyProductHistory = [
     reference: "SO-2024-045",
     notes: "Order via WhatsApp Corporate",
     user: "Manager",
-    status: "Completed",
   },
   {
     id: 21,
@@ -632,7 +612,6 @@ export const dummyProductHistory = [
     reference: "RET-2024-012",
     notes: "Barang tidak sesuai spesifikasi",
     user: "Staff",
-    status: "Completed",
   },
   {
     id: 22,
@@ -642,7 +621,6 @@ export const dummyProductHistory = [
     reference: "ADJ-2024-010",
     notes: "Penyusutan barang (Evaporation)",
     user: "Admin",
-    status: "Completed",
   },
   {
     id: 23,
@@ -652,7 +630,6 @@ export const dummyProductHistory = [
     reference: "PO-2024-020",
     notes: "Penerimaan rutin awal bulan",
     user: "Supervisor",
-    status: "Completed",
   },
   {
     id: 24,
@@ -662,7 +639,6 @@ export const dummyProductHistory = [
     reference: "SO-2024-050",
     notes: "Pengiriman borongan ekspedisi",
     user: "Staff",
-    status: "Completed",
   },
   {
     id: 25,
@@ -672,7 +648,6 @@ export const dummyProductHistory = [
     reference: "TRF-2024-010",
     notes: "Stok sisa event pameran",
     user: "Admin",
-    status: "Completed",
   },
   {
     id: 26,
@@ -682,7 +657,6 @@ export const dummyProductHistory = [
     reference: "SO-2024-055",
     notes: "Pesanan kilat internal",
     user: "Manager",
-    status: "Completed",
   },
   {
     id: 27,
@@ -692,7 +666,6 @@ export const dummyProductHistory = [
     reference: "PO-2024-025",
     notes: "Barang pengganti vendor",
     user: "Staff",
-    status: "Completed",
   },
   {
     id: 28,
@@ -702,7 +675,6 @@ export const dummyProductHistory = [
     reference: "SO-2024-060",
     notes: "Retribusi stok cabang",
     user: "Supervisor",
-    status: "Completed",
   },
   {
     id: 29,
@@ -712,7 +684,6 @@ export const dummyProductHistory = [
     reference: "RET-2024-015",
     notes: "Barang rusak pengiriman ekspedisi",
     user: "Admin",
-    status: "Completed",
   },
   {
     id: 30,
@@ -722,6 +693,5 @@ export const dummyProductHistory = [
     reference: "ADJ-2024-015",
     notes: "Penghapusan aset kedaluwarsa",
     user: "Manager",
-    status: "Completed",
   },
 ];

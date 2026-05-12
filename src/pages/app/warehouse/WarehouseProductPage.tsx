@@ -538,10 +538,10 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
                                 </span>
                               </div>
                             </div>
-                            <div className="flex items-center gap-1.5 bg-neon-green/5 px-2 py-0.5 rounded-full border border-neon-green/10">
-                              <div className="w-1.5 h-1.5 rounded-full bg-neon-green animate-pulse" />
-                              <span className="text-[9px] font-bold text-neon-green uppercase tracking-wider">
-                                {h.status}
+                            <div className="flex items-center gap-1 text-dark-500">
+                              <IconComponent iconName="Hi/HiOutlineClock" size={12} />
+                              <span className="text-[10px] font-bold">
+                                {h.date.split(" ")[1]}
                               </span>
                             </div>
                           </div>
