@@ -10,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 
+	master_data "react-go/core/modules/master_data/model"
+
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -25,14 +27,16 @@ func ItemCreate(c *fiber.Ctx) error {
 	}
 
 	var body struct {
-		CategoryID  string `json:"category_id" validate:"required"`
-		TypeID      string `json:"type_id" validate:"required"`
-		BrandID     string `json:"brand_id" validate:"required"`
-		VariantID   string `json:"variant_id" validate:"required"`
-		MemoryID    string `json:"memory_id"`
-		ColorID     string `json:"color_id" validate:"required"`
-		ConditionID string `json:"condition_id" validate:"required"`
-		SKU         string `json:"sku" validate:"required"`
+		CategoryID   string `json:"category_id" validate:"required"`
+		TypeID       string `json:"type_id" validate:"required"`
+		BrandID      string `json:"brand_id" validate:"required"`
+		VariantID    string `json:"variant_id" validate:"required"`
+		MemoryID     string `json:"memory_id"`
+		ColorID      string `json:"color_id" validate:"required"`
+		ConditionID  string `json:"condition_id" validate:"required"`
+		Weight       string `json:"weight" validate:"required"`
+		WeightUnitID string `json:"weight_unit_id" validate:"required"`
+		SKU          string `json:"sku" validate:"required"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
 		return dto.BodyBadRequest(c, err)
@@ -72,6 +76,20 @@ func ItemCreate(c *fiber.Ctx) error {
 		return dto.BadRequest(c, types.Language{
 			Id: "ID kondisi tidak valid",
 			En: "Invalid condition ID",
+		}, nil)
+	}
+	weight, err := strconv.ParseFloat(body.Weight, 64)
+	if err != nil {
+		return dto.BadRequest(c, types.Language{
+			Id: "Berat tidak valid",
+			En: "Invalid weight",
+		}, nil)
+	}
+	weightUnitID, err := strconv.Atoi(body.WeightUnitID)
+	if err != nil {
+		return dto.BadRequest(c, types.Language{
+			Id: "ID unit berat tidak valid",
+			En: "Invalid weight unit ID",
 		}, nil)
 	}
 
@@ -164,6 +182,16 @@ func ItemCreate(c *fiber.Ctx) error {
 	}
 	names = append(names, condition.Name)
 
+	var unit master_data.Unit
+	if err := variable.Db.
+		First(&unit, "id = ?", body.WeightUnitID).
+		Error; err != nil {
+		return dto.NotFound(c, types.Language{
+			Id: "Unit tidak ditemukan",
+			En: "Unit not found",
+		}, nil)
+	}
+
 	key := generateKeyFromName(names...)
 
 	// Check duplicate SKU
@@ -180,17 +208,19 @@ func ItemCreate(c *fiber.Ctx) error {
 	}
 
 	item := model.ProductItem{
-		Key:         key,
-		CategoryID:  uint(categoryID),
-		TypeID:      uint(typeID),
-		BrandID:     uint(brandID),
-		VariantID:   uint(variantID),
-		MemoryID:    memoryID,
-		ColorID:     colorID,
-		ConditionID: uint(conditionID),
-		SKU:         body.SKU,
-		CreatedBy:   currentUser.ID,
-		UpdatedBy:   currentUser.ID,
+		Key:          key,
+		CategoryID:   uint(categoryID),
+		TypeID:       uint(typeID),
+		BrandID:      uint(brandID),
+		VariantID:    uint(variantID),
+		MemoryID:     memoryID,
+		ColorID:      colorID,
+		ConditionID:  uint(conditionID),
+		Weight:       weight,
+		WeightUnitID: uint(weightUnitID),
+		SKU:          body.SKU,
+		CreatedBy:    currentUser.ID,
+		UpdatedBy:    currentUser.ID,
 	}
 
 	if err := variable.Db.
@@ -234,7 +264,8 @@ func ItemPaginate(c *fiber.Ctx) error {
 		Preload("Variant").
 		Preload("Memory").
 		Preload("Color").
-		Preload("Condition")
+		Preload("Condition").
+		Preload("Unit")
 
 	// Filter SKU & IMEI (Manual karena butuh OR)
 	if col_sku != "" {
@@ -276,29 +307,33 @@ func ItemPaginate(c *fiber.Ctx) error {
 			memory_name = fmt.Sprintf("%d GB / %d GB", row.Memory.Ram, row.Memory.InternalStorage)
 		}
 		rows = append(rows, map[string]any{
-			"id":             row.ID,
-			"key":            row.Key,
-			"sku":            row.SKU,
-			"buy_price":      0,
-			"qty":            0,
-			"category_id":    row.Category.ID,
-			"category_name":  row.Category.Name,
-			"category_icon":  row.Category.Icon,
-			"type_id":        row.Type.ID,
-			"type_name":      row.Type.Name,
-			"brand_id":       row.Brand.ID,
-			"brand_name":     row.Brand.Name,
-			"brand_logo":     row.Brand.Logo,
-			"variant_id":     row.Variant.ID,
-			"variant_name":   row.Variant.Name,
-			"memory_id":      row.Memory.ID,
-			"memory_name":    memory_name,
-			"color_id":       row.Color.ID,
-			"color_name":     row.Color.Name,
-			"color_hex":      row.Color.HexCode,
-			"condition_id":   row.Condition.ID,
-			"condition_name": row.Condition.Name,
-			"is_active":      row.IsActive,
+			"id":                     row.ID,
+			"key":                    row.Key,
+			"sku":                    row.SKU,
+			"buy_price":              0,
+			"qty":                    0,
+			"category_id":            row.Category.ID,
+			"category_name":          row.Category.Name,
+			"category_icon":          row.Category.Icon,
+			"type_id":                row.Type.ID,
+			"type_name":              row.Type.Name,
+			"brand_id":               row.Brand.ID,
+			"brand_name":             row.Brand.Name,
+			"brand_logo":             row.Brand.Logo,
+			"variant_id":             row.Variant.ID,
+			"variant_name":           row.Variant.Name,
+			"memory_id":              row.Memory.ID,
+			"memory_name":            memory_name,
+			"color_id":               row.Color.ID,
+			"color_name":             row.Color.Name,
+			"color_hex":              row.Color.HexCode,
+			"condition_id":           row.Condition.ID,
+			"condition_name":         row.Condition.Name,
+			"weight":                 row.Weight,
+			"weight_unit_id":         row.WeightUnitID,
+			"weight_unit_name":       row.Unit.Name,
+			"weight_unit_short_name": row.Unit.ShortName,
+			"is_active":              row.IsActive,
 		})
 	}
 
