@@ -41,7 +41,7 @@ export default function PhoneNumber({
       return (
         countries.find(
           (c) =>
-            c.language_key === phoneDefaultCountry ||
+            String(c.language_key) === phoneDefaultCountry ||
             c.code === phoneDefaultCountry,
         )?.code ?? "ID"
       );

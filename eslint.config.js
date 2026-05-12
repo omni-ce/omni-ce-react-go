@@ -7,7 +7,7 @@ import tseslint from "typescript-eslint";
 import { defineConfig, globalIgnores } from "eslint/config";
 
 export default defineConfig([
-  globalIgnores(["dist", "test_llm.ts"]),
+  globalIgnores(["dist", "test_llm.ts", "pwa-assets.config.ts"]),
   {
     files: ["**/*.{ts,tsx}"],
     languageOptions: {

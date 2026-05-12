@@ -573,7 +573,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
           filtered = filtered.filter((item) => {
             return searchableFields.some((field) => {
               const val = (item as Record<string, unknown>)[field];
-              return val && String(val).toLowerCase().includes(lowerQ);
+              return (typeof val === "string" || typeof val === "number") && String(val).toLowerCase().includes(lowerQ);
             });
           });
         }
@@ -585,7 +585,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
             filtered = filtered.filter((item) => {
               const itemVal = (item as Record<string, unknown>)[key];
               return (
-                itemVal && String(itemVal).toLowerCase().includes(lowerVal)
+                (typeof itemVal === "string" || typeof itemVal === "number") && String(itemVal).toLowerCase().includes(lowerVal)
               );
             });
           }
@@ -712,7 +712,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
           } else if (typeof val === "object" && val !== null) {
             data[field.key!] = val;
           } else {
-            data[field.key!] = val != null ? String(val) : "";
+            data[field.key!] = (typeof val === "string" || typeof val === "number") ? String(val) : "";
           }
         } else {
           if (field.type === "array") {
@@ -807,7 +807,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
               const val = item[child.key!] ?? "";
               if (
                 (child as DynamicFormFieldNormal).required &&
-                !String(val).trim()
+                !(typeof val === "string" || typeof val === "number" ? String(val) : "").trim()
               )
                 return false;
             }
@@ -815,7 +815,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
         }
       } else {
         const val = formData[(field as DynamicFormFieldNormal).key] ?? "";
-        if ((field as DynamicFormFieldNormal).required && !String(val).trim())
+        if ((field as DynamicFormFieldNormal).required && !(typeof val === "string" || typeof val === "number" ? String(val) : "").trim())
           return false;
         if (typeof val === "string") {
           if (

@@ -22,7 +22,11 @@ function hashKey(key: string): string {
 }
 
 // Encryption and Decryption methods
-function encryptMethod(method: Method, key: string, plaintext: string): string {
+function encryptMethod(
+  method: EncryptionMethods,
+  key: string,
+  plaintext: string,
+): string {
   const keyWA = CryptoJS.enc.Hex.parse(key);
 
   if (method === EncryptionMethods.RC4) {
@@ -34,7 +38,7 @@ function encryptMethod(method: Method, key: string, plaintext: string): string {
     method === EncryptionMethods.AES ? 16 : 8,
   );
 
-  const encrypted = CryptoJS[method].encrypt(plaintext, keyWA, {
+  const encrypted = CryptoJS[method as Method].encrypt(plaintext, keyWA, {
     iv: ivWA,
     mode: CryptoJS.mode.CBC,
     padding: CryptoJS.pad.Pkcs7,
@@ -46,7 +50,7 @@ function encryptMethod(method: Method, key: string, plaintext: string): string {
 }
 
 function decryptMethod(
-  method: Method,
+  method: EncryptionMethods,
   key: string,
   cipher_text: string,
 ): string {
@@ -70,16 +74,18 @@ function decryptMethod(
     combinedWA.sigBytes - blockSize,
   );
 
-  return CryptoJS[method].decrypt(
-    // @ts-ignore
-    { ciphertext: ciphertextWA },
-    keyWA,
-    {
-      iv: ivWA,
-      mode: CryptoJS.mode.CBC,
-      padding: CryptoJS.pad.Pkcs7,
-    },
-  ).toString(CryptoJS.enc.Utf8);
+  return CryptoJS[method as Method]
+    .decrypt(
+      // @ts-ignore
+      { ciphertext: ciphertextWA },
+      keyWA,
+      {
+        iv: ivWA,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7,
+      },
+    )
+    .toString(CryptoJS.enc.Utf8);
 }
 
 function applyMethod(

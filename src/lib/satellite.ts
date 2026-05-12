@@ -22,7 +22,7 @@ satellite.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
+  (error: Error) => {
     return Promise.reject(error);
   },
 );
@@ -37,7 +37,7 @@ satellite.interceptors.response.use(
     }
     return response;
   },
-  (error) => {
+  (error: Error) => {
     return Promise.reject(error);
   },
 );
