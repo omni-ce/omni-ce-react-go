@@ -152,7 +152,10 @@ export default function ProductItemPage({ ruleKey }: Props) {
           let category_name = item.category_name;
           try {
             if (category_name.startsWith("{")) {
-              const obj = JSON.parse(category_name) as Record<LanguageCode, string>;
+              const obj = JSON.parse(category_name) as Record<
+                LanguageCode,
+                string
+              >;
               category_name = language(obj);
             }
           } catch (e) {
@@ -220,8 +223,6 @@ export default function ProductItemPage({ ruleKey }: Props) {
       {
         key: "memory_name",
         header: language({ id: "Memori", en: "Memory" }),
-        search: true,
-        sort: true,
         render: (item) => (
           <span className="max-w-xs truncate block">
             {item.memory_name ?? "- "}
@@ -325,7 +326,10 @@ export default function ProductItemPage({ ruleKey }: Props) {
           let category_name = item.category_name;
           try {
             if (category_name.startsWith("{")) {
-              const obj = JSON.parse(category_name) as Record<LanguageCode, string>;
+              const obj = JSON.parse(category_name) as Record<
+                LanguageCode,
+                string
+              >;
               category_name = language(obj);
             }
           } catch (e) {

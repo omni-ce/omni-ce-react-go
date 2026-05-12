@@ -5,9 +5,10 @@ import (
 )
 
 func ProtectedRoute(api fiber.Router) {
-	api.Get("/paginate", GetPaginate)
-	api.Post("/create", Create)
-	api.Put("/edit/:id", Update)
-	api.Delete("/remove/:id", Delete)
-	api.Post("/bulk-remove", BulkDelete)
+	// Unit
+	api.Get("/unit/paginate", UnitPaginate)
+	api.Post("/unit/create", UnitCreate)
+	api.Put("/unit/edit/:id", UnitEdit)
+	api.Delete("/unit/remove/:id", UnitRemove)
+	api.Post("/unit/bulk-remove", UnitBulkRemove)
 }

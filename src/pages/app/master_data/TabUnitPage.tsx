@@ -30,8 +30,8 @@ export default function TabUnitPage({ ruleKey }: Props) {
         required: true,
       },
       {
-        key: "description",
-        label: language({ id: "Deskripsi", en: "Description" }),
+        key: "short_name",
+        label: language({ id: "Singkatan", en: "Short Name" }),
         type: "text",
         required: true,
       },
@@ -60,17 +60,6 @@ export default function TabUnitPage({ ruleKey }: Props) {
           <span className="font-mono text-sm">{item.short_name}</span>
         ),
       },
-      {
-        key: "is_active",
-        header: language({ id: "Status", en: "Status" }),
-        render: (item) => (
-          <Badge variant={item.is_active ? "default" : "destructive"}>
-            {item.is_active
-              ? language({ id: "Aktif", en: "Active" })
-              : language({ id: "Nonaktif", en: "Inactive" })}
-          </Badge>
-        ),
-      },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [languageCode, language],
@@ -83,10 +72,9 @@ export default function TabUnitPage({ ruleKey }: Props) {
         ref={paginationRef}
         title={language({ id: "Daftar Satuan", en: "Unit List" })}
         columns={columns}
-        module="master-data"
+        module="master-data/unit"
         fields={fields}
         ruleKey={ruleKey}
-        useIsActive
       />
     </GuardLayout>
   );

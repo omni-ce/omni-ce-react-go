@@ -29,6 +29,7 @@ func Models() []interface{} {
 		&captcha.Captcha{},
 		&auth.Access{},
 		//
+		&master_data.Unit{},
 		&user.User{},
 		&role.RoleDivision{},
 		&role.Role{},
@@ -40,7 +41,6 @@ func Models() []interface{} {
 		&apikey.ApiKey{},
 		&dashboard.DashboardWidget{},
 		// Custom
-		&master_data.MasterData{},
 		&company.CompanyEntity{},
 		&product.ProductType{},
 		&company.CompanyBranch{},
