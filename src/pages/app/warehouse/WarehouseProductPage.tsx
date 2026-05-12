@@ -422,7 +422,7 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
                   </div>
                 </div>
 
-                <div className="max-h-[400px] overflow-y-auto custom-scrollbar pr-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="max-h-[400px] overflow-y-auto custom-scrollbar pr-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {dummyHistory
                     .filter((h) => h.type === historyFilter)
                     .map((h) => (
