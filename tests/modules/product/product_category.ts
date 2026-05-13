@@ -5,6 +5,7 @@ import {
   inputFill,
   playNotification,
   scrollDown,
+  selectOption,
 } from "../../function";
 import { module_selected } from "../../variable";
 
@@ -30,13 +31,16 @@ async function ProductCategory(page: Page) {
 
   // click icon selector
   await buttonClick(page, ".field-icon-icon");
-  await buttonClick(
+  await selectOption(page, ".icon-selector-library-select", "Md");
+  await inputFill(
     page,
-    "#icon-dropdown-portal > div.p-3.space-y-2.bg-dark-900.border-b.border-dark-600 > div > select",
+    "#icon-dropdown-portal > div.p-3.space-y-2.bg-dark-900.border-b.border-dark-600 > div.relative.flex.items-center.gap-2 > input",
+    "electrical",
   );
+  await buttonClick(page, "#icon-dropdown-portal .grid button");
 
   // click button save
-  // await buttonClick(page, ".product-category-pagination-button-save", 1000);
+  await buttonClick(page, ".product-category-pagination-button-save", 1000);
 
   //# end delay
   await playNotification("section");

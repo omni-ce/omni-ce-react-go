@@ -266,7 +266,7 @@ export default function IconSelector({
                     setSelectedLibrary(e.target.value);
                     setSearch("");
                   }}
-                  className="w-full appearance-none rounded-xl border border-dark-600 bg-dark-800 px-4 py-2 text-sm text-foreground outline-none transition-all focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30"
+                  className="w-full appearance-none rounded-xl border border-dark-600 bg-dark-800 px-4 py-2 text-sm text-foreground outline-none transition-all focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30 icon-selector-library-select"
                 >
                   <option value="" className="bg-dark-800">
                     Select Icon Library

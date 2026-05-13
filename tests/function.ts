@@ -65,3 +65,13 @@ export const scrollDown = async (page: Page, className: string, value = 50) => {
     { className, value },
   );
 };
+
+export const selectOption = async (
+  page: Page,
+  className: string,
+  value: string,
+  delay = 500,
+) => {
+  await page.locator(className).first().selectOption(value);
+  await page.waitForTimeout(delay);
+};
