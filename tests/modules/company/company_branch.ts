@@ -9,7 +9,7 @@ import {
 import { module_selected } from "../../variable";
 
 async function CompanyBranch(page: Page) {
-  if (!module_selected.includes("branch")) {
+  if (module_selected.length > 0 && !module_selected.includes("branch")) {
     console.log("Company Branch skip ...");
     return;
   }

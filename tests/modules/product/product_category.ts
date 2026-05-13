@@ -13,7 +13,7 @@ async function ProductCategory(page: Page) {
   // click menu product
   await buttonClick(page, ".sidebar-menu-product");
 
-  if (!module_selected.includes("category")) {
+  if (module_selected.length > 0 && !module_selected.includes("category")) {
     console.log("Product Category skip ...");
     return;
   }

@@ -5,7 +5,7 @@ import CompanyEntity from "./company_entity";
 import CompanyBranch from "./company_branch";
 
 async function Company(page: Page) {
-  if (!module_selected.includes("company")) {
+  if (module_selected.length > 0 && !module_selected.includes("company")) {
     console.log("Company skip ...");
     return;
   }

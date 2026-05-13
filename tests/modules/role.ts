@@ -3,7 +3,7 @@ import { buttonClick, playNotification } from "../function";
 import { module_selected } from "../variable";
 
 async function Role(page: Page) {
-  if (!module_selected.includes("role")) {
+  if (module_selected.length > 0 && !module_selected.includes("role")) {
     console.log("Role skip ...");
     return;
   }

@@ -12,7 +12,7 @@ async function CompanyEntity(page: Page) {
   // click menu company
   await buttonClick(page, ".sidebar-menu-company");
 
-  if (!module_selected.includes("entity")) {
+  if (module_selected.length > 0 && !module_selected.includes("entity")) {
     console.log("Company Entity skip ...");
     return;
   }

@@ -9,7 +9,7 @@ import {
 import { module_selected } from "../variable";
 
 async function User(page: Page) {
-  if (!module_selected.includes("user")) {
+  if (module_selected.length > 0 && !module_selected.includes("user")) {
     console.log("User skip ...");
     return;
   }
