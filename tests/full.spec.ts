@@ -144,7 +144,7 @@ test("Full Testing", async ({ page }) => {
     // insert ke field
     await inputFill(page, ".field-username", username);
     await inputFill(page, ".field-password", password);
-    await buttonClick(page, 'button[type="submit"]');
+    await buttonClick(page, 'button[type="submit"]', 500);
 
     // 2:end delay
     await playNotification(page, "section");
@@ -162,7 +162,7 @@ test("Full Testing", async ({ page }) => {
     await buttonClick(page, ".role-check-admin-user");
 
     // click button save
-    await buttonClick(page, ".role-button-save");
+    await buttonClick(page, ".role-button-save", 500);
 
     // 3:end delay
     await playNotification(page, "section");
@@ -232,9 +232,9 @@ test("Full Testing", async ({ page }) => {
     );
 
     await buttonClick(page, ".roles-array-button-add", 1500);
-
     await scrollDown(page, ".user-pagination-dialog", 300);
 
+    // Pilih Role Divisi Pertama: Management
     await buttonClick(
       page,
       ".item-field-roles-0-division_id #field-division_id",
@@ -242,13 +242,12 @@ test("Full Testing", async ({ page }) => {
     );
     await inputFill(
       page,
-      ".item-field-roles-0-division_id #field-division_id .field-division_id-searchable-select-input",
+      ".field-division_id-searchable-select-input",
       "management",
     );
-    await buttonClick(
-      page,
-      ".item-field-roles-0-division_id #searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
-    );
+    await buttonClick(page, "#searchable-select-portal button", 1500);
+
+    // Pilih Role Jabatan Pertama: Admin
 
     // ---------------------------------------------- //
     // wait for navigation or success
