@@ -6,13 +6,18 @@ import {
   playNotification,
   scrollDown,
 } from "../../function";
-import { module_selected } from "../../variable";
+import { module_selected, started_exist } from "../../variable";
 
 async function CompanyBranch(page: Page) {
-  if (module_selected.length > 0 && !module_selected.includes("branch")) {
+  if (
+    started_exist.length === 0 &&
+    module_selected.length > 0 &&
+    !module_selected.includes("branch")
+  ) {
     console.log("Company Branch skip ...");
     return;
   }
+  started_exist.push(true);
 
   //# Company Branch
   // click submenu company: branch

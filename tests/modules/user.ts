@@ -6,13 +6,18 @@ import {
   playNotification,
   scrollDown,
 } from "../function";
-import { module_selected } from "../variable";
+import { module_selected, started_exist } from "../variable";
 
 async function User(page: Page) {
-  if (module_selected.length > 0 && !module_selected.includes("user")) {
+  if (
+    started_exist.length === 0 &&
+    module_selected.length > 0 &&
+    !module_selected.includes("user")
+  ) {
     console.log("User skip ...");
     return;
   }
+  started_exist.push(true);
 
   //# Add New User
   // click menu user

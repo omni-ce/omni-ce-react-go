@@ -6,16 +6,21 @@ import {
   playNotification,
   scrollDown,
 } from "../../function";
-import { module_selected } from "../../variable";
+import { module_selected, started_exist } from "../../variable";
 
 async function CompanyEntity(page: Page) {
   // click menu company
   await buttonClick(page, ".sidebar-menu-company");
 
-  if (module_selected.length > 0 && !module_selected.includes("entity")) {
+  if (
+    started_exist.length === 0 &&
+    module_selected.length > 0 &&
+    !module_selected.includes("entity")
+  ) {
     console.log("Company Entity skip ...");
     return;
   }
+  started_exist.push(true);
 
   //# Company Entity
   // click submenu company: entity
