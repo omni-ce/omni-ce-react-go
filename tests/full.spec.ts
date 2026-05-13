@@ -231,6 +231,7 @@ test("Full Testing", async ({ page }) => {
       "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
     );
 
+    // Divisi Role Pertama
     await buttonClick(page, ".roles-array-button-add", 1500);
     await scrollDown(page, ".user-pagination-dialog", 300);
 
@@ -248,6 +249,37 @@ test("Full Testing", async ({ page }) => {
     await buttonClick(page, "#searchable-select-portal button", 1500);
 
     // Pilih Role Jabatan Pertama: Admin
+    await buttonClick(page, ".item-field-roles-0-role_id #field-role_id", 1000);
+    await inputFill(page, ".field-role_id-searchable-select-input", "admin");
+    await buttonClick(page, "#searchable-select-portal button", 1500);
+
+    // Divisi Role Kedua
+    await buttonClick(page, ".roles-array-button-add", 1500);
+    await scrollDown(page, ".user-pagination-dialog", 300);
+
+    // Pilih Role Divisi Kedua: Management
+    await buttonClick(
+      page,
+      ".item-field-roles-1-division_id #field-division_id",
+      1000,
+    );
+    await inputFill(
+      page,
+      ".field-division_id-searchable-select-input",
+      "management",
+    );
+    await buttonClick(page, "#searchable-select-portal button", 1500);
+
+    // Pilih Role Jabatan Kedua: Operator
+    await buttonClick(page, ".item-field-roles-1-role_id #field-role_id", 1000);
+    await inputFill(page, ".field-role_id-searchable-select-input", "operator");
+    await buttonClick(page, "#searchable-select-portal button", 1500);
+
+    // Click Save ...
+    await buttonClick(page, ".user-pagination-button-save", 1000);
+
+    // 4:end delay
+    await playNotification(page, "section");
 
     // ---------------------------------------------- //
     // wait for navigation or success
