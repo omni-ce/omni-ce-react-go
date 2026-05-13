@@ -124,6 +124,7 @@ interface Props {
   onChange: (iconName: string) => void;
   placeholder?: string;
   disabled?: boolean;
+  className?: string;
 }
 
 export default function IconSelector({
@@ -131,6 +132,7 @@ export default function IconSelector({
   onChange,
   placeholder = "Select an icon",
   disabled = false,
+  className,
 }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -220,6 +222,7 @@ export default function IconSelector({
           isOpen
             ? "border-accent-500/60 ring-1 ring-accent-500/30 bg-dark-800"
             : "border-dark-600 bg-dark-900 hover:bg-dark-800",
+          className,
         )}
       >
         {value ? (

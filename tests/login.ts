@@ -7,7 +7,7 @@ import { pwd } from "./variable";
 
 async function Login(page: Page) {
   //# Access Login
-  await buttonClick(page, 'a[href*="login"], a[href*="dashboard"]');
+  await buttonClick(page, 'a[href*="login"], a[href*="dashboard"]', 500);
 
   // ambil username dan password memakai fs
   const userModelPath = path.resolve(

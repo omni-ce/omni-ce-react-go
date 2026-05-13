@@ -1997,6 +1997,7 @@ function DynamicFieldRenderer({
         <IconSelector
           value={ensureString(formData[field.key])}
           onChange={(val) => onChange(field.key, val)}
+          className={`field-${field.type}-${field.key}`}
         />
       ) : field.type === "phone" ? (
         <PhoneNumber
