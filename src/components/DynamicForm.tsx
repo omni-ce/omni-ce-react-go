@@ -1263,7 +1263,7 @@ function DynamicUsername({
       <Input
         id={`field-${field.key}`}
         type="text"
-        className="pl-11"
+        className={cn(`field-${field.key}`, "pl-11")}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         minLength={f.minLength}
@@ -1322,7 +1322,7 @@ function DynamicPassword({
       <Input
         id={`field-${field.key}`}
         type={show ? "text" : "password"}
-        className="pl-11 pr-12"
+        className={cn(`field-${field.key}`, "pl-11 pr-12")}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         minLength={f.minLength}
@@ -1897,7 +1897,7 @@ function DynamicFieldRenderer({
         <Input
           id={`field-${field.key}`}
           type="text"
-          className="mt-1.5"
+          className={cn(`field-${field.key}`, "mt-1.5")}
           value={ensureString(formData[field.key])}
           onChange={(e) => {
             const val = e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, "");
@@ -1988,6 +1988,7 @@ function DynamicFieldRenderer({
           <Input
             id={`field-${field.key}`}
             className={cn(
+              `field-${field.key}`,
               (field as DynamicFormFieldNormal).pricePrefix ? "pl-10" : "",
             )}
             value={(() => {
@@ -2096,7 +2097,7 @@ function DynamicFieldRenderer({
                   <Flag className="w-full h-full object-cover" />
                 </div>
                 <Input
-                  className="pl-11"
+                  className={cn(`field-${field.key}`, `field-${field.key}-${langCode}`, "pl-11")}
                   placeholder={`${field.label} (${langCode.toUpperCase()})`}
                   value={valObj[langCode] ?? ""}
                   onChange={(e) => {
@@ -2114,9 +2115,10 @@ function DynamicFieldRenderer({
           <Input
             id={`field-${field.key}`}
             type={field.type}
-            className={
-              (field as DynamicFormFieldNormal).numberSuffix ? "pr-12" : ""
-            }
+            className={cn(
+              `field-${field.key}`,
+              (field as DynamicFormFieldNormal).numberSuffix ? "pr-12" : "",
+            )}
             value={ensureString(formData[field.key])}
             onChange={(e) => {
               let val = e.target.value;

@@ -52,7 +52,7 @@ test("Full Testing", async ({ page }) => {
   await expect(githubLink).toContainText(/GitHub/i);
 
   // 1:end delay
-  await page.waitForTimeout(2500);
+  await page.waitForTimeout(2000);
 
   // 2. Access Login
   const loginButton = page
@@ -75,18 +75,23 @@ test("Full Testing", async ({ page }) => {
   const username = usernameMatch ? usernameMatch[1] : "";
   const password = passwordMatch ? passwordMatch[1] : "";
 
-  console.log({
-    username,
-    password,
-  });
-
   // insert ke field
-  await page.fill('input[name="username"]', username);
-  await page.fill('input[name="password"]', password);
+  await page.fill(".field-username", username);
+  await page.fill(".field-password", password);
+  await page.waitForTimeout(1000);
   await page.click('button[type="submit"]');
 
+  // 3. Role Check
+
+  // click menu role: #root > div.h-screen.overflow-hidden.bg-dark-900.flex > aside > nav > a.w-full.flex.items-center.gap-3.px-3.py-2\.5.rounded-xl.text-sm.font-medium.transition-all.duration-200.bg-badge-light-blue.text-accent-500.border.border-accent-500\/20
+
+  // click expand role admin: #root > div.h-screen.overflow-hidden.bg-dark-900.flex > div > main > div > div.space-y-4 > div > div.px-6.py-4.space-y-3.pt-2 > div:nth-child(2) > div
+
+  // click checklist menu user: #root > div.h-screen.overflow-hidden.bg-dark-900.flex > div > main > div > div.space-y-4 > div > div.px-6.py-4.space-y-3.pt-2 > div:nth-child(2) > div.border-t.border-dark-600\/40.px-4.py-3 > div > div:nth-child(3) > div.flex.items-center.gap-2.px-2 > input
+
+  // ---------------------------------------------- //
   // wait for navigation or success
-  await expect(page).toHaveURL(/.*select-role/);
+  // await expect(page).toHaveURL(/.*select-role/); // for user not su
 
   // Keep the browser open after finish
   await page.pause();
