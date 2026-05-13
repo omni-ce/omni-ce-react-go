@@ -31,20 +31,39 @@ const playNotification = async (
   }
 };
 
-const buttonClick = async (page: Page, className: string) => {
+const buttonClick = async (page: Page, className: string, delay = 2000) => {
   await page.locator(className).first().click();
-  await page.waitForTimeout(2000);
+  await page.waitForTimeout(delay);
 };
 
-const inputFill = async (page: Page, className: string, value: string) => {
+const inputFill = async (
+  page: Page,
+  className: string,
+  value: string,
+  delay = 500,
+) => {
   await page.fill(className, value);
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(delay);
 };
 
-const inputFile = async (page: Page, className: string, fileName: string) => {
+const inputFile = async (
+  page: Page,
+  className: string,
+  fileName: string,
+  delay = 1000,
+) => {
   const file = path.join(asset_test, fileName);
   await page.setInputFiles(className, file);
-  await page.waitForTimeout(1000);
+  await page.waitForTimeout(delay);
+};
+
+const scrollDown = async (page: Page, className: string, value = 50) => {
+  await page.evaluate(() => {
+    const dialog = document.querySelector(className);
+    if (dialog) {
+      dialog.scrollTop += value;
+    }
+  });
 };
 
 test("Full Testing", async ({ page }) => {
@@ -167,15 +186,19 @@ test("Full Testing", async ({ page }) => {
     await inputFill(page, ".field-text-username", "sandhikagalih");
 
     // input password, class: field-text-password
-    await inputFill(page, ".field-text-password", "SandhikaGalih@123");
+    await inputFill(page, ".field-text-password", "SandhikaGalih@123", 3000);
 
     // scroll dialog kebawah sedikit agar bisa melihat field dibawah
-    await page.evaluate(() => {
-      const dialog = document.querySelector(".user-pagination-dialog");
-      if (dialog) {
-        dialog.scrollTop = dialog.scrollHeight;
-      }
-    });
+    await scrollDown(page, ".user-pagination-dialog");
+
+    // input email, class: field-email-email
+    await inputFill(page, ".field-email-email", "sandhikagalih@test.com");
+
+    // input phone, class: field-phone-phone
+    await inputFill(page, ".field-phone-phone", "8123456789");
+
+    // scroll dialog kebawah sedikit agar bisa melihat field dibawah
+    await scrollDown(page, ".user-pagination-dialog");
 
     // ---------------------------------------------- //
     // wait for navigation or success
