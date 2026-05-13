@@ -1,10 +1,27 @@
 import { test, expect } from "@playwright/test";
+import fs from "fs";
+import path from "path";
 
 test("Full Testing", async ({ page }) => {
   // 0. Prepare
+  const backendUrl = "http://127.0.0.1:3000";
+
   // hit ke endpoint backend di port 3000 untuk code refresh
+  const refreshRes = await page.request.get(`${backendUrl}/api/test/code-refresh`);
+  expect(refreshRes.ok()).toBeTruthy();
+
   // ambil code menggunakan fs di file app_back_code.txt
+  const codePath = path.resolve(process.cwd(), "app_back_code.txt");
+  const code = fs.readFileSync(codePath, "utf-8").trim();
+
   // code di pakai untuk body hit ke apocalypse-tables
+  const apocalypseRes = await page.request.post(
+    `${backendUrl}/api/test/apocalypse-tables`,
+    {
+      data: { code },
+    },
+  );
+  expect(apocalypseRes.ok()).toBeTruthy();
 
   // 1. Access First Time
   await page.goto("http://127.0.0.1:5173/");
