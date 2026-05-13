@@ -377,7 +377,7 @@ function DynamicSelect({
   return (
     <SearchableSelect
       id={`field-${field.key}`}
-      className="mt-1.5"
+      className={cn("mt-1.5", `field-${field.type}-${field.key}`)}
       value={formData[(field as DynamicFormFieldNormal).key] ?? ""}
       onChange={(val) => onChange(val)}
       options={translatedOpts}
@@ -772,7 +772,7 @@ function DynamicFile({
           }}
           onClick={() => !loading && !disabled && fileInputRef.current?.click()}
           className={`
-            group flex items-center gap-3 px-4 py-2.5 rounded-xl border border-dashed transition-all cursor-pointer
+            group flex items-center gap-3 px-4 py-2.5 rounded-xl border border-dashed transition-all cursor-pointer field-${field.type}-${field.key}
             ${
               loading
                 ? "border-accent-500/50 bg-accent-500/5"
@@ -1263,7 +1263,11 @@ function DynamicUsername({
       <Input
         id={`field-${field.key}`}
         type="text"
-        className={cn(`field-${field.key}`, "pl-11")}
+        className={cn(
+          `field-${field.key}`,
+          `field-${field.type}-${field.key}`,
+          "pl-11",
+        )}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         minLength={f.minLength}
@@ -1322,7 +1326,11 @@ function DynamicPassword({
       <Input
         id={`field-${field.key}`}
         type={show ? "text" : "password"}
-        className={cn(`field-${field.key}`, "pl-11 pr-12")}
+        className={cn(
+          `field-${field.key}`,
+          `field-${field.type}-${field.key}`,
+          "pl-11 pr-12",
+        )}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         minLength={f.minLength}
@@ -1810,7 +1818,7 @@ function DynamicFieldRenderer({
   if (!field.key) return null;
 
   return (
-    <div className={getColClass(field)}>
+    <div className={cn(getColClass(field), `field-${field.type}-${field.key}`)}>
       <Label htmlFor={`field-${field.key}`} required={field.required}>
         {field.label}
       </Label>
@@ -1854,7 +1862,10 @@ function DynamicFieldRenderer({
       ) : field.type === "textarea" ? (
         <textarea
           id={`field-${field.key}`}
-          className="mt-1.5 w-full px-4 py-2.5 bg-dark-900 border border-dark-600 rounded-lg text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500 focus:ring-1 focus:ring-accent-500/30 transition-all text-sm disabled:opacity-50 min-h-20 resize-y"
+          className={cn(
+            "mt-1.5 w-full px-4 py-2.5 bg-dark-900 border border-dark-600 rounded-lg text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500 focus:ring-1 focus:ring-accent-500/30 transition-all text-sm disabled:opacity-50 min-h-20 resize-y",
+            `field-${field.type}-${field.key}`,
+          )}
           value={ensureString(formData[field.key])}
           onChange={(e) => onChange(field.key, e.target.value)}
           onBlur={(e) => handleBlur(e.target.value)}
@@ -1897,7 +1908,11 @@ function DynamicFieldRenderer({
         <Input
           id={`field-${field.key}`}
           type="text"
-          className={cn(`field-${field.key}`, "mt-1.5")}
+          className={cn(
+            `field-${field.key}`,
+            `field-${field.type}-${field.key}`,
+            "mt-1.5",
+          )}
           value={ensureString(formData[field.key])}
           onChange={(e) => {
             const val = e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, "");
@@ -2027,7 +2042,10 @@ function DynamicFieldRenderer({
           <input
             id={`field-${field.key}`}
             type="date"
-            className="w-full pl-12 pr-4 py-2.5 bg-dark-900 border border-dark-600 rounded-lg text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500 focus:ring-1 focus:ring-accent-500/30 transition-all text-sm disabled:opacity-50"
+            className={cn(
+              "w-full pl-12 pr-4 py-2.5 bg-dark-900 border border-dark-600 rounded-lg text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500 focus:ring-1 focus:ring-accent-500/30 transition-all text-sm disabled:opacity-50",
+              `field-${field.type}-${field.key}`,
+            )}
             value={ensureString(formData[field.key])}
             onChange={(e) => onChange(field.key, e.target.value)}
             disabled={disabled}
@@ -2097,7 +2115,11 @@ function DynamicFieldRenderer({
                   <Flag className="w-full h-full object-cover" />
                 </div>
                 <Input
-                  className={cn(`field-${field.key}`, `field-${field.key}-${langCode}`, "pl-11")}
+                  className={cn(
+                    `field-${field.key}`,
+                    `field-${field.key}-${langCode}`,
+                    "pl-11",
+                  )}
                   placeholder={`${field.label} (${langCode.toUpperCase()})`}
                   value={valObj[langCode] ?? ""}
                   onChange={(e) => {
@@ -2117,6 +2139,7 @@ function DynamicFieldRenderer({
             type={field.type}
             className={cn(
               `field-${field.key}`,
+              `field-${field.type}-${field.key}`,
               (field as DynamicFormFieldNormal).numberSuffix ? "pr-12" : "",
             )}
             value={ensureString(formData[field.key])}

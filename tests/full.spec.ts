@@ -157,6 +157,11 @@ test("Full Testing", async ({ page }) => {
   await page.click(".user-pagination-button-add");
   await page.waitForTimeout(1000);
 
+  // upload foto user, class: field-file-avatar
+  const fotoUserPath = path.join(pwd, "assets", "test", "sandhika-galih.jpeg");
+  await page.setInputFiles(".field-file-avatar", fotoUserPath);
+  await page.waitForTimeout(1000);
+
   // ---------------------------------------------- //
   // wait for navigation or success
   // await expect(page).toHaveURL(/.*select-role/); // for user not su
