@@ -1,365 +1,41 @@
-import { test, expect, type Page } from "@playwright/test";
-import fs from "fs";
-import path from "path";
+import { test } from "@playwright/test";
 
-import audio from "sound-play";
-
-const pwd = process.cwd();
-const asset_test = path.join(pwd, "assets", "test");
-
-const playNotification = async (
-  page: Page,
-  sound: "section" | "finish" | "error",
-) => {
-  let mp3Name = "";
-  if (sound === "section") {
-    mp3Name = "section-done.mp3";
-  } else if (sound === "finish") {
-    mp3Name = "testing-done.mp3";
-  } else {
-    mp3Name = "testing-error.mp3";
-  }
-  const soundPath = path.join(pwd, "public", mp3Name);
-  if (fs.existsSync(soundPath)) {
-    await audio.play(soundPath, 0.1);
-  }
-};
-
-const buttonClick = async (page: Page, className: string, delay = 1500) => {
-  await page.locator(className).first().click();
-  await page.waitForTimeout(delay);
-};
-
-const inputFill = async (
-  page: Page,
-  className: string,
-  value: string,
-  delay = 500,
-) => {
-  await page.locator(className).first().scrollIntoViewIfNeeded();
-  await page.waitForTimeout(500);
-  await page.fill(className, value);
-  await page.waitForTimeout(delay);
-};
-
-const inputFile = async (
-  page: Page,
-  className: string,
-  fileName: string,
-  delay = 1000,
-) => {
-  const file = path.join(asset_test, fileName);
-  await page.setInputFiles(className, file);
-  await page.waitForTimeout(delay);
-};
-
-const scrollDown = async (page: Page, className: string, value = 50) => {
-  await page.evaluate(
-    ({ className, value }) => {
-      const dialog = document.querySelector(className);
-      if (dialog) {
-        dialog.scrollTop += value;
-      }
-    },
-    { className, value },
-  );
-};
+import {
+  buttonClick,
+  inputFile,
+  inputFill,
+  playNotification,
+  scrollDown,
+} from "./function";
+import Prepare from "./prepare";
+import Landing from "./landing";
+import Login from "./login";
+import Role from "./modules/role";
+import User from "./modules/user";
+import Company from "./modules/company";
 
 test("Full Testing", async ({ page }) => {
   try {
-    // 0. Prepare
-    const frontendUrl = "http://127.0.0.1:5173";
-    const backendUrl = "http://127.0.0.1:3000";
-
-    // hit ke endpoint backend di port 3000 untuk code refresh
-    const refreshRes = await page.request.get(
-      `${backendUrl}/api/test/code-refresh`,
-    );
-    expect(refreshRes.ok()).toBeTruthy();
-
-    // ambil code menggunakan fs di file app_back_code.txt
-    const codePath = path.resolve(process.cwd(), "app_back_code.txt");
-    const code = fs.readFileSync(codePath, "utf-8").trim();
-
-    // code di pakai untuk body hit ke apocalypse-tables
-    const apocalypseRes = await page.request.post(
-      `${backendUrl}/api/test/apocalypse-tables`,
-      {
-        data: { code },
-      },
-    );
-    expect(apocalypseRes.ok()).toBeTruthy();
+    await Prepare(page);
+    await Landing(page);
+    await Login(page); // Super Admin
 
     // ---------------------------------------------- //
+    // Module ...
 
-    // 1. Access First Time
-    await page.goto(frontendUrl);
-
-    // 1.1. Check Heading
-    const heading = page.locator("h1");
-    await expect(heading).toBeVisible();
-    await expect(heading).toContainText(
-      /Build Full-Stack Apps|Bangun Aplikasi Full-Stack/i,
-    );
-    await expect(heading).toContainText(/React \+ Go/i);
-
-    // 1.2. Check Primary CTA (Login or Dashboard)
-    const ctaButton = page
-      .locator('a[href*="login"], a[href*="dashboard"]')
-      .first();
-    await expect(ctaButton).toBeVisible();
-    await expect(ctaButton).toContainText(
-      /Login Now|Masuk Sekarang|Go to Dashboard|Ke Dashboard/i,
-    );
-
-    // 1.3. Check GitHub Link
-    const githubLink = page.locator('a[href*="github.com"]').first();
-    await expect(githubLink).toBeVisible();
-    await expect(githubLink).toContainText(/GitHub/i);
-
-    // 1:end delay
-    await playNotification(page, "section");
-
-    // ---------------------------------------------- //
-
-    // 2. Access Login
-    await buttonClick(page, 'a[href*="login"], a[href*="dashboard"]');
-
-    // ambil username dan password memakai fs
-    const userModelPath = path.resolve(
-      pwd,
-      "core/modules/user/model/user.model.go",
-    );
-    const userModelContent = fs.readFileSync(userModelPath, "utf-8");
-
-    const usernameMatch = /Username:\s*"([^"]+)"/.exec(userModelContent);
-    const passwordMatch = /Password:\s*hash\.Password\("([^"]+)"\)/.exec(
-      userModelContent,
-    );
-
-    const username = usernameMatch ? usernameMatch[1] : "";
-    const password = passwordMatch ? passwordMatch[1] : "";
-
-    // insert ke field
-    await inputFill(page, ".field-username", username);
-    await inputFill(page, ".field-password", password);
-    await buttonClick(page, 'button[type="submit"]', 500);
-
-    // 2:end delay
-    await playNotification(page, "section");
-
-    // ---------------------------------------------- //
-
-    // 3. Role Check
-    // click menu role
-    await buttonClick(page, ".sidebar-menu-role");
-
-    // click expand role admin
-    await buttonClick(page, ".role-item-Admin");
-
-    // click checklist menu user
-    await buttonClick(page, ".role-check-admin-user");
-
-    // click button save
-    await buttonClick(page, ".role-button-save", 500);
-
-    // 3:end delay
-    await playNotification(page, "section");
-
-    // ---------------------------------------------- //
-
-    // 4. Add New User
-    // click menu user
-    await buttonClick(page, ".sidebar-menu-user");
-
-    // click button add
-    await buttonClick(page, ".user-pagination-button-add");
-
-    // upload foto user, class: field-file-avatar
-    await inputFile(page, ".field-file-avatar", "sandhika-galih.jpeg");
-
-    // input nama lengkap user, class: field-text-name
-    await inputFill(page, ".field-text-name", "Sandhika Galih");
-
-    // input username, class: field-text-username
-    await inputFill(page, ".field-text-username", "sandhikagalih");
-
-    // input password, class: field-text-password
-    await inputFill(page, ".field-text-password", "SandhikaGalih@123", 3000);
-
-    // input email, class: field-email-email
-    await inputFill(page, ".field-email-email", "sandhikagalih@test.com");
-
-    // input phone, class: field-phone-phone
-    await inputFill(page, ".field-phone-phone", "8123456789");
-
-    await scrollDown(page, ".user-pagination-dialog");
-
-    // click province: Jawa Barat
-    await buttonClick(page, "#province", 1000);
-    await inputFill(page, ".province-searchable-select-input", "jawa");
-    await buttonClick(
-      page,
-      "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
-    );
-
-    // scroll dialog kebawah sedikit agar bisa melihat field dibawah
-    await scrollDown(page, ".user-pagination-dialog");
-
-    // click regency: Kota Bandung
-    await buttonClick(page, "#regency", 1000);
-    await inputFill(page, ".regency-searchable-select-input", "kota");
-    await buttonClick(
-      page,
-      "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
-    );
-
-    // click district: Antapani
-    await buttonClick(page, "#district", 1000);
-    await inputFill(page, ".district-searchable-select-input", "anta");
-    await buttonClick(
-      page,
-      "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
-    );
-
-    // click village: Antapani
-    await buttonClick(page, "#village", 1000);
-    await inputFill(page, ".village-searchable-select-input", "tengah");
-    await buttonClick(
-      page,
-      "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
-    );
-
-    // Divisi Role Pertama
-    await buttonClick(page, ".roles-array-button-add", 1500);
-    await scrollDown(page, ".user-pagination-dialog", 300);
-
-    // Pilih Role Divisi Pertama: Management
-    await buttonClick(
-      page,
-      ".item-field-roles-0-division_id #field-division_id",
-      1000,
-    );
-    await inputFill(
-      page,
-      ".field-division_id-searchable-select-input",
-      "management",
-    );
-    await buttonClick(page, "#searchable-select-portal button", 1500);
-
-    // Pilih Role Jabatan Pertama: Admin
-    await buttonClick(page, ".item-field-roles-0-role_id #field-role_id", 1000);
-    await inputFill(page, ".field-role_id-searchable-select-input", "admin");
-    await buttonClick(page, "#searchable-select-portal button", 1500);
-
-    // Divisi Role Kedua
-    await buttonClick(page, ".roles-array-button-add", 1500);
-    await scrollDown(page, ".user-pagination-dialog", 300);
-
-    // Pilih Role Divisi Kedua: Management
-    await buttonClick(
-      page,
-      ".item-field-roles-1-division_id #field-division_id",
-      1000,
-    );
-    await inputFill(
-      page,
-      ".field-division_id-searchable-select-input",
-      "management",
-    );
-    await buttonClick(page, "#searchable-select-portal button", 1500);
-
-    // Pilih Role Jabatan Kedua: Operator
-    await buttonClick(page, ".item-field-roles-1-role_id #field-role_id", 1000);
-    await inputFill(page, ".field-role_id-searchable-select-input", "operator");
-    await buttonClick(page, "#searchable-select-portal button", 1500);
-
-    // Click Save ...
-    await buttonClick(page, ".user-pagination-button-save", 1000);
-
-    // 4:end delay
-    await playNotification(page, "section");
-
-    // ---------------------------------------------- //
-
-    // 5. Company
-    // click menu company
-    await buttonClick(page, ".sidebar-menu-company");
-    // click submenu company: entity
-    await buttonClick(page, ".sidebar-menu-company-entity");
-
-    // click button add
-    await buttonClick(page, ".company-entity-pagination-button-add");
-
-    // await page.waitForTimeout(9999999);
-
-    // upload logo
-    await inputFile(page, ".field-file-logo", "company-wpu.jpeg");
-
-    // input company name
-    await inputFill(page, ".field-text-name", "WPU Community");
-
-    // input company npwp
-    await inputFill(page, ".field-text-npwp_code", "1234567890123456");
-
-    // input company npwp alias
-    await inputFill(page, ".field-text-npwp_alias", "Sandhika Galih");
-
-    await scrollDown(page, ".company-entity-pagination-dialog", 500);
-
-    // input alamat
-    await inputFill(page, ".field-textarea-address", "Jl. lupa titik koma");
-
-    // click province: Jawa Barat
-    await buttonClick(page, "#province", 1000);
-    await inputFill(page, ".province-searchable-select-input", "jawa");
-    await buttonClick(
-      page,
-      "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
-    );
-
-    // scroll dialog kebawah sedikit agar bisa melihat field dibawah
-    await scrollDown(page, ".user-pagination-dialog");
-
-    // click regency: Kota Bandung
-    await buttonClick(page, "#regency", 1000);
-    await inputFill(page, ".regency-searchable-select-input", "kota");
-    await buttonClick(
-      page,
-      "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
-    );
-
-    // click district: Kiaracondong
-    await buttonClick(page, "#district", 1000);
-    await inputFill(page, ".district-searchable-select-input", "kiara");
-    await buttonClick(
-      page,
-      "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
-    );
-
-    // click village: Cicaheum
-    await buttonClick(page, "#village", 1000);
-    await inputFill(page, ".village-searchable-select-input", "cica");
-    await buttonClick(
-      page,
-      "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
-    );
-
-    // click button save
-    await buttonClick(page, ".company-entity-pagination-button-save", 1000);
-
-    // 5:end delay
-    await playNotification(page, "section");
+    await Role(page);
+    await User(page);
+    await Company(page);
 
     // ---------------------------------------------- //
     // wait for navigation or success
     // await expect(page).toHaveURL(/.*select-role/); // for user not su
 
     // Keep the browser open after finish
-    await playNotification(page, "finish");
+    await playNotification("finish");
     await page.pause();
   } catch (err) {
-    await playNotification(page, "error");
+    await playNotification("error");
     throw err;
   }
 });

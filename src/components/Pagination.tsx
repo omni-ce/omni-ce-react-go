@@ -825,7 +825,9 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
               if (
                 (child as DynamicFormFieldNormal).required &&
                 !(
-                  typeof val === "string" || typeof val === "number"
+                  typeof val === "string" ||
+                  typeof val === "number" ||
+                  typeof val === "boolean"
                     ? String(val)
                     : ""
                 ).trim()
@@ -839,7 +841,9 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
         if (
           (field as DynamicFormFieldNormal).required &&
           !(
-            typeof val === "string" || typeof val === "number"
+            typeof val === "string" ||
+            typeof val === "number" ||
+            typeof val === "boolean"
               ? String(val)
               : ""
           ).trim()
