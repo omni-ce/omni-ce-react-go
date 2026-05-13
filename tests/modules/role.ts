@@ -2,7 +2,7 @@ import type { Page } from "@playwright/test";
 import { buttonClick, playNotification } from "../function";
 
 async function Role(page: Page) {
-  // 3. Role Check
+  //# Role Check
   // click menu role
   await buttonClick(page, ".sidebar-menu-role");
 
@@ -15,7 +15,7 @@ async function Role(page: Page) {
   // click button save
   await buttonClick(page, ".role-button-save", 500);
 
-  // 3:end delay
+  //# end delay
   await playNotification("section");
 }
 

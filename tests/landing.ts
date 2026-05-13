@@ -3,10 +3,10 @@ import { playNotification } from "./function";
 import { frontendUrl } from "./variable";
 
 export async function Landing(page: Page) {
-  // 1. Access First Time
+  //# Access First Time
   await page.goto(frontendUrl);
 
-  // 1.1. Check Heading
+  // Check Heading
   const heading = page.locator("h1");
   await expect(heading).toBeVisible();
   await expect(heading).toContainText(
@@ -14,7 +14,7 @@ export async function Landing(page: Page) {
   );
   await expect(heading).toContainText(/React \+ Go/i);
 
-  // 1.2. Check Primary CTA (Login or Dashboard)
+  // Check Primary CTA (Login or Dashboard)
   const ctaButton = page
     .locator('a[href*="login"], a[href*="dashboard"]')
     .first();
@@ -23,12 +23,12 @@ export async function Landing(page: Page) {
     /Login Now|Masuk Sekarang|Go to Dashboard|Ke Dashboard/i,
   );
 
-  // 1.3. Check GitHub Link
+  // Check GitHub Link
   const githubLink = page.locator('a[href*="github.com"]').first();
   await expect(githubLink).toBeVisible();
   await expect(githubLink).toContainText(/GitHub/i);
 
-  // 1:end delay
+  //# end delay
   await playNotification("section");
 }
 

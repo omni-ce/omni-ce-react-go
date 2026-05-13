@@ -8,7 +8,7 @@ import {
 } from "../function";
 
 async function User(page: Page) {
-  // 4. Add New User
+  //# Add New User
   // click menu user
   await buttonClick(page, ".sidebar-menu-user");
 
@@ -43,7 +43,6 @@ async function User(page: Page) {
     "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
   );
 
-  // scroll dialog kebawah sedikit agar bisa melihat field dibawah
   await scrollDown(page, ".user-pagination-dialog");
 
   // click regency: Kota Bandung
@@ -117,7 +116,7 @@ async function User(page: Page) {
   // Click Save ...
   await buttonClick(page, ".user-pagination-button-save", 1000);
 
-  // 4:end delay
+  //# end delay
   await playNotification("section");
 }
 

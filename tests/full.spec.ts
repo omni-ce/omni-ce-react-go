@@ -1,15 +1,11 @@
 import { test } from "@playwright/test";
 
-import {
-  buttonClick,
-  inputFile,
-  inputFill,
-  playNotification,
-  scrollDown,
-} from "./function";
+import { playNotification } from "./function";
 import Prepare from "./prepare";
 import Landing from "./landing";
 import Login from "./login";
+
+// Module ...
 import Role from "./modules/role";
 import User from "./modules/user";
 import Company from "./modules/company";

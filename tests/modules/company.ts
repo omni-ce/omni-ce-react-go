@@ -8,7 +8,7 @@ import {
 } from "../function";
 
 async function Company(page: Page) {
-  // 5. Company
+  //# Company Entity
   // click menu company
   await buttonClick(page, ".sidebar-menu-company");
   // click submenu company: entity
@@ -42,7 +42,6 @@ async function Company(page: Page) {
     "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
   );
 
-  // scroll dialog kebawah sedikit agar bisa melihat field dibawah
   await scrollDown(page, ".user-pagination-dialog");
 
   // click regency: Kota Bandung
@@ -72,8 +71,24 @@ async function Company(page: Page) {
   // click button save
   await buttonClick(page, ".company-entity-pagination-button-save", 1000);
 
-  // 5:end delay
+  //# end delay
   await playNotification("section");
+
+  // ---------------------------------------------- //
+
+  //# Company Branch
+  // click submenu company: branch
+  await buttonClick(page, ".sidebar-menu-company-branch");
+
+  // click button add
+  await buttonClick(page, ".company-branch-pagination-button-add");
+
+  // click dropdown entity
+  await buttonClick(page, ".company-branch-pagination-dialog #field-entity_id");
+  await buttonClick(
+    page,
+    "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button > div > div > div",
+  );
 }
 
 export default Company;

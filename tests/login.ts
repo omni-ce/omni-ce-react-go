@@ -6,7 +6,7 @@ import { buttonClick, inputFill, playNotification } from "./function";
 import { pwd } from "./variable";
 
 async function Login(page: Page) {
-  // 2. Access Login
+  //# Access Login
   await buttonClick(page, 'a[href*="login"], a[href*="dashboard"]');
 
   // ambil username dan password memakai fs
@@ -29,7 +29,7 @@ async function Login(page: Page) {
   await inputFill(page, ".field-password", password);
   await buttonClick(page, 'button[type="submit"]', 500);
 
-  // 2:end delay
+  //# end delay
   await playNotification("section");
 }
 
