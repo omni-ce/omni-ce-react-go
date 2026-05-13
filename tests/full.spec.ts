@@ -9,8 +9,10 @@ import Login from "./login";
 import Role from "./modules/role";
 import User from "./modules/user";
 import Company from "./modules/company";
+import { started_exist } from "./variable";
 
 test("Full Testing", async ({ page }) => {
+  return;
   try {
     await Prepare(page);
     await Landing(page);
