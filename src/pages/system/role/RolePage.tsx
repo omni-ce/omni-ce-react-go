@@ -731,7 +731,10 @@ export default function RolePage({ ruleKey }: Props) {
                                         !division.is_active ||
                                         !perm.canSet
                                       }
-                                      className="w-3.5 h-3.5 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                                      className={cn(
+                                        "w-3.5 h-3.5 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed",
+                                        `role-check-${role.name.toLowerCase().replace(/\s+/g, "-")}-col-${act.key}`,
+                                      )}
                                     />
                                   </div>
                                 );
@@ -802,7 +805,10 @@ export default function RolePage({ ruleKey }: Props) {
                                           !division.is_active ||
                                           !perm.canSet
                                         }
-                                        className="w-3.5 h-3.5 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                                        className={cn(
+                                          "w-3.5 h-3.5 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed",
+                                          `role-check-${role.name.toLowerCase().replace(/\s+/g, "-")}-${menu.key.replace(/^header-/, "").replace(/\//g, "-")}`,
+                                        )}
                                       />
                                       <span className="text-sm text-foreground font-medium">
                                         {menu.level > 0
@@ -834,7 +840,10 @@ export default function RolePage({ ruleKey }: Props) {
                                             !division.is_active ||
                                             !perm.canSet
                                           }
-                                          className="w-4 h-4 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
+                                          className={cn(
+                                            "w-4 h-4 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-opacity",
+                                            `role-check-${role.name.toLowerCase().replace(/\s+/g, "-")}-${menu.key.replace(/^header-/, "").replace(/\//g, "-")}-${act.key}`,
+                                          )}
                                         />
                                       </div>
                                     ))}
@@ -871,7 +880,10 @@ export default function RolePage({ ruleKey }: Props) {
                                               !division.is_active ||
                                               !perm.canSet
                                             }
-                                            className="w-3.5 h-3.5 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                                            className={cn(
+                                           "w-3.5 h-3.5 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed",
+                                           `role-check-${role.name.toLowerCase().replace(/\s+/g, "-")}-${extra.key.replace(/\//g, "-")}`,
+                                         )}
                                           />
                                           <span className="text-sm text-dark-400 font-medium">
                                             └ {extra.label}
@@ -901,7 +913,10 @@ export default function RolePage({ ruleKey }: Props) {
                                                 !division.is_active ||
                                                 !perm.canSet
                                               }
-                                              className="w-4 h-4 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
+                                              className={cn(
+                                                "w-4 h-4 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-opacity",
+                                                `role-check-${role.name.toLowerCase().replace(/\s+/g, "-")}-${extra.key.replace(/\//g, "-")}-${act.key}`,
+                                              )}
                                             />
                                           </div>
                                         ))}

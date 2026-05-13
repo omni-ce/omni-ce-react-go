@@ -91,7 +91,7 @@ test("Full Testing", async ({ page }) => {
   await page.waitForTimeout(1000);
 
   // click checklist menu user
-  await page.click(".role-item-Admin .sidebar-menu-user input");
+  await page.click(".role-check-admin-user");
   await page.waitForTimeout(1000);
 
   // ---------------------------------------------- //
