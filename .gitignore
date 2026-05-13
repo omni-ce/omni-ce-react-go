@@ -44,6 +44,7 @@ react-go
 main
 
 # Playwright
+app_back_code.txt
 /test-results/
 /playwright-report/
 /blob-report/

@@ -19,6 +19,7 @@ import (
 	"react-go/core/modules/rule"
 	"react-go/core/modules/setting"
 	"react-go/core/modules/supplier"
+	"react-go/core/modules/test"
 	"react-go/core/modules/upload"
 	"react-go/core/modules/user"
 	"react-go/core/modules/warehouse"
@@ -33,6 +34,9 @@ func SetupRoutes(app *fiber.App, api fiber.Router) {
 
 	// Root (Hello World)
 	example.PublicRoute(app)
+
+	// Test
+	test.PublicRoute(api.Group("/test"))
 
 	// Upload
 	upload.ProtectedRoute(api.Group("/upload", middlewares.UseToken))
