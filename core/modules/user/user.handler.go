@@ -141,10 +141,10 @@ func Create(c *fiber.Ctx) error {
 		Name:      strings.TrimSpace(body.Name),
 		Username:  strings.TrimSpace(body.Username),
 		Password:  hash.Password(body.Password),
-		Address:   strings.TrimSpace(body.Address),
-		Role:      model.UserRoleClient,
-		CreatedBy: currentUser.ID,
-		UpdatedBy: currentUser.ID,
+		Address:         strings.TrimSpace(body.Address),
+		Role:            model.UserRoleClient,
+		CreatedByUserID: currentUser.ID,
+		UpdatedByUserID: currentUser.ID,
 	}
 
 	errTx := variable.Db.Transaction(func(tx *gorm.DB) error {

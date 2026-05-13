@@ -28,14 +28,14 @@ type User struct {
 	IsActive    bool      `json:"is_active" gorm:"not null;default:true"`
 
 	// SLA: create & update by user
-	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
-	CreatedBy uuid.UUID `json:"created_by" gorm:"type:char(36);not null"`
-	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime"`
-	UpdatedBy uuid.UUID `json:"updated_by" gorm:"type:char(36);not null"`
+	CreatedAt       time.Time `json:"created_at" gorm:"autoCreateTime"`
+	CreatedByUserID uuid.UUID `json:"created_by" gorm:"column:created_by_user_id;type:char(36);not null"`
+	UpdatedAt       time.Time `json:"updated_at" gorm:"autoUpdateTime"`
+	UpdatedByUserID uuid.UUID `json:"updated_by" gorm:"column:updated_by_user_id;type:char(36);not null"`
 
 	// relations
-	Created *User `json:"created" gorm:"foreignKey:CreatedBy;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	Updated *User `json:"updated" gorm:"foreignKey:UpdatedBy;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Created *User `json:"created" gorm:"foreignKey:CreatedByUserID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Updated *User `json:"updated" gorm:"foreignKey:UpdatedByUserID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 func (s *User) BeforeCreate(tx *gorm.DB) error {
@@ -85,8 +85,8 @@ func (User) Seed(db *gorm.DB) {
 		}
 
 		for _, s := range stats {
-			s.CreatedBy = s.ID
-			s.UpdatedBy = s.ID
+			s.CreatedByUserID = s.ID
+			s.UpdatedByUserID = s.ID
 			db.Create(&s)
 		}
 
