@@ -8,7 +8,6 @@ import player from "play-sound";
 const audio = player();
 
 const pwd = process.cwd();
-const assetsPath = path.join(pwd, "assets");
 
 const playNotification = async (
   page: Page,
@@ -16,19 +15,27 @@ const playNotification = async (
 ) => {
   let mp3Name = "";
   if (sound === "section") {
-    mp3Name = "section.mp3";
+    mp3Name = "section-done.mp3";
   } else if (sound === "finish") {
-    mp3Name = "finish.mp3";
+    mp3Name = "testing-done.mp3";
   } else {
-    mp3Name = "error.mp3";
+    mp3Name = "testing-error.mp3";
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-  audio.play(path.join(assetsPath, "public", mp3Name), (err) => {
-    if (err) throw err;
-  });
+  const soundPath = path.join(pwd, "public", mp3Name);
 
-  await page.waitForTimeout(2000);
+  if (fs.existsSync(soundPath)) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    audio.play(soundPath, (err) => {
+      if (err) console.error("Sound play error:", err);
+    });
+  }
+
+  try {
+    await page.waitForTimeout(2500);
+  } catch {
+    // Ignore if test ends during timeout
+  }
 };
 
 test("Full Testing", async ({ page }) => {
@@ -113,7 +120,6 @@ test("Full Testing", async ({ page }) => {
   await page.fill(".field-password", password);
   await page.waitForTimeout(2000);
   await page.click('button[type="submit"]');
-  await page.waitForTimeout(2000);
 
   // 2:end delay
   await playNotification(page, "section");
