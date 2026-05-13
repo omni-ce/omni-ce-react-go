@@ -8,11 +8,11 @@
 
 # Objectives
 
-- Warehouse
+- Warehouse with history
+- Store with history
 - POS
 - Middleware untuk handle rules
 - Switch maintenance system (bisa diaktifkan / dimatikan)
-- Bug: dynamic field: language salah bendera negara
 - Countdown auto logout
 - Halaman khusus auto logout yang di input hanya password
 - jika ending, full halaman dokumentasi di update
