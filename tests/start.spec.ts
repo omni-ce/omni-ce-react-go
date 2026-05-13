@@ -13,9 +13,10 @@ import User from "./modules/user";
 import Company from "./modules/company";
 
 test("Full Testing", async ({ page }) => {
-  console.log({ argv, args, module_selected });
-  expect(true).toBeTruthy();
-  return;
+  // console.log({ argv, args, module_selected });
+  // expect(true).toBeTruthy();
+  // return;
+
   try {
     await Prepare(page);
     await Landing(page);
