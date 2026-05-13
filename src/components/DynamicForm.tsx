@@ -751,7 +751,7 @@ function DynamicFile({
         <input
           type="file"
           ref={fileInputRef}
-          className="hidden"
+          className={cn("hidden", `field-${field.type}-${field.key}`)}
           onChange={handleFileChange}
           accept={
             (field as DynamicFormFieldNormal).fileType
@@ -772,7 +772,7 @@ function DynamicFile({
           }}
           onClick={() => !loading && !disabled && fileInputRef.current?.click()}
           className={`
-            group flex items-center gap-3 px-4 py-2.5 rounded-xl border border-dashed transition-all cursor-pointer field-${field.type}-${field.key}
+            group flex items-center gap-3 px-4 py-2.5 rounded-xl border border-dashed transition-all cursor-pointer field-uploader-${field.type}-${field.key}
             ${
               loading
                 ? "border-accent-500/50 bg-accent-500/5"
@@ -1818,7 +1818,7 @@ function DynamicFieldRenderer({
   if (!field.key) return null;
 
   return (
-    <div className={cn(getColClass(field), `field-${field.type}-${field.key}`)}>
+    <div className={cn(getColClass(field), `field-group-${field.type}-${field.key}`)}>
       <Label htmlFor={`field-${field.key}`} required={field.required}>
         {field.label}
       </Label>

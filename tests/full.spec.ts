@@ -2,12 +2,10 @@ import { test, expect, type Page } from "@playwright/test";
 import fs from "fs";
 import path from "path";
 
-import player from "play-sound";
-
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-const audio = player();
+import audio from "sound-play";
 
 const pwd = process.cwd();
+const asset_test = path.join(pwd, "assets", "test");
 
 const playNotification = async (
   page: Page,
@@ -21,21 +19,26 @@ const playNotification = async (
   } else {
     mp3Name = "testing-error.mp3";
   }
-
   const soundPath = path.join(pwd, "public", mp3Name);
-
   if (fs.existsSync(soundPath)) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    audio.play(soundPath, (err) => {
-      if (err) console.error("Sound play error:", err);
-    });
+    await audio.play(soundPath, 0.5);
   }
-
   try {
     await page.waitForTimeout(2500);
   } catch {
     // Ignore if test ends during timeout
   }
+};
+
+const buttonClick = async (page: Page, className: string) => {
+  await page.locator(className).first().click();
+  await page.waitForTimeout(2000);
+};
+
+const inputFill = async (page: Page, className: string, value: string) => {
+  await page.fill(className, value);
+  await page.waitForTimeout(500);
 };
 
 test("Full Testing", async ({ page }) => {
@@ -95,10 +98,7 @@ test("Full Testing", async ({ page }) => {
   // ---------------------------------------------- //
 
   // 2. Access Login
-  const loginButton = page
-    .locator('a[href*="login"], a[href*="dashboard"]')
-    .first();
-  await loginButton.click();
+  await buttonClick(page, 'a[href*="login"], a[href*="dashboard"]');
 
   // ambil username dan password memakai fs
   const userModelPath = path.resolve(
@@ -116,10 +116,9 @@ test("Full Testing", async ({ page }) => {
   const password = passwordMatch ? passwordMatch[1] : "";
 
   // insert ke field
-  await page.fill(".field-username", username);
-  await page.fill(".field-password", password);
-  await page.waitForTimeout(2000);
-  await page.click('button[type="submit"]');
+  await inputFill(page, ".field-username", username);
+  await inputFill(page, ".field-password", password);
+  await buttonClick(page, 'button[type="submit"]');
 
   // 2:end delay
   await playNotification(page, "section");
@@ -128,12 +127,10 @@ test("Full Testing", async ({ page }) => {
 
   // 3. Role Check
   // click menu role
-  await page.click(".sidebar-menu-role");
-  await page.waitForTimeout(1000);
+  await buttonClick(page, ".sidebar-menu-role");
 
   // click expand role admin
-  await page.click(".role-item-Admin");
-  await page.waitForTimeout(1000);
+  await buttonClick(page, ".role-item-Admin");
 
   // click checklist menu user
   await page.click(".role-check-admin-user");
@@ -158,8 +155,12 @@ test("Full Testing", async ({ page }) => {
   await page.waitForTimeout(1000);
 
   // upload foto user, class: field-file-avatar
-  const fotoUserPath = path.join(pwd, "assets", "test", "sandhika-galih.jpeg");
+  const fotoUserPath = path.join(asset_test, "sandhika-galih.jpeg");
   await page.setInputFiles(".field-file-avatar", fotoUserPath);
+  await page.waitForTimeout(1000);
+
+  // input nama lengkap user, class: field-text-name
+  await page.fill(".field-text-name", "Sandhika Galih");
   await page.waitForTimeout(1000);
 
   // ---------------------------------------------- //
