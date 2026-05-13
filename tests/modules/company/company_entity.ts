@@ -6,11 +6,18 @@ import {
   playNotification,
   scrollDown,
 } from "../../function";
+import { module_selected } from "../../variable";
 
 async function CompanyEntity(page: Page) {
-  //# Company Entity
   // click menu company
   await buttonClick(page, ".sidebar-menu-company");
+
+  if (!module_selected.includes("entity")) {
+    console.log("Company Entity skip ...");
+    return;
+  }
+
+  //# Company Entity
   // click submenu company: entity
   await buttonClick(page, ".sidebar-menu-company-entity");
 

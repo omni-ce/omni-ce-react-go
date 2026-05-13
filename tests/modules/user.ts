@@ -6,10 +6,11 @@ import {
   playNotification,
   scrollDown,
 } from "../function";
-import { started, module_selected } from "../variable";
+import { module_selected } from "../variable";
 
 async function User(page: Page) {
-  if (started && module_selected != "user") {
+  if (!module_selected.includes("user")) {
+    console.log("User skip ...");
     return;
   }
 

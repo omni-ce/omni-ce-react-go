@@ -6,8 +6,14 @@ import {
   playNotification,
   scrollDown,
 } from "../../function";
+import { module_selected } from "../../variable";
 
 async function CompanyBranch(page: Page) {
+  if (!module_selected.includes("branch")) {
+    console.log("Company Branch skip ...");
+    return;
+  }
+
   //# Company Branch
   // click submenu company: branch
   await buttonClick(page, ".sidebar-menu-company-branch");

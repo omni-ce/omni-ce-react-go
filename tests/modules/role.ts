@@ -1,9 +1,10 @@
 import type { Page } from "@playwright/test";
 import { buttonClick, playNotification } from "../function";
-import { started, module_selected } from "../variable";
+import { module_selected } from "../variable";
 
 async function Role(page: Page) {
-  if (started && module_selected != "role") {
+  if (!module_selected.includes("role")) {
+    console.log("Role skip ...");
     return;
   }
 

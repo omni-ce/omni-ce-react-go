@@ -1,9 +1,14 @@
 import fs from "fs";
 import path from "path";
 import { expect, type Page } from "@playwright/test";
-import { backendUrl } from "./variable";
+import { backendUrl, module_selected } from "./variable";
 
 export async function Prepare(page: Page) {
+  if (module_selected.length > 0) {
+    console.log("Prepare skip, module already selected ...");
+    return;
+  }
+
   // hit ke endpoint backend di port 3000 untuk code refresh
   const refreshRes = await page.request.get(
     `${backendUrl}/api/test/code-refresh`,

@@ -12,5 +12,4 @@ export const argv = process.env.CLI_ARGS
   ? (JSON.parse(process.env.CLI_ARGS) as string[])
   : process.argv;
 export const args = argv.slice(2);
-export const started = args.includes("start");
-export const module_selected = started ? args[3] : "";
+export const module_selected = args.slice(2);
