@@ -137,12 +137,14 @@ func Create(c *fiber.Ctx) error {
 	}
 
 	user := model.User{
-		Avatar:   body.Avatar,
-		Name:     strings.TrimSpace(body.Name),
-		Username: strings.TrimSpace(body.Username),
-		Password: hash.Password(body.Password),
-		Address:  strings.TrimSpace(body.Address),
-		Role:     model.UserRoleClient,
+		Avatar:    body.Avatar,
+		Name:      strings.TrimSpace(body.Name),
+		Username:  strings.TrimSpace(body.Username),
+		Password:  hash.Password(body.Password),
+		Address:   strings.TrimSpace(body.Address),
+		Role:      model.UserRoleClient,
+		CreatedBy: currentUser.ID,
+		UpdatedBy: currentUser.ID,
 	}
 
 	errTx := variable.Db.Transaction(func(tx *gorm.DB) error {
@@ -165,7 +167,7 @@ func Create(c *fiber.Ctx) error {
 		return nil
 	})
 	if errTx != nil {
-		message := err.Error()
+		message := errTx.Error()
 		if strings.Contains(message, "UNIQUE constraint") {
 			return dto.BadRequest(c, types.Language{
 				Id: "Username sudah ada",

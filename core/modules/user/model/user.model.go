@@ -34,8 +34,8 @@ type User struct {
 	UpdatedBy uuid.UUID `json:"updated_by" gorm:"type:char(36);not null"`
 
 	// relations
-	Created *User `json:"created" gorm:"foreignKey:CreatedBy;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	Updated *User `json:"updated" gorm:"foreignKey:UpdatedBy;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Created *User `json:"created" gorm:"foreignKey:CreatedBy;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Updated *User `json:"updated" gorm:"foreignKey:UpdatedBy;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 func (s *User) BeforeCreate(tx *gorm.DB) error {
@@ -73,8 +73,10 @@ func (User) Seed(db *gorm.DB) {
 	db.Model(&User{}).Count(&count)
 
 	if count == 0 {
+		adminId, _ := uuid.NewV7()
 		stats := []User{
 			{
+				ID:       adminId,
 				Name:     "Admin",
 				Username: "admin",
 				Password: hash.Password("Admin@123"),
@@ -83,6 +85,8 @@ func (User) Seed(db *gorm.DB) {
 		}
 
 		for _, s := range stats {
+			s.CreatedBy = s.ID
+			s.UpdatedBy = s.ID
 			db.Create(&s)
 		}
 

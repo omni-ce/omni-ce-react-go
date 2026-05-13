@@ -39,7 +39,7 @@ type Notification struct {
 	DeletedBy *uuid.UUID `json:"deleted_by" gorm:"type:char(36);not null"`
 
 	// relations
-	Created user.User `json:"created" gorm:"foreignKey:CreatedBy;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Created user.User `json:"created" gorm:"foreignKey:CreatedBy;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Deleted user.User `json:"deleted" gorm:"foreignKey:DeletedBy;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
