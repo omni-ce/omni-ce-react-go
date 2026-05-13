@@ -5,9 +5,9 @@ import {
   inputFill,
   playNotification,
   scrollDown,
-} from "../function";
+} from "../../function";
 
-async function Company(page: Page) {
+async function CompanyEntity(page: Page) {
   //# Company Entity
   // click menu company
   await buttonClick(page, ".sidebar-menu-company");
@@ -73,22 +73,6 @@ async function Company(page: Page) {
 
   //# end delay
   await playNotification("section");
-
-  // ---------------------------------------------- //
-
-  //# Company Branch
-  // click submenu company: branch
-  await buttonClick(page, ".sidebar-menu-company-branch");
-
-  // click button add
-  await buttonClick(page, ".company-branch-pagination-button-add");
-
-  // click dropdown entity
-  await buttonClick(page, ".company-branch-pagination-dialog #field-entity_id");
-  await buttonClick(
-    page,
-    "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button > div > div > div",
-  );
 }
 
-export default Company;
+export default CompanyEntity;
