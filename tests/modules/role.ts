@@ -1,7 +1,12 @@
 import type { Page } from "@playwright/test";
 import { buttonClick, playNotification } from "../function";
+import { started, module_selected } from "../variable";
 
 async function Role(page: Page) {
+  if (started && module_selected != "role") {
+    return;
+  }
+
   //# Role Check
   // click menu role
   await buttonClick(page, ".sidebar-menu-role");

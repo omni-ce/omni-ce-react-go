@@ -6,8 +6,13 @@ import {
   playNotification,
   scrollDown,
 } from "../function";
+import { started, module_selected } from "../variable";
 
 async function User(page: Page) {
+  if (started && module_selected != "user") {
+    return;
+  }
+
   //# Add New User
   // click menu user
   await buttonClick(page, ".sidebar-menu-user");

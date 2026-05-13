@@ -8,6 +8,8 @@ import { defineConfig, devices } from "@playwright/test";
 // import path from 'path';
 // dotenv.config({ path: path.resolve(__dirname, '.env') });
 
+process.env.CLI_ARGS ??= JSON.stringify(process.argv);
+
 /**
  * See https://playwright.dev/docs/test-configuration.
  */

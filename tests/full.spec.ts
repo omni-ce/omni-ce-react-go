@@ -1,6 +1,7 @@
-import { expect, test } from "@playwright/test";
+import { test } from "@playwright/test";
 
 import { playNotification } from "./function";
+
 import Prepare from "./prepare";
 import Landing from "./landing";
 import Login from "./login";
@@ -9,12 +10,8 @@ import Login from "./login";
 import Role from "./modules/role";
 import User from "./modules/user";
 import Company from "./modules/company";
-import { argv, args, started } from "./variable";
 
 test("Full Testing", async ({ page }) => {
-  console.log({ argv, args, started });
-  expect(true).toBeTruthy();
-  return;
   try {
     await Prepare(page);
     await Landing(page);
