@@ -82,7 +82,7 @@ func ApocalypseTables(c *fiber.Ctx) error {
 			variable.Db.Exec(fmt.Sprintf("DELETE FROM %s", table))
 			variable.Db.Exec(fmt.Sprintf("DELETE FROM sqlite_sequence WHERE name='%s'", table))
 		case "postgres":
-			variable.Db.Exec(fmt.Sprintf("TRUNCATE TABLE %s CASCADE", table))
+			variable.Db.Exec(fmt.Sprintf("TRUNCATE TABLE %s RESTART IDENTITY CASCADE", table))
 		default:
 			variable.Db.Exec(fmt.Sprintf("TRUNCATE TABLE %s", table))
 		}
