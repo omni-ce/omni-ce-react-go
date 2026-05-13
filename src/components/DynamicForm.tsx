@@ -1122,6 +1122,7 @@ function DebouncedInput({
         className={cn(
           `field-${field.key}`,
           `field-${field.type}-${field.key}`,
+          `field-text-${field.key}`,
           loading ? "pr-10" : "",
         )}
         value={value}
@@ -1335,6 +1336,7 @@ function DynamicPassword({
         className={cn(
           `field-${field.key}`,
           `field-${field.type}-${field.key}`,
+          `field-text-${field.key}`,
           "pl-11 pr-12",
         )}
         value={value}
@@ -2148,6 +2150,7 @@ function DynamicFieldRenderer({
             className={cn(
               `field-${field.key}`,
               `field-${field.type}-${field.key}`,
+              `field-text-${field.key}`,
               (field as DynamicFormFieldNormal).numberSuffix ? "pr-12" : "",
             )}
             value={ensureString(formData[field.key])}
