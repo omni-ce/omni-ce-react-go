@@ -60,6 +60,34 @@ test("Full Testing", async ({ page }) => {
     .first();
   await loginButton.click();
 
+  // ambil username dan password memakai fs
+  const userModelPath = path.resolve(
+    process.cwd(),
+    "core/modules/user/model/user.model.go",
+  );
+  const userModelContent = fs.readFileSync(userModelPath, "utf-8");
+
+  const usernameMatch = /Username:\s*"([^"]+)"/.exec(userModelContent);
+  const passwordMatch = /Password:\s*hash\.Password\("([^"]+)"\)/.exec(
+    userModelContent,
+  );
+
+  const username = usernameMatch ? usernameMatch[1] : "";
+  const password = passwordMatch ? passwordMatch[1] : "";
+
+  console.log({
+    username,
+    password,
+  });
+
+  // insert ke field
+  await page.fill('input[name="username"]', username);
+  await page.fill('input[name="password"]', password);
+  await page.click('button[type="submit"]');
+
+  // wait for navigation or success
+  await expect(page).toHaveURL(/.*select-role/);
+
   // Keep the browser open after finish
   await page.pause();
 });
