@@ -10,6 +10,5 @@ export const asset_test = path.join(pwd, "assets", "test");
 export let started_exist = false;
 export const argv = process.argv;
 export const args = argv.slice(2);
-export const started = args.includes("--start");
-
-console.log({ argv, args, started });
+export const started =
+  args.includes("--start") || args.includes("start") || !!process.env.START;
