@@ -34,8 +34,14 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
     headless: false,
+    viewport: null,
     launchOptions: {
-      args: ["--auto-open-devtools-for-tabs"],
+      args: [
+        // "--auto-open-devtools-for-tabs",
+        // "--start-maximized",
+        "--window-position=0,0",
+        "--screen-size=1920,1080",
+      ],
     },
   },
 

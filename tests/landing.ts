@@ -4,19 +4,25 @@ import { frontendUrl } from "./variable";
 
 export async function Landing(page: Page) {
   //# Access First Time
-  await page.addInitScript(() => {
-    const shield = document.createElement("div");
-    shield.id = "playwright-shield";
-    shield.style.position = "fixed";
-    shield.style.top = "0";
-    shield.style.left = "0";
-    shield.style.width = "100%";
-    shield.style.height = "100%";
-    shield.style.zIndex = "999999";
-    shield.style.backgroundColor = "transparent";
-    shield.style.pointerEvents = "auto";
-    document.body.appendChild(shield);
-  });
+  // await page.addInitScript(() => {
+  //   const inject = () => {
+  //     if (document.getElementById("playwright-shield")) return;
+  //     const shield = document.createElement("div");
+  //     shield.id = "playwright-shield";
+  //     shield.style.position = "fixed";
+  //     shield.style.top = "0";
+  //     shield.style.left = "0";
+  //     shield.style.width = "100vw";
+  //     shield.style.height = "100vh";
+  //     shield.style.zIndex = "2147483647";
+  //     shield.style.backgroundColor = "transparent";
+  //     shield.style.pointerEvents = "auto";
+  //     document.body.appendChild(shield);
+  //   };
+  //   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  //   if (document.body) inject();
+  //   else window.addEventListener("DOMContentLoaded", inject);
+  // });
 
   await page.goto(frontendUrl);
 
