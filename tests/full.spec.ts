@@ -25,4 +25,7 @@ test("Full Testing", async ({ page }) => {
   const githubLink = page.locator('a[href*="github.com"]').first();
   await expect(githubLink).toBeVisible();
   await expect(githubLink).toContainText(/GitHub/i);
+
+  // Keep the browser open after finish
+  await page.pause();
 });

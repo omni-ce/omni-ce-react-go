@@ -1,7 +1,7 @@
 package model
 
 import (
-	"os/user"
+	user "react-go/core/modules/user/model"
 	"time"
 
 	company "react-go/core/modules/company/model"

@@ -2,7 +2,6 @@ package model
 
 import (
 	"log"
-	"os/user"
 	"react-go/core/function/hash"
 	"react-go/core/types"
 	"time"
@@ -35,8 +34,8 @@ type User struct {
 	UpdatedBy uuid.UUID `json:"updated_by" gorm:"type:char(36);not null"`
 
 	// relations
-	Created user.User `json:"created" gorm:"foreignKey:CreatedBy;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	Updated user.User `json:"updated" gorm:"foreignKey:UpdatedBy;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Created *User `json:"created" gorm:"foreignKey:CreatedBy;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Updated *User `json:"updated" gorm:"foreignKey:UpdatedBy;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 func (s *User) BeforeCreate(tx *gorm.DB) error {
