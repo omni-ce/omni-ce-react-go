@@ -149,6 +149,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
 ) {
   const perm = usePermission(ruleKey);
   const { language } = useLanguageStore();
+  const sanitizedModule = useMemo(() => module.replace(/\//g, "-"), [module]);
   const { user } = useAuthStore();
   const [rows, setRows] = useState<T[]>([]);
   const [search, setSearch] = useState("");
@@ -308,7 +309,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                     checked={getRowIsActive(row)}
                     onCheckedChange={() => handleToggleActive(row)}
                     disabled={togglingActiveId === getRowId(row)}
-                    className={`${module}-pagination-button-active`}
+                    className={`${sanitizedModule}-pagination-button-active`}
                   />
                 )}
                 {showEdit && (
@@ -317,7 +318,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                     size="icon"
                     title={language({ id: "Ubah", en: "Edit" })}
                     onClick={() => openEdit(row)}
-                    className={`${module}-pagination-button-edit`}
+                    className={`${sanitizedModule}-pagination-button-edit`}
                   >
                     <IconComponent iconName="Hi/HiOutlinePencil" size={16} />
                   </Button>
@@ -330,7 +331,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                     onClick={() => openDelete(row)}
                     className={cn(
                       "text-neon-red hover:bg-neon-red/10",
-                      `${module}-pagination-button-delete`,
+                      `${sanitizedModule}-pagination-button-delete`,
                     )}
                   >
                     <IconComponent iconName="Hi/HiOutlineTrash" size={16} />
@@ -357,7 +358,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                             variant="ghost"
                             size="icon"
                             title={language(action.label)}
-                            className={`${module}-pagination-button-extra-${idx}`}
+                            className={`${sanitizedModule}-pagination-button-extra-${idx}`}
                             onClick={() => {
                               if (action.button) action.button(row, reload);
                               if (action.component)
@@ -1083,7 +1084,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                   onClick={openCreate}
                   className={cn(
                     "flex items-center gap-2",
-                    `${module}-pagination-button-add`,
+                    `${sanitizedModule}-pagination-button-add`,
                   )}
                   size="sm"
                 >
@@ -1099,7 +1100,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                 disabled={isLoading}
                 className={cn(
                   "w-9 h-9 rounded-full border-dark-600/40 bg-dark-900 text-dark-400 hover:text-foreground transition-all shrink-0",
-                  `${module}-pagination-button-reload`,
+                  `${sanitizedModule}-pagination-button-reload`,
                 )}
               >
                 <IconComponent
@@ -1388,7 +1389,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                 size="sm"
                 className={cn(
                   "flex items-center gap-2",
-                  `${module}-pagination-button-bulk-delete`,
+                  `${sanitizedModule}-pagination-button-bulk-delete`,
                 )}
                 onClick={() => setBulkDeleteDialogOpen(true)}
               >
@@ -1517,7 +1518,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
               className={cn(
                 "overflow-y-auto -mx-6 px-6 py-1",
                 popupHeight ? "flex-1" : "max-h-[60vh]",
-                `${module}-pagination-dialog`,
+                `${sanitizedModule}-pagination-dialog`,
               )}
             >
               <DynamicForm
@@ -1545,7 +1546,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
               <Button
                 onClick={handleSave}
                 disabled={isSubmitting || !isFormValid()}
-                className={`${module}-pagination-button-save`}
+                className={`${sanitizedModule}-pagination-button-save`}
               >
                 {language({ id: "Simpan", en: "Save" })}
               </Button>
@@ -1593,7 +1594,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                 variant="destructive"
                 onClick={handleDelete}
                 disabled={isSubmitting}
-                className={`${module}-pagination-button-delete-confirm`}
+                className={`${sanitizedModule}-pagination-button-delete-confirm`}
               >
                 {language({ id: "Hapus", en: "Delete" })}
               </Button>
@@ -1641,7 +1642,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                 variant="destructive"
                 onClick={handleBulkDelete}
                 disabled={isBulkDeleting}
-                className={`${module}-pagination-button-bulk-delete-confirm`}
+                className={`${sanitizedModule}-pagination-button-bulk-delete-confirm`}
               >
                 {language({ id: "Hapus", en: "Delete" })} {selectedIds.size}{" "}
                 {language({ id: "data", en: "items" })}
