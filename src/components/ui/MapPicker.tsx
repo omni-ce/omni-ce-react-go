@@ -281,14 +281,14 @@ export default function MapPicker({
           <div className="flex items-center gap-3">
             <button
               onClick={onClose}
-              className="px-4 py-2 rounded-lg text-sm font-medium text-dark-400 hover:text-foreground hover:bg-dark-800 transition-colors"
+              className="px-4 py-2 rounded-lg text-sm font-medium text-dark-400 hover:text-foreground hover:bg-dark-800 transition-colors map-picker-button-cancel"
             >
               {language({ id: "Batal", en: "Cancel" })}
             </button>
             <button
               onClick={handleConfirm}
               disabled={!position}
-              className={`px-5 py-2 rounded-lg text-sm font-bold transition-colors ${
+              className={`px-5 py-2 rounded-lg text-sm font-bold transition-colors map-picker-button-confirm ${
                 position
                   ? "bg-accent-500 hover:bg-accent-400 text-white shadow-lg shadow-accent-500/20"
                   : "bg-dark-700 text-dark-400 cursor-not-allowed"

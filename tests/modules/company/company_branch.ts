@@ -89,6 +89,14 @@ async function CompanyBranch(page: Page) {
   await buttonClick(page, ".field-group-map-map .field-map-map");
   // click on center page
   await page.mouse.click(300, 300);
+  // click map picker button confirm
+  await buttonClick(page, ".map-picker-button-confirm");
+
+  // click button save
+  await buttonClick(page, ".company-branch-pagination-button-save", 1000);
+
+  //# end delay
+  await playNotification("section");
 }
 
 export default CompanyBranch;
