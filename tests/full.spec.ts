@@ -1,6 +1,11 @@
 import { test, expect } from "@playwright/test";
 
 test("Full Testing", async ({ page }) => {
+  // 0. Prepare
+  // hit ke endpoint backend di port 3000 untuk code refresh
+  // ambil code menggunakan fs di file app_back_code.txt
+  // code di pakai untuk body hit ke apocalypse-tables
+
   // 1. Access First Time
   await page.goto("http://127.0.0.1:5173/");
 
