@@ -4,6 +4,20 @@ import { frontendUrl } from "./variable";
 
 export async function Landing(page: Page) {
   //# Access First Time
+  await page.addInitScript(() => {
+    const shield = document.createElement("div");
+    shield.id = "playwright-shield";
+    shield.style.position = "fixed";
+    shield.style.top = "0";
+    shield.style.left = "0";
+    shield.style.width = "100%";
+    shield.style.height = "100%";
+    shield.style.zIndex = "999999";
+    shield.style.backgroundColor = "transparent";
+    shield.style.pointerEvents = "auto";
+    document.body.appendChild(shield);
+  });
+
   await page.goto(frontendUrl);
 
   // Check Heading
