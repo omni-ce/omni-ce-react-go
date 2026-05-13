@@ -5,3 +5,4 @@ import (
 )
 
 var Db *gorm.DB
+var SeedAll func(*gorm.DB)
