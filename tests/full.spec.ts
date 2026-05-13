@@ -24,14 +24,9 @@ const playNotification = async (
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     await audio.play(soundPath, 0.5);
   }
-  try {
-    await page.waitForTimeout(1500);
-  } catch {
-    // Ignore if test ends during timeout
-  }
 };
 
-const buttonClick = async (page: Page, className: string, delay = 2000) => {
+const buttonClick = async (page: Page, className: string, delay = 1500) => {
   await page.locator(className).first().click();
   await page.waitForTimeout(delay);
 };
@@ -42,6 +37,8 @@ const inputFill = async (
   value: string,
   delay = 500,
 ) => {
+  await page.locator(className).first().scrollIntoViewIfNeeded();
+  await page.waitForTimeout(500);
   await page.fill(className, value);
   await page.waitForTimeout(delay);
 };
@@ -58,12 +55,15 @@ const inputFile = async (
 };
 
 const scrollDown = async (page: Page, className: string, value = 50) => {
-  await page.evaluate(() => {
-    const dialog = document.querySelector(className);
-    if (dialog) {
-      dialog.scrollTop += value;
-    }
-  });
+  await page.evaluate(
+    ({ className, value }) => {
+      const dialog = document.querySelector(className);
+      if (dialog) {
+        dialog.scrollTop += value;
+      }
+    },
+    { className, value },
+  );
 };
 
 test("Full Testing", async ({ page }) => {
@@ -188,9 +188,6 @@ test("Full Testing", async ({ page }) => {
     // input password, class: field-text-password
     await inputFill(page, ".field-text-password", "SandhikaGalih@123", 3000);
 
-    // scroll dialog kebawah sedikit agar bisa melihat field dibawah
-    await scrollDown(page, ".user-pagination-dialog");
-
     // input email, class: field-email-email
     await inputFill(page, ".field-email-email", "sandhikagalih@test.com");
 
@@ -199,6 +196,15 @@ test("Full Testing", async ({ page }) => {
 
     // scroll dialog kebawah sedikit agar bisa melihat field dibawah
     await scrollDown(page, ".user-pagination-dialog");
+
+    // click id:province
+    await buttonClick(page, "#province", 1000);
+    // ketik: jawa, class: #searchable-select-portal > div.p-2.border-b.border-dark-600.flex.items-center.gap-2.bg-dark-800
+    await inputFill(
+      page,
+      "#searchable-select-portal > div.p-2.border-b.border-dark-600.flex.items-center.gap-2.bg-dark-800",
+      "jawa",
+    );
 
     // ---------------------------------------------- //
     // wait for navigation or success
