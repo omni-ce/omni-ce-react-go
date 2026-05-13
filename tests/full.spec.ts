@@ -1,6 +1,35 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 import fs from "fs";
 import path from "path";
+
+import player from "play-sound";
+
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+const audio = player();
+
+const pwd = process.cwd();
+const assetsPath = path.join(pwd, "assets");
+
+const playNotification = async (
+  page: Page,
+  sound: "section" | "finish" | "error",
+) => {
+  let mp3Name = "";
+  if (sound === "section") {
+    mp3Name = "section.mp3";
+  } else if (sound === "finish") {
+    mp3Name = "finish.mp3";
+  } else {
+    mp3Name = "error.mp3";
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+  audio.play(path.join(assetsPath, "public", mp3Name), (err) => {
+    if (err) throw err;
+  });
+
+  await page.waitForTimeout(2000);
+};
 
 test("Full Testing", async ({ page }) => {
   // 0. Prepare
@@ -25,6 +54,8 @@ test("Full Testing", async ({ page }) => {
     },
   );
   expect(apocalypseRes.ok()).toBeTruthy();
+
+  // ---------------------------------------------- //
 
   // 1. Access First Time
   await page.goto(frontendUrl);
@@ -52,7 +83,9 @@ test("Full Testing", async ({ page }) => {
   await expect(githubLink).toContainText(/GitHub/i);
 
   // 1:end delay
-  await page.waitForTimeout(2000);
+  await playNotification(page, "section");
+
+  // ---------------------------------------------- //
 
   // 2. Access Login
   const loginButton = page
@@ -62,7 +95,7 @@ test("Full Testing", async ({ page }) => {
 
   // ambil username dan password memakai fs
   const userModelPath = path.resolve(
-    process.cwd(),
+    pwd,
     "core/modules/user/model/user.model.go",
   );
   const userModelContent = fs.readFileSync(userModelPath, "utf-8");
@@ -78,13 +111,19 @@ test("Full Testing", async ({ page }) => {
   // insert ke field
   await page.fill(".field-username", username);
   await page.fill(".field-password", password);
-  await page.waitForTimeout(1000);
+  await page.waitForTimeout(2000);
   await page.click('button[type="submit"]');
+  await page.waitForTimeout(2000);
+
+  // 2:end delay
+  await playNotification(page, "section");
+
+  // ---------------------------------------------- //
 
   // 3. Role Check
   // click menu role
   await page.click(".sidebar-menu-role");
-  await page.waitForTimeout(2000);
+  await page.waitForTimeout(1000);
 
   // click expand role admin
   await page.click(".role-item-Admin");
@@ -94,10 +133,18 @@ test("Full Testing", async ({ page }) => {
   await page.click(".role-check-admin-user");
   await page.waitForTimeout(1000);
 
+  // click button save
+  await page.click(".role-button-save");
+  await page.waitForTimeout(1000);
+
+  // 3:end delay
+  await playNotification(page, "section");
+
   // ---------------------------------------------- //
   // wait for navigation or success
   // await expect(page).toHaveURL(/.*select-role/); // for user not su
 
   // Keep the browser open after finish
+  await playNotification(page, "finish");
   await page.pause();
 });

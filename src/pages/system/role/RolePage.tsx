@@ -881,9 +881,9 @@ export default function RolePage({ ruleKey }: Props) {
                                               !perm.canSet
                                             }
                                             className={cn(
-                                           "w-3.5 h-3.5 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed",
-                                           `role-check-${role.name.toLowerCase().replace(/\s+/g, "-")}-${extra.key.replace(/\//g, "-")}`,
-                                         )}
+                                              "w-3.5 h-3.5 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed",
+                                              `role-check-${role.name.toLowerCase().replace(/\s+/g, "-")}-${menu.key.replace(/\//g, "-")}-${extra.key.replace(/\//g, "-")}`,
+                                            )}
                                           />
                                           <span className="text-sm text-dark-400 font-medium">
                                             └ {extra.label}
@@ -915,7 +915,7 @@ export default function RolePage({ ruleKey }: Props) {
                                               }
                                               className={cn(
                                                 "w-4 h-4 rounded border-dark-500 text-accent-500 focus:ring-accent-500/30 focus:ring-offset-0 bg-dark-700 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-opacity",
-                                                `role-check-${role.name.toLowerCase().replace(/\s+/g, "-")}-${extra.key.replace(/\//g, "-")}-${act.key}`,
+                                                `role-check-${role.name.toLowerCase().replace(/\s+/g, "-")}-${menu.key.replace(/\//g, "-")}-${extra.key.replace(/\//g, "-")}-${act.key}`,
                                               )}
                                             />
                                           </div>
@@ -957,7 +957,7 @@ export default function RolePage({ ruleKey }: Props) {
           <Button
             onClick={handleSave}
             disabled={isSaving}
-            className="gap-2 shadow-lg shadow-accent-500/20"
+            className="gap-2 shadow-lg shadow-accent-500/20 role-button-save"
           >
             {isSaving
               ? language({ id: "Menyimpan...", en: "Saving..." })
