@@ -2140,7 +2140,11 @@ function DynamicFieldRenderer({
                 <Input
                   className={cn(
                     `field-${field.key}`,
+                    `field-${field.type}-${field.key}`,
+                    `field-text-${field.key}`,
                     `field-${field.key}-${langCode}`,
+                    `field-${field.type}-${field.key}-${langCode}`,
+                    `field-text-${field.key}-${langCode}`,
                     "pl-11",
                   )}
                   placeholder={`${field.label} (${langCode.toUpperCase()})`}
