@@ -10,19 +10,22 @@ import { module_selected } from "../../variable";
 
 async function ProductCategory(page: Page) {
   // click menu product
-  await buttonClick(page, ".sidebar-menu-product-category");
+  await buttonClick(page, ".sidebar-menu-product");
 
   if (!module_selected.includes("category")) {
     console.log("Product Category skip ...");
     return;
   }
 
-  //# product: category
+  //# Product Category
   // click submenu product: category
   await buttonClick(page, ".sidebar-menu-product-category");
 
   // click button add
   await buttonClick(page, ".product-category-pagination-button-add");
+
+  // input category name
+  await inputFill(page, ".field-text-name", "Category");
 
   // click button save
   // await buttonClick(page, ".product-category-pagination-button-save", 1000);
