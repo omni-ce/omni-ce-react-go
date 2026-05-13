@@ -29,6 +29,7 @@ import {
   type DivisionGroup,
 } from "@/services/role.service";
 import { IconComponent } from "@/components/ui/IconSelector";
+import { cn } from "@/lib/utils";
 
 interface Props {
   ruleKey?: string;
@@ -618,7 +619,7 @@ export default function RolePage({ ruleKey }: Props) {
                       className="border border-dark-600/40 rounded-xl overflow-hidden"
                     >
                       {/* Role Header */}
-                      <div className="flex items-center gap-3 px-4 py-3 hover:bg-dark-800 transition-colors">
+                      <div className={cn("flex items-center gap-3 px-4 py-3 hover:bg-dark-800 transition-colors", `role-item-${role.name.replace(/\s+/g, "-")}`)}>
                         <button
                           className="flex items-center gap-3 flex-1 min-w-0 text-left"
                           onClick={() => toggleRoleAccordion(role.id)}
@@ -736,7 +737,10 @@ export default function RolePage({ ruleKey }: Props) {
                                 return (
                                   <React.Fragment key={menu.key}>
                                     <div
-                                      className="grid gap-2 min-w-150 items-center py-1.5 border-t border-dark-600/20 bg-dark-800"
+                                      className={cn(
+                                        "grid gap-2 min-w-150 items-center py-1.5 border-t border-dark-600/20 bg-dark-800",
+                                        `sidebar-menu-${menu.key.replace(/^header-/, "").replace(/\//g, "-")}`,
+                                      )}
                                       style={{
                                         gridTemplateColumns:
                                           "minmax(140px, 1fr) repeat(5, 80px)",
@@ -767,7 +771,10 @@ export default function RolePage({ ruleKey }: Props) {
                               return (
                                 <React.Fragment key={menu.key}>
                                   <div
-                                    className="grid gap-2 min-w-150 items-center py-1.5 border-t border-dark-600/20 hover:bg-dark-700/20 rounded transition-colors"
+                                    className={cn(
+                                      "grid gap-2 min-w-150 items-center py-1.5 border-t border-dark-600/20 hover:bg-dark-700/20 rounded transition-colors",
+                                      `sidebar-menu-${menu.key.replace(/\//g, "-")}`,
+                                    )}
                                     style={{
                                       gridTemplateColumns:
                                         "minmax(140px, 1fr) repeat(5, 80px)",

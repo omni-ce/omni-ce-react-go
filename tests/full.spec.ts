@@ -82,12 +82,17 @@ test("Full Testing", async ({ page }) => {
   await page.click('button[type="submit"]');
 
   // 3. Role Check
+  // click menu role
+  await page.click(".sidebar-menu-role");
+  await page.waitForTimeout(2000);
 
-  // click menu role: #root > div.h-screen.overflow-hidden.bg-dark-900.flex > aside > nav > a.w-full.flex.items-center.gap-3.px-3.py-2\.5.rounded-xl.text-sm.font-medium.transition-all.duration-200.bg-badge-light-blue.text-accent-500.border.border-accent-500\/20
+  // click expand role admin
+  await page.click(".role-item-Admin");
+  await page.waitForTimeout(1000);
 
-  // click expand role admin: #root > div.h-screen.overflow-hidden.bg-dark-900.flex > div > main > div > div.space-y-4 > div > div.px-6.py-4.space-y-3.pt-2 > div:nth-child(2) > div
-
-  // click checklist menu user: #root > div.h-screen.overflow-hidden.bg-dark-900.flex > div > main > div > div.space-y-4 > div > div.px-6.py-4.space-y-3.pt-2 > div:nth-child(2) > div.border-t.border-dark-600\/40.px-4.py-3 > div > div:nth-child(3) > div.flex.items-center.gap-2.px-2 > input
+  // click checklist menu user
+  await page.click(".role-item-Admin .sidebar-menu-user input");
+  await page.waitForTimeout(1000);
 
   // ---------------------------------------------- //
   // wait for navigation or success

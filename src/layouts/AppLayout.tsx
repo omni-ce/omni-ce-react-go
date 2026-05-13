@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/Dialog";
 import { IconComponent } from "@/components/ui/IconSelector";
 import Image from "@/components/Image";
+import { cn } from "@/lib/utils";
 
 export interface ISidebarLink extends Omit<Partial<RouteObject>, "children"> {
   show_hr?: boolean;
@@ -102,15 +103,16 @@ const SidebarItem = ({
         onClick={() => {
           if (window.innerWidth < 768) handleNavClick(fullPath);
         }}
-        className={`
-          w-full flex items-center gap-3 ${plClass} py-2.5 rounded-xl text-sm font-medium transition-all duration-200
-          ${
-            isExactActive
-              ? "bg-badge-light-blue text-accent-500 border border-accent-500/20"
-              : "text-dark-400 hover:text-foreground hover:bg-dark-800 border border-transparent"
-          }
-          ${effectiveCollapsed && !isMobileOpen ? "justify-center px-0" : ""}
-        `}
+        className={cn(
+          "w-full flex items-center gap-3",
+          plClass,
+          "py-2.5 rounded-xl text-sm font-medium transition-all duration-200",
+          isExactActive
+            ? "bg-badge-light-blue text-accent-500 border border-accent-500/20"
+            : "text-dark-400 hover:text-foreground hover:bg-dark-800 border border-transparent",
+          effectiveCollapsed && !isMobileOpen ? "justify-center px-0" : "",
+          `sidebar-menu-${fullPath.replace(/\//g, "-")}`,
+        )}
         title={effectiveCollapsed ? language(link.label) : undefined}
       >
         <IconComponent iconName={link.icon} size={20} className="shrink-0" />
@@ -128,15 +130,16 @@ const SidebarItem = ({
         onClick={() => {
           setIsExpanded(!isExpanded);
         }}
-        className={`
-          w-full flex items-center justify-between ${plClass} py-2.5 rounded-xl text-sm font-medium transition-all duration-200
-          ${
-            isActive && !isExactActive && !isExpanded
-              ? "text-accent-500 bg-accent-500/5 border border-transparent"
-              : "text-dark-400 hover:text-foreground hover:bg-dark-800 border border-transparent"
-          }
-          ${effectiveCollapsed && !isMobileOpen ? "justify-center px-0" : ""}
-        `}
+        className={cn(
+          "w-full flex items-center justify-between",
+          plClass,
+          "py-2.5 rounded-xl text-sm font-medium transition-all duration-200",
+          isActive && !isExactActive && !isExpanded
+            ? "text-accent-500 bg-accent-500/5 border border-transparent"
+            : "text-dark-400 hover:text-foreground hover:bg-dark-800 border border-transparent",
+          effectiveCollapsed && !isMobileOpen ? "justify-center px-0" : "",
+          `sidebar-menu-${fullPath.replace(/\//g, "-")}`,
+        )}
         title={effectiveCollapsed ? language(link.label) : undefined}
       >
         <div className="flex items-center gap-3 min-w-0">
