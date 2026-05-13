@@ -827,8 +827,11 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                 !(
                   typeof val === "string" ||
                   typeof val === "number" ||
-                  typeof val === "boolean"
-                    ? String(val)
+                  typeof val === "boolean" ||
+                  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                  (typeof val === "object" && val !== null)
+                    ? // eslint-disable-next-line @typescript-eslint/no-base-to-string
+                      String(val)
                     : ""
                 ).trim()
               )
@@ -843,8 +846,11 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
           !(
             typeof val === "string" ||
             typeof val === "number" ||
-            typeof val === "boolean"
-              ? String(val)
+            typeof val === "boolean" ||
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            (typeof val === "object" && val !== null)
+              ? // eslint-disable-next-line @typescript-eslint/no-base-to-string
+                String(val)
               : ""
           ).trim()
         )

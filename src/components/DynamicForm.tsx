@@ -25,11 +25,7 @@ import { formatFileSize } from "@/utils/format";
 import MapPicker, { type MapCoordinates } from "@/components/ui/MapPicker";
 import Image from "@/components/Image";
 import { cn } from "@/lib/utils";
-
-const ensureString = (val: unknown): string => {
-  if (typeof val === "string" || typeof val === "number") return String(val);
-  return "";
-};
+import { ensureString } from "@/utils/data";
 
 export interface DynamicFormFieldOption<T = unknown> {
   value: string | number;

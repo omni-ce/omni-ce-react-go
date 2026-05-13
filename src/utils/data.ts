@@ -9,3 +9,8 @@ export function safeJsonParse<T>(
     return fallback;
   }
 }
+
+export const ensureString = (val: unknown): string => {
+  if (typeof val === "string" || typeof val === "number") return String(val);
+  return "";
+};
