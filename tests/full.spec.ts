@@ -194,7 +194,6 @@ test("Full Testing", async ({ page }) => {
     // input phone, class: field-phone-phone
     await inputFill(page, ".field-phone-phone", "8123456789");
 
-    // scroll dialog kebawah sedikit agar bisa melihat field dibawah
     await scrollDown(page, ".user-pagination-dialog");
 
     // click province: Jawa Barat
@@ -230,6 +229,16 @@ test("Full Testing", async ({ page }) => {
     await buttonClick(
       page,
       "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
+    );
+
+    await buttonClick(page, ".roles-array-button-add", 1500);
+
+    await scrollDown(page, ".user-pagination-dialog", 300);
+
+    await buttonClick(
+      page,
+      ".field-roles-0-division_id > div > #field-division_id",
+      1000,
     );
 
     // ---------------------------------------------- //

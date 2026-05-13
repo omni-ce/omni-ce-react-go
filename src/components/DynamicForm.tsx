@@ -958,7 +958,13 @@ function ArrayField({
           </button>
           <div className="grid grid-cols-12 gap-4 mt-2">
             {field.children?.map((child) => (
-              <div key={child.key} className={getColClass(child)}>
+              <div
+                key={child.key}
+                className={
+                  getColClass(child) +
+                  ` item-field-${field.key}-${index}-${child.key}`
+                }
+              >
                 <Label
                   htmlFor={`field-${field.key}-${index}-${child.key}`}
                   required={(child as DynamicFormFieldNormal).required}
@@ -1027,7 +1033,7 @@ function ArrayField({
         variant="outline"
         size="sm"
         onClick={handleAdd}
-        className="w-full flex items-center justify-center gap-2 border-dashed border-dark-500 text-dark-400 hover:text-foreground"
+        className={`w-full flex items-center justify-center gap-2 border-dashed border-dark-500 text-dark-400 hover:text-foreground ${field.key}-array-button-add`}
       >
         <IconComponent iconName="Hi/HiOutlinePlus" className="w-4 h-4" />
         {language({ id: "Tambah", en: "Add" })} {field.label}
