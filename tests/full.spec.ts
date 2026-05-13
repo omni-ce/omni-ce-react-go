@@ -147,6 +147,13 @@ test("Full Testing", async ({ page }) => {
   await playNotification(page, "section");
 
   // ---------------------------------------------- //
+
+  // 4. Add New User
+  // click menu user
+  await page.click(".sidebar-menu-user");
+  await page.waitForTimeout(1000);
+
+  // ---------------------------------------------- //
   // wait for navigation or success
   // await expect(page).toHaveURL(/.*select-role/); // for user not su
 
