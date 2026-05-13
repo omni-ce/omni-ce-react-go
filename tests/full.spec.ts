@@ -237,8 +237,17 @@ test("Full Testing", async ({ page }) => {
 
     await buttonClick(
       page,
-      ".field-roles-0-division_id > div > #field-division_id",
+      ".item-field-roles-0-division_id #field-division_id",
       1000,
+    );
+    await inputFill(
+      page,
+      ".item-field-roles-0-division_id #field-division_id .field-division_id-searchable-select-input",
+      "management",
+    );
+    await buttonClick(
+      page,
+      ".item-field-roles-0-division_id #searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
     );
 
     // ---------------------------------------------- //
