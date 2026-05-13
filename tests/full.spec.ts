@@ -4,10 +4,13 @@ import path from "path";
 
 test("Full Testing", async ({ page }) => {
   // 0. Prepare
+  const frontendUrl = "http://127.0.0.1:5173";
   const backendUrl = "http://127.0.0.1:3000";
 
   // hit ke endpoint backend di port 3000 untuk code refresh
-  const refreshRes = await page.request.get(`${backendUrl}/api/test/code-refresh`);
+  const refreshRes = await page.request.get(
+    `${backendUrl}/api/test/code-refresh`,
+  );
   expect(refreshRes.ok()).toBeTruthy();
 
   // ambil code menggunakan fs di file app_back_code.txt
@@ -24,7 +27,7 @@ test("Full Testing", async ({ page }) => {
   expect(apocalypseRes.ok()).toBeTruthy();
 
   // 1. Access First Time
-  await page.goto("http://127.0.0.1:5173/");
+  await page.goto(frontendUrl);
 
   // 1.1. Check Heading
   const heading = page.locator("h1");
@@ -47,6 +50,15 @@ test("Full Testing", async ({ page }) => {
   const githubLink = page.locator('a[href*="github.com"]').first();
   await expect(githubLink).toBeVisible();
   await expect(githubLink).toContainText(/GitHub/i);
+
+  // 1:end delay
+  await page.waitForTimeout(2500);
+
+  // 2. Access Login
+  const loginButton = page
+    .locator('a[href*="login"], a[href*="dashboard"]')
+    .first();
+  await loginButton.click();
 
   // Keep the browser open after finish
   await page.pause();
