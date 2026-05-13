@@ -619,7 +619,12 @@ export default function RolePage({ ruleKey }: Props) {
                       className="border border-dark-600/40 rounded-xl overflow-hidden"
                     >
                       {/* Role Header */}
-                      <div className={cn("flex items-center gap-3 px-4 py-3 hover:bg-dark-800 transition-colors", `role-item-${role.name.replace(/\s+/g, "-")}`)}>
+                      <div
+                        className={cn(
+                          "flex items-center gap-3 px-4 py-3 hover:bg-dark-800 transition-colors",
+                          `role-item-${role.name.replace(/\s+/g, "-")}`,
+                        )}
+                      >
                         <button
                           className="flex items-center gap-3 flex-1 min-w-0 text-left"
                           onClick={() => toggleRoleAccordion(role.id)}
