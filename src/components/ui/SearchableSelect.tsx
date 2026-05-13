@@ -171,7 +171,7 @@ export function SearchableSelect({
               />
               <input
                 type="text"
-                className="w-full bg-transparent border-none text-sm text-foreground focus:outline-none placeholder:text-dark-400"
+                className={`${id}-searchable-select-input w-full bg-transparent border-none text-sm text-foreground focus:outline-none placeholder:text-dark-400`}
                 placeholder="Search..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}

@@ -67,6 +67,7 @@ export default defineConfig({
         "**/vendor/**",
         "**/bin/**",
         "**/tmp/**",
+        "**/*.spec.ts",
       ],
     },
   },

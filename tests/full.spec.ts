@@ -197,13 +197,39 @@ test("Full Testing", async ({ page }) => {
     // scroll dialog kebawah sedikit agar bisa melihat field dibawah
     await scrollDown(page, ".user-pagination-dialog");
 
-    // click id:province
+    // click province: Jawa Barat
     await buttonClick(page, "#province", 1000);
-    // ketik: jawa, class: #searchable-select-portal > div.p-2.border-b.border-dark-600.flex.items-center.gap-2.bg-dark-800
-    await inputFill(
+    await inputFill(page, ".province-searchable-select-input", "jawa");
+    await buttonClick(
       page,
-      "#searchable-select-portal > div.p-2.border-b.border-dark-600.flex.items-center.gap-2.bg-dark-800",
-      "jawa",
+      "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
+    );
+
+    // scroll dialog kebawah sedikit agar bisa melihat field dibawah
+    await scrollDown(page, ".user-pagination-dialog");
+
+    // click regency: Kota Bandung
+    await buttonClick(page, "#regency", 1000);
+    await inputFill(page, ".regency-searchable-select-input", "kota");
+    await buttonClick(
+      page,
+      "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
+    );
+
+    // click district: Antapani
+    await buttonClick(page, "#district", 1000);
+    await inputFill(page, ".district-searchable-select-input", "anta");
+    await buttonClick(
+      page,
+      "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
+    );
+
+    // click village: Antapani
+    await buttonClick(page, "#village", 1000);
+    await inputFill(page, ".village-searchable-select-input", "tengah");
+    await buttonClick(
+      page,
+      "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
     );
 
     // ---------------------------------------------- //

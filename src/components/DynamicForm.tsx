@@ -544,7 +544,12 @@ function DynamicAddress({
   }, [selectedDistrict]);
 
   return (
-    <div className={cn("space-y-3 mt-1.5 p-3 rounded-xl border border-dark-600 bg-dark-800", className)}>
+    <div
+      className={cn(
+        "space-y-3 mt-1.5 p-3 rounded-xl border border-dark-600 bg-dark-800",
+        className,
+      )}
+    >
       <SearchableSelect
         id="province"
         options={provinceOptions}
@@ -1826,7 +1831,12 @@ function DynamicFieldRenderer({
   if (!field.key) return null;
 
   return (
-    <div className={cn(getColClass(field), `field-group-${field.type}-${field.key}`)}>
+    <div
+      className={cn(
+        getColClass(field),
+        `field-group-${field.type}-${field.key}`,
+      )}
+    >
       <Label htmlFor={`field-${field.key}`} required={field.required}>
         {field.label}
       </Label>
