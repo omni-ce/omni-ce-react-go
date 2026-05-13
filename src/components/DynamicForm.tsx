@@ -393,10 +393,12 @@ function DynamicAddress({
   value,
   onChange,
   disabled,
+  className,
 }: {
   value: string;
   onChange: (val: string) => void;
   disabled?: boolean;
+  className?: string;
 }) {
   const [provinceOptions, setProvinceOptions] = useState<
     DynamicFormFieldOption[]
@@ -542,7 +544,7 @@ function DynamicAddress({
   }, [selectedDistrict]);
 
   return (
-    <div className="space-y-3 mt-1.5 p-3 rounded-xl border border-dark-600 bg-dark-800">
+    <div className={cn("space-y-3 mt-1.5 p-3 rounded-xl border border-dark-600 bg-dark-800", className)}>
       <SearchableSelect
         id="province"
         options={provinceOptions}
@@ -1117,7 +1119,11 @@ function DebouncedInput({
       <Input
         id={`field-${field.key}`}
         type={field.type}
-        className={loading ? "pr-10" : ""}
+        className={cn(
+          `field-${field.key}`,
+          `field-${field.type}-${field.key}`,
+          loading ? "pr-10" : "",
+        )}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         minLength={(field as DynamicFormFieldNormal).minLength}
@@ -1852,6 +1858,7 @@ function DynamicFieldRenderer({
         <DynamicAddress
           value={ensureString(formData[field.key])}
           onChange={(val) => onChange(field.key, val)}
+          className={`field-${field.type}-${field.key}`}
         />
       ) : field.type === "file" ? (
         <DynamicFile
@@ -1990,6 +1997,7 @@ function DynamicFieldRenderer({
           error={errors[field.key] || undefined}
           disabled={disabled}
           onBlur={() => handleBlur(ensureString(formData[field.key]))}
+          className={`field-${field.type}-${field.key}`}
         />
       ) : field.type === "price" ? (
         <div className="relative mt-1.5 flex items-center">

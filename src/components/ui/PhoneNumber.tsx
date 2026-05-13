@@ -27,7 +27,8 @@ export default function PhoneNumber({
   phoneDefaultCountry,
   phoneFirstAntiZero = false,
   maxLength,
-}: Props) {
+  className,
+}: Props & { className?: string }) {
   const { languageCode } = useLanguageStore();
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -286,6 +287,7 @@ export default function PhoneNumber({
           className={cn(
             "flex-1 px-4 py-3 bg-dark-900 border border-dark-600 rounded-xl text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30 transition-all text-sm disabled:opacity-50",
             error ? "border-neon-red/50" : "border-dark-600",
+            className,
           )}
         />
       </div>

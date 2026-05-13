@@ -41,6 +41,12 @@ const inputFill = async (page: Page, className: string, value: string) => {
   await page.waitForTimeout(500);
 };
 
+const inputFile = async (page: Page, className: string, fileName: string) => {
+  const file = path.join(asset_test, fileName);
+  await page.setInputFiles(className, file);
+  await page.waitForTimeout(1000);
+};
+
 test("Full Testing", async ({ page }) => {
   // 0. Prepare
   const frontendUrl = "http://127.0.0.1:5173";
@@ -133,12 +139,10 @@ test("Full Testing", async ({ page }) => {
   await buttonClick(page, ".role-item-Admin");
 
   // click checklist menu user
-  await page.click(".role-check-admin-user");
-  await page.waitForTimeout(1000);
+  await buttonClick(page, ".role-check-admin-user");
 
   // click button save
-  await page.click(".role-button-save");
-  await page.waitForTimeout(1000);
+  await buttonClick(page, ".role-button-save");
 
   // 3:end delay
   await playNotification(page, "section");
@@ -147,21 +151,22 @@ test("Full Testing", async ({ page }) => {
 
   // 4. Add New User
   // click menu user
-  await page.click(".sidebar-menu-user");
-  await page.waitForTimeout(1000);
+  await buttonClick(page, ".sidebar-menu-user");
 
   // click button add
-  await page.click(".user-pagination-button-add");
-  await page.waitForTimeout(1000);
+  await buttonClick(page, ".user-pagination-button-add");
 
   // upload foto user, class: field-file-avatar
-  const fotoUserPath = path.join(asset_test, "sandhika-galih.jpeg");
-  await page.setInputFiles(".field-file-avatar", fotoUserPath);
-  await page.waitForTimeout(1000);
+  await inputFile(page, ".field-file-avatar", "sandhika-galih.jpeg");
 
   // input nama lengkap user, class: field-text-name
-  await page.fill(".field-text-name", "Sandhika Galih");
-  await page.waitForTimeout(1000);
+  await inputFill(page, ".field-text-name", "Sandhika Galih");
+
+  // input username, class: field-text-username
+  await inputFill(page, ".field-text-username", "sandhikagalih");
+
+  // input password, class: field-text-password
+  await inputFill(page, ".field-text-password", "SandhikaGalih@123");
 
   // ---------------------------------------------- //
   // wait for navigation or success
