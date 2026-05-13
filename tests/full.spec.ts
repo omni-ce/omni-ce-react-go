@@ -153,6 +153,10 @@ test("Full Testing", async ({ page }) => {
   await page.click(".sidebar-menu-user");
   await page.waitForTimeout(1000);
 
+  // click button add
+  await page.click(".user-pagination-button-add");
+  await page.waitForTimeout(1000);
+
   // ---------------------------------------------- //
   // wait for navigation or success
   // await expect(page).toHaveURL(/.*select-role/); // for user not su

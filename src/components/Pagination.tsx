@@ -311,6 +311,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                     checked={getRowIsActive(row)}
                     onCheckedChange={() => handleToggleActive(row)}
                     disabled={togglingActiveId === getRowId(row)}
+                    className={`${module}-pagination-button-active`}
                   />
                 )}
                 {showEdit && (
@@ -319,6 +320,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                     size="icon"
                     title={language({ id: "Ubah", en: "Edit" })}
                     onClick={() => openEdit(row)}
+                    className={`${module}-pagination-button-edit`}
                   >
                     <IconComponent iconName="Hi/HiOutlinePencil" size={16} />
                   </Button>
@@ -329,7 +331,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                     size="icon"
                     title={language({ id: "Hapus", en: "Delete" })}
                     onClick={() => openDelete(row)}
-                    className="text-neon-red hover:bg-neon-red/10"
+                    className={cn("text-neon-red hover:bg-neon-red/10", `${module}-pagination-button-delete`)}
                   >
                     <IconComponent iconName="Hi/HiOutlineTrash" size={16} />
                   </Button>
@@ -355,6 +357,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                             variant="ghost"
                             size="icon"
                             title={language(action.label)}
+                            className={`${module}-pagination-button-extra-${idx}`}
                             onClick={() => {
                               if (action.button) action.button(row, reload);
                               if (action.component)
@@ -1049,7 +1052,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
               {hasCrud && perm.canCreate && (
                 <Button
                   onClick={openCreate}
-                  className="flex items-center gap-2"
+                  className={cn("flex items-center gap-2", `${module}-pagination-button-add`)}
                   size="sm"
                 >
                   <IconComponent iconName="Hi/HiOutlinePlus" size={16} />
@@ -1057,13 +1060,13 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                 </Button>
               )}
 
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => helpers.reload()}
-                disabled={isLoading}
-                className="w-9 h-9 rounded-full border-dark-600/40 bg-dark-900 text-dark-400 hover:text-foreground transition-all shrink-0"
-              >
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => helpers.reload()}
+                  disabled={isLoading}
+                  className={cn("w-9 h-9 rounded-full border-dark-600/40 bg-dark-900 text-dark-400 hover:text-foreground transition-all shrink-0", `${module}-pagination-button-reload`)}
+                >
                 <IconComponent
                   iconName="Hi/HiOutlineRefresh"
                   size={16}
@@ -1346,7 +1349,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
               <Button
                 variant="destructive"
                 size="sm"
-                className="flex items-center gap-2"
+                className={cn("flex items-center gap-2", `${module}-pagination-button-bulk-delete`)}
                 onClick={() => setBulkDeleteDialogOpen(true)}
               >
                 <IconComponent iconName="Hi/HiOutlineTrash" size={14} />
@@ -1501,6 +1504,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
               <Button
                 onClick={handleSave}
                 disabled={isSubmitting || !isFormValid()}
+                className={`${module}-pagination-button-save`}
               >
                 {language({ id: "Simpan", en: "Save" })}
               </Button>
@@ -1548,6 +1552,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                 variant="destructive"
                 onClick={handleDelete}
                 disabled={isSubmitting}
+                className={`${module}-pagination-button-delete-confirm`}
               >
                 {language({ id: "Hapus", en: "Delete" })}
               </Button>
@@ -1595,6 +1600,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                 variant="destructive"
                 onClick={handleBulkDelete}
                 disabled={isBulkDeleting}
+                className={`${module}-pagination-button-bulk-delete-confirm`}
               >
                 {language({ id: "Hapus", en: "Delete" })} {selectedIds.size}{" "}
                 {language({ id: "data", en: "items" })}
