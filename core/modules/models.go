@@ -29,6 +29,7 @@ import (
 
 func init() {
 	variable.SeedAll = SeedAll
+	variable.Models = Models
 }
 
 func Models() []interface{} {
