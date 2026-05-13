@@ -171,9 +171,7 @@ test("Full Testing", async ({ page }) => {
 
     // scroll dialog kebawah sedikit agar bisa melihat field dibawah
     await page.evaluate(() => {
-      const dialog = document.querySelector(
-        "body > div.fixed.inset-0.z-50.flex.items-center.justify-center > div.relative.z-10.w-full.mx-4.animate-fade-in > div > div.overflow-y-auto.-mx-6.px-6.py-1.max-h-[60vh]",
-      );
+      const dialog = document.querySelector(".user-pagination-dialog");
       if (dialog) {
         dialog.scrollTop = dialog.scrollHeight;
       }

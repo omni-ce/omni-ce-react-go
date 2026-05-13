@@ -289,10 +289,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
     const showEdit = perm.canUpdate;
     const showDelete = perm.canDelete;
     const hasAnyAction =
-      showToggle ||
-      showEdit ||
-      showDelete ||
-      extraActions.length > 0;
+      showToggle || showEdit || showDelete || extraActions.length > 0;
 
     const result: PaginationColumn<T>[] = [];
 
@@ -331,7 +328,10 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                     size="icon"
                     title={language({ id: "Hapus", en: "Delete" })}
                     onClick={() => openDelete(row)}
-                    className={cn("text-neon-red hover:bg-neon-red/10", `${module}-pagination-button-delete`)}
+                    className={cn(
+                      "text-neon-red hover:bg-neon-red/10",
+                      `${module}-pagination-button-delete`,
+                    )}
                   >
                     <IconComponent iconName="Hi/HiOutlineTrash" size={16} />
                   </Button>
@@ -513,7 +513,9 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                 let label = item.label;
                 try {
                   if (label.startsWith("{")) {
-                    label = language(JSON.parse(label) as Record<LanguageCode, string>);
+                    label = language(
+                      JSON.parse(label) as Record<LanguageCode, string>,
+                    );
                   }
                 } catch (e) {
                   // fallback to raw label
@@ -575,7 +577,10 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
           filtered = filtered.filter((item) => {
             return searchableFields.some((field) => {
               const val = (item as Record<string, unknown>)[field];
-              return (typeof val === "string" || typeof val === "number") && String(val).toLowerCase().includes(lowerQ);
+              return (
+                (typeof val === "string" || typeof val === "number") &&
+                String(val).toLowerCase().includes(lowerQ)
+              );
             });
           });
         }
@@ -587,7 +592,8 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
             filtered = filtered.filter((item) => {
               const itemVal = (item as Record<string, unknown>)[key];
               return (
-                (typeof itemVal === "string" || typeof itemVal === "number") && String(itemVal).toLowerCase().includes(lowerVal)
+                (typeof itemVal === "string" || typeof itemVal === "number") &&
+                String(itemVal).toLowerCase().includes(lowerVal)
               );
             });
           }
@@ -716,7 +722,10 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
           } else if (typeof val === "object" && val !== null) {
             data[key] = val;
           } else {
-            data[key] = (typeof val === "string" || typeof val === "number") ? String(val) : "";
+            data[key] =
+              typeof val === "string" || typeof val === "number"
+                ? String(val)
+                : "";
           }
         } else {
           if (field.type === "array") {
@@ -739,9 +748,9 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
           ) {
             data[field.key] = (field as DynamicFormFieldNormal).booleanDefault;
           } else {
-          if (field.key) {
-            data[field.key] = "";
-          }
+            if (field.key) {
+              data[field.key] = "";
+            }
           }
         }
       }
@@ -814,7 +823,11 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
               const val = item[key] ?? "";
               if (
                 (child as DynamicFormFieldNormal).required &&
-                !(typeof val === "string" || typeof val === "number" ? String(val) : "").trim()
+                !(
+                  typeof val === "string" || typeof val === "number"
+                    ? String(val)
+                    : ""
+                ).trim()
               )
                 return false;
             }
@@ -822,16 +835,32 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
         }
       } else {
         const val = formData[(field as DynamicFormFieldNormal).key] ?? "";
-        if ((field as DynamicFormFieldNormal).required && !(typeof val === "string" || typeof val === "number" ? String(val) : "").trim())
+        if (
+          (field as DynamicFormFieldNormal).required &&
+          !(
+            typeof val === "string" || typeof val === "number"
+              ? String(val)
+              : ""
+          ).trim()
+        )
           return false;
-          
-        if (field.type === "weight" && (field as DynamicFormFieldNormal).required) {
+
+        if (
+          field.type === "weight" &&
+          (field as DynamicFormFieldNormal).required
+        ) {
           const unitKey = `${(field as DynamicFormFieldNormal).key}_unit_id`;
           const unitVal = formData[unitKey] ?? "";
-          if (!(typeof unitVal === "string" || typeof unitVal === "number" ? String(unitVal) : "").trim())
+          if (
+            !(
+              typeof unitVal === "string" || typeof unitVal === "number"
+                ? String(unitVal)
+                : ""
+            ).trim()
+          )
             return false;
         }
-        
+
         if (typeof val === "string") {
           if (
             (field as DynamicFormFieldNormal).minLength &&
@@ -868,9 +897,9 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
           const fieldKey = (field as DynamicFormFieldNormal).key;
           payload[fieldKey] =
             typeof formData[fieldKey] === "string"
-              ? (formData[fieldKey]).trim()
+              ? formData[fieldKey].trim()
               : formData[fieldKey];
-              
+
           if (field.type === "weight") {
             const unitKey = `${fieldKey}_unit_id`;
             payload[unitKey] = formData[unitKey];
@@ -1052,7 +1081,10 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
               {hasCrud && perm.canCreate && (
                 <Button
                   onClick={openCreate}
-                  className={cn("flex items-center gap-2", `${module}-pagination-button-add`)}
+                  className={cn(
+                    "flex items-center gap-2",
+                    `${module}-pagination-button-add`,
+                  )}
                   size="sm"
                 >
                   <IconComponent iconName="Hi/HiOutlinePlus" size={16} />
@@ -1060,13 +1092,16 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                 </Button>
               )}
 
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => helpers.reload()}
-                  disabled={isLoading}
-                  className={cn("w-9 h-9 rounded-full border-dark-600/40 bg-dark-900 text-dark-400 hover:text-foreground transition-all shrink-0", `${module}-pagination-button-reload`)}
-                >
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => helpers.reload()}
+                disabled={isLoading}
+                className={cn(
+                  "w-9 h-9 rounded-full border-dark-600/40 bg-dark-900 text-dark-400 hover:text-foreground transition-all shrink-0",
+                  `${module}-pagination-button-reload`,
+                )}
+              >
                 <IconComponent
                   iconName="Hi/HiOutlineRefresh"
                   size={16}
@@ -1260,7 +1295,10 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                                   try {
                                     if (label.startsWith("{")) {
                                       label = language(
-                                        JSON.parse(label) as Record<LanguageCode, string>,
+                                        JSON.parse(label) as Record<
+                                          LanguageCode,
+                                          string
+                                        >,
                                       );
                                     }
                                   } catch (e) {
@@ -1308,8 +1346,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                       : String(idx);
 
                   const isSelected = (() => {
-                    if (dataSelected === undefined)
-                      return false;
+                    if (dataSelected === undefined) return false;
                     const rowId = getRowId(row);
                     if (Array.isArray(dataSelected)) {
                       return dataSelected.some(
@@ -1349,7 +1386,10 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
               <Button
                 variant="destructive"
                 size="sm"
-                className={cn("flex items-center gap-2", `${module}-pagination-button-bulk-delete`)}
+                className={cn(
+                  "flex items-center gap-2",
+                  `${module}-pagination-button-bulk-delete`,
+                )}
                 onClick={() => setBulkDeleteDialogOpen(true)}
               >
                 <IconComponent iconName="Hi/HiOutlineTrash" size={14} />
@@ -1477,20 +1517,21 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
               className={cn(
                 "overflow-y-auto -mx-6 px-6 py-1",
                 popupHeight ? "flex-1" : "max-h-[60vh]",
+                `${module}-pagination-dialog`,
               )}
             >
               <DynamicForm
-                  fields={filteredFields}
-                  formData={formData}
-                  onChange={(key, val) =>
-                    setFormData((prev) => ({ ...prev, [key]: val }))
-                  }
-                  fieldErrors={fieldErrors}
-                  editingRow={editingRow}
-                  onError={(key, err) =>
-                    setFieldErrors((prev) => ({ ...prev, [key]: err }))
-                  }
-                />
+                fields={filteredFields}
+                formData={formData}
+                onChange={(key, val) =>
+                  setFormData((prev) => ({ ...prev, [key]: val }))
+                }
+                fieldErrors={fieldErrors}
+                editingRow={editingRow}
+                onError={(key, err) =>
+                  setFieldErrors((prev) => ({ ...prev, [key]: err }))
+                }
+              />
             </div>
             {saveError && (
               <p className="px-6 text-xs text-neon-red font-semibold animate-in fade-in slide-in-from-top-1 duration-200">
@@ -1650,8 +1691,10 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                 {typeof extraActions[extraActionState.actionIndex].component ===
                 "function"
                   ? (
-                      extraActions[extraActionState.actionIndex]
-                        .component as (row: T, onClose: () => void) => ReactNode
+                      extraActions[extraActionState.actionIndex].component as (
+                        row: T,
+                        onClose: () => void,
+                      ) => ReactNode
                     )(extraActionState.row, () => setExtraActionState(null))
                   : typeof extraActions[extraActionState.actionIndex]
                         .component === "object" &&
@@ -1667,7 +1710,8 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                           onClose: () => setExtraActionState(null),
                         },
                       )
-                    : (extraActions[extraActionState.actionIndex].component as ReactNode)}
+                    : (extraActions[extraActionState.actionIndex]
+                        .component as ReactNode)}
               </div>
             </DialogContent>
           </Dialog>
