@@ -86,7 +86,7 @@ async function CompanyBranch(page: Page) {
   await inputFill(page, ".field-phone-phone", "8123456789");
 
   // click button map
-  await buttonClick(page, ".field-group-map-map button");
+  await buttonClick(page, ".field-group-map-map .field-map-map");
   // click on center page
   await page.mouse.click(300, 300);
 }

@@ -34,7 +34,7 @@ test("Full Testing", async ({ page }) => {
     // await expect(page).toHaveURL(/.*select-role/); // for user not su
 
     // Keep the browser open after finish
-    await playNotification("finish");
+    await playNotification("finish", 0.5);
     await page.pause();
   } catch (err) {
     await playNotification("error");

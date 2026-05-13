@@ -6,6 +6,7 @@ import { asset_test, pwd } from "./variable";
 
 export const playNotification = async (
   sound: "section" | "finish" | "error",
+  volume = 0.1,
 ) => {
   let mp3Name = "";
   if (sound === "section") {
@@ -17,7 +18,7 @@ export const playNotification = async (
   }
   const soundPath = path.join(pwd, "public", mp3Name);
   if (fs.existsSync(soundPath)) {
-    await audio.play(soundPath, 0.1);
+    await audio.play(soundPath, volume);
   }
 };
 

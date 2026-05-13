@@ -1544,7 +1544,6 @@ function DynamicMapField({
   const [isOpen, setIsOpen] = useState(false);
   const { language } = useLanguageStore();
 
-  console.log({ value });
   return (
     <>
       <div className="mt-1.5">
@@ -1560,6 +1559,7 @@ function DynamicMapField({
           onClick={() => !disabled && setIsOpen(true)}
           className={`
             flex items-center gap-3 px-4 py-3 rounded-xl border transition-all cursor-pointer
+            field-group-${field.type}-${field.key} field-${field.type}-${field.key}
             ${
               value
                 ? "border-accent-500/50 bg-accent-500/5 hover:bg-accent-500/10"
@@ -1665,6 +1665,7 @@ function DynamicGeolocationField({
         onClick={() => !disabled && !loading && handleGetLocation()}
         className={`
           flex items-center gap-3 px-4 py-3 rounded-xl border transition-all cursor-pointer
+          field-group-${field.type}-${field.key} field-${field.type}-${field.key}
           ${
             value
               ? "border-accent-500/50 bg-accent-500/5 hover:bg-accent-500/10"
