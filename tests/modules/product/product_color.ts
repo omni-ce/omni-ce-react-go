@@ -23,7 +23,7 @@ async function ProductColor(page: Page) {
 
   // input color name and hex code
   await inputFill(page, ".field-text-name", "Space Grey");
-  await inputFill(page, ".field-color-hex_code", "#3c3c3c");
+  await inputFill(page, ".field-color-hex_code-text", "#9c9c9c");
 
   // click button save
   await buttonClick(page, ".product-color-pagination-button-save", 1000);

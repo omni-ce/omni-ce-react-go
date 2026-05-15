@@ -8,6 +8,7 @@ interface Props {
   label?: string;
   required?: boolean;
   disabled?: boolean;
+  className?: string;
 }
 
 export default function ColorPickerSelector({
@@ -17,6 +18,7 @@ export default function ColorPickerSelector({
   label,
   required = false,
   disabled = false,
+  className,
 }: Props) {
   const { language } = useLanguageStore();
 
@@ -36,7 +38,10 @@ export default function ColorPickerSelector({
             disabled={disabled}
             // @ts-ignore
             onChange={(e) => onChange(e.target.value)}
-            className="absolute inset-0 h-full w-full cursor-pointer bg-transparent p-0 disabled:cursor-not-allowed [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:border-none"
+            className={cn(
+              "absolute inset-0 h-full w-full cursor-pointer bg-transparent p-0 disabled:cursor-not-allowed [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:border-none",
+              className,
+            )}
           />
         </div>
         <input
@@ -47,6 +52,7 @@ export default function ColorPickerSelector({
           onChange={(e) => onChange(e.target.value)}
           className={cn(
             "flex-1 rounded-xl border border-dark-600 bg-dark-900 px-4 py-2.5 text-sm text-foreground transition-all outline-none focus:border-accent-500/60 focus:ring-1 focus:ring-accent-500/30 disabled:opacity-50 disabled:cursor-not-allowed placeholder:text-dark-400 hover:bg-dark-800",
+            className ? `${className}-text` : "",
           )}
           placeholder={placeholder}
           pattern="^#[0-9A-Fa-f]{6}$"

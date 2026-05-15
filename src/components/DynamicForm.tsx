@@ -1986,6 +1986,7 @@ function DynamicFieldRenderer({
         <ColorPickerSelector
           value={ensureString(formData[field.key])}
           onChange={(val) => onChange(field.key, val)}
+          className={`field-${field.type}-${field.key}`}
         />
       ) : field.type === "country" ? (
         <CountrySelector
