@@ -45,13 +45,11 @@ export default function MainLayout() {
             <span className="font-bold text-foreground tracking-tight">
               React-Go
             </span>
-            <span className="text-[10px] text-dark-400 ml-1">
-              v{version}
-            </span>
+            <span className="text-[10px] text-dark-400 ml-1">v{version}</span>
           </div>
           <div className="flex items-center gap-3">
             <a
-              href="https://github.com/jefripunza/react-go"
+              href="https://github.com/omni-ce/omni-ce-react-go"
               target="_blank"
               rel="noopener noreferrer"
               className="hidden sm:flex items-center gap-2 px-3 py-1.5 text-xs text-dark-400 hover:text-foreground transition-colors"
@@ -122,9 +120,7 @@ export default function MainLayout() {
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Image src={AppIconSvg} alt="App" className="w-8 h-8" />
-            <span className="text-xs text-dark-400">
-              React-Go v{version}
-            </span>
+            <span className="text-xs text-dark-400">React-Go v{version}</span>
           </div>
           <div className="flex items-center gap-4 text-xs text-dark-400">
             <a

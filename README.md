@@ -185,7 +185,7 @@ Using GORM as the primary ORM with automatic migration support.
 ## Clone Repository
 
 ```bash
-git clone https://github.com/your-org/omni-ce.git .
+git clone https://github.com/omni-ce/omni-ce-react-go.git .
 ```
 
 ---

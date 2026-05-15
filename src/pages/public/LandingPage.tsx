@@ -174,7 +174,7 @@ export default function LandingPage() {
               <IconComponent iconName="Hi/HiOutlineArrowRight" size={16} />
             </Link>
             <a
-              href="https://github.com/jefripunza/react-go"
+              href="https://github.com/omni-ce/omni-ce-react-go"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-6 py-3 text-sm font-semibold border border-dark-600 text-dark-400 hover:text-foreground hover:border-dark-500 rounded-xl transition-all duration-200"
@@ -201,7 +201,7 @@ export default function LandingPage() {
               <pre className="px-5 py-4 text-xs text-dark-200 leading-relaxed overflow-x-auto">
                 <span className="text-neon-green">$</span>{" "}
                 <span className="text-dark-100">
-                  git clone https://github.com/jefripunza/react-go.git .
+                  git clone https://github.com/omni-ce/omni-ce-react-go.git .
                 </span>
                 {"\n"}
                 <span className="text-neon-green">$</span>{" "}
@@ -358,7 +358,7 @@ export default function LandingPage() {
               {
                 step: "01",
                 title: "Clone",
-                code: "git clone https://github.com/jefripunza/react-go.git .",
+                code: "git clone https://github.com/omni-ce/omni-ce-react-go.git .",
               },
               {
                 step: "02",

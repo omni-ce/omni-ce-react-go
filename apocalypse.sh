@@ -9,4 +9,4 @@ fi
 rm -rf *
 rm -rf .agent .air.toml .dockerignore .git .github .gitignore .agents .env.example
 
-git clone https://github.com/jefripunza/react-go.git .
+git clone https://github.com/omni-ce/omni-ce-react-go.git .

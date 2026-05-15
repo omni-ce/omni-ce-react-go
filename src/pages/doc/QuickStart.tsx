@@ -31,8 +31,7 @@ export default function QuickStart() {
         id: "Clone repository",
         en: "Clone the repository",
       })}
-git clone https://github.com/jefripunza/react-go.git
-cd react-go
+git clone https://github.com/omni-ce/omni-ce-react-go.git .
 
 # ${language({
         id: "Installasi Frontend Dependencies",

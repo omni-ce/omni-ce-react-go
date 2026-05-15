@@ -537,7 +537,7 @@ export default function SettingPage({}: Props) {
         </div>
         <div className="border-t border-dark-600/40 pt-3 space-y-1.5">
           <p className="text-xs text-dark-400">
-            Developed by{" "}
+            Initiator Developer by{" "}
             <a
               href="https://github.com/jefripunza"
               target="_blank"
@@ -550,7 +550,7 @@ export default function SettingPage({}: Props) {
           <p className="text-xs text-dark-400">
             Open source &middot;{" "}
             <a
-              href="https://github.com/jefripunza/react-go"
+              href="https://github.com/omni-ce/omni-ce-react-go"
               target="_blank"
               rel="noopener noreferrer"
               className="text-accent-500 hover:text-accent-300 transition-colors underline underline-offset-2"
