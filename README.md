@@ -10,13 +10,14 @@ Built using React 19, Golang, Fiber, GORM, and TailwindCSS v4, Omni-CE ERP focus
 
 # Overview
 
-Omni-CE ERP is designed for building:
+Omni-CE is designed for building:
 
-- ERP systems
-- CRM platforms
-- HRIS applications
+- Enterprise Resource Planning (ERP) systems
+- Supply Chain Management (SCM) systems
+- Customer Relationship Management (CRM) systems
+- Human Resource Information Systems (HRIS) applications
 - Inventory systems
-- POS systems
+- Point of Sale (POS) systems
 - Internal business tools
 - Enterprise dashboards
 - SaaS applications
