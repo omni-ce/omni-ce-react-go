@@ -92,12 +92,9 @@ export function SearchableSelect({
     if (!search) return options;
     const lowerSearch = search.toLowerCase();
     return options.filter((opt) => {
-      const label = opt.label ?? "";
-      const value = opt.value;
-      return (
-        label.toLowerCase().includes(lowerSearch) ||
-        String(value).toLowerCase().includes(lowerSearch)
-      );
+      const labelStr = String(opt.label ?? "").toLowerCase();
+      const valueStr = String(opt.value ?? "").toLowerCase();
+      return labelStr.includes(lowerSearch) || valueStr.includes(lowerSearch);
     });
   }, [options, search]);
 

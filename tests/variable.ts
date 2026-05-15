@@ -26,6 +26,6 @@ export const checkModuleStart = (
     console.log(`${module_name} skip ...`);
     return true;
   }
-  if (is_index) started_exist.push(true);
+  if (!is_index) started_exist.push(true);
   return false;
 };
