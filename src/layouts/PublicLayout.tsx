@@ -132,7 +132,7 @@ export default function MainLayout() {
               @jefripunza
             </a>
             <span className="text-dark-600">·</span>
-            <span>Open Source</span>
+            <span>Initiator of Open Source</span>
           </div>
         </div>
       </footer>

@@ -5,6 +5,7 @@ import {
   inputFill,
   playNotification,
   scrollDown,
+  selectAddress,
 } from "../function";
 import { module_selected, started_exist } from "../variable";
 
@@ -46,39 +47,7 @@ async function User(page: Page) {
 
   await scrollDown(page, ".user-pagination-dialog");
 
-  // click province: Jawa Barat
-  await buttonClick(page, "#province", 1000);
-  await inputFill(page, ".province-searchable-select-input", "jawa");
-  await buttonClick(
-    page,
-    "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
-  );
-
-  await scrollDown(page, ".user-pagination-dialog");
-
-  // click regency: Kota Bandung
-  await buttonClick(page, "#regency", 1000);
-  await inputFill(page, ".regency-searchable-select-input", "kota");
-  await buttonClick(
-    page,
-    "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
-  );
-
-  // click district: Antapani
-  await buttonClick(page, "#district", 1000);
-  await inputFill(page, ".district-searchable-select-input", "anta");
-  await buttonClick(
-    page,
-    "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
-  );
-
-  // click village: Antapani
-  await buttonClick(page, "#village", 1000);
-  await inputFill(page, ".village-searchable-select-input", "tengah");
-  await buttonClick(
-    page,
-    "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
-  );
+  await selectAddress(page, "jawa", "kota ban", "anta", "tengah");
 
   // Divisi Role Pertama
   await buttonClick(page, ".roles-array-button-add", 1500);
