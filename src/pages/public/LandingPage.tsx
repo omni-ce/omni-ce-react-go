@@ -196,9 +196,7 @@ export default function LandingPage() {
                   <div className="w-3 h-3 rounded-full bg-neon-yellow/60" />
                   <div className="w-3 h-3 rounded-full bg-neon-green/60" />
                 </div>
-                <span className="text-[10px] text-dark-400 ml-2">
-                  terminal
-                </span>
+                <span className="text-[10px] text-dark-400 ml-2">terminal</span>
               </div>
               <pre className="px-5 py-4 text-xs text-dark-200 leading-relaxed overflow-x-auto">
                 <span className="text-neon-green">$</span>{" "}
@@ -209,10 +207,10 @@ export default function LandingPage() {
                 <span className="text-neon-green">$</span>{" "}
                 <span className="text-dark-100">bash initialize.sh</span>
                 {"\n"}
-                <span className="text-neon-green">$(terminal-1)</span>{" "}
-                <span className="text-dark-100">yarn dev</span>
+                <span className="text-neon-green">$(terminal-1:fe)</span>{" "}
+                <span className="text-dark-100">bun run dev</span>
                 {"\n"}
-                <span className="text-neon-green">$(terminal-2)</span>{" "}
+                <span className="text-neon-green">$(terminal-2:be)</span>{" "}
                 <span className="text-dark-100">air</span>
                 {"\n\n"}
                 <span className="text-dark-400">
@@ -310,9 +308,7 @@ export default function LandingPage() {
               />
               <div>
                 <p className="text-sm font-semibold text-foreground">Node.js</p>
-                <p className="text-xs text-dark-400 mt-1">
-                  v20.20.2+
-                </p>
+                <p className="text-xs text-dark-400 mt-1">v20.20.2+</p>
               </div>
             </div>
             <div className="flex flex-col items-center gap-3">
@@ -372,7 +368,7 @@ export default function LandingPage() {
               {
                 step: "03",
                 title: language({ id: "Jalankan", en: "Run" }),
-                code: "yarn dev && air",
+                code: "bun run dev && air",
               },
             ].map((item) => (
               <div
