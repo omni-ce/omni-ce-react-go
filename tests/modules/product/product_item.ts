@@ -22,34 +22,38 @@ async function ProductItem(page: Page) {
   await buttonClick(page, ".product-item-pagination-button-add");
 
   // select category
-  await buttonClick(page, "#category_id", 1000);
-  await inputFill(page, ".category_id-searchable-select-input", "elektronik");
+  await buttonClick(page, "#field-category_id", 1000);
+  await inputFill(
+    page,
+    ".field-category_id-searchable-select-input",
+    "elektronik",
+  );
   await buttonClick(
     page,
     "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
   );
 
   // select type
-  await buttonClick(page, "#type_id", 1000);
-  await inputFill(page, ".type_id-searchable-select-input", "smartphone");
+  await buttonClick(page, "#field-type_id", 1000);
+  await inputFill(page, ".field-type_id-searchable-select-input", "smartphone");
   await buttonClick(
     page,
     "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
   );
 
   // select brand
-  await buttonClick(page, "#brand_id", 1000);
-  await inputFill(page, ".brand_id-searchable-select-input", "apple");
+  await buttonClick(page, "#field-brand_id", 1000);
+  await inputFill(page, ".field-brand_id-searchable-select-input", "apple");
   await buttonClick(
     page,
     "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
   );
 
   // select variant
-  await buttonClick(page, "#variant_id", 1000);
+  await buttonClick(page, "#field-variant_id", 1000);
   await inputFill(
     page,
-    ".variant_id-searchable-select-input",
+    ".field-variant_id-searchable-select-input",
     "iphone 15 pro max",
   );
   await buttonClick(
@@ -58,24 +62,32 @@ async function ProductItem(page: Page) {
   );
 
   // select memory
-  await buttonClick(page, "#memory_id", 1000);
-  await inputFill(page, ".memory_id-searchable-select-input", "8 gb / 256 gb");
+  await buttonClick(page, "#field-memory_id", 1000);
+  await inputFill(
+    page,
+    ".field-memory_id-searchable-select-input",
+    "8 gb / 256 gb",
+  );
   await buttonClick(
     page,
     "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
   );
 
   // select color
-  await buttonClick(page, "#color_id", 1000);
-  await inputFill(page, ".color_id-searchable-select-input", "space grey");
+  await buttonClick(page, "#field-color_id", 1000);
+  await inputFill(
+    page,
+    ".field-color_id-searchable-select-input",
+    "space grey",
+  );
   await buttonClick(
     page,
     "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
   );
 
   // select condition
-  await buttonClick(page, "#condition_id", 1000);
-  await inputFill(page, ".condition_id-searchable-select-input", "baru");
+  await buttonClick(page, "#field-condition_id", 1000);
+  await inputFill(page, ".field-condition_id-searchable-select-input", "baru");
   await buttonClick(
     page,
     "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
