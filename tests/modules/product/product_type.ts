@@ -27,11 +27,7 @@ async function ProductType(page: Page) {
 
   // select category
   await buttonClick(page, "#field-category_id", 1000);
-  await inputFill(
-    page,
-    ".field-category_id-searchable-select-input",
-    "elektronik",
-  );
+  await inputFill(page, ".field-category_id-searchable-select-input", "elec");
   await buttonClick(
     page,
     "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",

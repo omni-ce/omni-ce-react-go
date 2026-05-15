@@ -247,7 +247,7 @@ function DynamicSelect({
             return {
               ...formatted,
               value: String(formatted.value),
-              label: formatted.label ?? "",
+              label: d.label ?? "",
               render: formatted.render,
             };
           }
