@@ -12,3 +12,16 @@ export const argv = process.env.CLI_ARGS
   : process.argv;
 export const args = argv.slice(2);
 export const module_selected = args.slice(2);
+
+export const checkModuleStart = (module_name: string, module_key: string) => {
+  if (
+    started_exist.length === 0 &&
+    module_selected.length > 0 &&
+    !module_selected.includes(module_key)
+  ) {
+    console.log(`${module_name} skip ...`);
+    return true;
+  }
+  started_exist.push(true);
+  return false;
+};

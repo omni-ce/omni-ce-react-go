@@ -7,18 +7,12 @@ import {
   scrollDown,
   selectAddress,
 } from "../function";
-import { module_selected, started_exist } from "../variable";
+import { checkModuleStart } from "../variable";
 
 async function User(page: Page) {
-  if (
-    started_exist.length === 0 &&
-    module_selected.length > 0 &&
-    !module_selected.includes("user")
-  ) {
-    console.log("User skip ...");
+  if (checkModuleStart("User", "user")) {
     return;
   }
-  started_exist.push(true);
 
   //# Add New User
   // click menu user

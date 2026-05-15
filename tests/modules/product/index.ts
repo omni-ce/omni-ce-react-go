@@ -1,19 +1,18 @@
 import type { Page } from "@playwright/test";
-import { module_selected, started_exist } from "../../variable";
+import { checkModuleStart } from "../../variable";
 
 import ProductCategory from "./product_category";
+import ProductType from "./product_type";
+import ProductBrand from "./product_brand";
 
 async function Product(page: Page) {
-  if (
-    started_exist.length === 0 &&
-    module_selected.length > 0 &&
-    !module_selected.includes("product")
-  ) {
-    console.log("Product skip ...");
+  if (checkModuleStart("Product", "product")) {
     return;
   }
 
   await ProductCategory(page);
+  await ProductType(page);
+  await ProductBrand(page);
 }
 
 export default Product;

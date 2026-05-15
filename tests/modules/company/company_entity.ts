@@ -7,21 +7,15 @@ import {
   scrollDown,
   selectAddress,
 } from "../../function";
-import { module_selected, started_exist } from "../../variable";
+import { checkModuleStart } from "../../variable";
 
 async function CompanyEntity(page: Page) {
   // click menu company
   await buttonClick(page, ".sidebar-menu-company");
 
-  if (
-    started_exist.length === 0 &&
-    module_selected.length > 0 &&
-    !module_selected.includes("entity")
-  ) {
-    console.log("Company Entity skip ...");
+  if (checkModuleStart("Company Entity", "entity")) {
     return;
   }
-  started_exist.push(true);
 
   //# Company Entity
   // click submenu company: entity
