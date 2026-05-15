@@ -5,7 +5,7 @@ import CompanyEntity from "./company_entity";
 import CompanyBranch from "./company_branch";
 
 async function Company(page: Page) {
-  if (checkModuleStart("Company", "company")) {
+  if (checkModuleStart("Company", "company", true)) {
     return;
   }
 

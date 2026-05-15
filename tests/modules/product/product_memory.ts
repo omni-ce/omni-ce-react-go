@@ -18,6 +18,16 @@ async function ProductMemory(page: Page) {
   // click submenu product: memory
   await buttonClick(page, ".sidebar-menu-product-memory");
 
+  // click button add
+  await buttonClick(page, ".product-memory-pagination-button-add");
+
+  // input RAM and Internal Storage
+  await inputFill(page, ".field-number-ram", "8");
+  await inputFill(page, ".field-number-internal_storage", "256");
+
+  // click button save
+  await buttonClick(page, ".product-memory-pagination-button-save", 1000);
+
   //# end delay
   await playNotification("section");
 }

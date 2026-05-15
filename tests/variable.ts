@@ -13,7 +13,11 @@ export const argv = process.env.CLI_ARGS
 export const args = argv.slice(2);
 export const module_selected = args.slice(2);
 
-export const checkModuleStart = (module_name: string, module_key: string) => {
+export const checkModuleStart = (
+  module_name: string,
+  module_key: string,
+  is_index = false,
+) => {
   if (
     started_exist.length === 0 &&
     module_selected.length > 0 &&
@@ -22,6 +26,6 @@ export const checkModuleStart = (module_name: string, module_key: string) => {
     console.log(`${module_name} skip ...`);
     return true;
   }
-  started_exist.push(true);
+  if (is_index) started_exist.push(true);
   return false;
 };

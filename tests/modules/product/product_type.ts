@@ -18,6 +18,24 @@ async function ProductType(page: Page) {
   // click submenu product: type
   await buttonClick(page, ".sidebar-menu-product-type");
 
+  // click button add
+  await buttonClick(page, ".product-type-pagination-button-add");
+
+  // input type name
+  await inputFill(page, ".field-text-name-id", "Smartphone");
+  await inputFill(page, ".field-text-name-en", "Smartphone");
+
+  // select category
+  await buttonClick(page, "#field-category_id", 1000);
+  await inputFill(page, ".category_id-searchable-select-input", "elektronik");
+  await buttonClick(
+    page,
+    "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
+  );
+
+  // click button save
+  await buttonClick(page, ".product-type-pagination-button-save", 1000);
+
   //# end delay
   await playNotification("section");
 }

@@ -11,7 +11,7 @@ import ProductCondition from "./product_condition";
 import ProductItem from "./product_item";
 
 async function Product(page: Page) {
-  if (checkModuleStart("Product", "product")) {
+  if (checkModuleStart("Product", "product", true)) {
     return;
   }
 

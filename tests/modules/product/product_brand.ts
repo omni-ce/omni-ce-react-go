@@ -18,6 +18,18 @@ async function ProductBrand(page: Page) {
   // click submenu product: brand
   await buttonClick(page, ".sidebar-menu-product-brand");
 
+  // click button add
+  await buttonClick(page, ".product-brand-pagination-button-add");
+
+  // input brand logo
+  await inputFile(page, ".field-file-logo", "company-apple.jpeg");
+
+  // input brand name
+  await inputFill(page, ".field-text-name", "Apple");
+
+  // click button save
+  await buttonClick(page, ".product-brand-pagination-button-save", 1000);
+
   //# end delay
   await playNotification("section");
 }
