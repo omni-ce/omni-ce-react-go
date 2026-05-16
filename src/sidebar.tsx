@@ -35,6 +35,13 @@ import PosPage from "@/pages/app/pos/PosPage";
 // Marketing
 import MarketingCustomerPage from "@/pages/app/marketing/MarketingCustomerPage";
 
+// Accounting
+import ChartOfAccountPage from "@/pages/app/accounting/ChartOfAccountPage";
+import JournalPage from "@/pages/app/accounting/JournalPage";
+import BalanceSheetPage from "@/pages/app/accounting/BalanceSheetPage";
+import ProfitAndLosePage from "@/pages/app/accounting/ProfitAndLosePage";
+import GeneralLedgerPage from "@/pages/app/accounting/GeneralLedgerPage";
+
 const sidebarLinks: ISidebarLink[] = [
   {
     label: { id: "Pengguna", en: "User" },
@@ -333,37 +340,35 @@ const sidebarLinks: ISidebarLink[] = [
       {
         label: { id: "Bagan Akun", en: "Chart of Account" },
         path: "chart-of-account",
-        element: (
-          <MarketingCustomerPage ruleKey="accounting/chart-of-account" />
-        ),
+        element: <ChartOfAccountPage ruleKey="accounting/chart-of-account" />,
         strict: true,
         icon: "Hi/HiUserGroup",
       },
       {
         label: { id: "Jurnal", en: "Journal" },
         path: "journal",
-        element: <MarketingCustomerPage ruleKey="accounting/journal" />,
+        element: <JournalPage ruleKey="accounting/journal" />,
         strict: true,
         icon: "Hi/HiUserGroup",
       },
       {
         label: { id: "Buku Besar", en: "General Ledger" },
         path: "general-ledger",
-        element: <MarketingCustomerPage ruleKey="accounting/general-ledger" />,
+        element: <GeneralLedgerPage ruleKey="accounting/general-ledger" />,
         strict: true,
         icon: "Hi/HiUserGroup",
       },
       {
         label: { id: "Laba Rugi", en: "Profit and Loss" },
         path: "profit-and-loss",
-        element: <MarketingCustomerPage ruleKey="accounting/profit-and-loss" />,
+        element: <ProfitAndLosePage ruleKey="accounting/profit-and-loss" />,
         strict: true,
         icon: "Hi/HiUserGroup",
       },
       {
         label: { id: "Neraca", en: "Balance Sheet" },
         path: "balance-sheet",
-        element: <MarketingCustomerPage ruleKey="accounting/balance-sheet" />,
+        element: <BalanceSheetPage ruleKey="accounting/balance-sheet" />,
         strict: true,
         icon: "Hi/HiUserGroup",
       },
