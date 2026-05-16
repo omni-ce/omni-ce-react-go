@@ -15,7 +15,6 @@ import GuardLayout from "@/components/GuardLayout";
 import Image from "@/components/Image";
 import HistoryPage from "@/pages/app/warehouse/history";
 import type { LanguageKey } from "@/types/world";
-import { rawLanguageToObject } from "@/utils/convert";
 
 interface Props {
   ruleKey: string;
@@ -23,7 +22,7 @@ interface Props {
 
 export default function WarehouseProductPage({ ruleKey }: Props) {
   const paginationRef = useRef<PaginationHandle>(null);
-  const { languageCode, language } = useLanguageStore();
+  const { languageCode, language, rawLanguageToString } = useLanguageStore();
 
   const [dataSelected, setDataSelected] = useState<WarehouseProduct | null>(
     null,
@@ -75,14 +74,12 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
                 </div>
                 <div className="flex items-center gap-2 text-[11px] text-dark-400">
                   <span className="bg-dark-700 px-1.5 rounded border border-dark-600">
-                    {rawLanguageToObject(language, productItem.meta.category)}
+                    {rawLanguageToString(productItem.meta.category)}
                   </span>
                   <span>•</span>
                   <span>{productItem.meta.brand}</span>
                   <span>•</span>
-                  <span>
-                    {rawLanguageToObject(language, productItem.meta.type)}
-                  </span>
+                  <span>{rawLanguageToString(productItem.meta.type)}</span>
                   {productItem.meta.color && (
                     <>
                       <span>•</span>
@@ -181,12 +178,10 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
               </div>
               <div className="flex items-center gap-1.5 text-[11px] text-dark-400 mt-0.5">
                 <span className="bg-dark-700 px-1.5 rounded border border-dark-600">
-                  {rawLanguageToObject(language, item.product_category_name)}
+                  {rawLanguageToString(item.product_category_name)}
                 </span>
                 <span>•</span>
-                <span>
-                  {rawLanguageToObject(language, item.product_type_name)}
-                </span>
+                <span>{rawLanguageToString(item.product_type_name)}</span>
               </div>
             </div>
           </div>

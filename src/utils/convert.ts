@@ -60,18 +60,3 @@ export const formatRupiah = (amount: number) => {
     maximumFractionDigits: 0,
   }).format(amount);
 };
-
-export const rawLanguageToObject = (
-  language: (obj: Record<LanguageCode, string>) => string,
-  value: unknown,
-): string => {
-  try {
-    if (typeof value === "string" && value.startsWith("{")) {
-      const obj = JSON.parse(value) as Record<LanguageCode, string>;
-      return language(obj);
-    }
-  } catch (e) {
-    // fallback to raw name
-  }
-  return value as string;
-};

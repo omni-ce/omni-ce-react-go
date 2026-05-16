@@ -9,14 +9,13 @@ import type { ProductCategoryOption, ProductType } from "@/types/product";
 import { Badge } from "@/components/ui/Badge";
 import { IconComponent } from "@/components/ui/IconSelector";
 import GuardLayout from "@/components/GuardLayout";
-import { rawLanguageToObject } from "@/utils/convert";
 
 interface Props {
   ruleKey: string;
 }
 export default function ProductTypePage({ ruleKey }: Props) {
   const paginationRef = useRef<PaginationHandle>(null);
-  const { languageCode, language } = useLanguageStore();
+  const { languageCode, language, rawLanguageToString } = useLanguageStore();
 
   const fields = useMemo<PaginationField<ProductCategoryOption>[]>(
     () => [
@@ -38,7 +37,7 @@ export default function ProductTypePage({ ruleKey }: Props) {
           render: (
             <div className="flex items-center gap-2">
               <IconComponent iconName={item.meta.icon} className="text-lg" />
-              <span>{rawLanguageToObject(language, item.label)}</span>
+              <span>{rawLanguageToString(item.label)}</span>
             </div>
           ),
         }),
@@ -58,7 +57,7 @@ export default function ProductTypePage({ ruleKey }: Props) {
         render: (item) => (
           <span className="font-medium flex items-center gap-2">
             <IconComponent iconName={item.category_icon} className="text-lg" />
-            <span>{rawLanguageToObject(language, item.category_name)}</span>
+            <span>{rawLanguageToString(item.category_name)}</span>
           </span>
         ),
       },
@@ -68,9 +67,7 @@ export default function ProductTypePage({ ruleKey }: Props) {
         sort: true,
         search: true,
         render: (item) => (
-          <span className="font-medium">
-            {rawLanguageToObject(language, item.name)}
-          </span>
+          <span className="font-medium">{rawLanguageToString(item.name)}</span>
         ),
       },
       {

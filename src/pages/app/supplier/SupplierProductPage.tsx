@@ -10,7 +10,6 @@ import type { ProductItemOption } from "@/types/product";
 import GuardLayout from "@/components/GuardLayout";
 import type { LanguageKey } from "@/types/world";
 import type { SupplierProduct, SupplierProductOption } from "@/types/supplier";
-import { rawLanguageToObject } from "@/utils/convert";
 
 interface Props {
   ruleKey: string;
@@ -18,7 +17,7 @@ interface Props {
 
 export default function SupplierProductPage({ ruleKey }: Props) {
   const paginationRef = useRef<PaginationHandle>(null);
-  const { languageCode, language } = useLanguageStore();
+  const { languageCode, language, rawLanguageToString } = useLanguageStore();
 
   const fields = useMemo<PaginationField<ProductItemOption>[]>(
     () => [
@@ -54,12 +53,12 @@ export default function SupplierProductPage({ ruleKey }: Props) {
               </div>
               <div className="flex items-center gap-2 text-[11px] text-dark-400">
                 <span className="bg-dark-700 px-1.5 rounded border border-dark-600">
-                  {rawLanguageToObject(language, item.meta.category)}
+                  {rawLanguageToString(item.meta.category)}
                 </span>
                 <span>•</span>
                 <span>{item.meta.brand}</span>
                 <span>•</span>
-                <span>{rawLanguageToObject(language, item.meta.type)}</span>
+                <span>{rawLanguageToString(item.meta.type)}</span>
                 {item.meta.color && (
                   <>
                     <span>•</span>

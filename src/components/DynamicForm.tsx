@@ -26,7 +26,6 @@ import MapPicker, { type MapCoordinates } from "@/components/ui/MapPicker";
 import Image from "@/components/Image";
 import { cn } from "@/lib/utils";
 import { ensureString } from "@/utils/data";
-import { rawLanguageToObject } from "@/utils/convert";
 
 export interface DynamicFormFieldOption<T = unknown> {
   value: string | number;
@@ -194,7 +193,7 @@ function DynamicSelect({
   const [opts, setOpts] = useState<DynamicFormFieldOption[]>([]);
   const [disabled, setDisabled] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { languageCode, language } = useLanguageStore();
+  const { languageCode, language, rawLanguageToString } = useLanguageStore();
 
   const onChangeRef = useRef(onChange);
   useEffect(() => {
@@ -353,7 +352,7 @@ function DynamicSelect({
 
   const translatedOpts = useMemo(() => {
     return opts.map((opt) => {
-      const label = rawLanguageToObject(language, opt.label);
+      const label = rawLanguageToString(opt.label);
       return { ...opt, label };
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1238,7 +1237,7 @@ function DynamicUsername({
   onChange: (val: string) => void;
   disabled?: boolean;
 }) {
-  const { language } = useLanguageStore();
+  const { rawLanguageToString } = useLanguageStore();
   const f = field as DynamicFormFieldNormal;
 
   let placeholder = f.placeholder;
@@ -1248,7 +1247,7 @@ function DynamicUsername({
       en: "Enter username",
     });
   }
-  placeholder = rawLanguageToObject(language, placeholder);
+  placeholder = rawLanguageToString(placeholder);
   return (
     <div className="relative mt-1.5 flex items-center">
       <Input
@@ -1287,7 +1286,7 @@ function DynamicPassword({
   onChange: (val: string) => void;
   disabled?: boolean;
 }) {
-  const { language } = useLanguageStore();
+  const { rawLanguageToString } = useLanguageStore();
   const [show, setShow] = useState(false);
   const f = field as DynamicFormFieldNormal;
 
@@ -1298,7 +1297,7 @@ function DynamicPassword({
       en: "Enter password",
     });
   }
-  placeholder = rawLanguageToObject(language, placeholder);
+  placeholder = rawLanguageToString(placeholder);
   return (
     <div className="relative mt-1.5 flex items-center">
       <Input
@@ -1708,7 +1707,7 @@ function DynamicFieldRenderer({
   errors: Record<string, string>;
   disabled: boolean;
 }) {
-  const { language } = useLanguageStore();
+  const { language, rawLanguageToString } = useLanguageStore();
 
   const handleBlur = (val: string) => {
     if (!field.key || !onError) return;
@@ -1860,7 +1859,7 @@ function DynamicFieldRenderer({
           maxLength={field.maxLength}
           placeholder={(() => {
             const f = field as DynamicFormFieldNormal;
-            return rawLanguageToObject(language, f.placeholder);
+            return rawLanguageToString(f.placeholder);
           })()}
           rows={(field as DynamicFormFieldNormal).textareaRows}
         />
@@ -2166,7 +2165,7 @@ function DynamicFieldRenderer({
             disabled={disabled}
             placeholder={(() => {
               const f = field as DynamicFormFieldNormal;
-              return rawLanguageToObject(language, f.placeholder);
+              return rawLanguageToString(f.placeholder);
             })()}
             onBlur={(e) => handleBlur(e.target.value)}
             onWheel={(e) => field.type === "number" && e.currentTarget.blur()}

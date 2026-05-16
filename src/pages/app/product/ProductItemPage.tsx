@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/Badge";
 import { ProductImage } from "@/pages/app/product/action";
 import { IconComponent } from "@/components/ui/IconSelector";
 import Image from "@/components/Image";
-import { formatRupiah, rawLanguageToObject } from "@/utils/convert";
+import { formatRupiah } from "@/utils/convert";
 import GuardLayout from "@/components/GuardLayout";
 import type { UnitOption } from "@/types/master_data";
 
@@ -23,7 +23,7 @@ interface Props {
 }
 export default function ProductItemPage({ ruleKey }: Props) {
   const paginationRef = useRef<PaginationHandle>(null);
-  const { languageCode, language } = useLanguageStore();
+  const { languageCode, language, rawLanguageToString } = useLanguageStore();
 
   const fields = useMemo<
     PaginationField<ProductCategoryOption | ProductBrandOption>[]
@@ -39,11 +39,11 @@ export default function ProductItemPage({ ruleKey }: Props) {
           const cat = item as ProductCategoryOption;
           return {
             value: cat.value,
-            label: rawLanguageToObject(language, cat.label),
+            label: rawLanguageToString(cat.label),
             render: (
               <div className="flex items-center gap-2">
                 <IconComponent iconName={cat.meta.icon} className="text-lg" />
-                <span>{rawLanguageToObject(language, cat.label)}</span>
+                <span>{rawLanguageToString(cat.label)}</span>
               </div>
             ),
           };
@@ -151,7 +151,7 @@ export default function ProductItemPage({ ruleKey }: Props) {
         render: (item) => (
           <span className="font-medium flex items-center gap-2">
             <IconComponent iconName={item.category_icon} className="text-lg" />
-            <span>{rawLanguageToObject(language, item.category_name)}</span>
+            <span>{rawLanguageToString(item.category_name)}</span>
           </span>
         ),
       },
@@ -162,7 +162,7 @@ export default function ProductItemPage({ ruleKey }: Props) {
         options: "product-types/{category_name}",
         render: (item) => (
           <span className="font-medium">
-            {rawLanguageToObject(language, item.type_name)}
+            {rawLanguageToString(item.type_name)}
           </span>
         ),
       },
@@ -225,7 +225,7 @@ export default function ProductItemPage({ ruleKey }: Props) {
         header: language({ id: "Kondisi", en: "Condition" }),
         render: (item) => (
           <span className="font-medium flex items-center gap-2">
-            <span>{rawLanguageToObject(language, item.condition_name)}</span>
+            <span>{rawLanguageToString(item.condition_name)}</span>
           </span>
         ),
       },
@@ -294,7 +294,7 @@ export default function ProductItemPage({ ruleKey }: Props) {
         ruleKey={ruleKey}
         useIsActive
         dataDeleteName={(item) => {
-          return `${rawLanguageToObject(language, item.category_name)} ${item.brand_name} ${item.variant_name} (${item.memory_name ?? "-"}) ${item.color_name}`;
+          return `${rawLanguageToString(item.category_name)} ${item.brand_name} ${item.variant_name} (${item.memory_name ?? "-"}) ${item.color_name}`;
         }}
         extraActions={[
           {

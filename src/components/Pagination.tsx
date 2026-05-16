@@ -51,7 +51,6 @@ import type { RuleType } from "@/stores/ruleStore";
 import { cn } from "@/lib/utils";
 import type { AxiosError } from "axios";
 import type { LanguageKey } from "@/types/world";
-import { rawLanguageToObject } from "@/utils/convert";
 
 interface PaginationFetchParams {
   page: number;
@@ -149,7 +148,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
   ref: Ref<PaginationHandle>,
 ) {
   const perm = usePermission(ruleKey);
-  const { language } = useLanguageStore();
+  const { language, rawLanguageToString } = useLanguageStore();
   const sanitizedModule = useMemo(() => module.replace(/\//g, "-"), [module]);
   const { user } = useAuthStore();
   const [rows, setRows] = useState<T[]>([]);
@@ -512,7 +511,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                   };
                 }
                 const item = d as unknown as { label: string; value: unknown };
-                const label = rawLanguageToObject(language, item.label);
+                const label = rawLanguageToString(item.label);
                 return {
                   value: String(item.value),
                   label,
@@ -1295,10 +1294,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                                 ...(colOptions ?? []).map((opt) => {
                                   const format = column.selectFormat;
                                   const item = format ? format(opt) : opt;
-                                  const label = rawLanguageToObject(
-                                    language,
-                                    item.label,
-                                  );
+                                  const label = rawLanguageToString(item.label);
                                   return {
                                     value: String(opt.value),
                                     label,
@@ -1570,7 +1566,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
               })}{" "}
               <strong className="text-foreground">
                 {deletingRow
-                  ? rawLanguageToObject(language, getRowLabel(deletingRow))
+                  ? rawLanguageToString(getRowLabel(deletingRow))
                   : ""}
               </strong>
               ?{" "}

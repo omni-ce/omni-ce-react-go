@@ -7,14 +7,13 @@ import Pagination, {
 } from "@/components/Pagination";
 import type { ProductCondition } from "@/types/product";
 import GuardLayout from "@/components/GuardLayout";
-import { rawLanguageToObject } from "@/utils/convert";
 
 interface Props {
   ruleKey: string;
 }
 export default function ProductConditionPage({ ruleKey }: Props) {
   const paginationRef = useRef<PaginationHandle>(null);
-  const { languageCode, language } = useLanguageStore();
+  const { languageCode, language, rawLanguageToString } = useLanguageStore();
 
   const fields = useMemo<PaginationField[]>(
     () => [
@@ -43,9 +42,7 @@ export default function ProductConditionPage({ ruleKey }: Props) {
         sort: true,
         search: true,
         render: (item) => (
-          <span className="font-medium">
-            {rawLanguageToObject(language, item.name)}
-          </span>
+          <span className="font-medium">{rawLanguageToString(item.name)}</span>
         ),
       },
       {
