@@ -81,6 +81,62 @@ const sidebarLinks: ISidebarLink[] = [
   },
 
   {
+    label: { id: "Sumber Daya Manusia", en: "Human Resource" },
+    path: "human-resource",
+    icon: "Fa6/FaUserTie",
+    children: [
+      {
+        label: { id: "4DX", en: "4DX" },
+        path: "4dx",
+        icon: "Hi/HiUserGroup",
+        children: [
+          {
+            label: { id: "WIG", en: "WIG" },
+            path: "wig",
+            element: <MarketingCustomerPage ruleKey="human-resource/4dx/wig" />,
+            strict: true,
+            icon: "Hi/HiUserGroup",
+          },
+          {
+            label: { id: "Ukuran", en: "Measures" },
+            path: "measures",
+            element: (
+              <MarketingCustomerPage ruleKey="human-resource/4dx/measures" />
+            ),
+            strict: true,
+            icon: "Hi/HiUserGroup",
+          },
+          {
+            label: { id: "Papan Skor", en: "Scoreboard" },
+            path: "scoreboard",
+            element: (
+              <MarketingCustomerPage ruleKey="human-resource/4dx/scoreboard" />
+            ),
+            strict: true,
+            icon: "Hi/HiUserGroup",
+          },
+          {
+            label: { id: "Komitmen", en: "Commitments" },
+            path: "commitments",
+            element: (
+              <MarketingCustomerPage ruleKey="human-resource/4dx/commitments" />
+            ),
+            strict: true,
+            icon: "Hi/HiUserGroup",
+          },
+        ],
+      },
+      {
+        label: { id: "KPI", en: "KPI" },
+        path: "kpi",
+        element: <MarketingCustomerPage ruleKey="human-resource/kpi" />,
+        strict: true,
+        icon: "Hi/HiUserGroup",
+      },
+    ],
+  },
+
+  {
     label: { id: "Produk", en: "Product" },
     path: "product",
     icon: "Hi/HiOutlineCube",
@@ -251,6 +307,132 @@ const sidebarLinks: ISidebarLink[] = [
         element: <MarketingCustomerPage ruleKey="marketing/customer" />,
         strict: true,
         icon: "Hi/HiUserGroup",
+      },
+      {
+        label: { id: "Voucher", en: "Voucher" },
+        path: "voucher",
+        element: <MarketingCustomerPage ruleKey="marketing/customer" />,
+        strict: true,
+        icon: "Hi/HiUserGroup",
+      },
+      {
+        label: { id: "Diskon", en: "Discount" },
+        path: "discount",
+        element: <MarketingCustomerPage ruleKey="marketing/customer" />,
+        strict: true,
+        icon: "Hi/HiUserGroup",
+      },
+    ],
+  },
+
+  {
+    label: { id: "Akuntansi", en: "Accounting" },
+    path: "accounting",
+    icon: "Fa6/FaFileInvoiceDollar",
+    children: [
+      {
+        label: { id: "Bagan Akun", en: "Chart of Account" },
+        path: "chart-of-account",
+        element: (
+          <MarketingCustomerPage ruleKey="accounting/chart-of-account" />
+        ),
+        strict: true,
+        icon: "Hi/HiUserGroup",
+      },
+      {
+        label: { id: "Jurnal", en: "Journal" },
+        path: "journal",
+        element: <MarketingCustomerPage ruleKey="accounting/journal" />,
+        strict: true,
+        icon: "Hi/HiUserGroup",
+      },
+      {
+        label: { id: "Buku Besar", en: "General Ledger" },
+        path: "general-ledger",
+        element: <MarketingCustomerPage ruleKey="accounting/general-ledger" />,
+        strict: true,
+        icon: "Hi/HiUserGroup",
+      },
+      {
+        label: { id: "Laba Rugi", en: "Profit and Loss" },
+        path: "profit-and-loss",
+        element: <MarketingCustomerPage ruleKey="accounting/profit-and-loss" />,
+        strict: true,
+        icon: "Hi/HiUserGroup",
+      },
+      {
+        label: { id: "Neraca", en: "Balance Sheet" },
+        path: "balance-sheet",
+        element: <MarketingCustomerPage ruleKey="accounting/balance-sheet" />,
+        strict: true,
+        icon: "Hi/HiUserGroup",
+      },
+    ],
+  },
+
+  {
+    label: { id: "Integrasi", en: "Integration" },
+    path: "integration",
+    icon: "Md/MdOutlineCampaign",
+    children: [
+      {
+        label: { id: "Pasar", en: "Marketplace" },
+        path: "marketplace",
+        icon: "Hi/HiUserGroup",
+        children: [
+          {
+            label: { id: "Shopee", en: "Shopee" },
+            path: "shopee",
+            element: (
+              <MarketingCustomerPage ruleKey="integration/marketplace/shopee" />
+            ),
+            strict: true,
+            icon: "Hi/HiUserGroup",
+          },
+          {
+            label: { id: "Tokopedia", en: "Tokopedia" },
+            path: "tokopedia",
+            element: (
+              <MarketingCustomerPage ruleKey="integration/marketplace/tokopedia" />
+            ),
+            strict: true,
+            icon: "Hi/HiUserGroup",
+          },
+        ],
+      },
+      {
+        label: { id: "Gerbang Pembayaran", en: "Payment Gateway" },
+        path: "payment-gateway",
+        icon: "Hi/HiUserGroup",
+        children: [
+          {
+            label: { id: "Midtrans", en: "Midtrans" },
+            path: "midtrans",
+            element: (
+              <MarketingCustomerPage ruleKey="integration/payment-gateway/midtrans" />
+            ),
+            strict: true,
+            icon: "Hi/HiUserGroup",
+          },
+          {
+            label: { id: "Xendit", en: "Xendit" },
+            path: "xendit",
+            element: (
+              <MarketingCustomerPage ruleKey="integration/payment-gateway/xendit" />
+            ),
+            strict: true,
+            icon: "Hi/HiUserGroup",
+          },
+          {
+            label: { id: "Duitku", en: "Duitku" },
+            path: "duitku",
+            element: (
+              <MarketingCustomerPage ruleKey="integration/payment-gateway/duitku" />
+            ),
+            strict: true,
+            icon: "Hi/HiUserGroup",
+          },
+        ],
       },
     ],
   },

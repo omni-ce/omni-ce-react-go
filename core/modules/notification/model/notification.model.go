@@ -36,7 +36,7 @@ type Notification struct {
 	CreatedAt time.Time  `json:"created_at" gorm:"autoCreateTime"`
 	CreatedBy uuid.UUID  `json:"created_by" gorm:"type:char(36);not null"`
 	DeletedAt *time.Time `json:"-" gorm:"index;column:deleted_at;null"`
-	DeletedBy *uuid.UUID `json:"deleted_by" gorm:"type:char(36);not null"`
+	DeletedBy *uuid.UUID `json:"deleted_by,omitempty" gorm:"type:char(36);default:null"`
 
 	// relations
 	Created user.User `json:"created" gorm:"foreignKey:CreatedBy;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
