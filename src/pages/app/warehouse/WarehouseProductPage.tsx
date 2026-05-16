@@ -29,7 +29,9 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
     null,
   );
 
-  const fields = useMemo(
+  const fields = useMemo<
+    PaginationField<WarehouseLocationOption | ProductItemOption>[]
+  >(
     () => [
       {
         key: "warehouse_location_id",
@@ -37,19 +39,22 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
         type: "select",
         required: true,
         selectOptions: "warehouse-locations",
-        selectFormat: (item: WarehouseLocationOption) => ({
-          value: item.value,
-          render: (
-            <div className="flex items-center gap-2">
-              <Image
-                src={item.meta.entity_logo}
-                alt="logo"
-                className="w-6 h-6 rounded-full"
-              />
-              <span>{item.label}</span>
-            </div>
-          ),
-        }),
+        selectFormat: (item: unknown) => {
+          const warehouseLocation = item as WarehouseLocationOption;
+          return {
+            value: warehouseLocation.value,
+            render: (
+              <div className="flex items-center gap-2">
+                <Image
+                  src={warehouseLocation.meta.entity_logo}
+                  alt="logo"
+                  className="w-6 h-6 rounded-full"
+                />
+                <span>{warehouseLocation.label}</span>
+              </div>
+            ),
+          };
+        },
       },
       {
         key: "product_id",
@@ -57,45 +62,52 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
         type: "select",
         required: true,
         selectOptions: "product-items",
-        selectFormat: (item: ProductItemOption) => ({
-          value: String(item.value),
-          render: (
-            <div className="flex flex-col gap-1 w-full py-1">
-              <div className="flex items-center justify-between gap-4">
-                <span className="font-bold text-foreground text-sm truncate">
-                  {item.label}
-                </span>
+        selectFormat: (item: unknown) => {
+          const productItem = item as ProductItemOption;
+          return {
+            value: String(productItem.value),
+            render: (
+              <div className="flex flex-col gap-1 w-full py-1">
+                <div className="flex items-center justify-between gap-4">
+                  <span className="font-bold text-foreground text-sm truncate">
+                    {productItem.label}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 text-[11px] text-dark-400">
+                  <span className="bg-dark-700 px-1.5 rounded border border-dark-600">
+                    {rawLanguageToObject(language, productItem.meta.category)}
+                  </span>
+                  <span>•</span>
+                  <span>{productItem.meta.brand}</span>
+                  <span>•</span>
+                  <span>
+                    {rawLanguageToObject(language, productItem.meta.type)}
+                  </span>
+                  {productItem.meta.color && (
+                    <>
+                      <span>•</span>
+                      <div className="flex items-center gap-1">
+                        <div
+                          className="w-2.5 h-2.5 rounded-full border border-white/10"
+                          style={{
+                            backgroundColor: productItem.meta.color_hex,
+                          }}
+                        />
+                        <span>{productItem.meta.color}</span>
+                      </div>
+                    </>
+                  )}
+                  <Badge
+                    variant="outline"
+                    className="text-[10px] py-0 h-4 border-dark-600 bg-dark-800 text-dark-300 shrink-0"
+                  >
+                    {productItem.meta.sku}
+                  </Badge>
+                </div>
               </div>
-              <div className="flex items-center gap-2 text-[11px] text-dark-400">
-                <span className="bg-dark-700 px-1.5 rounded border border-dark-600">
-                  {rawLanguageToObject(language, item.meta.category)}
-                </span>
-                <span>•</span>
-                <span>{item.meta.brand}</span>
-                <span>•</span>
-                <span>{rawLanguageToObject(language, item.meta.type)}</span>
-                {item.meta.color && (
-                  <>
-                    <span>•</span>
-                    <div className="flex items-center gap-1">
-                      <div
-                        className="w-2.5 h-2.5 rounded-full border border-white/10"
-                        style={{ backgroundColor: item.meta.color_hex }}
-                      />
-                      <span>{item.meta.color}</span>
-                    </div>
-                  </>
-                )}
-                <Badge
-                  variant="outline"
-                  className="text-[10px] py-0 h-4 border-dark-600 bg-dark-800 text-dark-300 shrink-0"
-                >
-                  {item.meta.sku}
-                </Badge>
-              </div>
-            </div>
-          ),
-        }),
+            ),
+          };
+        },
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps

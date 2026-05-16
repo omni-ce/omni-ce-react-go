@@ -21,7 +21,7 @@ export default function WarehouseLocationPage({ ruleKey }: Props) {
   const paginationRef = useRef<PaginationHandle>(null);
   const { languageCode, language } = useLanguageStore();
 
-  const fields = useMemo(
+  const fields = useMemo<PaginationField<CompanyBranchOption>[]>(
     () => [
       {
         key: "branch_id",
@@ -29,19 +29,22 @@ export default function WarehouseLocationPage({ ruleKey }: Props) {
         type: "select",
         required: true,
         selectOptions: "company-branches",
-        selectFormat: (item: CompanyBranchOption) => ({
-          value: item.value,
-          render: (
-            <div className="flex items-center gap-2">
-              <Image
-                src={item.meta.entity_logo}
-                alt="logo"
-                className="w-6 h-6 rounded-full"
-              />
-              <span>{item.label}</span>
-            </div>
-          ),
-        }),
+        selectFormat: (item: unknown) => {
+          const branch = item as CompanyBranchOption;
+          return {
+            value: branch.value,
+            render: (
+              <div className="flex items-center gap-2">
+                <Image
+                  src={branch.meta.entity_logo}
+                  alt="logo"
+                  className="w-6 h-6 rounded-full"
+                />
+                <span>{branch.label}</span>
+              </div>
+            ),
+          };
+        },
       },
       {
         key: "role_id",

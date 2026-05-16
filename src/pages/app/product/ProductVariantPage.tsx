@@ -33,16 +33,19 @@ export default function ProductVarianPage({ ruleKey }: Props) {
         type: "select",
         required: true,
         selectOptions: "product-categories",
-        selectFormat: (item: ProductCategoryOption) => ({
-          value: item.value,
-          label: rawLanguageToObject(language, item.label),
-          render: (
-            <div className="flex items-center gap-2">
-              <IconComponent iconName={item.meta.icon} className="text-lg" />
-              <span>{rawLanguageToObject(language, item.label)}</span>
-            </div>
-          ),
-        }),
+        selectFormat: (item: unknown) => {
+          const cat = item as ProductCategoryOption;
+          return {
+            value: cat.value,
+            label: rawLanguageToObject(language, cat.label),
+            render: (
+              <div className="flex items-center gap-2">
+                <IconComponent iconName={cat.meta.icon} className="text-lg" />
+                <span>{rawLanguageToObject(language, cat.label)}</span>
+              </div>
+            ),
+          };
+        },
       },
       {
         key: "type_id",
@@ -58,15 +61,18 @@ export default function ProductVarianPage({ ruleKey }: Props) {
         type: "select",
         required: true,
         selectOptions: "product-brands",
-        selectFormat: (item: ProductBrandOption) => ({
-          value: item.value,
-          render: (
-            <div className="flex items-center gap-2">
-              <Image src={item.meta.logo} alt="logo" className="w-6 h-6" />
-              <span>{item.label}</span>
-            </div>
-          ),
-        }),
+        selectFormat: (item: unknown) => {
+          const brand = item as ProductBrandOption;
+          return {
+            value: brand.value,
+            render: (
+              <div className="flex items-center gap-2">
+                <Image src={brand.meta.logo} alt="logo" className="w-6 h-6" />
+                <span>{brand.label}</span>
+              </div>
+            ),
+          };
+        },
       },
       {
         key: "name",
