@@ -32,6 +32,14 @@ type DashboardStats struct {
 // ─── Widget CRUD ────────────────────────────────────────────────────
 
 func WidgetCreate(c *fiber.Ctx) error {
+	currentUser, err := function.JwtGetUser(c)
+	if err != nil {
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terautentikasi",
+			En: "Unauthorized",
+		}, nil)
+	}
+
 	var body struct {
 		RoleID      uint           `json:"role_id" validate:"required"`
 		Type        string         `json:"type" validate:"required"`
@@ -85,6 +93,8 @@ func WidgetCreate(c *fiber.Ctx) error {
 		Col:         string(colJSON),
 		Label:       body.Label,
 		Description: body.Description,
+		CreatedBy:   currentUser.ID,
+		UpdatedBy:   currentUser.ID,
 	}
 	if err := variable.Db.
 		Create(&widget).

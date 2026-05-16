@@ -86,22 +86,23 @@ func SendEventToUser(userID string, event string, data any) {
 	}
 }
 
-func SendNotification(userId uuid.UUID, notif types.Notification) {
+func SendNotification(fromUserID uuid.UUID, toUserID uuid.UUID, notif types.Notification) {
 	titleBytes, _ := json.Marshal(notif.Title)
 	messageBytes, _ := json.Marshal(notif.Message)
 
 	inserted := notification.Notification{
-		UserID:  userId,
-		Type:    notif.Type,
-		Title:   string(titleBytes),
-		Message: string(messageBytes),
+		UserID:    toUserID,
+		Type:      notif.Type,
+		Title:     string(titleBytes),
+		Message:   string(messageBytes),
+		CreatedBy: fromUserID,
 	}
 	if err := variable.Db.
 		Create(&inserted).
 		Error; err != nil {
-		log.Printf("❌ Failed to insert notification for user %s: %v", userId, err)
+		log.Printf("❌ Failed to insert notification for user %s: %v", toUserID, err)
 		return
 	}
 
-	SendEventToUser(userId.String(), "notification", inserted.Map())
+	SendEventToUser(toUserID.String(), "notification", inserted.Map())
 }

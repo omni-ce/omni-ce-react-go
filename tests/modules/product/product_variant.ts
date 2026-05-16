@@ -24,6 +24,7 @@ async function ProductVariant(page: Page) {
     "lap",
     "apple",
     "Macbook M5 14-inch",
+    "Apple M5 chip dengan layar 14-inch",
     "Apple M5 chip with 14-inch display",
   );
 
@@ -33,6 +34,7 @@ async function ProductVariant(page: Page) {
     "tele",
     "sam",
     "Galaxy Z-Fold 8",
+    "Galaxy Z-Fold 8 dengan layar 8-inch",
     "Galaxy Z-Fold 8 with 8 inch display",
   );
 
@@ -48,7 +50,8 @@ const inputNewVariant = async (
   type: string,
   brand: string,
   variant: string,
-  description: string,
+  description_id: string,
+  description_en: string,
 ) => {
   // click button add
   await buttonClick(page, ".product-variant-pagination-button-add");
@@ -79,7 +82,8 @@ const inputNewVariant = async (
 
   // input variant name
   await inputFill(page, ".field-text-name", variant);
-  await inputFill(page, ".field-text-description", description);
+  await inputFill(page, ".field-textarea-description-id", description_id);
+  await inputFill(page, ".field-textarea-description-en", description_en);
 
   // click button save
   await buttonClick(page, ".product-variant-pagination-button-save", 1000);

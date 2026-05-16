@@ -34,6 +34,7 @@ yarn.lock
 
 tsconfig.app.tsbuildinfo
 tsconfig.node.tsbuildinfo
+tsconfig.test.tsbuildinfo
 
 /database/system.sqlite
 /uploads

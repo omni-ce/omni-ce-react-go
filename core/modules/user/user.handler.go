@@ -56,7 +56,7 @@ func ChangePassword(c *fiber.Ctx) error {
 	}
 
 	// Send notification to user about password change
-	sse.SendNotification(existing.ID, types.Notification{
+	sse.SendNotification(existing.ID, existing.ID, types.Notification{
 		Type:    notification.NotificationTypeWarning,
 		Title:   types.Language{Id: "Kata sandi Anda diubah", En: "Your password was changed"},
 		Message: types.Language{Id: "Administrator telah mengubah kata sandi akun Anda.", En: "An administrator has changed your account password."},
@@ -137,10 +137,10 @@ func Create(c *fiber.Ctx) error {
 	}
 
 	user := model.User{
-		Avatar:    body.Avatar,
-		Name:      strings.TrimSpace(body.Name),
-		Username:  strings.TrimSpace(body.Username),
-		Password:  hash.Password(body.Password),
+		Avatar:          body.Avatar,
+		Name:            strings.TrimSpace(body.Name),
+		Username:        strings.TrimSpace(body.Username),
+		Password:        hash.Password(body.Password),
 		Address:         strings.TrimSpace(body.Address),
 		Role:            model.UserRoleClient,
 		CreatedByUserID: currentUser.ID,
@@ -292,6 +292,14 @@ func Edit(c *fiber.Ctx) error {
 		return dto.BadRequest(c, types.Language{
 			Id: "ID user tidak valid",
 			En: "Invalid user id",
+		}, nil)
+	}
+
+	currentUser, err := function.JwtGetUser(c)
+	if err != nil {
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terotorisasi",
+			En: "Unauthorized",
 		}, nil)
 	}
 
@@ -448,7 +456,7 @@ func Edit(c *fiber.Ctx) error {
 	}
 
 	// Send notification to edited user
-	sse.SendNotification(id, types.Notification{
+	sse.SendNotification(currentUser.ID, id, types.Notification{
 		Type:    notification.NotificationTypeInfo,
 		Title:   types.Language{Id: "Profil Anda diperbarui", En: "Your profile was updated"},
 		Message: types.Language{Id: "Administrator telah memperbarui informasi profil Anda.", En: "An administrator has updated your profile information."},
@@ -661,10 +669,10 @@ func ChangePasswordFromUser(c *fiber.Ctx) error {
 		return dto.BodyBadRequest(c, err)
 	}
 
-	var current_user model.User
+	var currentUser model.User
 	if err := variable.Db.
 		Where("id = ?", id.String()).
-		First(&current_user).
+		First(&currentUser).
 		Error; err != nil {
 		return dto.Unauthorized(c, types.Language{
 			Id: "ID user tidak valid",
@@ -673,7 +681,7 @@ func ChangePasswordFromUser(c *fiber.Ctx) error {
 	}
 
 	// check if password == previous password
-	if !hash.ValidatePassword(body.Password, current_user.Password) {
+	if !hash.ValidatePassword(body.Password, currentUser.Password) {
 		return dto.BadRequest(c, types.Language{
 			Id: "Password dan password sebelumnya harus berbeda",
 			En: "Password and previous password must be different",
@@ -681,7 +689,7 @@ func ChangePasswordFromUser(c *fiber.Ctx) error {
 	}
 
 	if err := variable.Db.
-		Model(&current_user).
+		Model(&currentUser).
 		Update("password", hash.Password(body.Password)).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
@@ -691,7 +699,7 @@ func ChangePasswordFromUser(c *fiber.Ctx) error {
 	}
 
 	// Send notification to user about password change
-	sse.SendNotification(id, types.Notification{
+	sse.SendNotification(currentUser.ID, id, types.Notification{
 		Type:    notification.NotificationTypeWarning,
 		Title:   types.Language{Id: "Kata sandi Anda diubah", En: "Your password was changed"},
 		Message: types.Language{Id: "Administrator telah mengubah kata sandi akun Anda.", En: "An administrator has changed your account password."},
@@ -701,7 +709,7 @@ func ChangePasswordFromUser(c *fiber.Ctx) error {
 		Id: "User berhasil diubah",
 		En: "User updated successfully",
 	}, fiber.Map{
-		"user": current_user.Map(),
+		"user": currentUser.Map(),
 	})
 }
 
@@ -756,7 +764,7 @@ func RoleSwitch(c *fiber.Ctx) error {
 	}
 
 	// Send notification to user about role change
-	sse.SendNotification(id, types.Notification{
+	sse.SendNotification(currentUser.ID, id, types.Notification{
 		Type:    notification.NotificationTypeSystem,
 		Title:   types.Language{Id: "Peran Anda telah diubah", En: "Your role has been changed"},
 		Message: types.Language{Id: "Administrator telah mengubah peran Anda menjadi " + newRole + ".", En: "An administrator has changed your role to " + newRole + "."},

@@ -32,6 +32,14 @@ func GetAll(c *fiber.Ctx) error {
 }
 
 func Create(c *fiber.Ctx) error {
+	currentUser, err := function.JwtGetUser(c)
+	if err != nil {
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terautentikasi",
+			En: "Unauthorized",
+		}, nil)
+	}
+
 	var body struct {
 		Name      string  `json:"name" validate:"required"`
 		ExpiresAt *string `json:"expires_at,omitempty" validate:"omitempty"` // RFC3339
@@ -41,7 +49,9 @@ func Create(c *fiber.Ctx) error {
 	}
 
 	entry := model.ApiKey{
-		Name: body.Name,
+		Name:      body.Name,
+		CreatedBy: currentUser.ID,
+		UpdatedBy: currentUser.ID,
 	}
 
 	if body.ExpiresAt != nil && *body.ExpiresAt != "" {
@@ -73,6 +83,14 @@ func Create(c *fiber.Ctx) error {
 }
 
 func Toggle(c *fiber.Ctx) error {
+	currentUser, err := function.JwtGetUser(c)
+	if err != nil {
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terautentikasi",
+			En: "Unauthorized",
+		}, nil)
+	}
+
 	id := c.Params("id")
 	if id == "" {
 		return dto.BadRequest(c, types.Language{
@@ -100,6 +118,7 @@ func Toggle(c *fiber.Ctx) error {
 	}
 
 	entry.IsActive = body.IsActive
+	entry.UpdatedBy = currentUser.ID
 	if err := variable.Db.
 		Save(&entry).
 		Error; err != nil {
