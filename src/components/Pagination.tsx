@@ -1569,7 +1569,9 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                 en: "Are you sure you want to delete",
               })}{" "}
               <strong className="text-foreground">
-                {deletingRow ? getRowLabel(deletingRow) : ""}
+                {deletingRow
+                  ? rawLanguageToObject(language, getRowLabel(deletingRow))
+                  : ""}
               </strong>
               ?{" "}
               {language({

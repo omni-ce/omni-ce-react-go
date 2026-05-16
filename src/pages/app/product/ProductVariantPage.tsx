@@ -23,7 +23,9 @@ export default function ProductVarianPage({ ruleKey }: Props) {
   const paginationRef = useRef<PaginationHandle>(null);
   const { languageCode, language } = useLanguageStore();
 
-  const fields = useMemo(
+  const fields = useMemo<
+    PaginationField<ProductCategoryOption | ProductBrandOption>[]
+  >(
     () => [
       {
         key: "category_id",
