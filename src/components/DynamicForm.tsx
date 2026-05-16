@@ -1845,7 +1845,8 @@ function DynamicFieldRenderer({
           value={ensureString(formData[field.key])}
           onChange={(val) => onChange(field.key, val)}
         />
-      ) : field.type === "textarea" ? (
+      ) : field.type === "textarea" &&
+        !(field as DynamicFormFieldNormal).textMultiLanguage ? (
         <textarea
           id={`field-${field.key}`}
           className={cn(
@@ -2066,7 +2067,7 @@ function DynamicFieldRenderer({
           onChange={(val) => onChange(field.key, val)}
           disabled={disabled}
         />
-      ) : field.type === "text" &&
+      ) : (field.type === "text" || field.type === "textarea") &&
         (field as DynamicFormFieldNormal).textMultiLanguage ? (
         <div className="space-y-2 mt-1.5">
           {SUPPORTED_LANGUAGES.map((langCode) => {
@@ -2090,24 +2091,52 @@ function DynamicFieldRenderer({
                 <div className="absolute left-3 z-10 flex items-center justify-center w-5 h-4 overflow-hidden rounded-sm border border-dark-600">
                   <Flag className="w-full h-full object-cover" />
                 </div>
-                <Input
-                  className={cn(
-                    `field-${field.key}`,
-                    `field-${field.type}-${field.key}`,
-                    `field-text-${field.key}`,
-                    `field-${field.key}-${langCode}`,
-                    `field-${field.type}-${field.key}-${langCode}`,
-                    `field-text-${field.key}-${langCode}`,
-                    "pl-11",
-                  )}
-                  placeholder={`${field.label} (${langCode.toUpperCase()})`}
-                  value={valObj[langCode] ?? ""}
-                  onChange={(e) => {
-                    const newValObj = { ...valObj, [langCode]: e.target.value };
-                    onChange(field.key, JSON.stringify(newValObj));
-                  }}
-                  disabled={disabled}
-                />
+                {field.type === "textarea" ? (
+                  <textarea
+                    className={cn(
+                      "mt-1.5 w-full px-4 py-2.5 pl-11 bg-dark-900 border border-dark-600 rounded-lg text-foreground placeholder-dark-400 focus:outline-none focus:border-accent-500 focus:ring-1 focus:ring-accent-500/30 transition-all text-sm disabled:opacity-50 min-h-20 resize-y",
+                      `field-${field.key}`,
+                      `field-${field.type}-${field.key}`,
+                      `field-text-${field.key}`,
+                      `field-${field.key}-${langCode}`,
+                      `field-${field.type}-${field.key}-${langCode}`,
+                      `field-text-${field.key}-${langCode}`,
+                    )}
+                    placeholder={`${field.label} (${langCode.toUpperCase()})`}
+                    value={valObj[langCode] ?? ""}
+                    onChange={(e) => {
+                      const newValObj = {
+                        ...valObj,
+                        [langCode]: e.target.value,
+                      };
+                      onChange(field.key, JSON.stringify(newValObj));
+                    }}
+                    disabled={disabled}
+                    rows={(field as DynamicFormFieldNormal).textareaRows ?? 3}
+                  />
+                ) : (
+                  <Input
+                    className={cn(
+                      `field-${field.key}`,
+                      `field-${field.type}-${field.key}`,
+                      `field-text-${field.key}`,
+                      `field-${field.key}-${langCode}`,
+                      `field-${field.type}-${field.key}-${langCode}`,
+                      `field-text-${field.key}-${langCode}`,
+                      "pl-11",
+                    )}
+                    placeholder={`${field.label} (${langCode.toUpperCase()})`}
+                    value={valObj[langCode] ?? ""}
+                    onChange={(e) => {
+                      const newValObj = {
+                        ...valObj,
+                        [langCode]: e.target.value,
+                      };
+                      onChange(field.key, JSON.stringify(newValObj));
+                    }}
+                    disabled={disabled}
+                  />
+                )}
               </div>
             );
           })}
