@@ -106,6 +106,20 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
           };
         },
       },
+      {
+        key: "is_converted",
+        label: language({ id: "Konversi", en: "Converted" }),
+        type: "switch",
+        required: true,
+        booleanDefault: false,
+      },
+      {
+        key: "quantity",
+        label: language({ id: "Jumlah", en: "Quantity" }),
+        type: "number",
+        required: true,
+        show_on_true: "is_converted",
+      },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [languageCode, language],

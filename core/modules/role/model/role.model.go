@@ -12,9 +12,9 @@ import (
 
 type Role struct {
 	ID             uint `json:"id" gorm:"autoIncrement;primaryKey"`
-	RoleDivisionID uint `json:"role_division_id" gorm:"type:bigint;not null"`
+	RoleDivisionID uint `json:"role_division_id" gorm:"type:bigint;uniqueIndex:idx_role_division_id_name;not null"`
 
-	Name        string `json:"name" gorm:"type:varchar(50);uniqueIndex;not null"`
+	Name        string `json:"name" gorm:"type:varchar(50);uniqueIndex:idx_role_division_id_name;not null"`
 	Description string `json:"description" gorm:"type:varchar(255)"`
 	IsActive    bool   `json:"is_active" gorm:"type:boolean;default:true"`
 

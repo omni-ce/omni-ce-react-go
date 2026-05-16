@@ -14,6 +14,14 @@ import (
 )
 
 func DivisionCreate(c *fiber.Ctx) error {
+	currentUser, err := function.JwtGetUser(c)
+	if err != nil {
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terautentikasi",
+			En: "Unauthorized",
+		}, nil)
+	}
+
 	var body struct {
 		Name        string `json:"name" validate:"required"`
 		Description string `json:"description"`
@@ -37,6 +45,8 @@ func DivisionCreate(c *fiber.Ctx) error {
 	division := model.RoleDivision{
 		Name:        body.Name,
 		Description: body.Description,
+		CreatedBy:   currentUser.ID,
+		UpdatedBy:   currentUser.ID,
 	}
 	if err := variable.Db.
 		Create(&division).
@@ -66,6 +76,14 @@ func DivisionUpdate(c *fiber.Ctx) error {
 		return dto.BadRequest(c, types.Language{
 			Id: "ID tidak valid",
 			En: "Invalid ID",
+		}, nil)
+	}
+
+	currentUser, err := function.JwtGetUser(c)
+	if err != nil {
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terautentikasi",
+			En: "Unauthorized",
 		}, nil)
 	}
 
@@ -101,6 +119,7 @@ func DivisionUpdate(c *fiber.Ctx) error {
 
 	division.Name = body.Name
 	division.Description = body.Description
+	division.UpdatedBy = currentUser.ID
 	if err := variable.Db.
 		Save(&division).
 		Error; err != nil {

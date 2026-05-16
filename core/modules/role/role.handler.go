@@ -81,6 +81,14 @@ func GetAll(c *fiber.Ctx) error {
 }
 
 func Create(c *fiber.Ctx) error {
+	currentUser, err := function.JwtGetUser(c)
+	if err != nil {
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terautentikasi",
+			En: "Unauthorized",
+		}, nil)
+	}
+
 	var body struct {
 		RoleDivisionID uint   `json:"role_division_id" validate:"required"`
 		Name           string `json:"name" validate:"required"`
@@ -104,7 +112,7 @@ func Create(c *fiber.Ctx) error {
 	// Check duplicate
 	var existing model.Role
 	if err := variable.Db.
-		Where("name = ?", body.Name).
+		Where("role_division_id = ? AND name = ?", body.RoleDivisionID, body.Name).
 		First(&existing).
 		Error; err == nil {
 		return dto.BadRequest(c, types.Language{
@@ -117,6 +125,8 @@ func Create(c *fiber.Ctx) error {
 		RoleDivisionID: body.RoleDivisionID,
 		Name:           body.Name,
 		Description:    body.Description,
+		CreatedBy:      currentUser.ID,
+		UpdatedBy:      currentUser.ID,
 	}
 	if err := variable.Db.
 		Create(&role).
@@ -168,6 +178,14 @@ func Update(c *fiber.Ctx) error {
 		}, nil)
 	}
 
+	currentUser, err := function.JwtGetUser(c)
+	if err != nil {
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terautentikasi",
+			En: "Unauthorized",
+		}, nil)
+	}
+
 	var body struct {
 		Name        string `json:"name" validate:"required"`
 		Description string `json:"description"`
@@ -208,6 +226,7 @@ func Update(c *fiber.Ctx) error {
 
 	role.Name = body.Name
 	role.Description = body.Description
+	role.UpdatedBy = currentUser.ID
 	if err := variable.Db.
 		Save(&role).
 		Error; err != nil {

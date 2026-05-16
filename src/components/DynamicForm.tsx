@@ -138,6 +138,7 @@ export interface DynamicFormFieldNormal<T = unknown> {
   textareaRows?: number;
   booleanDefault?: boolean;
   selectFormat?: (row: T) => DynamicFormFieldOption;
+  options?: DynamicFormFieldOption[];
   pricePrefix?: string;
   placeholder?: string;
 }
@@ -274,6 +275,26 @@ function DynamicSelect({
       const format = (field as DynamicFormFieldNormal).selectFormat;
       const opts = (field as DynamicFormFieldNormal)
         .selectOptions as DynamicFormFieldOption[];
+
+      if (format) {
+        setOpts(
+          opts.map((o) => {
+            const formatted = format(o);
+            return {
+              ...formatted,
+              value: String(formatted.value),
+            };
+          }),
+        );
+      } else {
+        setOpts(opts);
+      }
+      setDisabled(false);
+      return;
+    } else if ((field as DynamicFormFieldNormal).options) {
+      const format = (field as DynamicFormFieldNormal).selectFormat;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const opts = (field as DynamicFormFieldNormal).options!;
 
       if (format) {
         setOpts(
