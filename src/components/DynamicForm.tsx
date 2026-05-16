@@ -1197,7 +1197,7 @@ function DynamicWeight({
     <div className="flex items-center gap-2 mt-1.5">
       <Input
         type="number"
-        className="flex-1"
+        className={cn("flex-1", `field-weight-${field.key}`)}
         value={amount}
         onChange={(e) => field.key && onChange(field.key, e.target.value)}
         disabled={disabled}
@@ -1210,6 +1210,7 @@ function DynamicWeight({
               ...field,
               key: `${field.key}_unit_id`,
               label: "",
+              type: `weight-unit-${field.key}`,
               selectOptions: "units",
               selectFormat: (item: {
                 value: string | number;
@@ -1226,7 +1227,7 @@ function DynamicWeight({
                   </div>
                 ),
               }),
-            } as DynamicFormField
+            } as unknown as DynamicFormField
           }
           // @ts-ignore
           formData={{ [`${field.key}_unit_id`]: unitId }}

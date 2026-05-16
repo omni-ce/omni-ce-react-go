@@ -95,7 +95,11 @@ async function ProductItem(page: Page) {
 
   // input weight
   await inputFill(page, ".field-weight-weight", "221");
-  await selectOption(page, ".weight-unit-select", "G");
+  await buttonClick(page, ".field-weight-unit-weight-weight_unit_id", 1000);
+  await buttonClick(
+    page,
+    "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
+  );
 
   // input SKU
   await inputFill(page, ".field-text-sku", "IP15PM-256-SG");
