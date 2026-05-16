@@ -23,8 +23,8 @@ async function ProductVariant(page: Page) {
     "ele",
     "lap",
     "apple",
-    "Macbook M5 14inch",
-    "Apple M5 chip with 14 inch display",
+    "Macbook M5 14-inch",
+    "Apple M5 chip with 14-inch display",
   );
 
   await inputNewVariant(

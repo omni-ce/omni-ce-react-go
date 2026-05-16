@@ -83,7 +83,8 @@ export default function ProductVarianPage({ ruleKey }: Props) {
       {
         key: "description",
         label: language({ id: "Deskripsi", en: "Description" }),
-        type: "text",
+        type: "textarea",
+        textMultiLanguage: true,
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
