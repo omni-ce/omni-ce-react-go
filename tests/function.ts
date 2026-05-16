@@ -25,7 +25,7 @@ export const playNotification = async (
 export const buttonClick = async (
   page: Page,
   className: string,
-  delay = 1500,
+  delay = 1000,
 ) => {
   await page.locator(className).first().click();
   await page.waitForTimeout(delay);
@@ -47,7 +47,7 @@ export const inputFile = async (
   page: Page,
   className: string,
   fileName: string,
-  delay = 1000,
+  delay = 500,
 ) => {
   const file = path.join(asset_test, fileName);
   await page.setInputFiles(className, file);
