@@ -51,6 +51,7 @@ import type { RuleType } from "@/stores/ruleStore";
 import { cn } from "@/lib/utils";
 import type { AxiosError } from "axios";
 import type { LanguageKey } from "@/types/world";
+import { rawLanguageToObject } from "@/utils/convert";
 
 interface PaginationFetchParams {
   page: number;
@@ -511,16 +512,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                   };
                 }
                 const item = d as unknown as { label: string; value: unknown };
-                let label = item.label;
-                try {
-                  if (label.startsWith("{")) {
-                    label = language(
-                      JSON.parse(label) as Record<LanguageCode, string>,
-                    );
-                  }
-                } catch (e) {
-                  // fallback to raw label
-                }
+                const label = rawLanguageToObject(language, item.label);
                 return {
                   value: String(item.value),
                   label,
@@ -785,6 +777,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
     if (dataDeleteName) return dataDeleteName(row);
     if (typeof row === "object" && row !== null) {
       const obj = row as Record<string, unknown>;
+      console.log(row);
       if (typeof obj.name === "string") return obj.name;
       if (typeof obj.title === "string") return obj.title;
       if (typeof obj.key === "string") return obj.key;
@@ -1302,19 +1295,10 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                                 ...(colOptions ?? []).map((opt) => {
                                   const format = column.selectFormat;
                                   const item = format ? format(opt) : opt;
-                                  let label = item.label;
-                                  try {
-                                    if (label.startsWith("{")) {
-                                      label = language(
-                                        JSON.parse(label) as Record<
-                                          LanguageCode,
-                                          string
-                                        >,
-                                      );
-                                    }
-                                  } catch (e) {
-                                    // fallback to raw label
-                                  }
+                                  const label = rawLanguageToObject(
+                                    language,
+                                    item.label,
+                                  );
                                   return {
                                     value: String(opt.value),
                                     label,

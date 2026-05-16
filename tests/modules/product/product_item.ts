@@ -18,6 +18,49 @@ async function ProductItem(page: Page) {
   // click submenu product: item
   await buttonClick(page, ".sidebar-menu-product-item");
 
+  await insertNewItem(
+    page,
+    "ele",
+    "lap",
+    "Apple",
+    "mac",
+    "1024",
+    "grey",
+    "Baru",
+    "221",
+    "IP15PM-256-SG",
+  );
+  await insertNewItem(
+    page,
+    "ele",
+    "tele",
+    "sam",
+    "fold",
+    "512",
+    "black",
+    "Baru",
+    "190",
+    "ZFold5-512-BK",
+  );
+
+  //# end delay
+  await playNotification("section");
+}
+
+export default ProductItem;
+
+const insertNewItem = async (
+  page: Page,
+  category_id: string,
+  type_id: string,
+  brand_id: string,
+  variant_id: string,
+  memory_id: string,
+  color_id: string,
+  condition_id: string,
+  weight: string,
+  sku: string,
+) => {
   // click button add
   await buttonClick(page, ".product-item-pagination-button-add");
 
@@ -26,7 +69,7 @@ async function ProductItem(page: Page) {
   await inputFill(
     page,
     ".field-category_id-searchable-select-input",
-    "elektronik",
+    category_id,
   );
   await buttonClick(
     page,
@@ -35,7 +78,7 @@ async function ProductItem(page: Page) {
 
   // select type
   await buttonClick(page, "#field-type_id", 1000);
-  await inputFill(page, ".field-type_id-searchable-select-input", "smartphone");
+  await inputFill(page, ".field-type_id-searchable-select-input", type_id);
   await buttonClick(
     page,
     "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
@@ -43,7 +86,7 @@ async function ProductItem(page: Page) {
 
   // select brand
   await buttonClick(page, "#field-brand_id", 1000);
-  await inputFill(page, ".field-brand_id-searchable-select-input", "apple");
+  await inputFill(page, ".field-brand_id-searchable-select-input", brand_id);
   await buttonClick(
     page,
     "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
@@ -54,7 +97,7 @@ async function ProductItem(page: Page) {
   await inputFill(
     page,
     ".field-variant_id-searchable-select-input",
-    "iphone 15 pro max",
+    variant_id,
   );
   await buttonClick(
     page,
@@ -63,11 +106,7 @@ async function ProductItem(page: Page) {
 
   // select memory
   await buttonClick(page, "#field-memory_id", 1000);
-  await inputFill(
-    page,
-    ".field-memory_id-searchable-select-input",
-    "8 gb / 256 gb",
-  );
+  await inputFill(page, ".field-memory_id-searchable-select-input", memory_id);
   await buttonClick(
     page,
     "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
@@ -75,11 +114,7 @@ async function ProductItem(page: Page) {
 
   // select color
   await buttonClick(page, "#field-color_id", 1000);
-  await inputFill(
-    page,
-    ".field-color_id-searchable-select-input",
-    "space grey",
-  );
+  await inputFill(page, ".field-color_id-searchable-select-input", color_id);
   await buttonClick(
     page,
     "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
@@ -87,14 +122,18 @@ async function ProductItem(page: Page) {
 
   // select condition
   await buttonClick(page, "#field-condition_id", 1000);
-  await inputFill(page, ".field-condition_id-searchable-select-input", "baru");
+  await inputFill(
+    page,
+    ".field-condition_id-searchable-select-input",
+    condition_id,
+  );
   await buttonClick(
     page,
     "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
   );
 
   // input weight
-  await inputFill(page, ".field-weight-weight", "221");
+  await inputFill(page, ".field-weight-weight", weight);
   await buttonClick(page, ".field-weight-unit-weight-weight_unit_id", 1000);
   await buttonClick(
     page,
@@ -102,13 +141,8 @@ async function ProductItem(page: Page) {
   );
 
   // input SKU
-  await inputFill(page, ".field-text-sku", "IP15PM-256-SG");
+  await inputFill(page, ".field-text-sku", sku);
 
   // click button save
   await buttonClick(page, ".product-item-pagination-button-save", 1000);
-
-  //# end delay
-  await playNotification("section");
-}
-
-export default ProductItem;
+};

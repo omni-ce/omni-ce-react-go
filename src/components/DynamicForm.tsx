@@ -26,6 +26,7 @@ import MapPicker, { type MapCoordinates } from "@/components/ui/MapPicker";
 import Image from "@/components/Image";
 import { cn } from "@/lib/utils";
 import { ensureString } from "@/utils/data";
+import { rawLanguageToObject } from "@/utils/convert";
 
 export interface DynamicFormFieldOption<T = unknown> {
   value: string | number;
@@ -352,19 +353,7 @@ function DynamicSelect({
 
   const translatedOpts = useMemo(() => {
     return opts.map((opt) => {
-      let label = opt.label;
-      if (typeof label === "string" && label.startsWith("{")) {
-        try {
-          label = language(
-            JSON.parse(label) as Record<
-              LanguageKey.ID | LanguageKey.EN,
-              string
-            >,
-          );
-        } catch (e) {
-          // fallback
-        }
-      }
+      const label = rawLanguageToObject(language, opt.label);
       return { ...opt, label };
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1259,20 +1248,7 @@ function DynamicUsername({
       en: "Enter username",
     });
   }
-
-  if (placeholder?.startsWith("{")) {
-    try {
-      placeholder = language(
-        JSON.parse(placeholder) as Record<
-          LanguageKey.ID | LanguageKey.EN,
-          string
-        >,
-      );
-    } catch (e) {
-      // fallback
-    }
-  }
-
+  placeholder = rawLanguageToObject(language, placeholder);
   return (
     <div className="relative mt-1.5 flex items-center">
       <Input
@@ -1322,20 +1298,7 @@ function DynamicPassword({
       en: "Enter password",
     });
   }
-
-  if (placeholder?.startsWith("{")) {
-    try {
-      placeholder = language(
-        JSON.parse(placeholder) as Record<
-          LanguageKey.ID | LanguageKey.EN,
-          string
-        >,
-      );
-    } catch (e) {
-      // fallback
-    }
-  }
-
+  placeholder = rawLanguageToObject(language, placeholder);
   return (
     <div className="relative mt-1.5 flex items-center">
       <Input
@@ -1896,20 +1859,7 @@ function DynamicFieldRenderer({
           maxLength={field.maxLength}
           placeholder={(() => {
             const f = field as DynamicFormFieldNormal;
-            let p = f.placeholder;
-            if (p?.startsWith("{")) {
-              try {
-                p = language(
-                  JSON.parse(p) as Record<
-                    LanguageKey.ID | LanguageKey.EN,
-                    string
-                  >,
-                );
-              } catch (e) {
-                // fallback
-              }
-            }
-            return p;
+            return rawLanguageToObject(language, f.placeholder);
           })()}
           rows={(field as DynamicFormFieldNormal).textareaRows}
         />
@@ -2124,8 +2074,8 @@ function DynamicFieldRenderer({
             const Flag = flags[langInfo.flag];
 
             let valObj: Record<string, string> = {};
+            const rawVal = formData[field.key];
             try {
-              const rawVal = formData[field.key];
               if (typeof rawVal === "string" && rawVal.startsWith("{")) {
                 valObj = JSON.parse(rawVal) as Record<string, string>;
               } else if (typeof rawVal === "object" && rawVal !== null) {
@@ -2187,20 +2137,7 @@ function DynamicFieldRenderer({
             disabled={disabled}
             placeholder={(() => {
               const f = field as DynamicFormFieldNormal;
-              let p = f.placeholder;
-              if (p?.startsWith("{")) {
-                try {
-                  p = language(
-                    JSON.parse(p) as Record<
-                      LanguageKey.ID | LanguageKey.EN,
-                      string
-                    >,
-                  );
-                } catch (e) {
-                  // fallback
-                }
-              }
-              return p;
+              return rawLanguageToObject(language, f.placeholder);
             })()}
             onBlur={(e) => handleBlur(e.target.value)}
             onWheel={(e) => field.type === "number" && e.currentTarget.blur()}

@@ -12,6 +12,7 @@ import Image from "@/components/Image";
 import type { UserOption } from "@/types/user";
 import type { CompanyBranchOption } from "@/types/company";
 import GuardLayout from "@/components/GuardLayout";
+import { rawLanguageToObject } from "@/utils/convert";
 
 interface Props {
   ruleKey: string;
@@ -105,18 +106,11 @@ export default function WarehouseLocationPage({ ruleKey }: Props) {
         header: language({ id: "Nama", en: "Name" }),
         sort: true,
         search: true,
-        render: (item) => {
-          let name = item.name;
-          try {
-            if (name.startsWith("{")) {
-              const obj = JSON.parse(name) as Record<LanguageCode, string>;
-              name = language(obj);
-            }
-          } catch (e) {
-            // fallback to raw name
-          }
-          return <span className="font-medium">{name}</span>;
-        },
+        render: (item) => (
+          <span className="font-medium">
+            {rawLanguageToObject(language, item.name)}
+          </span>
+        ),
       },
 
       {

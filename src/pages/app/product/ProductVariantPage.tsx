@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/Badge";
 import Image from "@/components/Image";
 import { IconComponent } from "@/components/ui/IconSelector";
 import GuardLayout from "@/components/GuardLayout";
+import { rawLanguageToObject } from "@/utils/convert";
 
 interface Props {
   ruleKey: string;
@@ -30,31 +31,16 @@ export default function ProductVarianPage({ ruleKey }: Props) {
         type: "select",
         required: true,
         selectOptions: "product-categories",
-        selectFormat: (item: ProductCategoryOption) => {
-          const category_name = item.label;
-          let category = "";
-          try {
-            if (category_name.startsWith("{")) {
-              const obj = JSON.parse(category_name) as Record<
-                LanguageCode,
-                string
-              >;
-              category = language(obj);
-            }
-          } catch (e) {
-            // fallback to raw name
-          }
-          return {
-            value: item.value,
-            label: category || category_name,
-            render: (
-              <div className="flex items-center gap-2">
-                <IconComponent iconName={item.meta.icon} className="text-lg" />
-                <span>{category}</span>
-              </div>
-            ),
-          };
-        },
+        selectFormat: (item: ProductCategoryOption) => ({
+          value: item.value,
+          label: rawLanguageToObject(language, item.label),
+          render: (
+            <div className="flex items-center gap-2">
+              <IconComponent iconName={item.meta.icon} className="text-lg" />
+              <span>{rawLanguageToObject(language, item.label)}</span>
+            </div>
+          ),
+        }),
       },
       {
         key: "type_id",
@@ -102,47 +88,23 @@ export default function ProductVarianPage({ ruleKey }: Props) {
         key: "category_name",
         header: language({ id: "Kategori", en: "Category" }),
         options: "product-categories",
-        render: (item) => {
-          let category_name = item.category_name;
-          try {
-            if (category_name.startsWith("{")) {
-              const obj = JSON.parse(category_name) as Record<
-                LanguageCode,
-                string
-              >;
-              category_name = language(obj);
-            }
-          } catch (e) {
-            // fallback to raw name
-          }
-          return (
-            <span className="font-medium flex items-center gap-2">
-              <IconComponent
-                iconName={item.category_icon}
-                className="text-lg"
-              />
-              <span>{category_name}</span>
-            </span>
-          );
-        },
+        render: (item) => (
+          <span className="font-medium flex items-center gap-2">
+            <IconComponent iconName={item.category_icon} className="text-lg" />
+            <span>{rawLanguageToObject(language, item.category_name)}</span>
+          </span>
+        ),
       },
       {
         key: "type_name",
         header: language({ id: "Tipe", en: "Type" }),
         ref: "category_name",
         options: "product-types/{category_name}",
-        render: (item) => {
-          let name = item.type_name;
-          try {
-            if (name.startsWith("{")) {
-              const obj = JSON.parse(name) as Record<LanguageCode, string>;
-              name = language(obj);
-            }
-          } catch (e) {
-            // fallback to raw name
-          }
-          return <span className="font-medium">{name}</span>;
-        },
+        render: (item) => (
+          <span className="font-medium">
+            {rawLanguageToObject(language, item.type_name)}
+          </span>
+        ),
       },
       {
         key: "brand_id",

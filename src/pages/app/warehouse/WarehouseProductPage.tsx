@@ -15,6 +15,7 @@ import GuardLayout from "@/components/GuardLayout";
 import Image from "@/components/Image";
 import HistoryPage from "@/pages/app/warehouse/history";
 import type { LanguageKey } from "@/types/world";
+import { rawLanguageToObject } from "@/utils/convert";
 
 interface Props {
   ruleKey: string;
@@ -56,68 +57,45 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
         type: "select",
         required: true,
         selectOptions: "product-items",
-        selectFormat: (item: ProductItemOption) => {
-          let category_name = item.meta.category;
-          try {
-            if (category_name.startsWith("{")) {
-              const obj = JSON.parse(category_name) as Record<
-                LanguageKey,
-                string
-              >;
-              category_name = language(obj);
-            }
-          } catch (e) {
-            // fallback to raw name
-          }
-          let type_name = item.meta.type;
-          try {
-            if (type_name.startsWith("{")) {
-              const obj = JSON.parse(type_name) as Record<LanguageKey, string>;
-              type_name = language(obj);
-            }
-          } catch (e) {
-            // fallback to raw name
-          }
-          return {
-            value: String(item.value),
-            render: (
-              <div className="flex flex-col gap-1 w-full py-1">
-                <div className="flex items-center justify-between gap-4">
-                  <span className="font-bold text-foreground text-sm truncate">
-                    {item.label}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 text-[11px] text-dark-400">
-                  <span className="bg-dark-700 px-1.5 rounded border border-dark-600">
-                    {category_name}
-                  </span>
-                  <span>•</span>
-                  <span>{item.meta.brand}</span>
-                  <span>•</span>
-                  <span>{type_name}</span>
-                  {item.meta.color && (
-                    <>
-                      <span>•</span>
-                      <div className="flex items-center gap-1">
-                        <div
-                          className="w-2.5 h-2.5 rounded-full border border-white/10"
-                          style={{ backgroundColor: item.meta.color_hex }}
-                        />
-                        <span>{item.meta.color}</span>
-                      </div>
-                    </>
-                  )}
-                  <Badge
-                    variant="outline"
-                    className="text-[10px] py-0 h-4 border-dark-600 bg-dark-800 text-dark-300 shrink-0"
-                  >
-                    {item.meta.sku}
-                  </Badge>
-                </div>
+        selectFormat: (item: ProductItemOption) => ({
+          value: String(item.value),
+          render: (
+            <div className="flex flex-col gap-1 w-full py-1">
+              <div className="flex items-center justify-between gap-4">
+                <span className="font-bold text-foreground text-sm truncate">
+                  {item.label}
+                </span>
               </div>
-            ),
-          };
-        },
+              <div className="flex items-center gap-2 text-[11px] text-dark-400">
+                <span className="bg-dark-700 px-1.5 rounded border border-dark-600">
+                  {rawLanguageToObject(language, item.meta.category)}
+                </span>
+                <span>•</span>
+                <span>{item.meta.brand}</span>
+                <span>•</span>
+                <span>{rawLanguageToObject(language, item.meta.type)}</span>
+                {item.meta.color && (
+                  <>
+                    <span>•</span>
+                    <div className="flex items-center gap-1">
+                      <div
+                        className="w-2.5 h-2.5 rounded-full border border-white/10"
+                        style={{ backgroundColor: item.meta.color_hex }}
+                      />
+                      <span>{item.meta.color}</span>
+                    </div>
+                  </>
+                )}
+                <Badge
+                  variant="outline"
+                  className="text-[10px] py-0 h-4 border-dark-600 bg-dark-800 text-dark-300 shrink-0"
+                >
+                  {item.meta.sku}
+                </Badge>
+              </div>
+            </div>
+          ),
+        }),
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -168,56 +146,39 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
         header: language({ id: "Nama Produk", en: "Product Name" }),
         sort: true,
         search: true,
-        render: (item) => {
-          let categoryName = item.product_category_name;
-          let typeName = item.product_type_name;
-          try {
-            if (categoryName.startsWith("{")) {
-              const obj = JSON.parse(categoryName) as Record<
-                LanguageKey,
-                string
-              >;
-              categoryName = language(obj);
-            }
-            if (typeName.startsWith("{")) {
-              const obj = JSON.parse(typeName) as Record<LanguageKey, string>;
-              typeName = language(obj);
-            }
-          } catch (e) {
-            // fallback to raw name
-          }
-          return (
-            <div className="flex items-center gap-3 py-1">
-              <div className="w-12 h-12 rounded-xl bg-dark-800 border border-dark-600/40 p-1.5 flex items-center justify-center shrink-0">
-                <Image
-                  src={item.product_brand_logo}
-                  alt={item.product_name}
-                  className="max-h-full max-w-full object-contain"
-                />
+        render: (item) => (
+          <div className="flex items-center gap-3 py-1">
+            <div className="w-12 h-12 rounded-xl bg-dark-800 border border-dark-600/40 p-1.5 flex items-center justify-center shrink-0">
+              <Image
+                src={item.product_brand_logo}
+                alt={item.product_name}
+                className="max-h-full max-w-full object-contain"
+              />
+            </div>
+            <div className="flex flex-col min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-foreground text-sm truncate">
+                  {item.product_name}
+                </span>
+                <Badge
+                  variant="outline"
+                  className="text-[10px] py-0 h-4 border-dark-600 bg-dark-800 text-dark-300 shrink-0"
+                >
+                  {item.product_sku}
+                </Badge>
               </div>
-              <div className="flex flex-col min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className="font-bold text-foreground text-sm truncate">
-                    {item.product_name}
-                  </span>
-                  <Badge
-                    variant="outline"
-                    className="text-[10px] py-0 h-4 border-dark-600 bg-dark-800 text-dark-300 shrink-0"
-                  >
-                    {item.product_sku}
-                  </Badge>
-                </div>
-                <div className="flex items-center gap-1.5 text-[11px] text-dark-400 mt-0.5">
-                  <span className="bg-dark-700 px-1.5 rounded border border-dark-600">
-                    {categoryName}
-                  </span>
-                  <span>•</span>
-                  <span>{typeName}</span>
-                </div>
+              <div className="flex items-center gap-1.5 text-[11px] text-dark-400 mt-0.5">
+                <span className="bg-dark-700 px-1.5 rounded border border-dark-600">
+                  {rawLanguageToObject(language, item.product_category_name)}
+                </span>
+                <span>•</span>
+                <span>
+                  {rawLanguageToObject(language, item.product_type_name)}
+                </span>
               </div>
             </div>
-          );
-        },
+          </div>
+        ),
       },
       {
         key: "is_active",

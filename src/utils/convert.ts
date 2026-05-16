@@ -1,3 +1,5 @@
+import type { LanguageCode } from "@/stores/languageStore";
+
 export const getToken = (url: string) => {
   if (url.includes("/send/")) {
     return url.split("/send/")[1];
@@ -57,4 +59,19 @@ export const formatRupiah = (amount: number) => {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(amount);
+};
+
+export const rawLanguageToObject = (
+  language: (obj: Record<LanguageCode, string>) => string,
+  value: unknown,
+): string => {
+  try {
+    if (typeof value === "string" && value.startsWith("{")) {
+      const obj = JSON.parse(value) as Record<LanguageCode, string>;
+      return language(obj);
+    }
+  } catch (e) {
+    // fallback to raw name
+  }
+  return value as string;
 };

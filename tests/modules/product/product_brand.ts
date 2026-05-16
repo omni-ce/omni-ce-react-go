@@ -19,7 +19,7 @@ async function ProductBrand(page: Page) {
   await buttonClick(page, ".sidebar-menu-product-brand");
 
   await inputNewBrand(page, "Apple", "company-apple.jpeg");
-  await inputNewBrand(page, "Samsung", "company-samsung.jpeg");
+  await inputNewBrand(page, "Samsung", "company-samsung.png");
 
   //# end delay
   await playNotification("section");
