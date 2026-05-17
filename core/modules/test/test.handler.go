@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"react-go/core/database/seed"
 	"react-go/core/function"
 	"react-go/core/variable"
 	"strings"
@@ -126,6 +127,8 @@ func ApocalypseTables(c *fiber.Ctx) error {
 			variable.Db.Exec(fmt.Sprintf("TRUNCATE TABLE %s", table))
 		}
 	}
+
+	seed.Dynamic()
 
 	log.Println("✅ All tables truncated from Test Handler")
 	return c.JSON(fiber.Map{
