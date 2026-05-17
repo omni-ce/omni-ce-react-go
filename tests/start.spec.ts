@@ -12,6 +12,8 @@ import Role from "./modules/role";
 import User from "./modules/user";
 import Company from "./modules/company";
 import Product from "./modules/product";
+import Supplier from "./modules/supplier";
+import Warehouse from "./modules/warehouse";
 
 test("Full Testing", async ({ page }) => {
   // console.log({ argv, args, module_selected });
@@ -30,6 +32,8 @@ test("Full Testing", async ({ page }) => {
     await User(page);
     await Company(page);
     await Product(page);
+    await Supplier(page);
+    await Warehouse(page);
 
     // ---------------------------------------------- //
     // wait for navigation or success
