@@ -13,7 +13,7 @@ import type {
 import type { ProductItemOption } from "@/types/product";
 import GuardLayout from "@/components/GuardLayout";
 import Image from "@/components/Image";
-import HistoryPage from "@/pages/app/warehouse/history";
+import WarehouseProductInOut from "@/pages/app/warehouse/WarehouseProductInOut";
 import type { LanguageKey } from "@/types/world";
 import type { Unit } from "@/services/master_data.service";
 import type { Option } from "@/types/option";
@@ -294,7 +294,7 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
         useIsActive
       />
 
-      {dataSelected && <HistoryPage dataSelected={dataSelected} />}
+      {dataSelected && <WarehouseProductInOut dataSelected={dataSelected} />}
     </GuardLayout>
   );
 }

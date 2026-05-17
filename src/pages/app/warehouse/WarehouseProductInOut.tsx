@@ -21,7 +21,7 @@ import DynamicForm, { type DynamicFormField } from "@/components/DynamicForm";
 interface Props {
   dataSelected: WarehouseProduct;
 }
-export default function HistoryPage({ dataSelected }: Props) {
+export default function WarehouseProductInOut({ dataSelected }: Props) {
   const { language } = useLanguageStore();
 
   const [historyFilter, setHistoryFilter] = useState<"IN" | "OUT">("IN");
@@ -52,28 +52,23 @@ export default function HistoryPage({ dataSelected }: Props) {
     [],
   );
 
-  const inFormFields = useMemo((): DynamicFormField[] => {
-    const fields: DynamicFormField[] = [
+  const inFormFields = useMemo(
+    (): DynamicFormField[] => [
       {
-        key: "fromSupplier",
+        key: "is_from_supplier",
         label: language({ id: "Dari Supplier", en: "From Supplier" }),
         type: "checkbox",
         col: 12,
       },
-    ];
-
-    if (inForm.fromSupplier) {
-      fields.push({
-        key: "supplierId",
+      {
+        key: "supplier_id",
         label: language({ id: "Pilih Supplier", en: "Select Supplier" }),
         type: "select",
         selectOptions: mockSuppliers,
         required: true,
         col: 12,
-      });
-    }
-
-    fields.push(
+        showOnTrue: "is_from_supplier",
+      },
       {
         key: "reference",
         label: language({ id: "No. Referensi", en: "Reference No" }),
@@ -94,10 +89,9 @@ export default function HistoryPage({ dataSelected }: Props) {
         type: "textarea",
         col: 12,
       },
-    );
-
-    return fields;
-  }, [inForm.fromSupplier, language, mockSuppliers]);
+    ],
+    [language, mockSuppliers],
+  );
 
   return (
     <Card className="mt-4 animate-fade-in">

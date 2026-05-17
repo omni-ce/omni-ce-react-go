@@ -12,7 +12,7 @@ async function Warehouse(page: Page) {
 
   await WarehouseLocation(page);
   await WarehouseProduct(page);
-  await WarehouseHistory(page);
+  // await WarehouseHistory(page);
 }
 
 export default Warehouse;

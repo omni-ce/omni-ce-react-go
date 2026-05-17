@@ -60,3 +60,7 @@ export const formatRupiah = (amount: number) => {
     maximumFractionDigits: 0,
   }).format(amount);
 };
+
+export const toKey = (str: string): string => {
+  return str.toLowerCase().replace(/[^a-z0-9_]/g, "");
+};
