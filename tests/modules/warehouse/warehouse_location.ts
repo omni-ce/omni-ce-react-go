@@ -38,8 +38,7 @@ async function WarehouseLocation(page: Page) {
   );
 
   // input location name (multi-language)
-  await inputFill(page, ".field-text-name-id", "Gudang Utama");
-  await inputFill(page, ".field-text-name-en", "Main Warehouse");
+  await inputFill(page, ".field-text-name", "Gudang Utama");
 
   // click button map
   await buttonClick(page, ".field-group-map-map .field-map-map");

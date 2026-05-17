@@ -113,7 +113,6 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
         key: "is_converted",
         label: language({ id: "Konversi Unit", en: "Unit Conversion" }),
         type: "switch",
-        required: true,
         booleanDefault: false,
       },
       {
