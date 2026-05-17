@@ -2,6 +2,10 @@
 
 You are **Antigravity**, a paired programming AI assistant. Below are critical project-specific instructions and rules that you must follow at all times.
 
+## 0. Fundamental Working Principles
+- **No Mistake Mode**: Always act as if every user prompt ends with the directive **"fix, focus, no mistake"**, even if the user forgets to append it. Maintain maximum concentration, precision, and error-free execution.
+- **Skip Test on Document Edit**: When modifying only documentation/markdown/text files (e.g. `AGENT.md`), do NOT execute frontend (`yarn lint`, `yarn build`) or backend (`go build`) verification commands.
+
 ## 1. Automatic Backend Module Generation from Frontend Pages
 When you detect or are told that a frontend page is created (for example: `SupplierEntityPage.tsx`, `WarehouseProductPage.tsx`, etc.), it represents a **new GORM model and database entity**.
 
@@ -15,9 +19,20 @@ You must immediately perform the following tasks:
 3. **Module Structure Rules**:
    - **Model (`./core/modules/[nama_module]/model/[nama_module].model.go`)**: Create a GORM struct with appropriate fields (including tracking fields like `CreatedAt`, `CreatedBy`, `UpdatedAt`, `UpdatedBy`), a `Map()` method, and a `Seed() []ModelName` method.
      - **ID Field rules**: If the ID is specified as `integer`, define it as `ID uint` with `gorm:"autoIncrement;primaryKey"`. If the ID is specified as `uuid`, define it as `ID uuid.UUID` with `gorm:"type:char(36);primaryKey"`, and implement a pointer-receiver `BeforeCreate` hook using `uuid.NewV7()` to generate the UUID.
+     - **Debounce & Uniqueness**: If the frontend field specifies a `debounce` key (e.g. `debounce: "username"`), it means the field must be unique in the database. You MUST add the GORM tag `gorm:"unique"` to that field's column in the model.
    - **Handler (`./core/modules/[nama_module]/[nama_module].handler.go`)**: Implement the CRUD and pagination logic, retrieving user data via `function.JwtGetUser(c)` for audit logs.
      - **Integration/Joins**: If any frontend fields map/integrate with other models (such as `CategoryID`, `BrandID`, `TypeID` in a product item), import their model packages (e.g. `product "react-go/core/modules/product/model"`, `master_data "react-go/core/modules/master_data/model"`) and perform proper preloading and joining in GORM query (e.g. using `.Preload("Category")` for retrieval and `.Joins("Category")` for filtering in `Pagination` or `PaginationScoped`).
-   - **Router (`./core/modules/[nama_module]/[nama_module].router.go`)**: Implement Fiber routing with `PublicRoute` and `ProtectedRoute`.
+   - **Router & Feature Registration**:
+     - **Router Structure & Alignment**: The backend router structure must directly align with the frontend page's `module` prop value (e.g., `module="supplier/product"` on a FE Page like `SupplierProductPage.tsx`). The initial route prefix must be registered in [routes.go](file:///Users/jefripunza/Documents/Projects/react-go/core/modules/routes.go) (e.g., `api.Group("/supplier")`), and the remaining path must be mapped within the module's router `ProtectedRoute` (e.g., `api.Post("/product/create", ...)`).
+     - **Standard Pagination Endpoints**: If the module uses pagination, you MUST implement the following **6 default endpoints** in the module's router under `ProtectedRoute` (as automatically expected by the FE `Pagination` component):
+       1. `/create` (POST) - Create a record
+       2. `/paginate` (GET) - Paginate/retrieve records
+       3. `/edit/:id` (PUT) - Edit/update a record by ID
+       4. `/remove/:id` (DELETE) - Remove a record by ID
+       5. `/bulk-remove` (POST) - Bulk remove multiple records
+       6. `/set-active/:id` (PATCH) - Set the active status of a record
+     - **Debounce Registry**: If a field has a `debounce` key (e.g. `debounce: "username"`), check if the POST endpoint is registered in [debounce.router.go](file:///Users/jefripunza/Documents/Projects/react-go/core/modules/debounce/debounce.router.go). If it is not, add it (e.g., `api.Post("/[debounce-value]", [HandlerName])`) and implement the handler logic to check for duplication.
+     - **Option Registry**: If a field has a `selectOptions` key (e.g. `selectOptions: "supplier-entities"`), check if the GET endpoint is registered in [option.router.go](file:///Users/jefripunza/Documents/Projects/react-go/core/modules/option/option.router.go). If it is not, add it (e.g., `api.Get("/[select-options-value]", [HandlerName])`) and implement the lookup option mapping logic returning a list of `types.Option` elements in `option.handler.go`.
 4. **Inject and Register**:
    - **Routes**: Register the router at the bottom area in [routes.go](file:///Users/jefripunza/Documents/Projects/react-go/core/modules/routes.go) (around lines 94-118).
    - **Models**: Register the GORM model pointer (e.g. `&supplier.SupplierEntity{}`) inside the `Models()` list in [models.go](file:///Users/jefripunza/Documents/Projects/react-go/core/modules/models.go) (around line 32).

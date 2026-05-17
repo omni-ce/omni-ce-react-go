@@ -1,7 +1,7 @@
 import { type ISidebarLink } from "@/layouts/AppLayout";
 
 // Users
-import UserPage from "@/pages/system/user/UserPage";
+import UserPage from "@/pages/app/user/UserPage";
 
 // Master Data
 import MasterDataPage from "@/pages/app/master_data/MasterDataPage";

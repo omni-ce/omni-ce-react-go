@@ -10,7 +10,7 @@ import Pagination, {
 } from "@/components/Pagination";
 import BlankUser from "@/assets/blank-user.svg";
 import { FileType } from "@/components/DynamicForm";
-import { ChangePassword } from "@/pages/system/user/action";
+import { ChangePassword } from "@/pages/app/user/action";
 import { LanguageKey } from "@/types/world";
 import GuardLayout from "@/components/GuardLayout";
 
