@@ -792,7 +792,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
       if (field.only === "create" && !isCreate) continue;
       if (field.only === "update" && isCreate) continue;
 
-      const showOnTrue = (field as DynamicFormFieldNormal).show_on_true;
+      const showOnTrue = (field as DynamicFormFieldNormal).showOnTrue;
       if (showOnTrue) {
         const val = formData[showOnTrue];
         if (val !== true && val !== "true" && val !== 1 && val !== "1") {
@@ -903,7 +903,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
         if (field.only === "create" && !isCreate) continue;
         if (field.only === "update" && isCreate) continue;
 
-        const showOnTrue = (field as DynamicFormFieldNormal).show_on_true;
+        const showOnTrue = (field as DynamicFormFieldNormal).showOnTrue;
         if (showOnTrue) {
           const val = formData[showOnTrue];
           if (val !== true && val !== "true" && val !== 1 && val !== "1") {

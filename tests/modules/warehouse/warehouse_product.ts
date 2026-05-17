@@ -1,9 +1,5 @@
 import type { Page } from "@playwright/test";
-import {
-  buttonClick,
-  inputFill,
-  playNotification,
-} from "../../function";
+import { buttonClick, inputFill, playNotification } from "../../function";
 import { checkModuleStart } from "../../variable";
 
 async function WarehouseProduct(page: Page) {
@@ -19,7 +15,7 @@ async function WarehouseProduct(page: Page) {
     page,
     "Gudang Utama",
     "Macbook",
-    true,
+    false,
     "Box",
     "Pcs",
   );
@@ -43,6 +39,11 @@ const insertNewWarehouseProduct = async (
 
   // select warehouse_location_id
   await buttonClick(page, "#field-warehouse_location_id", 1000);
+  await inputFill(
+    page,
+    ".field-warehouse_location_id-searchable-select-input",
+    location_search,
+  );
   await buttonClick(
     page,
     "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1)",
@@ -50,6 +51,11 @@ const insertNewWarehouseProduct = async (
 
   // select product_id
   await buttonClick(page, "#field-product_id", 1000);
+  await inputFill(
+    page,
+    ".field-product_id-searchable-select-input",
+    product_search,
+  );
   await buttonClick(
     page,
     "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1)",

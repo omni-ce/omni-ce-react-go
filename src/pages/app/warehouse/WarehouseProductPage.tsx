@@ -41,6 +41,7 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
         type: "select",
         required: true,
         selectOptions: "warehouse-locations",
+        onlySuperAdmin: true,
         selectFormat: (item: unknown) => {
           const warehouseLocation = item as WarehouseLocationOption;
           return {
@@ -121,7 +122,7 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
         type: "select",
         required: true,
         selectOptions: "units",
-        show_on_true: "is_converted",
+        showOnTrue: "is_converted",
         selectFormat: (item: unknown) => {
           const unit = item as UnitOption;
           return {
@@ -143,7 +144,7 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
         type: "select",
         required: true,
         selectOptions: "units",
-        show_on_true: "is_converted",
+        showOnTrue: "is_converted",
         selectFormat: (item: unknown) => {
           const unit = item as UnitOption;
           return {
