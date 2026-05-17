@@ -141,6 +141,7 @@ export interface DynamicFormFieldNormal<T = unknown> {
   options?: DynamicFormFieldOption[];
   pricePrefix?: string;
   placeholder?: string;
+  show_on_true?: string;
 }
 
 interface DynamicFormFieldChildren {
@@ -1816,6 +1817,14 @@ function DynamicFieldRenderer({
   }
 
   if (!field.key) return null;
+
+  const showOnTrue = (field as DynamicFormFieldNormal).show_on_true;
+  if (showOnTrue) {
+    const val = formData[showOnTrue];
+    if (val !== true && val !== "true" && val !== 1 && val !== "1") {
+      return null;
+    }
+  }
 
   return (
     <div

@@ -94,24 +94,10 @@ export default function ChartOfAccountPage({ ruleKey }: Props) {
         header: language({ id: "Tipe", en: "Type" }),
         sort: true,
         search: true,
-        render: (row: ChartOfAccount) => (
-          <span>
-            {row.type === "normal" ? (
-              <Badge variant="default">
-                {language({ id: "Normal", en: "Normal" })}
-              </Badge>
-            ) : (
-              <Badge variant="secondary">
-                {language({ id: "Non-Normal", en: "Non-Normal" })}
-              </Badge>
-            )}
-          </span>
-        ),
       },
       {
         key: "category",
         header: language({ id: "Kategori", en: "Category" }),
-        render: (row: ChartOfAccount) => <span>{row.category}</span>,
       },
       {
         key: "is_active",

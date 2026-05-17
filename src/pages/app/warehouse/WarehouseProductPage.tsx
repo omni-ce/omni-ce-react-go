@@ -15,6 +15,9 @@ import GuardLayout from "@/components/GuardLayout";
 import Image from "@/components/Image";
 import HistoryPage from "@/pages/app/warehouse/history";
 import type { LanguageKey } from "@/types/world";
+import type { Unit } from "@/services/master_data.service";
+import type { Option } from "@/types/option";
+import type { UnitOption } from "@/types/master_data";
 
 interface Props {
   ruleKey: string;
@@ -29,7 +32,7 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
   );
 
   const fields = useMemo<
-    PaginationField<WarehouseLocationOption | ProductItemOption>[]
+    PaginationField<WarehouseLocationOption | ProductItemOption | UnitOption>[]
   >(
     () => [
       {
@@ -108,17 +111,54 @@ export default function WarehouseProductPage({ ruleKey }: Props) {
       },
       {
         key: "is_converted",
-        label: language({ id: "Konversi", en: "Converted" }),
+        label: language({ id: "Konversi Unit", en: "Unit Conversion" }),
         type: "switch",
         required: true,
         booleanDefault: false,
       },
       {
-        key: "quantity",
-        label: language({ id: "Jumlah", en: "Quantity" }),
-        type: "number",
+        key: "unit_in",
+        label: language({ id: "Unit Masuk", en: "Unit In" }),
+        type: "select",
         required: true,
+        selectOptions: "units",
         show_on_true: "is_converted",
+        selectFormat: (item: unknown) => {
+          const unit = item as UnitOption;
+          return {
+            value: unit.value,
+            render: (
+              <div className="flex items-center gap-2">
+                <span>{unit.label}</span>
+                <span className="text-xs text-muted-foreground">
+                  ({unit.meta?.short_name})
+                </span>
+              </div>
+            ),
+          };
+        },
+      },
+      {
+        key: "unit_out",
+        label: language({ id: "Unit Keluar", en: "Unit Out" }),
+        type: "select",
+        required: true,
+        selectOptions: "units",
+        show_on_true: "is_converted",
+        selectFormat: (item: unknown) => {
+          const unit = item as UnitOption;
+          return {
+            value: unit.value,
+            render: (
+              <div className="flex items-center gap-2">
+                <span>{unit.label}</span>
+                <span className="text-xs text-muted-foreground">
+                  ({unit.meta?.short_name})
+                </span>
+              </div>
+            ),
+          };
+        },
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps

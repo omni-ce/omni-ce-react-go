@@ -81,7 +81,7 @@ export interface PaginationColumn<T, TFilter = unknown> {
   rule?: RuleType;
   onlySuperAdmin?: boolean;
   selectFormat?: (row: TFilter) => { label: string; value: string | number };
-  render: (row: T, index: number, helpers: PaginationHelpers<T>) => ReactNode;
+  render?: (row: T, index: number, helpers: PaginationHelpers<T>) => ReactNode;
 }
 
 export interface PaginationExtraAction<T> {
@@ -1361,7 +1361,16 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
                           key={`${key}-${column.key}`}
                           className={`${getAlignClassName(column.align)} ${column.strict ? "w-px whitespace-nowrap" : ""} ${column.cellClassName ?? ""}`.trim()}
                         >
-                          {column.render(row, idx, helpers)}
+                          {column.render
+                            ? column.render(row, idx, helpers)
+                            : rawLanguageToString(
+                                typeof row[column.key as keyof T] === "string"
+                                  ? (row[column.key as keyof T] as string)
+                                  : row[column.key as keyof T] !== undefined &&
+                                      row[column.key as keyof T] !== null
+                                    ? String(row[column.key as keyof T])
+                                    : "",
+                              )}
                         </TableCell>
                       ))}
                     </TableRow>

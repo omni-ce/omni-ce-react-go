@@ -1,7 +1,7 @@
 export interface UnitOption {
   value: string;
   label: string;
-  meta: {
+  meta?: {
     short_name: string;
   };
 }

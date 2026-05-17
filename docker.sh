@@ -1,8 +1,8 @@
 #!/bin/bash
 
 
-APP_NAME="react-go-app"
-IMAGE_NAME="react-go"
+IMAGE_NAME="omni-ce"
+APP_NAME="$IMAGE_NAME-app"
 
 # Hapus file-file yang tidak perlu
 echo "🗑️ Cleaning up..."

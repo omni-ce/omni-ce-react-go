@@ -41,3 +41,12 @@ func (Setting) Seed(db *gorm.DB) {
 		log.Println("⚠️  Setting already seeded")
 	}
 }
+
+func (Setting) SeedExample() []Setting {
+	return []Setting{
+		{
+			Key:   "maintenance_mode",
+			Value: "false",
+		},
+	}
+}
