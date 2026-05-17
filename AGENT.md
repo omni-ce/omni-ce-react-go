@@ -22,11 +22,19 @@ You must immediately perform the following tasks:
    - **Routes**: Register the router at the bottom area in [routes.go](file:///Users/jefripunza/Documents/Projects/react-go/core/modules/routes.go) (around lines 94-118).
    - **Models**: Register the GORM model pointer (e.g. `&supplier.SupplierEntity{}`) inside the `Models()` list in [models.go](file:///Users/jefripunza/Documents/Projects/react-go/core/modules/models.go) (around line 32).
 
-## 2. CLI Rule: Rust Token Killer (RTK)
+## 2. Code Quality & Verification Rules
+- **Backend Verification**: After generating any backend code/module, test and verify the Go code by executing a Go build command (e.g. `go build`).
+- **Frontend Verification**: If frontend (FE) code is generated or modified, you MUST perform both of the following verification checks and ensure both are 100% error-free:
+  1. Run `yarn lint` to check for syntax and stylistic issues.
+  2. Run `yarn build` to ensure the compilation succeeds.
+- **Strict Typing in FE**: Avoid using the `any` type in Frontend (FE) TypeScript/React codebase at all costs. Always define explicit interfaces, types, or generic parameters.
+- **New Libraries & Context7**: If you import or use any new frontend (FE) or backend (BE) libraries/packages, you MUST query the `context7` MCP server (using its search/resolve and query tools) first to retrieve the official, up-to-date documentation and coding patterns, ensuring flawless integration and correct implementation.
+
+## 3. CLI Rule: Rust Token Killer (RTK)
 Always prefix all terminal commands with `rtk` to optimize token consumption and filter noisy output, as defined in `.agents/rules/antigravity-rtk-rules.md`.
 - Example: `rtk git status`, `rtk go test`, etc.
 
-## 3. Skill Integration
+## 4. Skill Integration
 Stay aware of and make use of the active agent skills in the `.agents/skills` folder:
 - **caveman**: Use ultra-compressed communication if requested.
 - **caveman-commit**: Use for generating conventional commits.
