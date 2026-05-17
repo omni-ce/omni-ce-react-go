@@ -220,8 +220,10 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
 
   const safeCurrentPage = Math.min(currentPage, totalPages);
   const filteredFields = useMemo(() => {
+    const isSuperAdmin = user?.role === "su";
     return fields.filter((field) => {
       const f = field as DynamicFormFieldNormal;
+      if (f.onlySuperAdmin && !isSuperAdmin) return false;
       if (!f.rule) return true;
       if (f.rule === "create") return perm.canCreate;
       if (f.rule === "read") return perm.canRead;
@@ -230,7 +232,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
       if (f.rule === "set") return perm.canSet;
       return true;
     });
-  }, [fields, perm]) as PaginationField[];
+  }, [fields, perm, user]) as PaginationField[];
   const hasCrud = filteredFields.length > 0;
 
   // ─── Row helpers ──────────────────────────────────────────────────

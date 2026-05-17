@@ -142,6 +142,7 @@ export interface DynamicFormFieldNormal<T = unknown> {
   pricePrefix?: string;
   placeholder?: string;
   showOnTrue?: string;
+  onlySuperAdmin?: boolean;
 }
 
 interface DynamicFormFieldChildren {
