@@ -15,6 +15,14 @@ import (
 )
 
 func ProductCreate(c *fiber.Ctx) error {
+	currentUser, err := function.JwtGetUser(c)
+	if err != nil {
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terotorisasi",
+			En: "Unauthorized",
+		}, nil)
+	}
+
 	var body struct {
 		SupplierID string `json:"supplier_id" validate:"required"`
 		ProductID  string `json:"product_id" validate:"required"`
@@ -57,6 +65,8 @@ func ProductCreate(c *fiber.Ctx) error {
 		SupplierID: uint(supplierID),
 		ProductID:  uint(productID),
 		IsActive:   true,
+		CreatedBy:  currentUser.ID,
+		UpdatedBy:  currentUser.ID,
 	}
 
 	if err := variable.Db.Create(&row).Error; err != nil {
@@ -142,6 +152,14 @@ func ProductPaginate(c *fiber.Ctx) error {
 
 func ProductEdit(c *fiber.Ctx) error {
 	id := c.Params("id")
+	currentUser, err := function.JwtGetUser(c)
+	if err != nil {
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terotorisasi",
+			En: "Unauthorized",
+		}, nil)
+	}
+
 	var body struct {
 		SupplierID string `json:"supplier_id" validate:"required"`
 		ProductID  string `json:"product_id" validate:"required"`
@@ -172,6 +190,7 @@ func ProductEdit(c *fiber.Ctx) error {
 
 	row.SupplierID = uint(supplierID)
 	row.ProductID = uint(productID)
+	row.UpdatedBy = currentUser.ID
 
 	if err := variable.Db.Save(&row).Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
@@ -227,6 +246,14 @@ func ProductBulkRemove(c *fiber.Ctx) error {
 
 func ProductSetActive(c *fiber.Ctx) error {
 	id := c.Params("id")
+	currentUser, err := function.JwtGetUser(c)
+	if err != nil {
+		return dto.Unauthorized(c, types.Language{
+			Id: "Tidak terotorisasi",
+			En: "Unauthorized",
+		}, nil)
+	}
+
 	var body struct {
 		IsActive bool `json:"is_active"`
 	}
@@ -234,7 +261,10 @@ func ProductSetActive(c *fiber.Ctx) error {
 		return dto.BodyBadRequest(c, err)
 	}
 
-	if err := variable.Db.Model(&supplier.SupplierProduct{}).Where("id = ?", id).Update("is_active", body.IsActive).Error; err != nil {
+	if err := variable.Db.Model(&supplier.SupplierProduct{}).Where("id = ?", id).Updates(map[string]any{
+		"is_active":  body.IsActive,
+		"updated_by": currentUser.ID,
+	}).Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal mengubah status",
 			En: "Failed to change status",

@@ -89,7 +89,7 @@ export interface PaginationExtraAction<T> {
   label: Record<LanguageCode, string>;
   width?: string | number;
   height?: string | number;
-  button?: (row: T, onClose: () => void) => ReactNode;
+  button?: (row: T, onClose: () => void) => ReactNode | void;
   component?: ReactNode | ((row: T, onClose: () => void) => ReactNode);
 }
 
@@ -524,6 +524,7 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
           });
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [columnSearches, dynamicOptions, language, mergedColumns],
   );
 

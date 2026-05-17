@@ -11,6 +11,7 @@ import (
 	master_data "react-go/core/modules/master_data/model"
 	product "react-go/core/modules/product/model"
 	role "react-go/core/modules/role/model"
+	supplier "react-go/core/modules/supplier/model"
 	user "react-go/core/modules/user/model"
 	warehouse "react-go/core/modules/warehouse/model"
 
@@ -896,5 +897,33 @@ func WarehouseLocations(c *fiber.Ctx) error {
 	return dto.OK(c, types.Language{
 		Id: "Lokasi gudang berhasil diambil",
 		En: "Warehouse locations retrieved successfully",
+	}, rows)
+}
+
+func SupplierEntities(c *fiber.Ctx) error {
+	entities := make([]supplier.SupplierEntity, 0)
+	if err := variable.Db.
+		Model(&supplier.SupplierEntity{}).
+		Find(&entities).
+		Error; err != nil {
+		return dto.InternalServerError(c, types.Language{
+			Id: "Gagal mencari entitas supplier",
+			En: "Failed to find supplier entities",
+		}, nil)
+	}
+
+	rows := make([]types.Option, 0)
+	for _, row := range entities {
+		if row.IsActive {
+			rows = append(rows, types.Option{
+				Label: row.Name,
+				Value: row.ID,
+			})
+		}
+	}
+
+	return dto.OK(c, types.Language{
+		Id: "Entitas supplier berhasil diambil",
+		En: "Supplier entities retrieved successfully",
 	}, rows)
 }

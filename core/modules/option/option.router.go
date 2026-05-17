@@ -34,6 +34,9 @@ func ProtectedRoute(api fiber.Router) {
 	// Warehouse
 	api.Get("/warehouse-locations", WarehouseLocations)
 	// api.Get("/warehouse-products/:warehouse_location_id", WarehouseProducts)
+
+	// Supplier
+	api.Get("/supplier-entities", SupplierEntities)
 }
 
 // Omni-ERP.ID

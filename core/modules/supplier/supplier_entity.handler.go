@@ -22,12 +22,14 @@ func EntityCreate(c *fiber.Ctx) error {
 	}
 
 	var body struct {
-		Name      string  `json:"name" validate:"required"`
-		Address   string  `json:"address" validate:"required"`
-		Phone     string  `json:"phone" validate:"required"`
-		Email     string  `json:"email" validate:"required,email"`
-		Longitude float64 `json:"longitude"`
-		Latitude  float64 `json:"latitude"`
+		Name    string `json:"name" validate:"required"`
+		Address string `json:"address" validate:"required"`
+		Phone   string `json:"phone" validate:"required"`
+		Email   string `json:"email" validate:"required,email"`
+		Map     struct {
+			Longitude float64 `json:"longitude"`
+			Latitude  float64 `json:"latitude"`
+		} `json:"map"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
 		return dto.BodyBadRequest(c, err)
@@ -38,8 +40,8 @@ func EntityCreate(c *fiber.Ctx) error {
 		Address:   body.Address,
 		Phone:     body.Phone,
 		Email:     body.Email,
-		Longitude: body.Longitude,
-		Latitude:  body.Latitude,
+		Longitude: body.Map.Longitude,
+		Latitude:  body.Map.Latitude,
 		IsActive:  true,
 		CreatedBy: currentUser.ID,
 		UpdatedBy: currentUser.ID,
@@ -97,12 +99,14 @@ func EntityEdit(c *fiber.Ctx) error {
 	}
 
 	var body struct {
-		Name      string  `json:"name" validate:"required"`
-		Address   string  `json:"address" validate:"required"`
-		Phone     string  `json:"phone" validate:"required"`
-		Email     string  `json:"email" validate:"required,email"`
-		Longitude float64 `json:"longitude"`
-		Latitude  float64 `json:"latitude"`
+		Name    string `json:"name" validate:"required"`
+		Address string `json:"address" validate:"required"`
+		Phone   string `json:"phone" validate:"required"`
+		Email   string `json:"email" validate:"required,email"`
+		Map     struct {
+			Longitude float64 `json:"longitude"`
+			Latitude  float64 `json:"latitude"`
+		} `json:"map"`
 	}
 	if err := function.RequestBody(c, &body); err != nil {
 		return dto.BodyBadRequest(c, err)
@@ -120,8 +124,8 @@ func EntityEdit(c *fiber.Ctx) error {
 	entity.Address = body.Address
 	entity.Phone = body.Phone
 	entity.Email = body.Email
-	entity.Longitude = body.Longitude
-	entity.Latitude = body.Latitude
+	entity.Longitude = body.Map.Longitude
+	entity.Latitude = body.Map.Latitude
 	entity.UpdatedBy = currentUser.ID
 
 	if err := variable.Db.Save(&entity).Error; err != nil {

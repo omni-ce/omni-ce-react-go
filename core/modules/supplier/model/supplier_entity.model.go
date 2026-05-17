@@ -31,13 +31,15 @@ type SupplierEntity struct {
 
 func (s *SupplierEntity) Map() map[string]any {
 	res := map[string]any{
-		"id":         s.ID,
-		"name":       s.Name,
-		"address":    s.Address,
-		"phone":      s.Phone,
-		"email":      s.Email,
-		"longitude":  s.Longitude,
-		"latitude":   s.Latitude,
+		"id":      s.ID,
+		"name":    s.Name,
+		"address": s.Address,
+		"phone":   s.Phone,
+		"email":   s.Email,
+		"map": map[string]any{
+			"longitude": s.Longitude,
+			"latitude":  s.Latitude,
+		},
 		"is_active":  s.IsActive,
 		"created_at": s.CreatedAt,
 		"created_by": s.CreatedBy,

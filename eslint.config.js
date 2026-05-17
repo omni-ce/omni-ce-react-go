@@ -48,6 +48,7 @@ export default defineConfig([
       "@typescript-eslint/no-unnecessary-condition": "error",
       "@typescript-eslint/no-confusing-void-expression": "off",
       "@typescript-eslint/no-dynamic-delete": "off",
+      "@typescript-eslint/no-invalid-void-type": "off",
       "@typescript-eslint/restrict-template-expressions": [
         "error",
         {
