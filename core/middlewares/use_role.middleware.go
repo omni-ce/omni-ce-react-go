@@ -26,7 +26,7 @@ func UseOnlyAdmin(c *fiber.Ctx) error {
 			En: "Unauthorized",
 		}, nil)
 	}
-	if currentUser.Role != user.UserRoleAdmin {
+	if currentUser.Role != user.UserRoleSuperAdmin {
 		return dto.Forbidden(c, types.Language{
 			Id: "Anda tidak memiliki izin",
 			En: "You don't have permission",

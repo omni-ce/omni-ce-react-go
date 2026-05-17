@@ -43,7 +43,7 @@ func getUserMapWithRoles(user user.User) map[string]any {
 
 func getRules(current_user user.User) ([]map[string]any, error) {
 	rows := make([]map[string]any, 0)
-	if current_user.Role == user.UserRoleClient {
+	if current_user.Role == user.UserRoleUser {
 		roleUsers := make([]role.RoleUser, 0)
 		variable.Db.Where("user_id = ?", current_user.ID).Find(&roleUsers)
 		roleIds := make([]uint, 0)

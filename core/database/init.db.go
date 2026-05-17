@@ -6,6 +6,9 @@ import (
 	"react-go/core/environment"
 	"react-go/core/modules"
 	"react-go/core/variable"
+	"reflect"
+
+	"gorm.io/gorm"
 )
 
 func init() {
@@ -23,6 +26,19 @@ func init() {
 	}
 	log.Println("✅ Database initialized")
 
-	modules.SeedAll(variable.Db)
+	models := modules.Models()
+	for _, model := range models {
+		if s, ok := model.(interface{ Seed(*gorm.DB) }); ok {
+			model_name := reflect.TypeOf(model).Elem().Name()
+			var count int64
+			variable.Db.Model(model).Count(&count)
+			if count == 0 {
+				log.Printf("✅ %s seeded", model_name)
+				s.Seed(variable.Db)
+			} else {
+				log.Printf("⚠️  %s already seeded", model_name)
+			}
+		}
+	}
 	go keepDBAlive()
 }

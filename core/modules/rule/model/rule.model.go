@@ -1,11 +1,7 @@
 package model
 
 import (
-	"log"
-
 	role "react-go/core/modules/role/model"
-
-	"gorm.io/gorm"
 )
 
 type Rule struct {
@@ -30,35 +26,22 @@ func (s *Rule) Map() map[string]any {
 	}
 }
 
-func (Rule) Seed(db *gorm.DB) {
-	var count int64
-	db.Model(&Rule{}).Count(&count)
-
-	if count == 0 {
-		stats := []Rule{
-			{RoleID: 1, Key: "roles", Action: "read", State: true},
-			{RoleID: 1, Key: "roles", Action: "create", State: true},
-			{RoleID: 1, Key: "roles", Action: "update", State: true},
-			{RoleID: 1, Key: "roles", Action: "delete", State: true},
-			{RoleID: 1, Key: "roles", Action: "set", State: true},
-			{RoleID: 1, Key: "users", Action: "read", State: true},
-			{RoleID: 1, Key: "users", Action: "create", State: true},
-			{RoleID: 1, Key: "users", Action: "update", State: true},
-			{RoleID: 1, Key: "users", Action: "delete", State: true},
-			{RoleID: 1, Key: "users", Action: "set", State: true},
-			{RoleID: 1, Key: "master-data", Action: "read", State: true},
-			{RoleID: 1, Key: "master-data", Action: "create", State: true},
-			{RoleID: 1, Key: "master-data", Action: "update", State: true},
-			{RoleID: 1, Key: "master-data", Action: "delete", State: true},
-			{RoleID: 1, Key: "master-data", Action: "set", State: true},
-		}
-
-		for _, s := range stats {
-			db.Create(&s)
-		}
-
-		log.Println("✅ Example seeded")
-	} else {
-		log.Println("⚠️ Example already seeded")
+func (Rule) Seed() []Rule {
+	return []Rule{
+		{RoleID: 1, Key: "roles", Action: "read", State: true},
+		{RoleID: 1, Key: "roles", Action: "create", State: true},
+		{RoleID: 1, Key: "roles", Action: "update", State: true},
+		{RoleID: 1, Key: "roles", Action: "delete", State: true},
+		{RoleID: 1, Key: "roles", Action: "set", State: true},
+		{RoleID: 1, Key: "users", Action: "read", State: true},
+		{RoleID: 1, Key: "users", Action: "create", State: true},
+		{RoleID: 1, Key: "users", Action: "update", State: true},
+		{RoleID: 1, Key: "users", Action: "delete", State: true},
+		{RoleID: 1, Key: "users", Action: "set", State: true},
+		{RoleID: 1, Key: "master-data", Action: "read", State: true},
+		{RoleID: 1, Key: "master-data", Action: "create", State: true},
+		{RoleID: 1, Key: "master-data", Action: "update", State: true},
+		{RoleID: 1, Key: "master-data", Action: "delete", State: true},
+		{RoleID: 1, Key: "master-data", Action: "set", State: true},
 	}
 }

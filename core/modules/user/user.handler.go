@@ -80,7 +80,7 @@ func Create(c *fiber.Ctx) error {
 			En: "Unauthorized",
 		}, nil)
 	}
-	if currentUser.Role != model.UserRoleAdmin {
+	if currentUser.Role != model.UserRoleSuperAdmin {
 		return dto.Forbidden(c, types.Language{
 			Id: "Hanya super admin yang bisa membuat user",
 			En: "Only super admin can create users",
@@ -142,7 +142,7 @@ func Create(c *fiber.Ctx) error {
 		Username:        strings.TrimSpace(body.Username),
 		Password:        hash.Password(body.Password),
 		Address:         strings.TrimSpace(body.Address),
-		Role:            model.UserRoleClient,
+		Role:            model.UserRoleUser,
 		CreatedByUserID: currentUser.ID,
 		UpdatedByUserID: currentUser.ID,
 	}
@@ -191,7 +191,7 @@ func Create(c *fiber.Ctx) error {
 func Paginate(c *fiber.Ctx) error {
 	users := make([]model.User, 0)
 	pagination, err := function.Pagination(c, &model.User{}, func(query *gorm.DB) *gorm.DB {
-		return query.Where("role = ?", model.UserRoleClient)
+		return query.Where("role = ?", model.UserRoleUser)
 	}, []string{"name", "username", "role"}, &users)
 	if err != nil {
 		return dto.InternalServerError(c, types.Language{
@@ -490,7 +490,7 @@ func Remove(c *fiber.Ctx) error {
 			En: "Unauthorized",
 		}, nil)
 	}
-	if currentUser.Role != model.UserRoleAdmin {
+	if currentUser.Role != model.UserRoleSuperAdmin {
 		return dto.Forbidden(c, types.Language{
 			Id: "Hanya super admin yang bisa menghapus user",
 			En: "Only super admin can delete users",
@@ -529,7 +529,7 @@ func BulkRemove(c *fiber.Ctx) error {
 			En: "Unauthorized",
 		}, nil)
 	}
-	if currentUser.Role != model.UserRoleAdmin {
+	if currentUser.Role != model.UserRoleSuperAdmin {
 		return dto.Forbidden(c, types.Language{
 			Id: "Hanya super admin yang bisa menghapus user",
 			En: "Only super admin can delete users",
@@ -556,7 +556,7 @@ func BulkRemove(c *fiber.Ctx) error {
 		}
 		var user model.User
 		if err := variable.Db.
-			Where("id = ? AND role = ?", id.String(), model.UserRoleClient).
+			Where("id = ? AND role = ?", id.String(), model.UserRoleUser).
 			First(&user).
 			Error; err != nil {
 			continue
@@ -606,7 +606,7 @@ func SetActive(c *fiber.Ctx) error {
 			En: "Unauthorized",
 		}, nil)
 	}
-	if currentUser.Role != model.UserRoleAdmin {
+	if currentUser.Role != model.UserRoleSuperAdmin {
 		return dto.Forbidden(c, types.Language{
 			Id: "Hanya super admin yang bisa mengaktifkan/menonaktifkan user",
 			En: "Only super admin can activate/deactivate users",
@@ -731,7 +731,7 @@ func RoleSwitch(c *fiber.Ctx) error {
 			En: "Unauthorized",
 		}, nil)
 	}
-	if currentUser.Role != model.UserRoleAdmin {
+	if currentUser.Role != model.UserRoleSuperAdmin {
 		return dto.Forbidden(c, types.Language{
 			Id: "Hanya super admin yang bisa mengubah peran user",
 			En: "Only super admin can switch user roles",
@@ -748,9 +748,9 @@ func RoleSwitch(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	newRole := model.UserRoleClient
-	if strings.EqualFold(existing.Role, model.UserRoleClient) {
-		newRole = model.UserRoleAdmin
+	newRole := model.UserRoleUser
+	if strings.EqualFold(existing.Role, model.UserRoleUser) {
+		newRole = model.UserRoleSuperAdmin
 	}
 
 	if err := variable.Db.

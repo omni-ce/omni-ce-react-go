@@ -1,7 +1,6 @@
 package model
 
 import (
-	"log"
 	"time"
 
 	user "react-go/core/modules/user/model"
@@ -44,19 +43,6 @@ func (s *Example) Map() map[string]any {
 	}
 }
 
-func (Example) Seed(db *gorm.DB) {
-	var count int64
-	db.Model(&Example{}).Count(&count)
-
-	if count == 0 {
-		stats := []Example{}
-
-		for _, s := range stats {
-			db.Create(&s)
-		}
-
-		log.Println("✅ Example seeded")
-	} else {
-		log.Println("⚠️ Example already seeded")
-	}
+func (Example) Seed() []Example {
+	return []Example{}
 }

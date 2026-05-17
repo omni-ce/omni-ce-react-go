@@ -1,8 +1,6 @@
 package model
 
 import (
-	"log"
-
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -20,29 +18,7 @@ func (s *Setting) BeforeCreate(tx *gorm.DB) error {
 	return nil
 }
 
-func (Setting) Seed(db *gorm.DB) {
-	var count int64
-	db.Model(&Setting{}).Count(&count)
-
-	if count == 0 {
-		stats := []Setting{
-			{
-				Key:   "maintenance_mode",
-				Value: "false",
-			},
-		}
-
-		for _, s := range stats {
-			db.Create(&s)
-		}
-
-		log.Println("✅ Setting seeded")
-	} else {
-		log.Println("⚠️  Setting already seeded")
-	}
-}
-
-func (Setting) SeedExample() []Setting {
+func (Setting) Seed() []Setting {
 	return []Setting{
 		{
 			Key:   "maintenance_mode",

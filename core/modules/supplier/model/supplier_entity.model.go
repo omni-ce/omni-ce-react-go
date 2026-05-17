@@ -1,13 +1,11 @@
 package model
 
 import (
-	"log"
 	"time"
 
 	user "react-go/core/modules/user/model"
 
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
 type SupplierEntity struct {
@@ -57,19 +55,6 @@ func (s *SupplierEntity) Map() map[string]any {
 	return res
 }
 
-func (SupplierEntity) Seed(db *gorm.DB) {
-	var count int64
-	db.Model(&SupplierEntity{}).Count(&count)
-
-	if count == 0 {
-		stats := []SupplierEntity{}
-
-		for _, s := range stats {
-			db.Create(&s)
-		}
-
-		log.Println("✅ SupplierEntity seeded")
-	} else {
-		log.Println("⚠️ SupplierEntity already seeded")
-	}
+func (SupplierEntity) Seed() []SupplierEntity {
+	return []SupplierEntity{}
 }

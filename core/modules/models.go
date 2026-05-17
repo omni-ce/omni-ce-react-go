@@ -23,12 +23,9 @@ import (
 	warehouse "react-go/core/modules/warehouse/model"
 
 	"react-go/core/variable"
-
-	"gorm.io/gorm"
 )
 
 func init() {
-	variable.SeedAll = SeedAll
 	variable.Models = Models
 }
 
@@ -65,18 +62,4 @@ func Models() []interface{} {
 		&warehouse.WarehouseLocation{},
 		&warehouse.WarehouseProduct{},
 	}
-}
-
-func SeedAll(db *gorm.DB) {
-	if db == nil {
-		return
-	}
-	user.User{}.Seed(db)
-	setting.Setting{}.Seed(db)
-	role.RoleDivision{}.Seed(db)
-	role.Role{}.Seed(db)
-	rule.Rule{}.Seed(db)
-	master_data.Unit{}.Seed(db)
-
-	// Custom
 }

@@ -1,13 +1,11 @@
 package model
 
 import (
-	"log"
 	user "react-go/core/modules/user/model"
 	"react-go/core/types"
 	"time"
 
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
 type Role struct {
@@ -39,22 +37,9 @@ func (s *Role) Option() types.Option {
 	}
 }
 
-func (Role) Seed(db *gorm.DB) {
-	var count int64
-	db.Model(&Role{}).Count(&count)
-
-	if count == 0 {
-		roles := []Role{
-			{ID: 1, RoleDivisionID: 1, Name: "Admin", Description: "Full access"},
-			{ID: 2, RoleDivisionID: 1, Name: "Operator", Description: "Limited access"},
-		}
-
-		for _, r := range roles {
-			db.Create(&r)
-		}
-
-		log.Println("✅ Roles seeded")
-	} else {
-		log.Println("⚠️  Roles already seeded")
+func (Role) Seed() []Role {
+	return []Role{
+		{ID: 1, RoleDivisionID: 1, Name: "Admin", Description: "Full access"},
+		{ID: 2, RoleDivisionID: 1, Name: "Operator", Description: "Limited access"},
 	}
 }

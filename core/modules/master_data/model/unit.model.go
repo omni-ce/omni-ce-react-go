@@ -1,10 +1,7 @@
 package model
 
 import (
-	"log"
 	"react-go/core/types"
-
-	"gorm.io/gorm"
 )
 
 type Unit struct {
@@ -26,70 +23,57 @@ func (s *Unit) Option() types.Option {
 	}
 }
 
-func (Unit) Seed(db *gorm.DB) {
-	var count int64
-	db.Model(&Unit{}).Count(&count)
-
-	if count == 0 {
-		stats := []Unit{
-			{
-				Name:      "Kilogram",
-				ShortName: "Kg",
-				IsWeight:  true,
-			},
-			{
-				Name:      "Gram",
-				ShortName: "Gr",
-				IsWeight:  true,
-			},
-			{
-				Name:        "Liter",
-				ShortName:   "Ltr",
-				IsLiquidity: true,
-			},
-			{
-				Name:        "Milliliter",
-				ShortName:   "Ml",
-				IsLiquidity: true,
-			},
-			{
-				Name:      "Meter",
-				ShortName: "Mtr",
-				IsMeasure: true,
-			},
-			{
-				Name:      "Centimeter",
-				ShortName: "Cm",
-				IsMeasure: true,
-			},
-			{
-				Name:      "Pcs",
-				ShortName: "Pcs",
-				IsCount:   true,
-			},
-			{
-				Name:      "Unit",
-				ShortName: "Unit",
-				IsCount:   true,
-			},
-			{
-				Name:      "Pair",
-				ShortName: "Pair",
-				IsCount:   true,
-			},
-			{
-				Name:      "Box",
-				ShortName: "Box",
-				IsCount:   true,
-			},
-		}
-
-		for _, s := range stats {
-			db.Create(&s)
-		}
-
-		log.Println("✅ Example seeded")
-	} else {
-		log.Println("⚠️ Example already seeded")
+func (Unit) Seed() []Unit {
+	return []Unit{
+		{
+			Name:      "Kilogram",
+			ShortName: "Kg",
+			IsWeight:  true,
+		},
+		{
+			Name:      "Gram",
+			ShortName: "Gr",
+			IsWeight:  true,
+		},
+		{
+			Name:        "Liter",
+			ShortName:   "Ltr",
+			IsLiquidity: true,
+		},
+		{
+			Name:        "Milliliter",
+			ShortName:   "Ml",
+			IsLiquidity: true,
+		},
+		{
+			Name:      "Meter",
+			ShortName: "Mtr",
+			IsMeasure: true,
+		},
+		{
+			Name:      "Centimeter",
+			ShortName: "Cm",
+			IsMeasure: true,
+		},
+		{
+			Name:      "Pcs",
+			ShortName: "Pcs",
+			IsCount:   true,
+		},
+		{
+			Name:      "Unit",
+			ShortName: "Unit",
+			IsCount:   true,
+		},
+		{
+			Name:      "Pair",
+			ShortName: "Pair",
+			IsCount:   true,
+		},
+		{
+			Name:      "Box",
+			ShortName: "Box",
+			IsCount:   true,
+		},
 	}
 }

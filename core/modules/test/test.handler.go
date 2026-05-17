@@ -127,11 +127,6 @@ func ApocalypseTables(c *fiber.Ctx) error {
 		}
 	}
 
-	// Seed kembali data seperti data awal
-	if variable.SeedAll != nil {
-		variable.SeedAll(variable.Db)
-	}
-
 	log.Println("✅ All tables truncated from Test Handler")
 	return c.JSON(fiber.Map{
 		"message": "OK",

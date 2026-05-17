@@ -1,7 +1,6 @@
 package model
 
 import (
-	"log"
 	"react-go/core/function/hash"
 	"react-go/core/types"
 	"time"
@@ -11,8 +10,8 @@ import (
 )
 
 const (
-	UserRoleAdmin  = "su"
-	UserRoleClient = "user"
+	UserRoleSuperAdmin = "su"
+	UserRoleUser       = "user"
 )
 
 type User struct {
@@ -68,30 +67,18 @@ func (s *User) Option() types.Option {
 	}
 }
 
-func (User) Seed(db *gorm.DB) {
-	var count int64
-	db.Model(&User{}).Count(&count)
-
-	if count == 0 {
-		adminId, _ := uuid.NewV7()
-		stats := []User{
-			{
-				ID:       adminId,
-				Name:     "Admin",
-				Username: "admin",
-				Password: hash.Password("Admin@123"),
-				Role:     UserRoleAdmin,
-			},
-		}
-
-		for _, s := range stats {
-			s.CreatedByUserID = s.ID
-			s.UpdatedByUserID = s.ID
-			db.Create(&s)
-		}
-
-		log.Println("✅ Users seeded")
-	} else {
-		log.Println("⚠️  Users already seeded")
+func (User) Seed() []User {
+	adminId, _ := uuid.NewV7()
+	users := []User{
+		{
+			ID:              adminId,
+			Name:            "Super Admin",
+			Username:        "super_admin",
+			Password:        hash.Password("SuperAdmin@123"),
+			Role:            UserRoleSuperAdmin,
+			CreatedByUserID: adminId,
+			UpdatedByUserID: adminId,
+		},
 	}
+	return users
 }
