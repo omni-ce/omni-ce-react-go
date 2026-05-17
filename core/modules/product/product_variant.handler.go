@@ -3,7 +3,7 @@ package product
 import (
 	"react-go/core/dto"
 	"react-go/core/function"
-	"react-go/core/modules/product/model"
+	product "react-go/core/modules/product/model"
 	"react-go/core/types"
 	"react-go/core/variable"
 	"strconv"
@@ -51,7 +51,7 @@ func VariantCreate(c *fiber.Ctx) error {
 	key := generateKeyFromName(body.Name)
 
 	// Check duplicate key
-	var existing model.ProductVariant
+	var existing product.ProductVariant
 	if err := variable.Db.
 		Where("`key` = ?", key).
 		First(&existing).
@@ -62,7 +62,7 @@ func VariantCreate(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	variant := model.ProductVariant{
+	variant := product.ProductVariant{
 		TypeID:      uint(typeID),
 		BrandID:     uint(brandID),
 		Key:         key,
@@ -97,8 +97,8 @@ func VariantCreate(c *fiber.Ctx) error {
 }
 
 func VariantPaginate(c *fiber.Ctx) error {
-	variants := make([]model.ProductVariant, 0)
-	pagination, err := function.Pagination(c, &model.ProductVariant{}, func(db *gorm.DB) *gorm.DB {
+	variants := make([]product.ProductVariant, 0)
+	pagination, err := function.Pagination(c, &product.ProductVariant{}, func(db *gorm.DB) *gorm.DB {
 		return db.Preload("Type").Preload("Brand")
 	}, []string{"name", "key"}, &variants)
 	if err != nil {
@@ -112,7 +112,7 @@ func VariantPaginate(c *fiber.Ctx) error {
 	for _, row := range variants {
 		typeIds = append(typeIds, row.TypeID)
 	}
-	_types := make([]model.ProductType, 0)
+	_types := make([]product.ProductType, 0)
 	if err := variable.Db.
 		Where("id IN ?", typeIds).
 		Find(&_types).
@@ -122,7 +122,7 @@ func VariantPaginate(c *fiber.Ctx) error {
 			En: "Failed to get types",
 		}, nil)
 	}
-	typeMap := make(map[uint]model.ProductType)
+	typeMap := make(map[uint]product.ProductType)
 	for _, t := range _types {
 		typeMap[t.ID] = t
 	}
@@ -131,7 +131,7 @@ func VariantPaginate(c *fiber.Ctx) error {
 	for _, row := range variants {
 		categoryIds = append(categoryIds, typeMap[row.TypeID].CategoryID)
 	}
-	categories := make([]model.ProductCategory, 0)
+	categories := make([]product.ProductCategory, 0)
 	if err := variable.Db.
 		Where("id IN ?", categoryIds).
 		Find(&categories).
@@ -141,7 +141,7 @@ func VariantPaginate(c *fiber.Ctx) error {
 			En: "Failed to get categories",
 		}, nil)
 	}
-	categoryMap := make(map[uint]model.ProductCategory)
+	categoryMap := make(map[uint]product.ProductCategory)
 	for _, t := range categories {
 		categoryMap[t.ID] = t
 	}
@@ -187,7 +187,7 @@ func VariantEdit(c *fiber.Ctx) error {
 		return dto.BodyBadRequest(c, err)
 	}
 
-	var existing model.ProductVariant
+	var existing product.ProductVariant
 	if err := variable.Db.
 		First(&existing, "id = ?", id).
 		Error; err != nil {
@@ -201,7 +201,7 @@ func VariantEdit(c *fiber.Ctx) error {
 
 	// Check duplicate key if changed
 	if key != existing.Key {
-		var dup model.ProductVariant
+		var dup product.ProductVariant
 		if err := variable.Db.
 			Where("`key` = ? AND id != ?", key, id).
 			First(&dup).
@@ -247,7 +247,7 @@ func VariantRemove(c *fiber.Ctx) error {
 	id := c.Params("id")
 
 	if err := variable.Db.
-		Delete(&model.ProductVariant{}, "id = ?", id).
+		Delete(&product.ProductVariant{}, "id = ?", id).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus variant",
@@ -270,7 +270,7 @@ func VariantBulkRemove(c *fiber.Ctx) error {
 	}
 
 	if err := variable.Db.
-		Delete(&model.ProductVariant{}, "id IN ?", body.IDs).
+		Delete(&product.ProductVariant{}, "id IN ?", body.IDs).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus variant",
@@ -287,7 +287,7 @@ func VariantBulkRemove(c *fiber.Ctx) error {
 func VariantSetActive(c *fiber.Ctx) error {
 	id := c.Params("id")
 
-	var existing model.ProductVariant
+	var existing product.ProductVariant
 	if err := variable.Db.
 		First(&existing, "id = ?", id).
 		Error; err != nil {

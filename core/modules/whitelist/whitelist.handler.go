@@ -3,7 +3,7 @@ package whitelist
 import (
 	"react-go/core/dto"
 	"react-go/core/function"
-	model "react-go/core/modules/whitelist/model"
+	whitelist "react-go/core/modules/whitelist/model"
 	"react-go/core/types"
 	"react-go/core/variable"
 	"strings"
@@ -12,7 +12,7 @@ import (
 )
 
 func GetAll(c *fiber.Ctx) error {
-	entries := make([]model.Whitelist, 0)
+	entries := make([]whitelist.Whitelist, 0)
 	if err := variable.Db.
 		Order("created_at DESC").
 		Find(&entries).
@@ -52,7 +52,7 @@ func Create(c *fiber.Ctx) error {
 	}
 
 	// Check if value already exists
-	var existing model.Whitelist
+	var existing whitelist.Whitelist
 	if err := variable.Db.
 		Where("value = ?", body.Value).
 		First(&existing).
@@ -63,7 +63,7 @@ func Create(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	entry := model.Whitelist{
+	entry := whitelist.Whitelist{
 		Type:  body.Type,
 		Value: body.Value,
 		Label: body.Label,
@@ -99,7 +99,7 @@ func Delete(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	var entry model.Whitelist
+	var entry whitelist.Whitelist
 	if err := variable.Db.
 		Where("id = ?", id).
 		First(&entry).

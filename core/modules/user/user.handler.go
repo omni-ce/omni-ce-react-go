@@ -9,7 +9,7 @@ import (
 	"react-go/core/function/hash"
 	notification "react-go/core/modules/notification/model"
 	role "react-go/core/modules/role/model"
-	model "react-go/core/modules/user/model"
+	user "react-go/core/modules/user/model"
 	"react-go/core/sse"
 	"react-go/core/types"
 	"react-go/core/variable"
@@ -80,7 +80,7 @@ func Create(c *fiber.Ctx) error {
 			En: "Unauthorized",
 		}, nil)
 	}
-	if currentUser.Role != model.UserRoleSuperAdmin {
+	if currentUser.Role != user.UserRoleSuperAdmin {
 		return dto.Forbidden(c, types.Language{
 			Id: "Hanya super admin yang bisa membuat user",
 			En: "Only super admin can create users",
@@ -125,7 +125,7 @@ func Create(c *fiber.Ctx) error {
 	}
 
 	// Check duplicate username
-	var existing model.User
+	var existing user.User
 	if err := variable.Db.
 		Where("username = ?", body.Username).
 		First(&existing).
@@ -136,13 +136,13 @@ func Create(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	user := model.User{
+	user := user.User{
 		Avatar:          body.Avatar,
 		Name:            strings.TrimSpace(body.Name),
 		Username:        strings.TrimSpace(body.Username),
 		Password:        hash.Password(body.Password),
 		Address:         strings.TrimSpace(body.Address),
-		Role:            model.UserRoleUser,
+		Role:            user.UserRoleUser,
 		CreatedByUserID: currentUser.ID,
 		UpdatedByUserID: currentUser.ID,
 	}
@@ -189,9 +189,9 @@ func Create(c *fiber.Ctx) error {
 }
 
 func Paginate(c *fiber.Ctx) error {
-	users := make([]model.User, 0)
-	pagination, err := function.Pagination(c, &model.User{}, func(query *gorm.DB) *gorm.DB {
-		return query.Where("role = ?", model.UserRoleUser)
+	users := make([]user.User, 0)
+	pagination, err := function.Pagination(c, &user.User{}, func(query *gorm.DB) *gorm.DB {
+		return query.Where("role = ?", user.UserRoleUser)
 	}, []string{"name", "username", "role"}, &users)
 	if err != nil {
 		return dto.InternalServerError(c, types.Language{
@@ -357,7 +357,7 @@ func Edit(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	var existing model.User
+	var existing user.User
 	if err := variable.Db.
 		First(&existing, "id = ?", id.String()).
 		Error; err != nil {
@@ -377,7 +377,7 @@ func Edit(c *fiber.Ctx) error {
 	username := strings.TrimSpace(body.Username)
 	if username != "" && username != existing.Username {
 		// Check duplicate username
-		var dup model.User
+		var dup user.User
 		if err := variable.Db.
 			Where("username = ? AND id != ?", username, id.String()).
 			First(&dup).
@@ -490,7 +490,7 @@ func Remove(c *fiber.Ctx) error {
 			En: "Unauthorized",
 		}, nil)
 	}
-	if currentUser.Role != model.UserRoleSuperAdmin {
+	if currentUser.Role != user.UserRoleSuperAdmin {
 		return dto.Forbidden(c, types.Language{
 			Id: "Hanya super admin yang bisa menghapus user",
 			En: "Only super admin can delete users",
@@ -506,7 +506,7 @@ func Remove(c *fiber.Ctx) error {
 	}
 
 	if err = variable.Db.
-		Delete(&model.User{}, "id = ?", id.String()).
+		Delete(&user.User{}, "id = ?", id.String()).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus user",
@@ -529,7 +529,7 @@ func BulkRemove(c *fiber.Ctx) error {
 			En: "Unauthorized",
 		}, nil)
 	}
-	if currentUser.Role != model.UserRoleSuperAdmin {
+	if currentUser.Role != user.UserRoleSuperAdmin {
 		return dto.Forbidden(c, types.Language{
 			Id: "Hanya super admin yang bisa menghapus user",
 			En: "Only super admin can delete users",
@@ -554,10 +554,10 @@ func BulkRemove(c *fiber.Ctx) error {
 		if id.String() == currentUser.ID.String() {
 			continue
 		}
-		var user model.User
+		var checkUser user.User
 		if err := variable.Db.
-			Where("id = ? AND role = ?", id.String(), model.UserRoleUser).
-			First(&user).
+			Where("id = ? AND role = ?", id.String(), user.UserRoleUser).
+			First(&checkUser).
 			Error; err != nil {
 			continue
 		}
@@ -572,7 +572,7 @@ func BulkRemove(c *fiber.Ctx) error {
 	}
 
 	if err := variable.Db.
-		Delete(&model.User{}, "id IN ?", validIDs).
+		Delete(&user.User{}, "id IN ?", validIDs).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus user",
@@ -606,14 +606,14 @@ func SetActive(c *fiber.Ctx) error {
 			En: "Unauthorized",
 		}, nil)
 	}
-	if currentUser.Role != model.UserRoleSuperAdmin {
+	if currentUser.Role != user.UserRoleSuperAdmin {
 		return dto.Forbidden(c, types.Language{
 			Id: "Hanya super admin yang bisa mengaktifkan/menonaktifkan user",
 			En: "Only super admin can activate/deactivate users",
 		}, nil)
 	}
 
-	var existing model.User
+	var existing user.User
 	if err := variable.Db.
 		First(&existing, "id = ?", id.String()).
 		Error; err != nil {
@@ -669,7 +669,7 @@ func ChangePasswordFromUser(c *fiber.Ctx) error {
 		return dto.BodyBadRequest(c, err)
 	}
 
-	var currentUser model.User
+	var currentUser user.User
 	if err := variable.Db.
 		Where("id = ?", id.String()).
 		First(&currentUser).
@@ -731,14 +731,14 @@ func RoleSwitch(c *fiber.Ctx) error {
 			En: "Unauthorized",
 		}, nil)
 	}
-	if currentUser.Role != model.UserRoleSuperAdmin {
+	if currentUser.Role != user.UserRoleSuperAdmin {
 		return dto.Forbidden(c, types.Language{
 			Id: "Hanya super admin yang bisa mengubah peran user",
 			En: "Only super admin can switch user roles",
 		}, nil)
 	}
 
-	var existing model.User
+	var existing user.User
 	if err := variable.Db.
 		First(&existing, "id = ?", id.String()).
 		Error; err != nil {
@@ -748,9 +748,9 @@ func RoleSwitch(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	newRole := model.UserRoleUser
-	if strings.EqualFold(existing.Role, model.UserRoleUser) {
-		newRole = model.UserRoleSuperAdmin
+	newRole := user.UserRoleUser
+	if strings.EqualFold(existing.Role, user.UserRoleUser) {
+		newRole = user.UserRoleSuperAdmin
 	}
 
 	if err := variable.Db.
@@ -808,7 +808,7 @@ func UpdateProfile(c *fiber.Ctx) error {
 	username := strings.TrimSpace(body.Username)
 	if username != "" {
 		if username != existing.Username {
-			var check_user model.User
+			var check_user user.User
 			if err := variable.Db.
 				Where("username = ?", username).
 				First(&check_user).

@@ -3,7 +3,7 @@ package apikey
 import (
 	"react-go/core/dto"
 	"react-go/core/function"
-	model "react-go/core/modules/apikey/model"
+	apikey "react-go/core/modules/apikey/model"
 	"react-go/core/types"
 	"react-go/core/variable"
 	"strings"
@@ -13,7 +13,7 @@ import (
 )
 
 func GetAll(c *fiber.Ctx) error {
-	keys := make([]model.ApiKey, 0)
+	keys := make([]apikey.ApiKey, 0)
 	if err := variable.Db.
 		Order("created_at DESC").
 		Find(&keys).
@@ -48,7 +48,7 @@ func Create(c *fiber.Ctx) error {
 		return dto.BodyBadRequest(c, err)
 	}
 
-	entry := model.ApiKey{
+	entry := apikey.ApiKey{
 		Name:      body.Name,
 		CreatedBy: currentUser.ID,
 		UpdatedBy: currentUser.ID,
@@ -106,7 +106,7 @@ func Toggle(c *fiber.Ctx) error {
 		return dto.BodyBadRequest(c, err)
 	}
 
-	var entry model.ApiKey
+	var entry apikey.ApiKey
 	if err := variable.Db.
 		Where("id = ?", id).
 		First(&entry).
@@ -143,7 +143,7 @@ func Delete(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	var entry model.ApiKey
+	var entry apikey.ApiKey
 	if err := variable.Db.
 		Where("id = ?", id).
 		First(&entry).

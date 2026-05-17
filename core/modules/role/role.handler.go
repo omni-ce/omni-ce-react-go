@@ -3,7 +3,7 @@ package role
 import (
 	"react-go/core/dto"
 	"react-go/core/function"
-	model "react-go/core/modules/role/model"
+	role "react-go/core/modules/role/model"
 	rule "react-go/core/modules/rule/model"
 	"react-go/core/types"
 	"react-go/core/variable"
@@ -14,7 +14,7 @@ import (
 )
 
 func GetAll(c *fiber.Ctx) error {
-	divisions := make([]model.RoleDivision, 0)
+	divisions := make([]role.RoleDivision, 0)
 	if err := variable.Db.
 		Order("name ASC").
 		Find(&divisions).
@@ -25,7 +25,7 @@ func GetAll(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	roles := make([]model.Role, 0)
+	roles := make([]role.Role, 0)
 	if err := variable.Db.
 		Order("name ASC").
 		Find(&roles).
@@ -99,7 +99,7 @@ func Create(c *fiber.Ctx) error {
 	}
 
 	// Check division exists
-	var division model.RoleDivision
+	var division role.RoleDivision
 	if err := variable.Db.
 		First(&division, "id = ?", body.RoleDivisionID).
 		Error; err != nil {
@@ -110,7 +110,7 @@ func Create(c *fiber.Ctx) error {
 	}
 
 	// Check duplicate
-	var existing model.Role
+	var existing role.Role
 	if err := variable.Db.
 		Where("role_division_id = ? AND name = ?", body.RoleDivisionID, body.Name).
 		First(&existing).
@@ -121,7 +121,7 @@ func Create(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	role := model.Role{
+	role := role.Role{
 		RoleDivisionID: body.RoleDivisionID,
 		Name:           body.Name,
 		Description:    body.Description,
@@ -151,8 +151,8 @@ func Create(c *fiber.Ctx) error {
 }
 
 func GetPaginate(c *fiber.Ctx) error {
-	roles := make([]model.Role, 0)
-	pagination, err := function.Pagination(c, &model.Role{}, nil, []string{"name", "description"}, &roles)
+	roles := make([]role.Role, 0)
+	pagination, err := function.Pagination(c, &role.Role{}, nil, []string{"name", "description"}, &roles)
 	if err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal mendapatkan data",
@@ -194,9 +194,9 @@ func Update(c *fiber.Ctx) error {
 		return dto.BodyBadRequest(c, err)
 	}
 
-	var role model.Role
+	var exist role.Role
 	if err := variable.Db.
-		First(&role, "id = ?", id).
+		First(&exist, "id = ?", id).
 		Error; err != nil {
 		return dto.NotFound(c, types.Language{
 			Id: "Role tidak ditemukan",
@@ -205,7 +205,7 @@ func Update(c *fiber.Ctx) error {
 	}
 
 	// Prevent renaming protected roles
-	if (role.Name == "su" || role.Name == "user") && body.Name != role.Name {
+	if (exist.Name == "su" || exist.Name == "user") && body.Name != exist.Name {
 		return dto.BadRequest(c, types.Language{
 			Id: "Tidak dapat mengubah nama role yang dilindungi",
 			En: "Cannot rename protected role",
@@ -213,7 +213,7 @@ func Update(c *fiber.Ctx) error {
 	}
 
 	// Check duplicate name (excluding self)
-	var dup model.Role
+	var dup role.Role
 	if err := variable.Db.
 		Where("name = ? AND id != ?", body.Name, id).
 		First(&dup).
@@ -224,11 +224,11 @@ func Update(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	role.Name = body.Name
-	role.Description = body.Description
-	role.UpdatedBy = currentUser.ID
+	exist.Name = body.Name
+	exist.Description = body.Description
+	exist.UpdatedBy = currentUser.ID
 	if err := variable.Db.
-		Save(&role).
+		Save(&exist).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal memperbarui role",
@@ -239,7 +239,7 @@ func Update(c *fiber.Ctx) error {
 	return dto.OK(c, types.Language{
 		Id: "Role berhasil diperbarui",
 		En: "Role updated successfully",
-	}, role)
+	}, exist)
 }
 
 func Delete(c *fiber.Ctx) error {
@@ -251,9 +251,9 @@ func Delete(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	var role model.Role
+	var exist role.Role
 	if err := variable.Db.
-		First(&role, "id = ?", id).
+		First(&exist, "id = ?", id).
 		Error; err != nil {
 		return dto.NotFound(c, types.Language{
 			Id: "Role tidak ditemukan",
@@ -267,7 +267,7 @@ func Delete(c *fiber.Ctx) error {
 		Delete(&rule.Rule{})
 
 	if err := variable.Db.
-		Delete(&role).
+		Delete(&exist).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus role",
@@ -290,9 +290,9 @@ func SetActive(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	var role model.Role
+	var exist role.Role
 	if err := variable.Db.
-		First(&role, "id = ?", id).
+		First(&exist, "id = ?", id).
 		Error; err != nil {
 		return dto.NotFound(c, types.Language{
 			Id: "Role tidak ditemukan",
@@ -300,9 +300,9 @@ func SetActive(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	newStatus := !role.IsActive
+	newStatus := !exist.IsActive
 	if err := variable.Db.
-		Model(&role).
+		Model(&exist).
 		Update("is_active", newStatus).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
@@ -333,7 +333,7 @@ func BulkDelete(c *fiber.Ctx) error {
 		Delete(&rule.Rule{})
 
 	if err := variable.Db.
-		Delete(&model.Role{}, "id IN ?", body.IDs).
+		Delete(&role.Role{}, "id IN ?", body.IDs).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus role",

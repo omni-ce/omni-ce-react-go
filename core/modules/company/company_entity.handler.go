@@ -4,7 +4,7 @@ import (
 	"react-go/core/dto"
 	"react-go/core/function"
 	"react-go/core/function/location"
-	"react-go/core/modules/company/model"
+	company "react-go/core/modules/company/model"
 	"react-go/core/types"
 	"react-go/core/variable"
 	"strings"
@@ -34,7 +34,7 @@ func EntityCreate(c *fiber.Ctx) error {
 		return dto.BodyBadRequest(c, err)
 	}
 
-	entity := model.CompanyEntity{
+	entity := company.CompanyEntity{
 		Logo:        body.Logo,
 		Name:        body.Name,
 		NpwpCode:    body.NpwpCode,
@@ -72,8 +72,8 @@ func EntityCreate(c *fiber.Ctx) error {
 }
 
 func EntityPaginate(c *fiber.Ctx) error {
-	entities := make([]model.CompanyEntity, 0)
-	pagination, err := function.Pagination(c, &model.CompanyEntity{}, nil, []string{"name", "npwp_code", "address"}, &entities)
+	entities := make([]company.CompanyEntity, 0)
+	pagination, err := function.Pagination(c, &company.CompanyEntity{}, nil, []string{"name", "npwp_code", "address"}, &entities)
 	if err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal membuat paginasi",
@@ -142,7 +142,7 @@ func EntityEdit(c *fiber.Ctx) error {
 		return dto.BodyBadRequest(c, err)
 	}
 
-	var entity model.CompanyEntity
+	var entity company.CompanyEntity
 	if err := variable.Db.
 		First(&entity, "id = ?", id).
 		Error; err != nil {
@@ -200,7 +200,7 @@ func EntityRemove(c *fiber.Ctx) error {
 	id := c.Params("id")
 
 	if err := variable.Db.
-		Delete(&model.CompanyEntity{}, "id = ?", id).
+		Delete(&company.CompanyEntity{}, "id = ?", id).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus entity",
@@ -223,7 +223,7 @@ func EntityBulkRemove(c *fiber.Ctx) error {
 	}
 
 	if err := variable.Db.
-		Delete(&model.CompanyEntity{}, "id IN ?", body.IDs).
+		Delete(&company.CompanyEntity{}, "id IN ?", body.IDs).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus entity",
@@ -249,7 +249,7 @@ func EntitySetActive(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	var entity model.CompanyEntity
+	var entity company.CompanyEntity
 	if err := variable.Db.
 		First(&entity, "id = ?", id).
 		Error; err != nil {

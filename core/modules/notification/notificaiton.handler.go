@@ -3,7 +3,7 @@ package notification
 import (
 	"react-go/core/dto"
 	"react-go/core/function"
-	model "react-go/core/modules/notification/model"
+	notification "react-go/core/modules/notification/model"
 	"react-go/core/types"
 	"react-go/core/variable"
 	"strconv"
@@ -33,7 +33,7 @@ func NextData(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	var notifications []model.Notification
+	var notifications []notification.Notification
 	query := variable.Db.Where("user_id = ?", userID).Order("id DESC").Limit(10)
 	if cursorID > 0 {
 		query = query.Where("id < ?", cursorID)
@@ -72,7 +72,7 @@ func MarkRead(c *fiber.Ctx) error {
 
 	now := time.Now()
 	if err := variable.Db.
-		Model(&model.Notification{}).
+		Model(&notification.Notification{}).
 		Where("id IN ? AND user_id = ?", body.IDs, userID).
 		Updates(map[string]interface{}{
 			"is_read": true,
@@ -109,7 +109,7 @@ func ToggleRead(c *fiber.Ctx) error {
 		return dto.BodyBadRequest(c, err)
 	}
 
-	var notif model.Notification
+	var notif notification.Notification
 	if err := variable.Db.
 		Where("id = ? AND user_id = ?", body.ID, userID).
 		First(&notif).
@@ -172,9 +172,9 @@ func Delete(c *fiber.Ctx) error {
 	now := time.Now()
 
 	result := variable.Db.
-		Model(&model.Notification{}).
+		Model(&notification.Notification{}).
 		Where("id = ? AND user_id = ?", id, userID).
-		Updates(&model.Notification{DeletedAt: &now})
+		Updates(&notification.Notification{DeletedAt: &now})
 	if result.Error != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus notifikasi",
@@ -215,9 +215,9 @@ func ClearAll(c *fiber.Ctx) error {
 	now := time.Now()
 
 	if err := variable.Db.
-		Model(&model.Notification{}).
+		Model(&notification.Notification{}).
 		Where("user_id = ?", userID).
-		Updates(&model.Notification{DeletedAt: &now}).
+		Updates(&notification.Notification{DeletedAt: &now}).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus semua notifikasi",

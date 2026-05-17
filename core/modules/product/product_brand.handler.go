@@ -3,7 +3,7 @@ package product
 import (
 	"react-go/core/dto"
 	"react-go/core/function"
-	"react-go/core/modules/product/model"
+	product "react-go/core/modules/product/model"
 	"react-go/core/types"
 	"react-go/core/variable"
 	"strings"
@@ -31,7 +31,7 @@ func BrandCreate(c *fiber.Ctx) error {
 	key := generateKeyFromName(body.Name)
 
 	// Check duplicate key
-	var existing model.ProductBrand
+	var existing product.ProductBrand
 	if err := variable.Db.
 		Where("`key` = ?", key).
 		First(&existing).
@@ -42,7 +42,7 @@ func BrandCreate(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	brand := model.ProductBrand{
+	brand := product.ProductBrand{
 		Key:       key,
 		Logo:      body.Logo,
 		Name:      body.Name,
@@ -75,8 +75,8 @@ func BrandCreate(c *fiber.Ctx) error {
 }
 
 func BrandPaginate(c *fiber.Ctx) error {
-	var categories []model.ProductBrand
-	pagination, err := function.Pagination(c, &model.ProductBrand{}, nil, []string{"name", "key"}, &categories)
+	var categories []product.ProductBrand
+	pagination, err := function.Pagination(c, &product.ProductBrand{}, nil, []string{"name", "key"}, &categories)
 	if err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menyiapkan paginasi",
@@ -116,7 +116,7 @@ func BrandEdit(c *fiber.Ctx) error {
 		return dto.BodyBadRequest(c, err)
 	}
 
-	var existing model.ProductBrand
+	var existing product.ProductBrand
 	if err := variable.Db.
 		First(&existing, "id = ?", id).
 		Error; err != nil {
@@ -130,7 +130,7 @@ func BrandEdit(c *fiber.Ctx) error {
 
 	// Check duplicate key if changed
 	if key != existing.Key {
-		var dup model.ProductBrand
+		var dup product.ProductBrand
 		if err := variable.Db.
 			Where("`key` = ? AND id != ?", key, id).
 			First(&dup).
@@ -170,7 +170,7 @@ func BrandRemove(c *fiber.Ctx) error {
 	id := c.Params("id")
 
 	if err := variable.Db.
-		Delete(&model.ProductBrand{}, "id = ?", id).
+		Delete(&product.ProductBrand{}, "id = ?", id).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus brand",
@@ -193,7 +193,7 @@ func BrandBulkRemove(c *fiber.Ctx) error {
 	}
 
 	if err := variable.Db.
-		Delete(&model.ProductBrand{}, "id IN ?", body.IDs).
+		Delete(&product.ProductBrand{}, "id IN ?", body.IDs).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus brand",
@@ -210,7 +210,7 @@ func BrandBulkRemove(c *fiber.Ctx) error {
 func BrandSetActive(c *fiber.Ctx) error {
 	id := c.Params("id")
 
-	var existing model.ProductBrand
+	var existing product.ProductBrand
 	if err := variable.Db.
 		First(&existing, "id = ?", id).
 		Error; err != nil {

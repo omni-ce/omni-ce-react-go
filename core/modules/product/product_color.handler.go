@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"react-go/core/dto"
 	"react-go/core/function"
-	"react-go/core/modules/product/model"
+	product "react-go/core/modules/product/model"
 	"react-go/core/types"
 	"react-go/core/variable"
 	"strings"
@@ -32,7 +32,7 @@ func ColorCreate(c *fiber.Ctx) error {
 	key := generateKeyFromName(body.Name)
 
 	// Check duplicate key
-	var existing model.ProductColor
+	var existing product.ProductColor
 	if err := variable.Db.
 		Where("`key` = ?", key).
 		First(&existing).
@@ -43,7 +43,7 @@ func ColorCreate(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	color := model.ProductColor{
+	color := product.ProductColor{
 		Key:       key,
 		Name:      body.Name,
 		HexCode:   body.HexCode,
@@ -76,8 +76,8 @@ func ColorCreate(c *fiber.Ctx) error {
 }
 
 func ColorPaginate(c *fiber.Ctx) error {
-	var categories []model.ProductColor
-	pagination, err := function.Pagination(c, &model.ProductColor{}, nil, []string{"name", "key"}, &categories)
+	var categories []product.ProductColor
+	pagination, err := function.Pagination(c, &product.ProductColor{}, nil, []string{"name", "key"}, &categories)
 	if err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menyiapkan paginasi",
@@ -117,7 +117,7 @@ func ColorEdit(c *fiber.Ctx) error {
 		return dto.BodyBadRequest(c, err)
 	}
 
-	var existing model.ProductColor
+	var existing product.ProductColor
 	if err := variable.Db.
 		First(&existing, "id = ?", id).
 		Error; err != nil {
@@ -131,7 +131,7 @@ func ColorEdit(c *fiber.Ctx) error {
 
 	// Check duplicate key if changed
 	if key != existing.Key {
-		var dup model.ProductColor
+		var dup product.ProductColor
 		if err := variable.Db.
 			Where("`key` = ? AND id != ?", key, id).
 			First(&dup).
@@ -171,7 +171,7 @@ func ColorRemove(c *fiber.Ctx) error {
 	id := c.Params("id")
 
 	if err := variable.Db.
-		Delete(&model.ProductColor{}, "id = ?", id).
+		Delete(&product.ProductColor{}, "id = ?", id).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus warna",
@@ -194,7 +194,7 @@ func ColorBulkRemove(c *fiber.Ctx) error {
 	}
 
 	if err := variable.Db.
-		Delete(&model.ProductColor{}, "id IN ?", body.IDs).
+		Delete(&product.ProductColor{}, "id IN ?", body.IDs).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus warna",

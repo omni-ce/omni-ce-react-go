@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"react-go/core/dto"
 	"react-go/core/function"
-	"react-go/core/modules/product/model"
+	product "react-go/core/modules/product/model"
 	"react-go/core/types"
 	"react-go/core/variable"
 	"strconv"
@@ -95,7 +95,7 @@ func ItemCreate(c *fiber.Ctx) error {
 
 	names := make([]string, 0)
 
-	var category model.ProductCategory
+	var category product.ProductCategory
 	if err := variable.Db.
 		First(&category, "id = ?", body.CategoryID).
 		Error; err != nil {
@@ -105,7 +105,7 @@ func ItemCreate(c *fiber.Ctx) error {
 		}, nil)
 	}
 	names = append(names, category.Name)
-	var _type model.ProductType
+	var _type product.ProductType
 	if err := variable.Db.
 		First(&_type, "id = ?", body.TypeID).
 		Error; err != nil {
@@ -115,7 +115,7 @@ func ItemCreate(c *fiber.Ctx) error {
 		}, nil)
 	}
 	names = append(names, _type.Name)
-	var brand model.ProductBrand
+	var brand product.ProductBrand
 	if err := variable.Db.
 		First(&brand, "id = ?", body.BrandID).
 		Error; err != nil {
@@ -125,7 +125,7 @@ func ItemCreate(c *fiber.Ctx) error {
 		}, nil)
 	}
 	names = append(names, brand.Name)
-	var variant model.ProductVariant
+	var variant product.ProductVariant
 	if err := variable.Db.
 		First(&variant, "id = ?", body.VariantID).
 		Error; err != nil {
@@ -141,7 +141,7 @@ func ItemCreate(c *fiber.Ctx) error {
 		if mid, err := strconv.Atoi(body.MemoryID); err == nil {
 			uMid := uint(mid)
 			memoryID = &uMid
-			var memory model.ProductMemory
+			var memory product.ProductMemory
 			if err := variable.Db.
 				First(&memory, "id = ?", body.MemoryID).
 				Error; err != nil {
@@ -158,7 +158,7 @@ func ItemCreate(c *fiber.Ctx) error {
 		if mid, err := strconv.Atoi(body.ColorID); err == nil {
 			uMid := uint(mid)
 			colorID = &uMid
-			var color model.ProductColor
+			var color product.ProductColor
 			if err := variable.Db.
 				First(&color, "id = ?", body.ColorID).
 				Error; err != nil {
@@ -171,7 +171,7 @@ func ItemCreate(c *fiber.Ctx) error {
 		}
 	}
 
-	var condition model.ProductCondition
+	var condition product.ProductCondition
 	if err := variable.Db.
 		First(&condition, "id = ?", body.ConditionID).
 		Error; err != nil {
@@ -195,7 +195,7 @@ func ItemCreate(c *fiber.Ctx) error {
 	key := generateKeyFromName(names...)
 
 	// Check duplicate SKU
-	var existing model.ProductItem
+	var existing product.ProductItem
 	if err := variable.Db.
 		Session(&gorm.Session{Logger: logger.Default.LogMode(logger.Silent)}). // silent mode to avoid noise
 		Where("sku = ?", body.SKU).
@@ -207,7 +207,7 @@ func ItemCreate(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	item := model.ProductItem{
+	item := product.ProductItem{
 		Key:          key,
 		CategoryID:   uint(categoryID),
 		TypeID:       uint(typeID),
@@ -254,10 +254,10 @@ func ItemPaginate(c *fiber.Ctx) error {
 	col_brand_name := c.Query("col_brand_name")
 	col_variant_name := c.Query("col_variant_name")
 
-	items := make([]model.ProductItem, 0)
+	items := make([]product.ProductItem, 0)
 
 	// Buat query dasar dengan Preload untuk data dan Joins untuk filter
-	query := variable.Db.Model(&model.ProductItem{}).
+	query := variable.Db.Model(&product.ProductItem{}).
 		Preload("Category").
 		Preload("Type").
 		Preload("Brand").
@@ -291,7 +291,7 @@ func ItemPaginate(c *fiber.Ctx) error {
 	}
 
 	// Gunakan PaginationScoped agar Count menyertakan filter Join & Where di atas
-	pagination, err := function.PaginationScoped(c, query, &model.ProductItem{}, []string{}, &items)
+	pagination, err := function.PaginationScoped(c, query, &product.ProductItem{}, []string{}, &items)
 
 	if err != nil {
 		return dto.InternalServerError(c, types.Language{
@@ -370,7 +370,7 @@ func ItemEdit(c *fiber.Ctx) error {
 		return dto.BodyBadRequest(c, err)
 	}
 
-	var existing model.ProductItem
+	var existing product.ProductItem
 	if err := variable.Db.
 		First(&existing, "id = ?", id).
 		Error; err != nil {
@@ -382,7 +382,7 @@ func ItemEdit(c *fiber.Ctx) error {
 
 	// Check duplicate SKU if changed
 	if body.SKU != existing.SKU {
-		var dup model.ProductItem
+		var dup product.ProductItem
 		if err := variable.Db.
 			Where("sku = ? AND id != ?", body.SKU, id).
 			First(&dup).
@@ -459,32 +459,32 @@ func ItemEdit(c *fiber.Ctx) error {
 
 	// Regenerate Key
 	keyNames := make([]string, 0)
-	var cat model.ProductCategory
+	var cat product.ProductCategory
 	if err := variable.Db.
 		First(&cat, existing.CategoryID).
 		Error; err == nil {
 		keyNames = append(keyNames, cat.Name)
 	}
-	var typ model.ProductType
+	var typ product.ProductType
 	if err := variable.Db.
 		First(&typ, existing.TypeID).
 		Error; err == nil {
 		keyNames = append(keyNames, typ.Name)
 	}
-	var brnd model.ProductBrand
+	var brnd product.ProductBrand
 	if err := variable.Db.
 		First(&brnd, existing.BrandID).
 		Error; err == nil {
 		keyNames = append(keyNames, brnd.Name)
 	}
-	var vrnt model.ProductVariant
+	var vrnt product.ProductVariant
 	if err := variable.Db.
 		First(&vrnt, existing.VariantID).
 		Error; err == nil {
 		keyNames = append(keyNames, vrnt.Name)
 	}
 	if existing.MemoryID != nil {
-		var mem model.ProductMemory
+		var mem product.ProductMemory
 		if err := variable.Db.
 			First(&mem, *existing.MemoryID).
 			Error; err == nil {
@@ -492,14 +492,14 @@ func ItemEdit(c *fiber.Ctx) error {
 		}
 	}
 	if existing.ColorID != nil {
-		var clr model.ProductColor
+		var clr product.ProductColor
 		if err := variable.Db.
 			First(&clr, *existing.ColorID).
 			Error; err == nil {
 			keyNames = append(keyNames, clr.Name)
 		}
 	}
-	var con model.ProductCondition
+	var con product.ProductCondition
 	if err := variable.Db.
 		First(&con, existing.ConditionID).
 		Error; err == nil {
@@ -528,7 +528,7 @@ func ItemRemove(c *fiber.Ctx) error {
 	id := c.Params("id")
 
 	if err := variable.Db.
-		Delete(&model.ProductItem{}, "id = ?", id).
+		Delete(&product.ProductItem{}, "id = ?", id).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus item",
@@ -551,7 +551,7 @@ func ItemBulkRemove(c *fiber.Ctx) error {
 	}
 
 	if err := variable.Db.
-		Delete(&model.ProductItem{}, "id IN ?", body.IDs).
+		Delete(&product.ProductItem{}, "id IN ?", body.IDs).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus item",

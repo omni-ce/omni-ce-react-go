@@ -3,7 +3,7 @@ package product
 import (
 	"react-go/core/dto"
 	"react-go/core/function"
-	"react-go/core/modules/product/model"
+	product "react-go/core/modules/product/model"
 	"react-go/core/types"
 	"react-go/core/variable"
 	"strconv"
@@ -41,7 +41,7 @@ func TypeCreate(c *fiber.Ctx) error {
 	key := generateKeyFromName(body.Name)
 
 	// Check duplicate key
-	var existing model.ProductType
+	var existing product.ProductType
 	if err := variable.Db.
 		Where("`key` = ?", key).
 		First(&existing).
@@ -52,7 +52,7 @@ func TypeCreate(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	_type := model.ProductType{
+	_type := product.ProductType{
 		CategoryID: uint(categoryID),
 		Key:        key,
 		Name:       body.Name,
@@ -85,8 +85,8 @@ func TypeCreate(c *fiber.Ctx) error {
 }
 
 func TypePaginate(c *fiber.Ctx) error {
-	_types := make([]model.ProductType, 0)
-	pagination, err := function.Pagination(c, &model.ProductType{}, func(db *gorm.DB) *gorm.DB {
+	_types := make([]product.ProductType, 0)
+	pagination, err := function.Pagination(c, &product.ProductType{}, func(db *gorm.DB) *gorm.DB {
 		return db.Preload("Category")
 	}, []string{"name", "key"}, &_types)
 	if err != nil {
@@ -131,7 +131,7 @@ func TypeEdit(c *fiber.Ctx) error {
 		return dto.BodyBadRequest(c, err)
 	}
 
-	var existing model.ProductType
+	var existing product.ProductType
 	if err := variable.Db.
 		First(&existing, "id = ?", id).
 		Error; err != nil {
@@ -145,7 +145,7 @@ func TypeEdit(c *fiber.Ctx) error {
 
 	// Check duplicate key if changed
 	if key != existing.Key {
-		var dup model.ProductType
+		var dup product.ProductType
 		if err := variable.Db.
 			Where("`key` = ? AND id != ?", key, id).
 			First(&dup).
@@ -187,7 +187,7 @@ func TypeRemove(c *fiber.Ctx) error {
 	id := c.Params("id")
 
 	if err := variable.Db.
-		Delete(&model.ProductType{}, "id = ?", id).
+		Delete(&product.ProductType{}, "id = ?", id).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus tipe",
@@ -210,7 +210,7 @@ func TypeBulkRemove(c *fiber.Ctx) error {
 	}
 
 	if err := variable.Db.
-		Delete(&model.ProductType{}, "id IN ?", body.IDs).
+		Delete(&product.ProductType{}, "id IN ?", body.IDs).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus tipe",
@@ -227,7 +227,7 @@ func TypeBulkRemove(c *fiber.Ctx) error {
 func TypeSetActive(c *fiber.Ctx) error {
 	id := c.Params("id")
 
-	var existing model.ProductType
+	var existing product.ProductType
 	if err := variable.Db.
 		First(&existing, "id = ?", id).
 		Error; err != nil {

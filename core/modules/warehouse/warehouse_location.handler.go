@@ -5,7 +5,7 @@ import (
 	"react-go/core/function"
 	company "react-go/core/modules/company/model"
 	role "react-go/core/modules/role/model"
-	model "react-go/core/modules/warehouse/model"
+	warehouse "react-go/core/modules/warehouse/model"
 	"react-go/core/types"
 	"react-go/core/variable"
 	"strconv"
@@ -55,7 +55,7 @@ func LocationCreate(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	location := model.WarehouseLocation{
+	location := warehouse.WarehouseLocation{
 		BranchID:  uint(branchId),
 		RoleID:    uint(roleID),
 		Name:      strings.TrimSpace(body.Name),
@@ -91,8 +91,8 @@ func LocationCreate(c *fiber.Ctx) error {
 }
 
 func LocationPaginate(c *fiber.Ctx) error {
-	locations := make([]model.WarehouseLocation, 0)
-	pagination, err := function.Pagination(c, &model.WarehouseLocation{}, func(query *gorm.DB) *gorm.DB {
+	locations := make([]warehouse.WarehouseLocation, 0)
+	pagination, err := function.Pagination(c, &warehouse.WarehouseLocation{}, func(query *gorm.DB) *gorm.DB {
 		return query.Preload("Branch").Preload("Role")
 	}, []string{"name"}, &locations)
 	if err != nil {
@@ -216,7 +216,7 @@ func LocationEdit(c *fiber.Ctx) error {
 		return dto.BodyBadRequest(c, err)
 	}
 
-	var existing model.WarehouseLocation
+	var existing warehouse.WarehouseLocation
 	if err := variable.Db.
 		First(&existing, id).
 		Error; err != nil {
@@ -272,7 +272,7 @@ func LocationRemove(c *fiber.Ctx) error {
 	id, _ := strconv.Atoi(idParam)
 
 	if err := variable.Db.
-		Delete(&model.WarehouseLocation{}, id).
+		Delete(&warehouse.WarehouseLocation{}, id).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus lokasi",
@@ -295,7 +295,7 @@ func LocationBulkRemove(c *fiber.Ctx) error {
 	}
 
 	if err := variable.Db.
-		Delete(&model.WarehouseLocation{}, "id IN ?", body.IDs).
+		Delete(&warehouse.WarehouseLocation{}, "id IN ?", body.IDs).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus lokasi",
@@ -315,7 +315,7 @@ func LocationSetActive(c *fiber.Ctx) error {
 	idParam := c.Params("id")
 	id, _ := strconv.Atoi(idParam)
 
-	var existing model.WarehouseLocation
+	var existing warehouse.WarehouseLocation
 	if err := variable.Db.
 		First(&existing, id).
 		Error; err != nil {

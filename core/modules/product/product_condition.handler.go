@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"react-go/core/dto"
 	"react-go/core/function"
-	"react-go/core/modules/product/model"
+	product "react-go/core/modules/product/model"
 	"react-go/core/types"
 	"react-go/core/variable"
 	"strings"
@@ -32,7 +32,7 @@ func ConditionCreate(c *fiber.Ctx) error {
 	key := generateKeyFromName(body.Name)
 
 	// Check duplicate key
-	var existing model.ProductCondition
+	var existing product.ProductCondition
 	if err := variable.Db.
 		Where("`key` = ?", key).
 		First(&existing).
@@ -43,7 +43,7 @@ func ConditionCreate(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	condition := model.ProductCondition{
+	condition := product.ProductCondition{
 		Key:         key,
 		Name:        body.Name,
 		Description: body.Description,
@@ -76,8 +76,8 @@ func ConditionCreate(c *fiber.Ctx) error {
 }
 
 func ConditionPaginate(c *fiber.Ctx) error {
-	var categories []model.ProductCondition
-	pagination, err := function.Pagination(c, &model.ProductCondition{}, nil, []string{"name", "key"}, &categories)
+	var categories []product.ProductCondition
+	pagination, err := function.Pagination(c, &product.ProductCondition{}, nil, []string{"name", "key"}, &categories)
 	if err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal memuat halaman",
@@ -117,7 +117,7 @@ func ConditionEdit(c *fiber.Ctx) error {
 		return dto.BodyBadRequest(c, err)
 	}
 
-	var existing model.ProductCondition
+	var existing product.ProductCondition
 	if err := variable.Db.
 		First(&existing, "id = ?", id).
 		Error; err != nil {
@@ -131,7 +131,7 @@ func ConditionEdit(c *fiber.Ctx) error {
 
 	// Check duplicate key if changed
 	if key != existing.Key {
-		var dup model.ProductCondition
+		var dup product.ProductCondition
 		if err := variable.Db.
 			Where("`key` = ? AND id != ?", key, id).
 			First(&dup).
@@ -171,7 +171,7 @@ func ConditionRemove(c *fiber.Ctx) error {
 	id := c.Params("id")
 
 	if err := variable.Db.
-		Delete(&model.ProductCondition{}, "id = ?", id).
+		Delete(&product.ProductCondition{}, "id = ?", id).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus kondisi",
@@ -194,7 +194,7 @@ func ConditionBulkRemove(c *fiber.Ctx) error {
 	}
 
 	if err := variable.Db.
-		Delete(&model.ProductCondition{}, "id IN ?", body.IDs).
+		Delete(&product.ProductCondition{}, "id IN ?", body.IDs).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus kategori",

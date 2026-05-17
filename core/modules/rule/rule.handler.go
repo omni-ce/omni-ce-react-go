@@ -4,7 +4,7 @@ import (
 	"react-go/core/dto"
 	"react-go/core/function"
 	role "react-go/core/modules/role/model"
-	model "react-go/core/modules/rule/model"
+	rule "react-go/core/modules/rule/model"
 	"react-go/core/sse"
 	"react-go/core/types"
 	"react-go/core/variable"
@@ -59,7 +59,7 @@ func Set(c *fiber.Ctx) error {
 		if item.State != nil {
 			stateVal = *item.State
 		}
-		var existing model.Rule
+		var existing rule.Rule
 
 		if err := variable.Db.
 			Where("role_id = ? AND key = ? AND action = ?", item.RoleID, item.Key, item.Action).
@@ -79,7 +79,7 @@ func Set(c *fiber.Ctx) error {
 			rows = append(rows, existing.Map())
 		} else {
 			// Not found, insert new with default state true if not specified
-			roleMenu := model.Rule{
+			roleMenu := rule.Rule{
 				RoleID: item.RoleID,
 				Key:    item.Key,
 				Action: item.Action,
@@ -116,9 +116,9 @@ func Set(c *fiber.Ctx) error {
 }
 
 func List(c *fiber.Ctx) error {
-	roleMenus := make([]model.Rule, 0)
+	roleMenus := make([]rule.Rule, 0)
 	if err := variable.Db.
-		Model(&model.Rule{}).
+		Model(&rule.Rule{}).
 		Find(&roleMenus).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{

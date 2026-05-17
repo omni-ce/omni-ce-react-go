@@ -4,7 +4,7 @@ import (
 	"react-go/core/dto"
 	"react-go/core/function"
 	"react-go/core/function/location"
-	"react-go/core/modules/company/model"
+	company "react-go/core/modules/company/model"
 	"react-go/core/types"
 	"react-go/core/variable"
 	"strconv"
@@ -57,7 +57,7 @@ func BranchCreate(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	branch := model.CompanyBranch{
+	branch := company.CompanyBranch{
 		EntityID:    uint(entityID),
 		PicID:       picID,
 		Code:        body.Code,
@@ -97,8 +97,8 @@ func BranchCreate(c *fiber.Ctx) error {
 }
 
 func BranchPaginate(c *fiber.Ctx) error {
-	branches := make([]model.CompanyBranch, 0)
-	pagination, err := function.Pagination(c, &model.CompanyBranch{}, func(db *gorm.DB) *gorm.DB {
+	branches := make([]company.CompanyBranch, 0)
+	pagination, err := function.Pagination(c, &company.CompanyBranch{}, func(db *gorm.DB) *gorm.DB {
 		return db.Preload("Entity").Preload("Pic")
 	}, []string{"name", "code", "address"}, &branches)
 	if err != nil {
@@ -183,7 +183,7 @@ func BranchEdit(c *fiber.Ctx) error {
 		return dto.BodyBadRequest(c, err)
 	}
 
-	var branch model.CompanyBranch
+	var branch company.CompanyBranch
 	if err := variable.Db.
 		First(&branch, "id = ?", id).
 		Error; err != nil {
@@ -259,7 +259,7 @@ func BranchRemove(c *fiber.Ctx) error {
 	id := c.Params("id")
 
 	if err := variable.Db.
-		Delete(&model.CompanyBranch{}, "id = ?", id).
+		Delete(&company.CompanyBranch{}, "id = ?", id).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus cabang perusahaan",
@@ -282,7 +282,7 @@ func BranchBulkRemove(c *fiber.Ctx) error {
 	}
 
 	if err := variable.Db.
-		Delete(&model.CompanyBranch{}, "id IN ?", body.IDs).
+		Delete(&company.CompanyBranch{}, "id IN ?", body.IDs).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus cabang perusahaan",
@@ -308,7 +308,7 @@ func BranchSetActive(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	var branch model.CompanyBranch
+	var branch company.CompanyBranch
 	if err := variable.Db.
 		First(&branch, "id = ?", id).
 		Error; err != nil {

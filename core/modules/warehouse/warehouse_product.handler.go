@@ -7,7 +7,7 @@ import (
 	company "react-go/core/modules/company/model"
 	product "react-go/core/modules/product/model"
 	role "react-go/core/modules/role/model"
-	model "react-go/core/modules/warehouse/model"
+	warehouse "react-go/core/modules/warehouse/model"
 	"react-go/core/types"
 	"react-go/core/variable"
 	"strconv"
@@ -52,7 +52,7 @@ func ProductCreate(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	product := model.WarehouseProduct{
+	product := warehouse.WarehouseProduct{
 		WarehouseLocationID: uint(warehouseLocationId),
 		ProductID:           uint(productId),
 		Qty:                 body.Qty,
@@ -86,8 +86,8 @@ func ProductCreate(c *fiber.Ctx) error {
 }
 
 func ProductPaginate(c *fiber.Ctx) error {
-	warehouseProducts := make([]model.WarehouseProduct, 0)
-	pagination, err := function.Pagination(c, &model.WarehouseProduct{}, func(query *gorm.DB) *gorm.DB {
+	warehouseProducts := make([]warehouse.WarehouseProduct, 0)
+	pagination, err := function.Pagination(c, &warehouse.WarehouseProduct{}, func(query *gorm.DB) *gorm.DB {
 		return query.Preload("WarehouseLocation").Preload("Product")
 	}, []string{}, &warehouseProducts)
 	if err != nil {
@@ -107,7 +107,7 @@ func ProductPaginate(c *fiber.Ctx) error {
 		productIds = append(productIds, product.ProductID)
 	}
 
-	warehouseLocations := make([]model.WarehouseLocation, 0)
+	warehouseLocations := make([]warehouse.WarehouseLocation, 0)
 	products := make([]product.ProductItem, 0)
 	variable.Db.Where("id IN ?", warehouseLocationIds).Find(&warehouseLocations)
 	variable.Db.Where("id IN ?", productIds).Find(&products)
@@ -223,7 +223,7 @@ func ProductPaginate(c *fiber.Ctx) error {
 	result := make([]map[string]any, 0, len(warehouseProducts))
 	for i := range warehouseProducts {
 		p := warehouseProducts[i].Map()
-		var warehouse_location model.WarehouseLocation
+		var warehouse_location warehouse.WarehouseLocation
 		for _, wl := range warehouseLocations {
 			if wl.ID == warehouseProducts[i].WarehouseLocationID {
 				warehouse_location = wl
@@ -378,7 +378,7 @@ func ProductEdit(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	var existing model.WarehouseProduct
+	var existing warehouse.WarehouseProduct
 	if err := variable.Db.
 		First(&existing, id).
 		Error; err != nil {
@@ -423,7 +423,7 @@ func ProductRemove(c *fiber.Ctx) error {
 	id, _ := strconv.Atoi(idParam)
 
 	if err := variable.Db.
-		Delete(&model.WarehouseProduct{}, id).
+		Delete(&warehouse.WarehouseProduct{}, id).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus warehouse product",
@@ -446,7 +446,7 @@ func ProductBulkRemove(c *fiber.Ctx) error {
 	}
 
 	if err := variable.Db.
-		Delete(&model.WarehouseProduct{}, "id IN ?", body.IDs).
+		Delete(&warehouse.WarehouseProduct{}, "id IN ?", body.IDs).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus warehouse product",
@@ -466,7 +466,7 @@ func ProductSetActive(c *fiber.Ctx) error {
 	idParam := c.Params("id")
 	id, _ := strconv.Atoi(idParam)
 
-	var existing model.WarehouseProduct
+	var existing warehouse.WarehouseProduct
 	if err := variable.Db.
 		First(&existing, id).
 		Error; err != nil {

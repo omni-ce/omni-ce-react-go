@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"react-go/core/dto"
 	"react-go/core/function"
-	product_model "react-go/core/modules/product/model"
-	"react-go/core/modules/supplier/model"
+	product "react-go/core/modules/product/model"
+	supplier "react-go/core/modules/supplier/model"
 	"react-go/core/types"
 	"react-go/core/variable"
 	"strconv"
@@ -27,8 +27,8 @@ func ProductCreate(c *fiber.Ctx) error {
 	productID, _ := strconv.Atoi(body.ProductID)
 
 	// Check if supplier exists
-	var supplier model.SupplierEntity
-	if err := variable.Db.First(&supplier, "id = ?", supplierID).Error; err != nil {
+	var supplierExist supplier.SupplierEntity
+	if err := variable.Db.First(&supplierExist, "id = ?", supplierID).Error; err != nil {
 		return dto.NotFound(c, types.Language{
 			Id: "Supplier tidak ditemukan",
 			En: "Supplier not found",
@@ -36,8 +36,8 @@ func ProductCreate(c *fiber.Ctx) error {
 	}
 
 	// Check if product exists
-	var product product_model.ProductItem
-	if err := variable.Db.First(&product, "id = ?", productID).Error; err != nil {
+	var productExist product.ProductItem
+	if err := variable.Db.First(&productExist, "id = ?", productID).Error; err != nil {
 		return dto.NotFound(c, types.Language{
 			Id: "Produk tidak ditemukan",
 			En: "Product not found",
@@ -45,7 +45,7 @@ func ProductCreate(c *fiber.Ctx) error {
 	}
 
 	// Check if already exists
-	var existing model.SupplierProduct
+	var existing supplier.SupplierProduct
 	if err := variable.Db.Where("supplier_id = ? AND product_id = ?", supplierID, productID).First(&existing).Error; err == nil {
 		return dto.BadRequest(c, types.Language{
 			Id: "Produk sudah terdaftar untuk supplier ini",
@@ -53,7 +53,7 @@ func ProductCreate(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	row := model.SupplierProduct{
+	row := supplier.SupplierProduct{
 		SupplierID: uint(supplierID),
 		ProductID:  uint(productID),
 		IsActive:   true,
@@ -78,8 +78,8 @@ func ProductPaginate(c *fiber.Ctx) error {
 	col_supplier_name := c.Query("col_supplier_name")
 	col_product_name := c.Query("col_product_name")
 
-	items := make([]model.SupplierProduct, 0)
-	query := variable.Db.Model(&model.SupplierProduct{}).
+	items := make([]supplier.SupplierProduct, 0)
+	query := variable.Db.Model(&supplier.SupplierProduct{}).
 		Preload("Supplier").
 		Preload("Product").
 		Preload("Product.Category").
@@ -101,7 +101,7 @@ func ProductPaginate(c *fiber.Ctx) error {
 		query = query.Joins("Product").Where("LOWER(Product.sku) LIKE ?", "%"+strings.ToLower(col_product_name)+"%")
 	}
 
-	pagination, err := function.PaginationScoped(c, query, &model.SupplierProduct{}, []string{}, &items)
+	pagination, err := function.PaginationScoped(c, query, &supplier.SupplierProduct{}, []string{}, &items)
 	if err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal mengambil data",
@@ -153,7 +153,7 @@ func ProductEdit(c *fiber.Ctx) error {
 	supplierID, _ := strconv.Atoi(body.SupplierID)
 	productID, _ := strconv.Atoi(body.ProductID)
 
-	var row model.SupplierProduct
+	var row supplier.SupplierProduct
 	if err := variable.Db.First(&row, "id = ?", id).Error; err != nil {
 		return dto.NotFound(c, types.Language{
 			Id: "Data tidak ditemukan",
@@ -162,7 +162,7 @@ func ProductEdit(c *fiber.Ctx) error {
 	}
 
 	// Check if already exists for other records
-	var dup model.SupplierProduct
+	var dup supplier.SupplierProduct
 	if err := variable.Db.Where("supplier_id = ? AND product_id = ? AND id != ?", supplierID, productID, id).First(&dup).Error; err == nil {
 		return dto.BadRequest(c, types.Language{
 			Id: "Produk sudah terdaftar untuk supplier ini",
@@ -191,7 +191,7 @@ func ProductEdit(c *fiber.Ctx) error {
 func ProductRemove(c *fiber.Ctx) error {
 	id := c.Params("id")
 
-	if err := variable.Db.Delete(&model.SupplierProduct{}, "id = ?", id).Error; err != nil {
+	if err := variable.Db.Delete(&supplier.SupplierProduct{}, "id = ?", id).Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus data",
 			En: "Failed to delete data",
@@ -212,7 +212,7 @@ func ProductBulkRemove(c *fiber.Ctx) error {
 		return dto.BodyBadRequest(c, err)
 	}
 
-	if err := variable.Db.Delete(&model.SupplierProduct{}, "id IN ?", body.IDs).Error; err != nil {
+	if err := variable.Db.Delete(&supplier.SupplierProduct{}, "id IN ?", body.IDs).Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus data",
 			En: "Failed to delete data",
@@ -234,7 +234,7 @@ func ProductSetActive(c *fiber.Ctx) error {
 		return dto.BodyBadRequest(c, err)
 	}
 
-	if err := variable.Db.Model(&model.SupplierProduct{}).Where("id = ?", id).Update("is_active", body.IsActive).Error; err != nil {
+	if err := variable.Db.Model(&supplier.SupplierProduct{}).Where("id = ?", id).Update("is_active", body.IsActive).Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal mengubah status",
 			En: "Failed to change status",

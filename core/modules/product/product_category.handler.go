@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"react-go/core/dto"
 	"react-go/core/function"
-	"react-go/core/modules/product/model"
+	product "react-go/core/modules/product/model"
 	"react-go/core/types"
 	"react-go/core/variable"
 	"strings"
@@ -32,7 +32,7 @@ func CategoryCreate(c *fiber.Ctx) error {
 	key := generateKeyFromName(body.Name)
 
 	// Check duplicate key
-	var existing model.ProductCategory
+	var existing product.ProductCategory
 	if err := variable.Db.
 		Where("`key` = ?", key).
 		First(&existing).
@@ -43,7 +43,7 @@ func CategoryCreate(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	category := model.ProductCategory{
+	category := product.ProductCategory{
 		Key:       key,
 		Icon:      body.Icon,
 		Name:      body.Name,
@@ -76,8 +76,8 @@ func CategoryCreate(c *fiber.Ctx) error {
 }
 
 func CategoryPaginate(c *fiber.Ctx) error {
-	var categories []model.ProductCategory
-	pagination, err := function.Pagination(c, &model.ProductCategory{}, nil, []string{"name", "key"}, &categories)
+	var categories []product.ProductCategory
+	pagination, err := function.Pagination(c, &product.ProductCategory{}, nil, []string{"name", "key"}, &categories)
 	if err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menyiapkan pagination",
@@ -117,7 +117,7 @@ func CategoryEdit(c *fiber.Ctx) error {
 		return dto.BodyBadRequest(c, err)
 	}
 
-	var existing model.ProductCategory
+	var existing product.ProductCategory
 	if err := variable.Db.
 		First(&existing, "id = ?", id).
 		Error; err != nil {
@@ -131,7 +131,7 @@ func CategoryEdit(c *fiber.Ctx) error {
 
 	// Check duplicate key if changed
 	if key != existing.Key {
-		var dup model.ProductCategory
+		var dup product.ProductCategory
 		if err := variable.Db.
 			Where("`key` = ? AND id != ?", key, id).
 			First(&dup).
@@ -171,7 +171,7 @@ func CategoryRemove(c *fiber.Ctx) error {
 	id := c.Params("id")
 
 	if err := variable.Db.
-		Delete(&model.ProductCategory{}, "id = ?", id).
+		Delete(&product.ProductCategory{}, "id = ?", id).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus kategori",
@@ -194,7 +194,7 @@ func CategoryBulkRemove(c *fiber.Ctx) error {
 	}
 
 	if err := variable.Db.
-		Delete(&model.ProductCategory{}, "id IN ?", body.IDs).
+		Delete(&product.ProductCategory{}, "id IN ?", body.IDs).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus kategori",
@@ -211,7 +211,7 @@ func CategoryBulkRemove(c *fiber.Ctx) error {
 func CategorySetActive(c *fiber.Ctx) error {
 	id := c.Params("id")
 
-	var existing model.ProductCategory
+	var existing product.ProductCategory
 	if err := variable.Db.
 		First(&existing, "id = ?", id).
 		Error; err != nil {

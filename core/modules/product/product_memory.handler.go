@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"react-go/core/dto"
 	"react-go/core/function"
-	"react-go/core/modules/product/model"
+	product "react-go/core/modules/product/model"
 	"react-go/core/types"
 	"react-go/core/variable"
 	"strconv"
@@ -48,7 +48,7 @@ func MemoryCreate(c *fiber.Ctx) error {
 	key := generateKeyFromName(body.Ram, body.InternalStorage)
 
 	// Check duplicate key
-	var existing model.ProductMemory
+	var existing product.ProductMemory
 	if err := variable.Db.
 		Where("`key` = ?", key).
 		First(&existing).
@@ -59,7 +59,7 @@ func MemoryCreate(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	memory := model.ProductMemory{
+	memory := product.ProductMemory{
 		Key:             key,
 		Ram:             ramInt,
 		InternalStorage: internalStorageInt,
@@ -92,8 +92,8 @@ func MemoryCreate(c *fiber.Ctx) error {
 }
 
 func MemoryPaginate(c *fiber.Ctx) error {
-	var memories []model.ProductMemory
-	pagination, err := function.Pagination(c, &model.ProductMemory{}, nil, []string{"name", "key"}, &memories)
+	var memories []product.ProductMemory
+	pagination, err := function.Pagination(c, &product.ProductMemory{}, nil, []string{"name", "key"}, &memories)
 	if err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal mempersiapkan pagination",
@@ -148,7 +148,7 @@ func MemoryEdit(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	var existing model.ProductMemory
+	var existing product.ProductMemory
 	if err := variable.Db.
 		First(&existing, "id = ?", id).
 		Error; err != nil {
@@ -162,7 +162,7 @@ func MemoryEdit(c *fiber.Ctx) error {
 
 	// Check duplicate key if changed
 	if key != existing.Key {
-		var dup model.ProductMemory
+		var dup product.ProductMemory
 		if err := variable.Db.
 			Where("`key` = ? AND id != ?", key, id).
 			First(&dup).
@@ -202,7 +202,7 @@ func MemoryRemove(c *fiber.Ctx) error {
 	id := c.Params("id")
 
 	if err := variable.Db.
-		Delete(&model.ProductMemory{}, "id = ?", id).
+		Delete(&product.ProductMemory{}, "id = ?", id).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus memory",
@@ -225,7 +225,7 @@ func MemoryBulkRemove(c *fiber.Ctx) error {
 	}
 
 	if err := variable.Db.
-		Delete(&model.ProductMemory{}, "id IN ?", body.IDs).
+		Delete(&product.ProductMemory{}, "id IN ?", body.IDs).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus memory",

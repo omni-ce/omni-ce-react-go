@@ -3,7 +3,7 @@ package middlewares
 import (
 	"react-go/core/dto"
 	"react-go/core/function"
-	model "react-go/core/modules/setting/model"
+	setting "react-go/core/modules/setting/model"
 	"react-go/core/types"
 	"react-go/core/variable"
 
@@ -12,7 +12,7 @@ import (
 
 func UseMaintenance(c *fiber.Ctx) error {
 	// Check if maintenance mode is enabled
-	var setting model.Setting
+	var setting setting.Setting
 	if err := variable.Db.
 		Where("key = ?", "maintenance_mode").
 		First(&setting).

@@ -3,7 +3,7 @@ package product
 import (
 	"react-go/core/dto"
 	"react-go/core/function"
-	"react-go/core/modules/product/model"
+	product "react-go/core/modules/product/model"
 	"react-go/core/types"
 	"react-go/core/variable"
 	"strconv"
@@ -42,13 +42,13 @@ func ItemImageSet(c *fiber.Ctx) error {
 
 	err = variable.Db.Transaction(func(tx *gorm.DB) error {
 		var count int64
-		if err := tx.Model(&model.ProductItemImage{}).Where("item_id = ?", itemIdInt).Count(&count).Error; err != nil {
+		if err := tx.Model(&product.ProductItemImage{}).Where("item_id = ?", itemIdInt).Count(&count).Error; err != nil {
 			return err
 		}
 
 		isPrimary := count == 0
 
-		newImg := model.ProductItemImage{
+		newImg := product.ProductItemImage{
 			ItemID:     uint(itemIdInt),
 			Url:        body.Url,
 			IsPrimary:  isPrimary,
@@ -79,7 +79,7 @@ func ItemImageSet(c *fiber.Ctx) error {
 func ItemImageList(c *fiber.Ctx) error {
 	itemId := c.Params("item_id")
 
-	var images []model.ProductItemImage
+	var images []product.ProductItemImage
 	if err := variable.Db.
 		Where("item_id = ?", itemId).
 		Order("is_primary DESC, uploaded_at ASC").
@@ -116,7 +116,7 @@ func ItemImageRemove(c *fiber.Ctx) error {
 	}
 
 	if err := variable.Db.
-		Delete(&model.ProductItemImage{}, "id = ?", idUUID).
+		Delete(&product.ProductItemImage{}, "id = ?", idUUID).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus gambar",
@@ -140,7 +140,7 @@ func ItemImageSetPrimary(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	var target model.ProductItemImage
+	var target product.ProductItemImage
 	if err := variable.Db.
 		First(&target, "id = ?", idUUID).
 		Error; err != nil {
@@ -152,7 +152,7 @@ func ItemImageSetPrimary(c *fiber.Ctx) error {
 
 	err = variable.Db.Transaction(func(tx *gorm.DB) error {
 		// 1. Unset all primary for this item
-		if err := tx.Model(&model.ProductItemImage{}).
+		if err := tx.Model(&product.ProductItemImage{}).
 			Where("item_id = ?", target.ItemID).
 			Update("is_primary", false).Error; err != nil {
 			return err

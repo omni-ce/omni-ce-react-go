@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"react-go/core/dto"
 	"react-go/core/function"
-	"react-go/core/modules/supplier/model"
+	supplier "react-go/core/modules/supplier/model"
 	"react-go/core/types"
 	"react-go/core/variable"
 
@@ -33,7 +33,7 @@ func EntityCreate(c *fiber.Ctx) error {
 		return dto.BodyBadRequest(c, err)
 	}
 
-	entity := model.SupplierEntity{
+	entity := supplier.SupplierEntity{
 		Name:      body.Name,
 		Address:   body.Address,
 		Phone:     body.Phone,
@@ -61,8 +61,8 @@ func EntityCreate(c *fiber.Ctx) error {
 }
 
 func EntityPaginate(c *fiber.Ctx) error {
-	entities := make([]model.SupplierEntity, 0)
-	pagination, err := function.Pagination(c, &model.SupplierEntity{}, func(db *gorm.DB) *gorm.DB {
+	entities := make([]supplier.SupplierEntity, 0)
+	pagination, err := function.Pagination(c, &supplier.SupplierEntity{}, func(db *gorm.DB) *gorm.DB {
 		return db.Preload("Created").Preload("Updated")
 	}, []string{"name", "address", "phone", "email"}, &entities)
 	if err != nil {
@@ -108,7 +108,7 @@ func EntityEdit(c *fiber.Ctx) error {
 		return dto.BodyBadRequest(c, err)
 	}
 
-	var entity model.SupplierEntity
+	var entity supplier.SupplierEntity
 	if err := variable.Db.First(&entity, "id = ?", id).Error; err != nil {
 		return dto.NotFound(c, types.Language{
 			Id: "Entitas tidak ditemukan",
@@ -142,7 +142,7 @@ func EntityEdit(c *fiber.Ctx) error {
 func EntityRemove(c *fiber.Ctx) error {
 	id := c.Params("id")
 
-	if err := variable.Db.Delete(&model.SupplierEntity{}, "id = ?", id).Error; err != nil {
+	if err := variable.Db.Delete(&supplier.SupplierEntity{}, "id = ?", id).Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus entitas",
 			En: "Failed to delete entity",
@@ -163,7 +163,7 @@ func EntityBulkRemove(c *fiber.Ctx) error {
 		return dto.BodyBadRequest(c, err)
 	}
 
-	if err := variable.Db.Delete(&model.SupplierEntity{}, "id IN ?", body.IDs).Error; err != nil {
+	if err := variable.Db.Delete(&supplier.SupplierEntity{}, "id IN ?", body.IDs).Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus entitas",
 			En: "Failed to delete entities",
@@ -185,7 +185,7 @@ func EntitySetActive(c *fiber.Ctx) error {
 		return dto.BodyBadRequest(c, err)
 	}
 
-	if err := variable.Db.Model(&model.SupplierEntity{}).Where("id = ?", id).Update("is_active", body.IsActive).Error; err != nil {
+	if err := variable.Db.Model(&supplier.SupplierEntity{}).Where("id = ?", id).Update("is_active", body.IsActive).Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal mengubah status",
 			En: "Failed to change status",

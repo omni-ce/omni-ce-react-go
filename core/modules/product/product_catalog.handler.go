@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"react-go/core/dto"
 	"react-go/core/function"
-	"react-go/core/modules/product/model"
+	product "react-go/core/modules/product/model"
 	"react-go/core/types"
 	"react-go/core/variable"
 
@@ -26,7 +26,7 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 	}
 
 	// 1. Get Categories (Fetch into struct to avoid panic, then map to clean response)
-	categoriesData := make([]model.ProductCategory, 0)
+	categoriesData := make([]product.ProductCategory, 0)
 	if err := variable.Db.
 		Select("id, key, name, icon").
 		Where("is_active = ?", true).
@@ -48,7 +48,7 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 	}
 
 	// 2. Get Types
-	typesData := make([]model.ProductType, 0)
+	typesData := make([]product.ProductType, 0)
 	if body.CategoryID != 0 {
 		if err := variable.Db.
 			Select("id, key, name").
@@ -71,11 +71,11 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 	}
 
 	// 3. Get Brand
-	brandsData := make([]model.ProductBrand, 0)
+	brandsData := make([]product.ProductBrand, 0)
 	if body.TypeID != 0 {
 		brandIds := make([]uint, 0)
 		if err := variable.Db.
-			Model(&model.ProductItem{}).
+			Model(&product.ProductItem{}).
 			Where("type_id = ? AND is_active = ?", body.TypeID, true).
 			Distinct("brand_id").
 			Pluck("brand_id", &brandIds).
@@ -158,7 +158,7 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 	}
 
 	// 5. Fetch Variant details and their Items
-	variants := make([]model.ProductVariant, 0)
+	variants := make([]product.ProductVariant, 0)
 	if err := variable.Db.
 		Where("id IN ?", variantIDs).
 		Find(&variants).
@@ -169,7 +169,7 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	items := make([]model.ProductItem, 0)
+	items := make([]product.ProductItem, 0)
 	if err := variable.Db.
 		Where("variant_id IN ?", variantIDs).
 		Where("is_active = ?", true).
@@ -184,7 +184,7 @@ func CatalogInfiniteScroll(c *fiber.Ctx) error {
 	}
 
 	// Group items by VariantID
-	itemsByVariant := make(map[uint][]model.ProductItem)
+	itemsByVariant := make(map[uint][]product.ProductItem)
 	for _, it := range items {
 		itemsByVariant[it.VariantID] = append(itemsByVariant[it.VariantID], it)
 	}

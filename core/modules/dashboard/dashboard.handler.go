@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"react-go/core/dto"
 	"react-go/core/function"
-	model "react-go/core/modules/dashboard/model"
+	dashboard "react-go/core/modules/dashboard/model"
 	"react-go/core/types"
 	"react-go/core/variable"
 	"strconv"
@@ -66,7 +66,7 @@ func WidgetCreate(c *fiber.Ctx) error {
 	}
 
 	// Check if combination already exists
-	var existing model.DashboardWidget
+	var existing dashboard.DashboardWidget
 	if err := variable.Db.
 		Where("role_id = ? AND type = ? AND function_key = ?", body.RoleID, body.Type, body.FunctionKey).
 		First(&existing).
@@ -86,7 +86,7 @@ func WidgetCreate(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	widget := model.DashboardWidget{
+	widget := dashboard.DashboardWidget{
 		RoleID:      body.RoleID,
 		Type:        body.Type,
 		FunctionKey: body.FunctionKey,
@@ -135,7 +135,7 @@ func WidgetList(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	widgets := make([]model.DashboardWidget, 0)
+	widgets := make([]dashboard.DashboardWidget, 0)
 	if err := variable.Db.
 		Where("role_id = ?", roleID).
 		Order("function_key ASC").
@@ -190,7 +190,7 @@ func WidgetEdit(c *fiber.Ctx) error {
 		return dto.BodyBadRequest(c, err)
 	}
 
-	var widget model.DashboardWidget
+	var widget dashboard.DashboardWidget
 	if err := variable.Db.
 		Where("id = ?", id).
 		First(&widget).
@@ -267,7 +267,7 @@ func WidgetRemove(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	var widget model.DashboardWidget
+	var widget dashboard.DashboardWidget
 	if err := variable.Db.
 		Where("id = ?", id).
 		First(&widget).

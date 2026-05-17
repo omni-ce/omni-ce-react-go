@@ -3,7 +3,7 @@ package role
 import (
 	"react-go/core/dto"
 	"react-go/core/function"
-	model "react-go/core/modules/role/model"
+	role "react-go/core/modules/role/model"
 	rule "react-go/core/modules/rule/model"
 	"react-go/core/types"
 	"react-go/core/variable"
@@ -31,7 +31,7 @@ func DivisionCreate(c *fiber.Ctx) error {
 	}
 
 	// Check duplicate
-	var existing model.RoleDivision
+	var existing role.RoleDivision
 	if err := variable.Db.
 		Where("name = ?", body.Name).
 		First(&existing).
@@ -42,7 +42,7 @@ func DivisionCreate(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	division := model.RoleDivision{
+	division := role.RoleDivision{
 		Name:        body.Name,
 		Description: body.Description,
 		CreatedBy:   currentUser.ID,
@@ -95,7 +95,7 @@ func DivisionUpdate(c *fiber.Ctx) error {
 		return dto.BodyBadRequest(c, err)
 	}
 
-	var division model.RoleDivision
+	var division role.RoleDivision
 	if err := variable.Db.
 		First(&division, "id = ?", id).
 		Error; err != nil {
@@ -106,7 +106,7 @@ func DivisionUpdate(c *fiber.Ctx) error {
 	}
 
 	// Check duplicate name (excluding self)
-	var dup model.RoleDivision
+	var dup role.RoleDivision
 	if err := variable.Db.
 		Where("name = ? AND id != ?", body.Name, id).
 		First(&dup).
@@ -144,7 +144,7 @@ func DivisionDelete(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	var division model.RoleDivision
+	var division role.RoleDivision
 	if err := variable.Db.
 		First(&division, "id = ?", id).
 		Error; err != nil {
@@ -157,7 +157,7 @@ func DivisionDelete(c *fiber.Ctx) error {
 	// Get all role IDs under this division
 	var roleIDs []uint
 	variable.Db.
-		Model(&model.Role{}).
+		Model(&role.Role{}).
 		Where("role_division_id = ?", id).
 		Pluck("id", &roleIDs)
 
@@ -171,7 +171,7 @@ func DivisionDelete(c *fiber.Ctx) error {
 	// Delete roles under this division
 	variable.Db.
 		Where("role_division_id = ?", id).
-		Delete(&model.Role{})
+		Delete(&role.Role{})
 
 	// Delete the division
 	if err := variable.Db.
@@ -198,7 +198,7 @@ func DivisionSetActive(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	var division model.RoleDivision
+	var division role.RoleDivision
 	if err := variable.Db.
 		First(&division, "id = ?", id).
 		Error; err != nil {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"react-go/core/dto"
 	"react-go/core/function"
-	model "react-go/core/modules/master_data/model"
+	master_data "react-go/core/modules/master_data/model"
 	"react-go/core/types"
 	"react-go/core/variable"
 	"strings"
@@ -22,7 +22,7 @@ func UnitCreate(c *fiber.Ctx) error {
 	}
 
 	// Check duplicate key
-	var existing model.Unit
+	var existing master_data.Unit
 	if err := variable.Db.
 		Where("short_name = ?", body.ShortName).
 		First(&existing).
@@ -33,7 +33,7 @@ func UnitCreate(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	unit := model.Unit{
+	unit := master_data.Unit{
 		Name:      body.Name,
 		ShortName: body.ShortName,
 	}
@@ -63,8 +63,8 @@ func UnitCreate(c *fiber.Ctx) error {
 }
 
 func UnitPaginate(c *fiber.Ctx) error {
-	var units []model.Unit
-	pagination, err := function.Pagination(c, &model.Unit{}, nil, []string{"name", "short_name"}, &units)
+	var units []master_data.Unit
+	pagination, err := function.Pagination(c, &master_data.Unit{}, nil, []string{"name", "short_name"}, &units)
 	if err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menyiapkan pagination",
@@ -92,7 +92,7 @@ func UnitEdit(c *fiber.Ctx) error {
 		return dto.BodyBadRequest(c, err)
 	}
 
-	var existing model.Unit
+	var existing master_data.Unit
 	if err := variable.Db.
 		First(&existing, "id = ?", id).
 		Error; err != nil {
@@ -104,7 +104,7 @@ func UnitEdit(c *fiber.Ctx) error {
 
 	// Check duplicate key if changed
 	if body.ShortName != existing.ShortName {
-		var dup model.Unit
+		var dup master_data.Unit
 		if err := variable.Db.
 			Where("short_name = ? AND id != ?", body.ShortName, id).
 			First(&dup).
@@ -140,7 +140,7 @@ func UnitRemove(c *fiber.Ctx) error {
 	id := c.Params("id")
 
 	if err := variable.Db.
-		Delete(&model.Unit{}, "id = ?", id).
+		Delete(&master_data.Unit{}, "id = ?", id).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus satuan",
@@ -163,7 +163,7 @@ func UnitBulkRemove(c *fiber.Ctx) error {
 	}
 
 	if err := variable.Db.
-		Delete(&model.Unit{}, "id IN ?", body.IDs).
+		Delete(&master_data.Unit{}, "id IN ?", body.IDs).
 		Error; err != nil {
 		return dto.InternalServerError(c, types.Language{
 			Id: "Gagal menghapus satuan",

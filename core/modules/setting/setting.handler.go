@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"react-go/core/dto"
 	"react-go/core/function"
-	model "react-go/core/modules/setting/model"
+	setting "react-go/core/modules/setting/model"
 	"react-go/core/types"
 	"react-go/core/variable"
 	"strings"
@@ -14,7 +14,7 @@ import (
 )
 
 func All(c *fiber.Ctx) error {
-	settings := make([]model.Setting, 0)
+	settings := make([]setting.Setting, 0)
 	if err := variable.Db.
 		Find(&settings).
 		Error; err != nil {
@@ -50,7 +50,7 @@ func Set(c *fiber.Ctx) error {
 		}
 
 		for key, value := range bodies {
-			var s model.Setting
+			var s setting.Setting
 			if err := variable.Db.
 				Where("key = ?", key).
 				First(&s).
@@ -102,7 +102,7 @@ func Set(c *fiber.Ctx) error {
 			}
 			file := files[0]
 
-			var s model.Setting
+			var s setting.Setting
 			if err := variable.Db.
 				Where("key = ?", fieldname).
 				First(&s).
@@ -135,7 +135,7 @@ func Set(c *fiber.Ctx) error {
 			}
 			value := values[0]
 
-			var s model.Setting
+			var s setting.Setting
 			if err := variable.Db.
 				Where("key = ?", key).
 				First(&s).
@@ -171,13 +171,13 @@ func ToggleMaintenance(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	var s model.Setting
+	var s setting.Setting
 	if err := variable.Db.
 		Where("key = ?", "maintenance_mode").
 		First(&s).
 		Error; err != nil {
 		// Create if not exists
-		s = model.Setting{Key: "maintenance_mode", Value: "false"}
+		s = setting.Setting{Key: "maintenance_mode", Value: "false"}
 		variable.Db.Create(&s)
 	}
 

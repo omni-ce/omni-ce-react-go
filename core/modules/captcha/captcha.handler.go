@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	model "react-go/core/modules/captcha/model"
+	captcha "react-go/core/modules/captcha/model"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -59,7 +59,7 @@ func Validate(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	var record model.Captcha
+	var record captcha.Captcha
 	if err := variable.Db.
 		Where("id = ?", body.CaptchaID).
 		First(&record).
@@ -102,7 +102,7 @@ func Regenerate(c *fiber.Ctx) error {
 
 	// Delete old captcha if provided
 	if body.LastCaptchaID != "" {
-		variable.Db.Where("id = ?", body.LastCaptchaID).Delete(&model.Captcha{})
+		variable.Db.Where("id = ?", body.LastCaptchaID).Delete(&captcha.Captcha{})
 	}
 
 	digitCount, ok := getDigitCountOverrideFromQuery(c)
@@ -172,10 +172,10 @@ func getDigitCountOverrideFromQuery(c *fiber.Ctx) (int, bool) {
 	return val, true
 }
 
-func createCaptcha(digitCount int) (*model.Captcha, error) {
+func createCaptcha(digitCount int) (*captcha.Captcha, error) {
 	captchaText := generateRandomString(digitCount)
 
-	record := &model.Captcha{
+	record := &captcha.Captcha{
 		Captcha: captchaText,
 	}
 	if err := variable.Db.
@@ -189,7 +189,7 @@ func createCaptcha(digitCount int) (*model.Captcha, error) {
 func clearExpiredCaptcha() {
 	// jika created_at lebih dari 5 menit dari sekarang maka di delete
 	expired_captcha_minute := 5
-	var records []model.Captcha
+	var records []captcha.Captcha
 	variable.Db.Where("created_at < ?", time.Now().Add(-time.Duration(expired_captcha_minute)*time.Minute)).Find(&records)
 	for _, record := range records {
 		variable.Db.Delete(&record)

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"react-go/core/dto"
-	"react-go/core/modules/product/model"
+	product "react-go/core/modules/product/model"
 	"react-go/core/types"
 	"react-go/core/variable"
 	"regexp"
@@ -55,8 +55,8 @@ func sanitizeKey(s string) string {
 }
 
 func RegenerateItemKeysByAttribute(attribute string, id uint) {
-	var items []model.ProductItem
-	query := variable.Db.Model(&model.ProductItem{})
+	var items []product.ProductItem
+	query := variable.Db.Model(&product.ProductItem{})
 	switch attribute {
 	case "category":
 		query = query.Where("category_id = ?", id)
