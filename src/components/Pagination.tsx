@@ -792,6 +792,14 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
       if (field.only === "create" && !isCreate) continue;
       if (field.only === "update" && isCreate) continue;
 
+      const showOnTrue = (field as DynamicFormFieldNormal).show_on_true;
+      if (showOnTrue) {
+        const val = formData[showOnTrue];
+        if (val !== true && val !== "true" && val !== 1 && val !== "1") {
+          continue;
+        }
+      }
+
       if (field.type === "array") {
         const arr = (formData[field.key] ?? []) as Record<string, unknown>[];
         if (field.required && arr.length === 0) return false;
@@ -894,6 +902,14 @@ const Pagination = forwardRef(function Pagination<T, F = unknown>(
         const isCreate = !editingRow;
         if (field.only === "create" && !isCreate) continue;
         if (field.only === "update" && isCreate) continue;
+
+        const showOnTrue = (field as DynamicFormFieldNormal).show_on_true;
+        if (showOnTrue) {
+          const val = formData[showOnTrue];
+          if (val !== true && val !== "true" && val !== 1 && val !== "1") {
+            continue;
+          }
+        }
 
         if (field.type === "array") {
           payload[field.key] = formData[field.key] ?? [];

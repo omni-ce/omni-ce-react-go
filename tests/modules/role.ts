@@ -11,11 +11,7 @@ async function Role(page: Page) {
   // click menu role
   await buttonClick(page, ".sidebar-menu-role");
 
-  // click expand role admin
-  await buttonClick(page, ".role-item-Admin");
-
-  // click checklist menu user
-  await buttonClick(page, ".role-check-admin-user");
+  await changeRole(page, "Admin", ["admin-user"]);
 
   // click button save
   await buttonClick(page, ".role-button-save", 500);
@@ -25,3 +21,16 @@ async function Role(page: Page) {
 }
 
 export default Role;
+
+const changeRole = async (
+  page: Page,
+  select_role: string,
+  checklists: string[],
+) => {
+  // click expand role admin
+  await buttonClick(page, `.role-item-${select_role}`);
+  for (const checklist of checklists) {
+    // click checklist menu
+    await buttonClick(page, `.role-check-${checklist}`);
+  }
+};
