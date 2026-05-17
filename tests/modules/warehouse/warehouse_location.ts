@@ -20,6 +20,20 @@ async function WarehouseLocation(page: Page) {
   // click submenu warehouse: location
   await buttonClick(page, ".sidebar-menu-warehouse-location");
 
+  await insertNewWarehouseLocation(page, "Discord", "Admin", "Gudang Utama");
+
+  //# end delay
+  await playNotification("section");
+}
+
+export default WarehouseLocation;
+
+const insertNewWarehouseLocation = async (
+  page: Page,
+  branch_search: string,
+  role_search: string,
+  name: string,
+) => {
   // click button add
   await buttonClick(page, ".warehouse-location-pagination-button-add");
 
@@ -38,7 +52,7 @@ async function WarehouseLocation(page: Page) {
   );
 
   // input location name (multi-language)
-  await inputFill(page, ".field-text-name", "Gudang Utama");
+  await inputFill(page, ".field-text-name", name);
 
   // click button map
   await buttonClick(page, ".field-group-map-map .field-map-map");
@@ -49,9 +63,4 @@ async function WarehouseLocation(page: Page) {
 
   // click button save
   await buttonClick(page, ".warehouse-location-pagination-button-save", 1000);
-
-  //# end delay
-  await playNotification("section");
-}
-
-export default WarehouseLocation;
+};

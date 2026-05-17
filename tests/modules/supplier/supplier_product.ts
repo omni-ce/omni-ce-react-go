@@ -15,6 +15,19 @@ async function SupplierProduct(page: Page) {
   // click submenu supplier: product
   await buttonClick(page, ".sidebar-menu-supplier-product");
 
+  await insertNewSupplierProduct(page, "Global Supplier Corp", "Macbook");
+
+  //# end delay
+  await playNotification("section");
+}
+
+export default SupplierProduct;
+
+const insertNewSupplierProduct = async (
+  page: Page,
+  supplier_search: string,
+  product_search: string,
+) => {
   // click button add
   await buttonClick(page, ".supplier-product-pagination-button-add");
 
@@ -34,9 +47,4 @@ async function SupplierProduct(page: Page) {
 
   // click button save
   await buttonClick(page, ".supplier-product-pagination-button-save", 1000);
-
-  //# end delay
-  await playNotification("section");
-}
-
-export default SupplierProduct;
+};

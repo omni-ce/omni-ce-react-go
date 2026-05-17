@@ -18,6 +18,33 @@ async function CompanyBranch(page: Page) {
   // click submenu company: branch
   await buttonClick(page, ".sidebar-menu-company-branch");
 
+  await insertNewCompanyBranch(
+    page,
+    "WPU Community",
+    "Sandhika Galih",
+    "Discord",
+    "discord",
+    "Jl. lupa titik koma",
+    ["jawa", "kota ban", "gede", "ranca"],
+    "8123456789",
+  );
+
+  //# end delay
+  await playNotification("section");
+}
+
+export default CompanyBranch;
+
+const insertNewCompanyBranch = async (
+  page: Page,
+  entity_search: string,
+  pic_search: string,
+  name: string,
+  code: string,
+  address: string,
+  addressSelects: string[],
+  phone: string,
+) => {
   // click button add
   await buttonClick(page, ".company-branch-pagination-button-add");
 
@@ -36,22 +63,28 @@ async function CompanyBranch(page: Page) {
   );
 
   // input branch name
-  await inputFill(page, ".field-text-name", "Discord");
+  await inputFill(page, ".field-text-name", name);
 
   // input branch code
-  await inputFill(page, ".field-text-code", "discord");
+  await inputFill(page, ".field-text-code", code);
 
   await scrollDown(page, ".user-pagination-dialog", 300);
 
   // input address
-  await inputFill(page, ".field-textarea-address", "Jl. lupa titik koma");
+  await inputFill(page, ".field-textarea-address", address);
 
-  await selectAddress(page, "jawa", "kota ban", "gede", "ranca");
+  await selectAddress(
+    page,
+    addressSelects[0],
+    addressSelects[1],
+    addressSelects[2],
+    addressSelects[3],
+  );
 
   await scrollDown(page, ".company-pagination-dialog");
 
   // input phone, class: field-phone-phone
-  await inputFill(page, ".field-phone-phone", "8123456789");
+  await inputFill(page, ".field-phone-phone", phone);
 
   // click button map
   await buttonClick(page, ".field-group-map-map .field-map-map");
@@ -62,9 +95,4 @@ async function CompanyBranch(page: Page) {
 
   // click button save
   await buttonClick(page, ".company-branch-pagination-button-save", 1000);
-
-  //# end delay
-  await playNotification("section");
-}
-
-export default CompanyBranch;
+};
