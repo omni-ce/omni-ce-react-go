@@ -117,3 +117,21 @@ export const selectAddress = async (
     "#searchable-select-portal > div.overflow-y-auto.p-1.flex-1 > button:nth-child(1) > div > div",
   );
 };
+
+export const selectMap = async (page: Page, address: string, delay = 500) => {
+  // click button map
+  await buttonClick(page, ".field-group-map-map .field-map-map");
+  // click on center page
+  await page.mouse.click(600, 165); // search bar
+  // delay
+  await page.waitForTimeout(delay);
+  // type address on keyboard
+  await page.keyboard.type(address, { delay: 100 });
+  // enter
+  await page.keyboard.press("Enter");
+  // delay
+  await page.waitForTimeout(delay);
+  await page.mouse.click(600, 222); // first option
+  // click map picker button confirm
+  await buttonClick(page, ".map-picker-button-confirm");
+};

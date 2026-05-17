@@ -5,6 +5,7 @@ import {
   playNotification,
   scrollDown,
   selectAddress,
+  selectMap,
 } from "../../function";
 import { checkModuleStart } from "../../variable";
 
@@ -55,11 +56,7 @@ const insertNewWarehouseLocation = async (
   await inputFill(page, ".field-text-name", name);
 
   // click button map
-  await buttonClick(page, ".field-group-map-map .field-map-map");
-  // click on center page
-  await page.mouse.click(300, 300);
-  // click map picker button confirm
-  await buttonClick(page, ".map-picker-button-confirm");
+  await selectMap(page, "rancabolang");
 
   // click button save
   await buttonClick(page, ".warehouse-location-pagination-button-save", 1000);

@@ -6,6 +6,7 @@ import {
   playNotification,
   scrollDown,
   selectAddress,
+  selectMap,
 } from "../../function";
 import { checkModuleStart } from "../../variable";
 
@@ -72,11 +73,7 @@ const insertNewSupplierEntity = async (
   await inputFill(page, ".field-email-email", email);
 
   // click button map
-  await buttonClick(page, ".field-group-map-map .field-map-map");
-  // click on center page
-  await page.mouse.click(300, 300);
-  // click map picker button confirm
-  await buttonClick(page, ".map-picker-button-confirm");
+  await selectMap(page, "rancabolang");
 
   // click button save
   await buttonClick(page, ".supplier-entity-pagination-button-save", 1000);

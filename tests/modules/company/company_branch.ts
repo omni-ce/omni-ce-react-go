@@ -6,6 +6,7 @@ import {
   playNotification,
   scrollDown,
   selectAddress,
+  selectMap,
 } from "../../function";
 import { checkModuleStart } from "../../variable";
 
@@ -22,8 +23,6 @@ async function CompanyBranch(page: Page) {
     page,
     "WPU Community",
     "Sandhika Galih",
-    "Discord",
-    "discord",
     "Jl. lupa titik koma",
     ["jawa", "kota ban", "gede", "ranca"],
     "8123456789",
@@ -37,8 +36,6 @@ export default CompanyBranch;
 
 const insertNewCompanyBranch = async (
   page: Page,
-  entity_search: string,
-  pic_search: string,
   name: string,
   code: string,
   address: string,
@@ -87,11 +84,7 @@ const insertNewCompanyBranch = async (
   await inputFill(page, ".field-phone-phone", phone);
 
   // click button map
-  await buttonClick(page, ".field-group-map-map .field-map-map");
-  // click on center page
-  await page.mouse.click(300, 300);
-  // click map picker button confirm
-  await buttonClick(page, ".map-picker-button-confirm");
+  await selectMap(page, "rancabolang");
 
   // click button save
   await buttonClick(page, ".company-branch-pagination-button-save", 1000);
