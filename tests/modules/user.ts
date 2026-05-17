@@ -84,7 +84,9 @@ const insertNewUser = async (
 
   await selectAddress(page, address[0], address[1], address[2], address[3]);
 
-  for (const { division, role } of roles) {
+  for (let index = 0; index < roles.length; index++) {
+    const { division, role } = roles[index];
+
     // Divisi Role Pertama
     await buttonClick(page, ".roles-array-button-add", 1500);
     await scrollDown(page, ".user-pagination-dialog", 300);
@@ -92,7 +94,7 @@ const insertNewUser = async (
     // Pilih Role Divisi Pertama: Management
     await buttonClick(
       page,
-      ".item-field-roles-0-division_id #field-division_id",
+      `.item-field-roles-${index}-division_id #field-division_id`,
       1000,
     );
     await inputFill(
@@ -103,7 +105,11 @@ const insertNewUser = async (
     await buttonClick(page, "#searchable-select-portal button", 1500);
 
     // Pilih Role Jabatan Pertama: Admin
-    await buttonClick(page, ".item-field-roles-0-role_id #field-role_id", 1000);
+    await buttonClick(
+      page,
+      `.item-field-roles-${index}-role_id #field-role_id`,
+      1000,
+    );
     await inputFill(page, ".field-role_id-searchable-select-input", role);
     await buttonClick(page, "#searchable-select-portal button", 1500);
   }

@@ -24,8 +24,8 @@ async function SupplierEntity(page: Page) {
   await insertNewSupplierEntity(
     page,
     "Global Supplier Corp",
-    "Jl. Supplier Mandiri No. 45",
     ["jawa", "kota ban", "gede", "ranca"],
+    "Jl. Supplier Mandiri No. 45",
     "8123456789",
     "info@globalsupplier.com",
   );
@@ -39,8 +39,8 @@ export default SupplierEntity;
 const insertNewSupplierEntity = async (
   page: Page,
   name: string,
-  address: string,
   addressSelects: string[],
+  address: string,
   phone: string,
   email: string,
 ) => {

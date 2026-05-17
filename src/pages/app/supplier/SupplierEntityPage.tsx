@@ -29,8 +29,17 @@ export default function SupplierEntityPage({ ruleKey }: Props) {
       {
         key: "address",
         label: language({ id: "Alamat", en: "Address" }),
+        type: "textarea",
+        required: true,
+        col: 6,
+        textareaRows: 10,
+      },
+      {
+        key: "address_code",
+        label: language({ id: "Kode Alamat", en: "Address Code" }),
         type: "address",
         required: true,
+        col: 6,
       },
       {
         key: "phone",

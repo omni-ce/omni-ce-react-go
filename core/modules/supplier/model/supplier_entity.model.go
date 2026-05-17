@@ -9,14 +9,15 @@ import (
 )
 
 type SupplierEntity struct {
-	ID        uint    `json:"id" gorm:"autoIncrement;primaryKey"`
-	Name      string  `json:"name" gorm:"type:varchar(128);not null"`
-	Address   string  `json:"address" gorm:"type:text;not null"`
-	Phone     string  `json:"phone" gorm:"type:varchar(32);not null"`
-	Email     string  `json:"email" gorm:"type:varchar(128);not null"`
-	Longitude float64 `json:"longitude" gorm:"type:float;not null"`
-	Latitude  float64 `json:"latitude" gorm:"type:float;not null"`
-	IsActive  bool    `json:"is_active" gorm:"default:true"`
+	ID          uint    `json:"id" gorm:"autoIncrement;primaryKey"`
+	Name        string  `json:"name" gorm:"type:varchar(128);not null"`
+	Address     string  `json:"address" gorm:"type:text;not null"`
+	AddressCode string  `json:"address_code" gorm:"type:varchar(255);not null"`
+	Phone       string  `json:"phone" gorm:"type:varchar(32);not null"`
+	Email       string  `json:"email" gorm:"type:varchar(128);not null"`
+	Longitude   float64 `json:"longitude" gorm:"type:float;not null"`
+	Latitude    float64 `json:"latitude" gorm:"type:float;not null"`
+	IsActive    bool    `json:"is_active" gorm:"default:true"`
 
 	// SLA: create & update by user
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
@@ -31,11 +32,12 @@ type SupplierEntity struct {
 
 func (s *SupplierEntity) Map() map[string]any {
 	res := map[string]any{
-		"id":      s.ID,
-		"name":    s.Name,
-		"address": s.Address,
-		"phone":   s.Phone,
-		"email":   s.Email,
+		"id":           s.ID,
+		"name":         s.Name,
+		"address":      s.Address,
+		"address_code": s.AddressCode,
+		"phone":        s.Phone,
+		"email":        s.Email,
 		"map": map[string]any{
 			"longitude": s.Longitude,
 			"latitude":  s.Latitude,

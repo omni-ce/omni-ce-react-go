@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"react-go/core/dto"
 	"react-go/core/function"
+	"react-go/core/function/location"
 	supplier "react-go/core/modules/supplier/model"
 	"react-go/core/types"
 	"react-go/core/variable"
@@ -22,11 +23,12 @@ func EntityCreate(c *fiber.Ctx) error {
 	}
 
 	var body struct {
-		Name    string `json:"name" validate:"required"`
-		Address string `json:"address" validate:"required"`
-		Phone   string `json:"phone" validate:"required"`
-		Email   string `json:"email" validate:"required,email"`
-		Map     struct {
+		Name        string `json:"name" validate:"required"`
+		Address     string `json:"address" validate:"required"`
+		AddressCode string `json:"address_code" validate:"required"`
+		Phone       string `json:"phone" validate:"required"`
+		Email       string `json:"email" validate:"required,email"`
+		Map         struct {
 			Longitude float64 `json:"longitude"`
 			Latitude  float64 `json:"latitude"`
 		} `json:"map"`
@@ -36,15 +38,16 @@ func EntityCreate(c *fiber.Ctx) error {
 	}
 
 	entity := supplier.SupplierEntity{
-		Name:      body.Name,
-		Address:   body.Address,
-		Phone:     body.Phone,
-		Email:     body.Email,
-		Longitude: body.Map.Longitude,
-		Latitude:  body.Map.Latitude,
-		IsActive:  true,
-		CreatedBy: currentUser.ID,
-		UpdatedBy: currentUser.ID,
+		Name:        body.Name,
+		Address:     body.Address,
+		AddressCode: body.AddressCode,
+		Phone:       body.Phone,
+		Email:       body.Email,
+		Longitude:   body.Map.Longitude,
+		Latitude:    body.Map.Latitude,
+		IsActive:    true,
+		CreatedBy:   currentUser.ID,
+		UpdatedBy:   currentUser.ID,
 	}
 
 	if err := variable.Db.Create(&entity).Error; err != nil {
@@ -74,9 +77,34 @@ func EntityPaginate(c *fiber.Ctx) error {
 		}, nil)
 	}
 
-	rows := make([]map[string]any, 0, len(entities))
-	for _, e := range entities {
-		rows = append(rows, e.Map())
+	address_codes := make([]string, 0)
+	for _, entity := range entities {
+		address_codes = append(address_codes, entity.AddressCode)
+	}
+
+	addresses := make(map[string]string)
+	for _, address_code := range address_codes {
+		fullAddress, err, isBadRequest := location.GetFull(address_code)
+		if err != nil {
+			if isBadRequest {
+				return dto.BadRequest(c, types.Language{
+					Id: "Code alamat tidak valid",
+					En: "Invalid address code",
+				}, nil)
+			}
+			return dto.InternalServerError(c, types.Language{
+				Id: "Gagal mendapatkan alamat",
+				En: "Failed to get address",
+			}, nil)
+		}
+		addresses[address_code] = fullAddress
+	}
+
+	rows := make([]any, 0)
+	for _, entity := range entities {
+		data := entity.Map()
+		data["full_address"] = addresses[entity.AddressCode]
+		rows = append(rows, data)
 	}
 
 	return dto.OK(c, types.Language{
@@ -99,11 +127,12 @@ func EntityEdit(c *fiber.Ctx) error {
 	}
 
 	var body struct {
-		Name    string `json:"name" validate:"required"`
-		Address string `json:"address" validate:"required"`
-		Phone   string `json:"phone" validate:"required"`
-		Email   string `json:"email" validate:"required,email"`
-		Map     struct {
+		Name        string `json:"name" validate:"required"`
+		Address     string `json:"address" validate:"required"`
+		AddressCode string `json:"address_code" validate:"required"`
+		Phone       string `json:"phone" validate:"required"`
+		Email       string `json:"email" validate:"required,email"`
+		Map         struct {
 			Longitude float64 `json:"longitude"`
 			Latitude  float64 `json:"latitude"`
 		} `json:"map"`
@@ -122,6 +151,7 @@ func EntityEdit(c *fiber.Ctx) error {
 
 	entity.Name = body.Name
 	entity.Address = body.Address
+	entity.AddressCode = body.AddressCode
 	entity.Phone = body.Phone
 	entity.Email = body.Email
 	entity.Longitude = body.Map.Longitude
